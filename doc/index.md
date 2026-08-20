@@ -19,7 +19,7 @@ Klipper, Mainsail, Fluidd, Klipperscreen and other ecosystems. It is super
 flexible and now even easier to install and setup.
 
 <p align="center">
-  <img src="index/universal_mmu_driver.jpg" alt="Happy Hare driving several different MMUs through Mainsail, Fluidd, KlipperScreen and the console" width="100%">
+  <img src="index/universal_mmu_driver.png" alt="Happy Hare driving several different MMUs through Mainsail, Fluidd, KlipperScreen and the console" width="100%">
 </p>
 
 ## What it drives
