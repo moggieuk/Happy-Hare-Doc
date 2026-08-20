@@ -436,23 +436,6 @@ body {
 }
 
 /*
- * Let the home-page ecosystem collage float into either page theme instead
- * of ending at a hard white rectangle. Two intersecting masks feather the
- * horizontal and vertical edges independently while leaving its content
- * untouched and fully opaque away from the narrow perimeter.
- */
-.hh-hero-image {
-  -webkit-mask-image:
-    linear-gradient(to right, transparent, #000 5%, #000 95%, transparent),
-    linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(to right, transparent, #000 5%, #000 95%, transparent),
-    linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
-  mask-composite: intersect;
-}
-
-/*
  * Mermaid diagrams (see doc/assets/javascripts/hh-mermaid.js) are deliberately
  * marked class="hh-mermaid", NOT "mermaid" - the plain "mermaid" class is what
  * mermaid.min.js's own bundled auto-render scans for on page load, which races
