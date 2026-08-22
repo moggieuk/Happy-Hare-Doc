@@ -166,7 +166,7 @@ The other two distances Happy Hare can use (**`Toolhead sensor to nozzle`** & **
 have enabled them and remain hidden when disabled.
 
 <p align="center">
-  <img src="GettingStarted-Tradrack/10-all-toolhead-dimensions-combined.png" alt="Toolhead dimensions, pre-filled from the selected combo" width="70%">
+  <img src="GettingStarted-Shared/toolhead-dimensions-combined.png" alt="Toolhead dimensions, pre-filled from the selected combo" width="70%">
 </p>
 <br>
 

@@ -110,6 +110,7 @@ nav:
       - Box Turtle: GettingStarted-BoxTurtle.md
       - BTT ViViD: GettingStarted-ViViD.md
       - Tradrack: GettingStarted-Tradrack.md
+      - EMU: GettingStarted-EMU.md
   - Calibration:
       - Overview: Calibration.md
       - Selector: Calibration-Selector.md
