@@ -203,11 +203,12 @@ reopen the menu. To go back in and change something, use:
 This is the normal way to revisit any setting on this page — there's no need to
 ever hand-edit the generated `.cfg` files directly.
 
-!!! note The one thing worth knowing: if you've hand-edited a `.cfg` file since
-your last visit to `menuconfig`, `-i` will ask how to reconcile that —
-**Refresh** (keep your manual edits, and just add new options), **Replace**
-(regenerate everything from menuconfig, discarding direct edits) or **Merge**
-(attempts to merge manual edits into menuconfig)
+!!! note
+    The one thing worth knowing: if you've hand-edited a `.cfg` file since
+    your last visit to `menuconfig`, `-i` will ask how to reconcile that —
+    **Refresh** (keep your manual edits, and just add new options), **Replace**
+    (regenerate everything from menuconfig, discarding direct edits) or **Merge**
+    (attempts to merge manual edits into menuconfig)
 
 If you only ever configure through `menuconfig`, as this page assumes, option 2
 (**Refresh**) is the recommended choice because it rebuilds your Happy Hare
