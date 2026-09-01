@@ -62,14 +62,14 @@ unit list.
 
 ## Pass 1: shared configuration
 
-The first `menuconfig` pass has a different colour scheme and is labelled
+The first `menuconfig` pass has a different color scheme and is labelled
 **Shared Config**. It contains settings that apply to the complete printer rather
 than to one physical MMU. Existing values are pulled from the first unit's saved
 configuration; review them and update anything that should now apply to the whole
 multi-unit setup.
 
 <p align="center">
-  <img src="GettingStarted-Multi-Unit/01-shared-config.png" alt="Multi-unit shared configuration screen in the aquatic colour scheme" width="80%">
+  <img src="GettingStarted-Multi-Unit/01-shared-config.png" alt="Multi-unit shared configuration screen in the aquatic color scheme" width="80%">
 </p>
 
 Printer-wide settings on this screen include the toolhead and its sensors,
@@ -102,7 +102,7 @@ symbolic names in the configuration.
 
 ## Pass 2: review existing unit0
 
-The next `menuconfig` pass returns to the normal colour scheme and is labelled
+The next `menuconfig` pass returns to the normal color scheme and is labelled
 **Unit: unit0**. It contains only settings specific to the first physical unit.
 Its existing configuration has been carried forward, but review the MMU type,
 board and MCU connection, fitted features, pins, endstops and unit-specific
@@ -116,7 +116,7 @@ The installer then opens a fresh unit-specific configuration labelled
 **Unit: unit1**.
 
 <p align="center">
-  <img src="GettingStarted-Multi-Unit/03-unit1-config.png" alt="Normal-colour menuconfig screen for the new unit1 configuration" width="80%">
+  <img src="GettingStarted-Multi-Unit/03-unit1-config.png" alt="Normal-color menuconfig screen for the new unit1 configuration" width="80%">
 </p>
 
 Configure this unit as thoroughly as a first installation:
@@ -138,7 +138,7 @@ From the `Happy-Hare` directory, rerun the interactive installer:
 ./install.sh -i
 ```
 
-On the first, teal-coloured **Shared Config** pass, open **MMU unit names** and
+On the first, teal-colored **Shared Config** pass, open **MMU unit names** and
 remove the symbolic name of the unit you no longer want. Save the shared
 configuration, then complete the remaining unit-specific passes. When the
 installer finishes, it removes the generated configuration for the deleted unit.

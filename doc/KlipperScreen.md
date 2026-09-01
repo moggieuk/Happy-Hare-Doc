@@ -222,12 +222,12 @@ or with [`MMU_GATE_MAP`](Reference-Commands.md#mmu_gate_map)):
 </p>
 
 See [Feature: Spoolman / Filament Hub](Feature-Spoolman.md) for the underlying
-sync behaviour this panel is editing.
+sync behavior this panel is editing.
 
 ## MMU Options
 
 A handful of settings in KlipperScreen's own configuration menu adjust MMU
-behaviour on the display side:
+behavior on the display side:
 
 <p align="center">
   <img src="KlipperScreen/mmu_options.png" alt="KlipperScreen MMU options menu" width="80%">

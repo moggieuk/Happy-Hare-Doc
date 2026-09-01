@@ -358,7 +358,7 @@ you the brightness on screen is a floor rather than a reading.
 
 A lit LED used to be `##`, which was a problem rather than a shorthand: the glyph was painted
 in the LED's color, and a white or grey LED — `mmu_breathing_white_fast` on `selecting`,
-`mmu_sparkle` on `complete`, `white_light` for an uncoloured gate under `filament_color` — came
+`mmu_sparkle` on `complete`, `white_light` for an uncolored gate under `filament_color` — came
 out indistinguishable from ordinary text, because the terminal's default foreground *is* white.
 A block in the same color still reads as a block.
 

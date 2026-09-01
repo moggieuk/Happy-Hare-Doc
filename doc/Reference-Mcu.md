@@ -33,7 +33,7 @@ for what that screen actually looks like.
 </p>
 
 ??? Wiring
-    Fystec Burrows ERB v2 wiring diagram:
+    Fysetc Burrows ERB v2 wiring diagram:
     <p align="center">
      <img src="Reference-Mcu/ERB_v2_Wiring.png" alt="Fysetc Burrows ERB v2 wiring diagram">
     </p>

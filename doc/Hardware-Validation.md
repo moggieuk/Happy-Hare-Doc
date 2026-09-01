@@ -152,7 +152,7 @@ movement afterward using [Gear Rotation Distance](Calibration-Gear.md).
 
 ## Encoder Validation (if fitted)
 
-An encoder measures distance travelled, not direction. Reset or note its
+An encoder measures distance traveled, not direction. Reset or note its
 position, pull filament through it by hand, then query it again:
 
 ```text

@@ -236,7 +236,7 @@ When filament isn't present, the `mmu_shared_exit` sensor should report as `Open
 (**`MMU_HOME`**) until it triggers the Tradrack `gate sensor`. If it's working correctly, `mmu_shared_exit` should report as `Triggered` 
 and `Open` when removed.
 
-Use the foldoc/GettingStarted-Tradrack.mdlowing command to verify or use the Mainsail/Fluid sensor status.
+Use the following command to verify, or use the Mainsail/Fluidd sensor status.
 ```{.text .console-command}
 MMU_SENSORS
 

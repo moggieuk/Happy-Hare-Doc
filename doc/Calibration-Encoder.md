@@ -6,7 +6,7 @@ Encoder](Feature-Encoder.md) for what the encoder does and how to wire
 one up; this page is just the calibration command itself).
 
 `MMU_CALIBRATE_ENCODER` measures **encoder resolution** - how many
-millimetres of filament movement correspond to one encoder pulse. It
+millimeters of filament movement correspond to one encoder pulse. It
 needs the current gate's gear rotation distance already calibrated (see
 [Calibration: Gear](Calibration-Gear.md)) - the encoder measurement is
 only as good as the gear move it's measuring against.

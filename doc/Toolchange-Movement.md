@@ -8,7 +8,7 @@ worth reading alongside this page.
 
 ## Overview of Toolhead Parking
 
-Happy Hare recognises 7 operations that may need toolhead parking:
+Happy Hare recognizes 7 operations that may need toolhead parking:
 
 - `toolchange` - a normal toolchange, via `Tx` or `MMU_CHANGE_TOOL`
 - `runout` - a forced toolchange triggered by runout

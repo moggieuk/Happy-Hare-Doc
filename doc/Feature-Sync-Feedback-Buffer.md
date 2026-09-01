@@ -271,7 +271,7 @@ for a quick glance without opening the meter:
       Switch sensor at an extreme (compression shown)
     </td>
     <td align="center">
-      <img src="Feature-Sync-Feedback-Buffer/p-sensor-position.png" alt="Proportional sensor showing its normalised position" width="90%"><br>
+      <img src="Feature-Sync-Feedback-Buffer/p-sensor-position.png" alt="Proportional sensor showing its normalized position" width="90%"><br>
       Proportional sensor's live position (<code>0.25</code> here)
     </td>
   </tr>

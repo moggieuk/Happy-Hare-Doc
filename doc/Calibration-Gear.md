@@ -2,7 +2,7 @@
 
 Every MMU has at least one gear stepper moving filament, and like any
 extruder, its accuracy depends on `rotation_distance` - how far the
-stepper actually turns the filament per commanded millimetre. Gate 0
+stepper actually turns the filament per commanded millimeter. Gate 0
 always acts as the **reference gate**: it's the one you calibrate first,
 and (on designs with per-gate gears) the one every other gate is measured
 against.

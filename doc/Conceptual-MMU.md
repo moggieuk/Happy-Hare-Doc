@@ -43,14 +43,14 @@ be connected to the same printer with additional splitters in the bowden path.
 "Hub" or just a **”Buffer”** casually, which can be a bit confusing: this is a 
 sensor that detects tension or compression across the filament path and is used
 to keep the gear and extruder steppers synchronized so they don't fight each other. 
-Sensor designs typically incorporate a few millimetres of filament slack which
+Sensor designs typically incorporate a few millimeters of filament slack which
 is where the “buffer” nickname / term comes from. However, it's job is to sense 
 tension/compression, not buffering or catching loose filament. Happy Hare exposes
 this as `sync_feedback_state` (`compressed`/`expanded`/`neutral`/`disabled`)
 in [Printer Variables](Reference-Printer-Variables.md#printermmu) and reuses it to
 drive [FlowGuard](Feature-FlowGuard.md) and tangle-prevention.<br>
 Recent advancements have seen new sensors introduced that use an analog 
-interface (ADC) to provide proportional, real-time positional telementry to 
+interface (ADC) to provide proportional, real-time positional telemetry to
 _actively_ manage filament tension and compression. These are the **ultimate**
 sensor design and are fully supported by Happy Hare.
 
@@ -212,7 +212,7 @@ varies by design and budget.
 
 ## EndlessSpool
 
-If a gate runs out of filamaent (detected by an entry sensor, exit sensor, or the
+If a gate runs out of filament (detected by an entry sensor, exit sensor, or the
 encoder), and EndlessSpool is enabled, Happy Hare unloads, remaps the current
 tool to another gate in the same configured group, reloads, and resumes the
 print automatically - the potentially-kinked filament at the spool end never

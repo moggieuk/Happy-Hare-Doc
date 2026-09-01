@@ -301,7 +301,7 @@ printer and gate it's currently assigned to:
 You can also group the dashboard by printer name:
 
 <p align="center">
-  <img src="Feature-Spoolman/spoolman-location-dashboard.png" alt="Spoolman web UI dashbord grouped by printer">
+  <img src="Feature-Spoolman/spoolman-location-dashboard.png" alt="Spoolman web UI dashboard grouped by printer">
 </p>
 
 ## Tuning

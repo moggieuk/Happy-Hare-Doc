@@ -11,7 +11,7 @@
 // ```mermaid fences - there is no fence-extraction step for that markup to race on, since
 // the diagram source reaches the browser as plain text every time.
 //
-// Deliberately NOT class="mermaid": mermaid.min.js's own default behaviour auto-scans
+// Deliberately NOT class="mermaid": mermaid.min.js's own default behavior auto-scans
 // for exactly that class and self-renders it on the page's FIRST load, via its own
 // DOMContentLoaded listener registered the instant the CDN script itself loads - i.e.
 // before this file (loaded after it) even runs, so calling mermaid.initialize({

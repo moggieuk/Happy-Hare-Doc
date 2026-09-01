@@ -177,7 +177,7 @@ are already filled in — `85.1` and `2` here — measured by someone else on th
 hardware rather than left at the generic default. The other two distances Happy Hare
 can use (toolhead sensor to nozzle, extruder sensor to entry) only appear once you've
 told it you actually have those sensors on your toolhead, higher up this same screen --
-until relevent the values stay hidden here.
+until relevant the values stay hidden here.
 
 This is a shortcut, not a substitute: even with a listed toolhead, you're still
 better off learning to measure and calibrate your own eventually, since small
@@ -217,7 +217,7 @@ scroll all the way from the top to **Paths & Services** at the bottom at least
 once. Nothing you look at will break anything: moving the highlight
 costs nothing, and `R` is always there to undo a change you don't
 want. Remember that you don't need to setup everything now — you can come back
-many times and re-run menconfig with `./install.sh -i` and incrementally
+many times and re-run menuconfig with `./install.sh -i` and incrementally
 setup features and macros.
 
 ### Saving, and coming back later
@@ -247,7 +247,7 @@ ever hand-edit the generated `.cfg` files directly.
     If you only ever configure through `menuconfig`, as this page assumes, option 2
     (**Refresh**) is the recommended choice because it rebuilds your Happy Hare
     klipper config files ensuring a clean config and any future update made to the
-    Happy Hare sofware.
+    Happy Hare software.
 
 
 ## Validating Hardware Setup
@@ -363,7 +363,7 @@ expected.
 
 ## Slicer Setup
 
-You now need to add some gcode hooks into your favorate slicer for `start g-code`,
+You now need to add some gcode hooks into your favorite slicer for `start g-code`,
 `end g-code`, `after layer change` and `on tool change`. This is to coordinate with
 the MMU during certain phases of a print. This is covered in
 [Slicer Setup](Slicer-Setup.md#start-g-code). Jump to this section, make these

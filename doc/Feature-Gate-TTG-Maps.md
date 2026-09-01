@@ -67,7 +67,7 @@ Gates / Filaments:
 If you've enabled [Spoolman](Feature-Spoolman.md), the same command gains an
 `Id:` field and everything else about it works identically - it's the same
 command and the same map either way, just with one extra column. See that
-page for the Spoolman-specific console format and sync behaviour.
+page for the Spoolman-specific console format and sync behavior.
 
 !!! tip
     The initial map (and the defaults `MMU_GATE_MAP RESET=1` restores) come

@@ -85,7 +85,7 @@ are tracked for every gate regardless.
     Don't chase a perfect score on every gate - a summary trends back
     towards good on its own once whatever caused a rough patch is fixed, no
     reset needed. Treat it as a comparison between gates rather than an
-    absolute target; a gate that's noticeably worse than its neighbours is
+    absolute target; a gate that's noticeably worse than its neighbors is
     the one worth investigating (calibration, friction, or a move speed
     that's too aggressive for that particular gate).
 

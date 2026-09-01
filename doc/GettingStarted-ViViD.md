@@ -366,7 +366,7 @@ those changes before trying a multi-material file.
 
 ## Printing with MMU
 
-The remaining choice before a first print is how to purge the previous colour
+The remaining choice before a first print is how to purge the previous color
 at each toolchange:
 
 - **Slicer-controlled** — use the slicer's wipe tower. This is the simplest
@@ -382,7 +382,7 @@ Toolchange retraction, z-hop and parking positions live in
 `menuconfig`. Review [Toolchange Movement](Toolchange-Movement.md) before
 changing those defaults.
 
-Once the slicer hooks and purge method are set, slice a small two-colour test
+Once the slicer hooks and purge method are set, slice a small two-color test
 object and run the first print. Starting with two gates keeps diagnosis simple
 while still exercising a real unload, selector move and reload.
 

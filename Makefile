@@ -4,6 +4,10 @@ PY    := python
 # For quiet builds, override with make Q= for verbose output
 Q ?= @
 
+# CSpell version used by the opt-in spellcheck target. Keep this compatible with
+# Node versions commonly found on contributor machines.
+CSPELL_VERSION ?= 9.8.0
+
 # Where to fetch Happy-Hare's source from, and which ref to pin to. HAPPY_HARE_REF
 # is a tracked file (one line) rather than a Makefile variable so bumping the pin
 # is a one-line diff, not a Makefile edit. Tracks the 'v4' branch while v4 is still
@@ -27,7 +31,7 @@ VENV     ?= venv
 VENV_PY  := $(VENV)/bin/python
 BOOTSTRAP_PY := $(if $(shell command -v $(PY) 2>/dev/null),$(PY),python3)
 
-.PHONY: fetch-source clean-source shots command_reference docs docs_build docs_check docs_preview help
+.PHONY: fetch-source clean-source shots command_reference docs docs_build docs_check docs_preview spellcheck help
 
 help:  # Print this help and exit
 	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z0-9_-]+:[^:]*## / {printf "\033[36m%-24s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -124,6 +128,31 @@ docs_build: $(VENV_READY_STAMP)  ## Build static site
 docs_check: $(VENV_READY_STAMP)  ## Run strict build validation
 	$(Q)"$(VENV)/bin/zensical" build --strict
 	$(Q)"$(VENV_PY)" -m doc_tools.check_refs
+
+# Spell-check tracked, human-maintained documentation and supporting source using
+# the project CSpell configuration. Generated references, project notes and binary
+# assets are excluded.
+# Pass additional CSpell options through ARGS, e.g. make spellcheck ARGS='--no-summary'.
+spellcheck:  ## Spell-check documentation and supporting source
+	$(Q)command -v npx >/dev/null 2>&1 || { \
+		echo "Node.js/npm is required to run CSpell" >&2; \
+		exit 1; \
+	}
+	$(Q)git ls-files -- \
+		'*.md' '*.txt' '*.yml' '*.yaml' '*.py' '*.js' '*.css' \
+		'Makefile' \
+		':(exclude).cspell.config.yml' \
+		':(exclude).project-words.txt' \
+		':(exclude).agents/**' \
+		':(exclude).claude/**' \
+		':(exclude)MMX-Happy-Hare-Guide-Review.md' \
+		':(exclude)TOC.md' \
+		':(exclude)doc/Reference-Commands.md' \
+		':(exclude)doc/Dev-Command-Reference.md' | \
+		while IFS= read -r file; do \
+			[ -f "$$file" ] && printf '%s\n' "$$file"; \
+		done | \
+		npx --yes cspell@$(CSPELL_VERSION) lint --no-progress --file-list stdin $(ARGS)
 
 # Serves the already-built ./site as plain static files - no rebuild, no live
 # reload. This is what GitHub Pages (or any static host) actually does with the

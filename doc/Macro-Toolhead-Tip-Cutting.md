@@ -48,7 +48,7 @@ guides on this topic:
   struggles with a particular filament.
 - **`pushback_length`** pushes the cut fragment back into the hotend so it
   can't cause a future clog - a PTFE-tube-length-plus-a-few-mm starting
-  point, not the couple of millimetres that might look sufficient at first
+  point, not the couple of millimeters that might look sufficient at first
   glance.
 
 ## See also

@@ -14,7 +14,7 @@ theme:
   variant: classic
   logo: assets/images/doc_logo2.png
   favicon: assets/images/favicon.png
-  # Pink is the brand's own colour, not a pick from Material's swatch list for its
+  # Pink is the brand's own color, not a pick from Material's swatch list for its
   # own sake: HH's warning text is #FF69B4 (see test/README.md, "why a warning
   # shows up on a pink background") and the wiki/README logo is that same hot pink
   # rendered as a neon sign. Black keeps the header/nav that neon-over-brick dark
@@ -49,7 +49,7 @@ extra_javascript:
   # comment and TOC.md's "Zensical rough edges" for why that path is flaky.
   # Pinned to an exact release, not a floating major tag: every other asset on
   # this site is local, and a silent CDN-side 10.x patch bump would change
-  # rendering behaviour with no commit here. mermaid.min.js is the UMD build,
+  # rendering behavior with no commit here. mermaid.min.js is the UMD build,
   # which attaches a synchronous global `mermaid` - the .mjs/ESM build would
   # need type="module" and a different loading order.
   - https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js

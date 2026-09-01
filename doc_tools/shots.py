@@ -248,7 +248,7 @@ def _getting_started_mmx(mc, shot):
 
 def _getting_started_multi_unit_shared(mc, shot):
     """
-    For doc/GettingStarted-Multi-Unit.md - the aquatic-coloured shared-config
+    For doc/GettingStarted-Multi-Unit.md - the aquatic-colored shared-config
     entry point used by install.sh -i -n.
     """
     # The shared screen's persistent Help pane makes the general autofit/repaint
