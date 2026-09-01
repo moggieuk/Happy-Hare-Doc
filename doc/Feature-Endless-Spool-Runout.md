@@ -64,7 +64,7 @@ endless_spool_groups     :      # Group membership per gate, comma-separated (bl
 see [Commands](#commands) below. `endless_spool_eject_gate` lets a design
 with a moving selector send the leftover filament fragment somewhere other
 than back through the gate it just came from - useful if your buffer design
-tends to let that fragment drift into a neighbouring gate's buffer and
+tends to let that fragment drift into a neighboring gate's buffer and
 tangle it. Set it to the gate number you want to use (it must be `1` or
 higher - `0` isn't accepted here, so gate 0 can't be the designated waste
 gate). Two things worth knowing before turning it on:
@@ -160,7 +160,7 @@ read it, but new macros should use `endless_spool_enabled` instead.
   group lookup and gate remap a real runout would, without needing to
   actually run a spool dry - a good way to confirm your groups are set up the
   way you think they are.
-- **Consider `endless_spool_on_load` alongside the mid-print behaviour.**
+- **Consider `endless_spool_on_load` alongside the mid-print behavior.**
   It's the same mechanism applied to a manual or macro-driven tool change
   onto a gate you already know is empty, so the two settings are usually
   worth enabling together.

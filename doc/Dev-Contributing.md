@@ -16,7 +16,7 @@ Found an actual bug?
 
 - **Bug fixes**: open a pull request directly. Describe the problem and the
   solution, and reference the issue number if there is one.
-- **New features or behaviour changes**: don't open an issue *or* a PR
+- **New features or behavior changes**: don't open an issue *or* a PR
   first - gather feedback on the idea (Discord is the usual place) before
   investing the work. Changes that break existing setups are likely to be
   rejected outright, given how many different MMU/AFC combinations this

@@ -2,7 +2,7 @@
 
 Happy Hare ships with sensible defaults for every supported MMU, but a
 handful of dimensions are physical to *your* build - how far your gear
-stepper actually turns per millimetre of filament, exactly where your
+stepper actually turns per millimeter of filament, exactly where your
 selector needs to park, how long your particular bowden tube is. No
 default can know these in advance; that's what calibration is for.
 

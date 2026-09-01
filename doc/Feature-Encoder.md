@@ -6,7 +6,7 @@ An encoder measures filament movement directly, as a small wheel or optical
 sensor turned by the filament passing through it. It has no direction
 sense - the position it reports only ever counts up, regardless of whether
 filament is moving into or out of the MMU - so Happy Hare always reads it as
-a distance travelled, not a direction.
+a distance traveled, not a direction.
 
 That one measurement gets reused in several unrelated places once an encoder
 is fitted:

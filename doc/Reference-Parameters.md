@@ -91,7 +91,7 @@ the full picture.
 | `spoolman_support` | `off` | `off`/`readonly`/`push`/`pull` - see [Feature: Spoolman / Filament Hub](Feature-Spoolman.md) for what each does |
 | `spoolman_pending_id_timeout` | `20` s | How long a pending spool ID assignment stays valid before being voided |
 | `spoolman_led_segment` | `gate_status` | Which LED segment(s) show the pending-spool-ID overlay: `gate_status`, `status`, or `both` |
-| `spoolman_nfc_auto_create` | `0` | Auto-create a Spoolman spool from an unrecognised NFC tag's metadata - see [Feature: NFC/RFID Reading](Feature-NFC.md) |
+| `spoolman_nfc_auto_create` | `0` | Auto-create a Spoolman spool from an unrecognized NFC tag's metadata - see [Feature: NFC/RFID Reading](Feature-NFC.md) |
 | `t_macro_color` | `slicer` | Source for the `Tx` macro's color variable: `slicer`, `allgates`, `gatemap`, or `off` |
 
 ### Console
@@ -320,10 +320,10 @@ methods.
 | `extruder_collision_homing_current` | `30`% | Gear stepper current during collision-based homing (`encoder`/`mmu_gear_touch` methods) |
 | `extruder_force_homing` | *(toolhead-sensor-equipped only)* | Force extruder homing even though a toolhead sensor makes it unnecessary |
 
-### Toolhead loading/unloading (behaviour)
+### Toolhead loading/unloading (behavior)
 
 Distinct from `[mmu_toolhead]`'s physical geometry settings above - these
-tune the toolhead-loading *behaviour* itself, per unit.
+tune the toolhead-loading *behavior* itself, per unit.
 
 | Parameter | Default | Description |
 |---|---|---|
@@ -433,7 +433,7 @@ See [Feature: NFC/RFID Reading](Feature-NFC.md) for the full picture.
 ### CAD dimensions for custom designs
 
 Commented out by default - only needed for a `mmu_vendor: Other` custom
-build, or to override the values a recognised vendor/version normally
+build, or to override the values a recognized vendor/version normally
 supplies automatically.
 
 | Parameter | Default (commented) | Description |

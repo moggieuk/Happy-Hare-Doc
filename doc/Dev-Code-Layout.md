@@ -185,7 +185,7 @@ not a diagram simplification:
 `class LinearMultiGearSelector(LinearSelector, VirtualSelector)`, literally.
 The docstring explains why: a "type-C" design (one gear stepper per gate,
 *plus* a physical carriage that still has to move to line the selected gate
-up with the extruder path) needs both behaviours, and Python's MRO is relied
+up with the extruder path) needs both behaviors, and Python's MRO is relied
 on directly - "gear selection occurs before selector movement when using
 `super()` in `select_gate()`". `MacroSelector` (fully user-implemented, via
 gcode macros) is the other direct `BaseSelector` subclass, omitted above for

@@ -77,7 +77,7 @@ The default is **`8`** gates, but you can change it to match your build — in t
 Next, select the **`Selector servo type`**. For most ERCF v3 builds the default is the **`GuoHua A0090`**, 
 with several other common kit servos included in the list — **`GDW DS041MG`** and **`MG‑90S`** among them.
 
-You’ll also find the **`Savox SH‑0255MG`**, a community‑favourite and widely regarded as the _Gucci_, 
+You’ll also find the **`Savox SH‑0255MG`**, a community‑favorite and widely regarded as the _Gucci_,
 ultra‑reliable option thanks to its consistent torque and proven, long‑term durability.
 
 If your build uses a different servo, select **`Not listed`**. Servo settings such as min/max

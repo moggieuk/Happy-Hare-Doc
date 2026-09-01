@@ -32,13 +32,13 @@ A read can be shallow or deep:
   already registered in Spoolman.
 - **Deep read** (`nfc_deep_read`, on by default) - also parses the tag's
   own stored data, when the tag carries any. Several third-party tag
-  formats are recognised (Bambu, Creality, and the plain NDEF format used by
+  formats are recognized (Bambu, Creality, and the plain NDEF format used by
   OpenSpool/OpenTag-style tags and printable QR/NFC combo tags), giving
   material, color, vendor and temperature straight from the tag - useful
   on its own, and it's *also* what feeds
   [Spoolman auto-create](Feature-Spoolman.md#parameter-setup) for a tag
   Spoolman has never seen before. A tag in a format Happy Hare doesn't
-  recognise still yields its UID; it just won't have parsed metadata.
+  recognize still yields its UID; it just won't have parsed metadata.
 
 ## Hardware Setup
 
@@ -452,7 +452,7 @@ of just failing to resolve:
    write to Spoolman, so auto-create is suppressed regardless of this
    setting in those modes.
 
-With all three set, scanning a brand-new tag that carries recognisable
+With all three set, scanning a brand-new tag that carries recognizable
 filament data (see [Concept](#concept)) creates the spool in Spoolman and
 registers the tag against it in the same step - the next scan of that same
 tag resolves normally.
@@ -571,7 +571,7 @@ both off by default so a stock setup pays no extra reader I/O:
   (`MMU_NFC ... ENABLE=0`, or it starts that way); re-enable with
   `ENABLE=1`, which also re-initializes it.
 - **A deep read returns the UID but no metadata** - the tag isn't in one of
-  the recognised formats (see [Concept](#concept)), or it's genuinely
+  the recognized formats (see [Concept](#concept)), or it's genuinely
   blank. UID-only resolution still works if the tag is already registered
   in Spoolman.
 - **`MMU_NFC_SCAN` errors "gate is empty"** - it homes filament to find the

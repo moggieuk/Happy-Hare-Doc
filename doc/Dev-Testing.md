@@ -274,7 +274,7 @@ timeout, a 5-second warning window, a 2.5-second boot delay. Real waiting would 
 suite unusable. `advance()` runs every timer that falls due, in order.
 
 **The filament model.** Two numbers per gate: where the filament's leading edge (the *tip*)
-is and where its trailing end (the *tail*) is, in millimetres, measured so that `0` is the
+is and where its trailing end (the *tail*) is, in millimeters, measured so that `0` is the
 gate's sensor. Filament occupies everything between them, so a switch reads "triggered"
 when it sits inside that span. When Happy Hare commands a move, the harness works out which
 sensor trips first and how far the filament actually gets. Default layout:
@@ -449,7 +449,7 @@ involved. `RoundTrip` pumps messages between the two sides until everything sett
 
 ## 5. Six things that will bite you
 
-These are all real behaviours, learned by getting them wrong.
+These are all real behaviors, learned by getting them wrong.
 
 **1. Placing filament is an event.** Covering the entry switch is an *insert*, and Happy
 Hare responds by preloading that gate. `place_filament()` suppresses that by default so
@@ -529,7 +529,7 @@ log file at `hh.tmpdir + '/mmu.log'`.
 ```python
 print(hh.filament().history)
 # [(0, 100.0, 'homing -> mmu_exit_0'), (0, -100.0, 'move')]
-#  gate, millimetres, why
+#  gate, millimeters, why
 print(hh.filament().describe(0))
 # gate 0 tip=-100.0 mmu_entry_0=0 mmu_exit_0=0 mmu_shared_exit=0 filament_compression=0
 ```
@@ -561,7 +561,7 @@ A reasonable loop:
    fix and pass after — check that, or you don't know it's testing anything.
 
 **When you find a bug you're not fixing now**, write it as an `@unittest.expectedFailure`
-describing the correct behaviour, with a comment explaining the cause. It documents the
+describing the correct behavior, with a comment explaining the cause. It documents the
 problem, proves it's real, and cleans itself up when fixed.
 
 **Prefer driving real commands** (`hh.run_gcode('MMU_PRELOAD GATE=1')`) over calling
@@ -581,15 +581,15 @@ per-area picture; these are the structural limits behind it.
 - **No real hardware protocol.** The RC522 init sequence is exercised, but tag *reads* are
   faked at the driver level. The PN532 and PN7160 I²C drivers aren't covered at all.
 - **Proprietary tag formats are untested.** Bambu, Creality, QIDI and Anycubic parsing
-  needs captured dumps from real spools — synthesising them would only prove the test
+  needs captured dumps from real spools — synthesizing them would only prove the test
   agrees with itself.
 - **Encoder and gear calibration are seeded, never measured.** `MMU_CALIBRATE_ENCODER` and
   `MMU_CALIBRATE_GEAR` would only re-derive the numbers the harness generates its moves
   from, so they would confirm arithmetic rather than test anything.
 - **Macros load but mostly don't run.** The shipped `config/macros/*.cfg` are read
-  verbatim so sequences can find them, but a test that asserts on macro *behaviour* would
+  verbatim so sequences can find them, but a test that asserts on macro *behavior* would
   be testing Klipper's Jinja, not Happy Hare.
-- **The fakes could be wrong.** They're written against real Klipper's behaviour, but
+- **The fakes could be wrong.** They're written against real Klipper's behavior, but
   where they diverge, a test can pass while the real thing fails.
 
 Green means "Happy Hare's logic does what we think" — not "this will work on a printer".

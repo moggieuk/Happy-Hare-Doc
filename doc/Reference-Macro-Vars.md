@@ -245,7 +245,7 @@ left to its upstream README alone.
 | `brush_start` | `67` | Start X of a bed-mounted brush - indicative defaults `34`/`67`/`84` for 250/300/350mm builds; for a gantry-mounted brush, set to your nozzle-stop position instead |
 | `brush_width` | `35` mm | Brush width along X |
 | `brush_top` | `6` | Z position of the brush top - start high and lower carefully; `None` for a gantry-mounted brush needing no Z move |
-| `clearance_z` | `2` mm | Z clearance above the brush while travelling |
+| `clearance_z` | `2` mm | Z clearance above the brush while traveling |
 | `wipe_qty` | `2` | Number of full wipe passes |
 | `wipe_spd_xy` | `10000` mm/min | Wipe speed |
 | `brush_y_offset` | `0` | Offset subtracted from max Y for brushing |

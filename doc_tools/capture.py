@@ -12,7 +12,7 @@
 #
 # No screen recorder, no window manager, no cropping by hand. menuconfig is a
 # curses app, so it is given a pty, its escape stream is fed to a terminal
-# emulator (pyte), and the resulting character grid - text plus per-cell colour -
+# emulator (pyte), and the resulting character grid - text plus per-cell color -
 # is drawn with Pillow. That grid is also what the assertions read, so a shot can
 # state which screen it expects to be on and fail loudly when it is not.
 #
@@ -143,7 +143,7 @@ def hh_version():
 
     Kconfig:91 takes it from $HH_VERSION and renders it into the title bar of every
     screen; left unset the title reads 'Happy Hare v Configuration', which is what a
-    screenshot would then immortalise. Deriving it rather than hardcoding keeps that
+    screenshot would then immortalize. Deriving it rather than hardcoding keeps that
     from going stale. There are two other copies of this regex - install.sh:32 and
     test/hh/cfg.py:90 - and they must agree.
     """
@@ -504,16 +504,16 @@ class Menuconfig:
                 for arrow in SCROLL_ARROWS if arrow * 3 in line]
 
     def _bars(self):
-        """Full-width coloured rows: the title bar, and the separator below the menu."""
+        """Full-width colored rows: the title bar, and the separator below the menu."""
         page = Counter(self.screen.buffer[y][x].bg
                        for y in range(self.rows)
                        for x in range(self.cols)).most_common(1)[0][0]
         found = []
         for y in range(self.rows):
             row = self.screen.buffer[y]
-            colours = Counter(row[x].bg for x in range(self.cols))
-            colour, count = colours.most_common(1)[0]
-            if count == self.cols and colour != page:
+            colors = Counter(row[x].bg for x in range(self.cols))
+            color, count = colors.most_common(1)[0]
+            if count == self.cols and color != page:
                 found.append(y)
         return found
 
@@ -873,7 +873,7 @@ class Menuconfig:
 # -- the ad-hoc key language -------------------------------------------------
 #
 # Lets a whole navigation be written on a command line, which is what makes the
-# tool driveable without editing a file first:
+# tool drivable without editing a file first:
 #
 #   --keys 'select:Purging,enter,down,down,help'
 #

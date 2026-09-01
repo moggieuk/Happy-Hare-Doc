@@ -110,7 +110,7 @@ a reader could be shown.
   vendor without a reader on every gate.
 * **A real config: `--seed path/to/.mmu_config`.** Whatever is on your printer.
 * **A unit of a multi-unit setup: `--seed path/to/.mmu_config_gru`.** The `_gru`
-  suffix is recognised, so the session parses as unit `gru` with `F_MULTI_UNIT=y`,
+  suffix is recognized, so the session parses as unit `gru` with `F_MULTI_UNIT=y`,
   and `UNIT_INDEX` plus the printer-level `HAS_SENSOR_*` capabilities are read out of
   the sibling `.mmu_config` — exactly what `install.sh:435-442` passes down. Point it
   at a top `.mmu_config` that has `CONFIG_MULTI_UNIT=y` and you get the shared-config

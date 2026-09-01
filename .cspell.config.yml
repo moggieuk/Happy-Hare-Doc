@@ -1,0 +1,44 @@
+---
+$schema: https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
+version: '0.2'
+language: 'en-US'
+dictionaryDefinitions:
+  - name: project-words
+    path: './.project-words.txt'
+    addWords: true
+dictionaries:
+  - project-words
+ignorePaths:
+  - '/venv/'
+  - '/site/'
+  - '/.cache/'
+  - '/.happy-hare-src/'
+  - '/.project-words.txt'
+overrides:
+  - filename: '**/*.md'
+    ignoreRegExpList:
+      # Examples and identifiers are code, not prose.
+      - '/^\s*```[\s\S]*?^\s*```/gm'
+      - '/`[^`\n]+`/g'
+
+  - filename: 'doc/GettingStarted-Installer-Configurator.md'
+    # Markdown splits the bold mnemonic letters from the rest of each word.
+    ignoreWords:
+      - efresh
+      - eplace
+      - erge
+
+  - filename: '**/*.py'
+    ignoreRegExpList:
+      # Ignore identifiers followed by brackets (items[-1]).
+      - '/\b\w+\b(?=\[)/'
+
+      # Ignore calls and definitions.
+      - '/\b\w+\b(?=\s*\(|\()/'
+      - '/\b(def|class)\s+\w+/'
+
+      # Ignore attribute access, assignments, imports and decorators.
+      - '/\.\b\w+\b/'
+      - '/\b\w+\b(?=\s*=)/'
+      - '/\b(import|from|as)\b/'
+      - '/@\b\w+\b/'
