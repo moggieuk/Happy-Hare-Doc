@@ -104,7 +104,7 @@ nav:
       - What Is an MMU?: Conceptual-MMU.md
   - Getting Started:
       - Installation: Installation.md
-      - Installer / Configurator: GettingStarted-Installer-Configurator.md
+      - Menuconfig: GettingStarted-Installer-Configurator.md
       - Upgrading from v3 to v4: Upgrade-v3-v4.md
       - Hardware Validation: Hardware-Validation.md
       - Box Turtle: GettingStarted-BoxTurtle.md
