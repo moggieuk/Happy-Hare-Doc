@@ -195,6 +195,7 @@ default locations and likely miss your actual install.
 - [Getting Started with EMU](GettingStarted-EMU.md)
 - [Getting Started with ERCF](GettingStarted-ERCF.md)
 - [Getting Started with Tradrack](GettingStarted-Tradrack.md)
+- [Getting Started with MMX](GettingStarted-MMX.md)
 - [Operation](Operation.md) - what happens when the MMU pauses, and how to
   resume/recover
 

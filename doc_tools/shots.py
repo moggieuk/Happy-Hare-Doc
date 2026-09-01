@@ -197,6 +197,55 @@ def _getting_started_vivid(mc, shot):
     # same Software Options screen, not a submenu; the item above is selectable in place.
 
 
+def _getting_started_mmx(mc, shot):
+    """
+    For doc/GettingStarted-MMX.md - the first menuconfig pass for the original
+    four-gate MMX servo-cam design. Starts bare so the MMX choice itself is part
+    of the walkthrough, then selects the EBB42 reference board used by the MMX
+    project. The scene deliberately enables both real sensor groups from that
+    reference build: four entry sensors and the PB4 shared-exit sensor.
+    """
+    mc.enter('MMU Type')
+    mc.select('MMX  - Multi-Material Extruder')
+    mc.toggle()
+    shot('01-mmu-type-mmx')
+    mc.back()  # -> (Top)
+
+    mc.enter('Board type')
+    mc.select('BTT EBB 42 CANbus V1.2')
+    mc.toggle()
+    mc.autofit()
+    mc.select('BTT EBB 42 CANbus V1.2')
+    shot('02-board-type-ebb42')
+    mc.back()  # -> (Top)
+    mc.autofit()
+
+    mc.enter('MMU Features / Additions')
+    shot('03-mmu-features')
+    mc.enter('Filament sensors')
+    mc.select('gate/lane entry sensors')
+    mc.toggle()
+    mc.select('shared exit sensor')
+    mc.toggle()
+    mc.autofit()
+    mc.select('gate/lane entry sensors')
+    shot('04-filament-sensors')
+    mc.back()
+    mc.back()  # -> (Top)
+    mc.autofit()
+
+    mc.enter('Pins / TMC')
+    shot('05-pins')
+    mc.enter('Mmu entry sensor pins')
+    shot('06-entry-sensor-pins')
+    mc.back()
+    mc.back()  # -> (Top)
+    mc.autofit()
+
+    mc.enter('Endstops and Bowden movement')
+    shot('07-endstops')
+
+
 def _getting_started_multi_unit_shared(mc, shot):
     """
     For doc/GettingStarted-Multi-Unit.md - the aquatic-coloured shared-config
@@ -752,6 +801,14 @@ SESSIONS = [
         'doc/GettingStarted-ViViD.md - first menuconfig pass for a BTT ViViD',
         'scenes': _getting_started_vivid,
         'outdir': 'GettingStarted-ViViD',
+        'seed': 'none',
+    },
+    {
+        'name': 'getting-started-mmx',
+        'caption':
+        'doc/GettingStarted-MMX.md - first menuconfig pass for an MMX',
+        'scenes': _getting_started_mmx,
+        'outdir': 'GettingStarted-MMX',
         'seed': 'none',
     },
     {

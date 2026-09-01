@@ -64,6 +64,26 @@ from that checkout and choosing "Upgrade to v4" instead.
     The v4 branch will not be actively developed. It is likely the only updates
     will be for breaking Klipper changes or other severe bugs.
 
+### Return to v3 after completing a v4 setup
+
+If you already completed the upgrade and want to return to the preserved v3
+configuration, uninstall v4, copy the saved `mmu.V3` directory back into the
+active `mmu` location, then switch branches:
+
+```bash
+cd ~/Happy-Hare
+./install.sh -d
+cp -a ~/printer_data/config/mmu.V3 ~/printer_data/config/mmu
+./install.sh -b v3
+```
+
+The uninstall makes a timestamped backup of the active v4 configuration before
+removing it and leaves `mmu.V3` untouched. Using `cp -a` retains that original
+backup as well. If Klipper uses a non-standard configuration directory, replace
+`~/printer_data/config` with the same path supplied to the installer with `-c`.
+If several `mmu.V3-*` directories exist, identify the correct saved v3 state
+before copying it, and never copy over an existing `mmu` directory.
+
 ### Upgrade to v4
 
 Choose this if you want the new features and are willing to reconfigure your
@@ -97,4 +117,5 @@ the backup in `~printer_data/config/mmu.V3`
 - [Getting Started with EMU](GettingStarted-EMU.md)
 - [Getting Started with ERCF](GettingStarted-ERCF.md)
 - [Getting Started with Tradrack](GettingStarted-Tradrack.md)
+- [Getting Started with MMX](GettingStarted-MMX.md)
 ---

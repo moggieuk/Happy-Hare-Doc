@@ -112,6 +112,7 @@ nav:
       - EMU: GettingStarted-EMU.md
       - ERCF: GettingStarted-ERCF.md
       - Tradrack: GettingStarted-Tradrack.md
+      - MMX: GettingStarted-MMX.md
       - Multiple MMU Units: GettingStarted-Multi-Unit.md
   - Calibration:
       - Overview: Calibration.md
