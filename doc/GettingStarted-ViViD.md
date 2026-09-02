@@ -10,15 +10,18 @@ two separate controller boards, not one.
 
 ## Menuconfig Installer
 
-From your Happy-Hare checkout:
+First clone the Happy Hare repository as described in
+[Cloning Happy Hare](Installation.md#cloning-happy-hare).
+
+Then run the installer:
 
 ```bash
-cd ~/Happy-Hare
+cd Happy-Hare
 ./install.sh
 ```
 
-The very first time you run this, there's no `.mmu_config` yet, so the
-installer drops you straight into `menuconfig` - no separate flag needed.
+The first run opens `menuconfig` automatically because no `.mmu_config` exists
+yet; no `-i` flag is needed.
 
 ## Choosing the MMU type
 

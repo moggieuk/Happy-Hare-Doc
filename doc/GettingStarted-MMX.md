@@ -29,22 +29,23 @@ The reference MMX build uses a BTT EBB42 v1.2. If your controller or wiring is
 different, select the real board and enter the pins from your build rather than
 copying the reference values below.
 
-## Install Happy Hare
+## Menuconfig Installer
 
-For a new Happy Hare installation, connect to the Klipper host and clone the
-repository:
+First clone the Happy Hare repository as described in
+[Cloning Happy Hare](Installation.md#cloning-happy-hare).
+
+Then run the installer:
 
 ```bash
-cd ~
-git clone https://github.com/moggieuk/Happy-Hare.git
 cd Happy-Hare
 ./install.sh
 ```
 
-The first run opens `menuconfig` automatically. Use `./install.sh -i` when you
-want to reopen it later. If Happy Hare is already installed, use the existing
-checkout; do not clone another copy over it. See [Installation](Installation.md)
-for non-standard Klipper paths and the full installer flag reference.
+The first run opens `menuconfig` automatically because no `.mmu_config` exists
+yet; no `-i` flag is needed. If Happy Hare is already installed, use the
+existing checkout; do not clone another copy over it. See
+[Installation](Installation.md) for non-standard Klipper paths and the full
+installer flag reference.
 
 !!! note "Coming from an existing installation"
     The installer preserves the existing MMU configuration automatically

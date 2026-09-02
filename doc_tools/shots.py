@@ -89,15 +89,33 @@ def _getting_started_boxturtle(mc, shot):
     mc.enter('Board type')
     shot('05-board-type')  # AFC Lite v1.0 - the board this MMU shipped with
     mc.back()
+    mc.key(b'g')
+    mc.autofit()
+    mc.repaint()
 
     mc.enter('MCU connection')
     shot(
         '06-mcu-connection')  # Serial - already right for a USB-attached board
     mc.back()
+    mc.key(b'g')
+    mc.autofit()
+    mc.repaint()
 
     mc.enter('MMU Features / Additions')
     shot('07-mmu-features')  # LEDs/eSpooler/buffer already on; nothing to add
+
+    mc.enter('eSpooler config')
+    mc.select('eSpooler enable 0 pin')
+    shot('07a-espooler-config')  # AFC Lite enable/rewind/forward pins per gate
     mc.back()
+
+    mc.enter('Buffer config')
+    shot('07b-buffer-config')  # Turtle Neck range, spring state and switch pins
+    mc.back()
+    mc.back()
+    mc.key(b'g')
+    mc.autofit()
+    mc.repaint()
 
     mc.enter('Pins / TMC')
     mc.enter('Gear pins')
@@ -110,6 +128,9 @@ def _getting_started_boxturtle(mc, shot):
     mc.cancel()  # this page only shows the move; it does not make it
     mc.back()
     mc.back()  # -> (Top)
+    mc.key(b'g')
+    mc.autofit()
+    mc.repaint()
 
     mc.enter('Toolhead')
     mc.select('Stealthburner Clockwork2 Revo Voron')
@@ -121,21 +142,15 @@ def _getting_started_boxturtle(mc, shot):
     mc.select('Stealthburner Clockwork2 Revo Voron')
     shot('11-toolhead-selected')  # (X) on the choice, highlight on it too
     mc.back()  # -> (Top)
+    mc.key(b'g')
+    mc.autofit()
+    mc.repaint()
 
     mc.enter('Toolhead sensors/settings')
     # extruder-to-nozzle/residual filled in from the choice above - the sensor-gated
     # ones (toolhead/extruder sensor distances) stay hidden since this Box Turtle
     # has neither
     shot('12-toolhead-dimensions')
-
-    # -> (Top)
-    mc.back()
-
-    mc.enter('Software Options')
-    mc.enter('Select spoolman spool manager support')
-    mc.select('Read-only')
-    mc.toggle()
-    shot('13-spoolman-readonly')  # the one setting this page actually changes
 
 
 def _getting_started_vivid(mc, shot):
