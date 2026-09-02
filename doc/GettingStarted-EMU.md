@@ -8,20 +8,23 @@ getting an EMU installed and talking to Klipper.
 
 ## Menuconfig Installer
 
-From your Happy-Hare checkout:
+First clone the Happy Hare repository as described in
+[Cloning Happy Hare](Installation.md#cloning-happy-hare).
+
+Then run the installer with EMU support enabled:
 
 ```bash
-cd ~/Happy-Hare
+cd Happy-Hare
 ./install.sh -e
 ```
 
-The very first time you run this, there's no `.mmu_config` yet, so the installer
-drops you straight into `menuconfig`.
+The first run opens `menuconfig` automatically because no `.mmu_config` exists
+yet; no `-i` flag is needed.
 
 !!! note
-    `-e` ensures multi-mcu support loads, you may omit it on later
+    `-e` ensures multi-mcu (mcu per gate) support, you may omit it on later
     iterations. `menuconfig` may take longer to start up as a result, but it is
-    required for a typical EMU setup.
+    required for a typical EMU setup with small mcu per device.
 
 <p align="center"> <img src="GettingStarted-EMU/01-first-run.png" alt="First
   run: nothing configured yet" width="70%"> </p>

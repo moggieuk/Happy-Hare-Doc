@@ -25,14 +25,19 @@ base load/unload operations. Once operational, optional capabilities like LED's,
 more advanced Happy Hare features can be enabled, configured and calibrated.
 
 ## Menuconfig Installer
-From your Happy-Hare checkout/directory:
+
+First clone the Happy Hare repository as described in
+[Cloning Happy Hare](Installation.md#cloning-happy-hare).
+
+Then run the installer:
 
 ```bash
+cd Happy-Hare
 ./install.sh
 ```
 
-If this is the very first time you've run `./install.sh`, there's no `.mmu_config` yet, so the installer
-drops you straight into the interactive `menuconfig` mode — no separate `-i` flag needed.
+The first run opens `menuconfig` automatically because no `.mmu_config` exists
+yet; no `-i` flag is needed.
 
 <p align="center">
   <img src="GettingStarted-ERCF/01-first-run.png" alt="First run: nothing configured yet" width="70%">
