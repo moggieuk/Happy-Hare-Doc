@@ -103,10 +103,12 @@ navigations
 nunc
 Octo
 orbem
+OwlFC
 PETG
 PGDN
 PGUP
 Pico
+PinConnect
 pinout
 pinouts
 Prusa
