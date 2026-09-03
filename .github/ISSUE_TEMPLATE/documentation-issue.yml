@@ -80,7 +80,6 @@ body:
         - "Developer Guide — The Simulator (Dev-Simulator.md)"
         - "Developer Guide — Documentation Style Guide (Dev-Documentation-Style-Guide.md)"
         - "Developer Guide — Documentation Tooling (Dev-Doc-Tooling.md)"
-        - "Developer Guide — Installer Dev (Docker) (Dev-Installer-Docker.md)"
         - "Developer Guide — Contributing (Dev-Contributing.md)"
         - "Command Reference screenshots / generated images"
         - "Other / not sure (describe below)"

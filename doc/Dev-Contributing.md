@@ -83,9 +83,7 @@ you haven't yet, these are the pages worth reading first:
   `menuconfig` choice becomes a running config.
 - [Testing](Dev-Testing.md) and [The Simulator](Dev-Simulator.md) - running
   and exercising Happy Hare with no printer attached.
-- [Documentation Tooling](Dev-Doc-Tooling.md) and
-  [Installer Dev (Docker)](Dev-Installer-Docker.md) - the supporting tooling
-  around both of the above.
+- [Documentation Tooling](Dev-Doc-Tooling.md) - the supporting tooling around
+  both of the above.
 
 ---
-
