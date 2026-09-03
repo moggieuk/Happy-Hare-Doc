@@ -549,3 +549,36 @@ body {
     bottom: 0.75rem;
   }
 }
+
+/*
+ * Interactive MCU pinouts are complete standalone documents embedded from a
+ * page-specific resource directory. Their own script reports the content
+ * height when the connector list stacks below the board; hh-pinout-embed.js
+ * applies that height here so the iframe doesn't acquire an inner scrollbar.
+ */
+.hh-pinout-embed {
+  display: block;
+  width: 100%;
+  height: clamp(32rem, 72vh, 48rem);
+  margin: 1em 0 0.5em;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.4rem;
+  background: var(--md-default-bg-color);
+  box-shadow: 0 0.2rem 0.6rem rgba(0, 0, 0, 0.12);
+}
+
+.md-typeset .hh-pinout-fullscreen {
+  margin: 0.25em 0 1em;
+  font-size: 0.72rem;
+  text-align: right;
+}
+
+.md-typeset .hh-pinout-fullscreen a {
+  color: var(--md-default-fg-color--light);
+  font-weight: 400;
+}
+
+.md-typeset .hh-pinout-fullscreen a:hover,
+.md-typeset .hh-pinout-fullscreen a:focus-visible {
+  color: var(--md-accent-fg-color);
+}

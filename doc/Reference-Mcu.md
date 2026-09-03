@@ -219,6 +219,19 @@ BTT EBB36:
 
     See [Flashing Firmware](#flashing-firmware) below for the full procedure.
 
+### OwlFC Mini
+
+Hover over or select a connector on the board to see its pinout and purpose.
+
+<iframe
+  class="hh-pinout-embed"
+  src="Reference-Mcu/owlfc-mini.pinout.html"
+  title="Interactive OwlFC Mini pinout"
+  loading="lazy">
+</iframe>
+
+<p class="hh-pinout-fullscreen"><a href="Reference-Mcu/owlfc-mini.pinout.html" target="_blank" rel="noopener">Show full screen</a></p>
+
 ## All Supported Boards
 
 Every board `menuconfig`'s **Board type** screen offers, direct from the

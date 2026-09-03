@@ -44,6 +44,7 @@ extra_css:
 
 extra_javascript:
   - assets/javascripts/hh-page-nav.js
+  - assets/javascripts/hh-pinout-embed.js
   # Mermaid, loaded and driven ourselves (hh-mermaid.js) rather than through
   # pymdownx.superfences' custom-fence recipe - see hh-mermaid.js's own header
   # comment and TOC.md's "Zensical rough edges" for why that path is flaky.
