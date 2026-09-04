@@ -18,6 +18,29 @@ in-print purging**. See [Feature: Tip Forming and
 Purging](Feature-Tip-Forming-Purging.md#purge-volumes) for how the purge
 length itself is calculated.
 
+## Selecting the reference purge
+
+Open menuconfig's **Purging --->** screen. Leave **Have Blobifier?**
+disabled unless that hardware is fitted, then open **Select standalone
+purging option** and choose **Simple purge into bucket**. This writes
+`purge_macro: _MMU_PURGE` to `mmu.cfg`.
+
+<p align="center">
+  <img src="Macro-Purge/purging.png" alt="menuconfig Purging screen with Blobifier disabled and Simple purge into bucket selected" width="85%">
+</p>
+
+The remaining settings control when and how Happy Hare calls the macro:
+
+| Setting | Purpose |
+|---|---|
+| **Happy Hare controlled in-print purge** | Leave enabled to use `_MMU_PURGE` during prints, and turn off the slicer's wipe tower. Disable it to let the slicer handle in-print purging while retaining `_MMU_PURGE` for standalone operations. |
+| **Extruder purging current** | Percentage of normal extruder current to use while purging. `100` disables the boost; increase it only as needed, up to `150`. |
+
+The reference macro does not move the toolhead to a bucket: it purges at
+the current position. Configure [toolhead
+parking](Toolchange-Movement.md#toolhead-movement-during-toolchange) so the
+nozzle is over a suitable bucket before the macro runs.
+
 ## Configuration
 
 <p align="center">
@@ -28,7 +51,7 @@ length itself is calculated.
 **Macro Variables → Purge (\_MMU_PURGE)** screen shown above - genuinely
 one setting, `extruder_purge_speed`: as fast as possible without the
 extruder skipping steps. Extruder current for purging can also be raised
-separately, in [`extruder_purge_current`](Reference-Parameters.md#tip-forming). Full
+separately, in [`extruder_purge_current`](Reference-Parameters.md#purging). Full
 detail: [Macro Variables: Reference
 purge](Reference-Macro-Vars.md#reference-purge-_mmu_purge_vars).
 

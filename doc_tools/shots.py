@@ -687,7 +687,8 @@ def _macro_servo_cutter(mc, shot):
 
 def _macro_blobifier(mc, shot):
     """
-    For doc/Macro-Blobifier.md - the _BLOBIFIER macro-vars screen. Gated on
+    For doc/Macro-Blobifier.md - the Blobifier-enabled Purging screen in both
+    actuator modes, followed by the _BLOBIFIER macro-vars screen. Gated on
     MMU_HAS_BLOBIFIER, off by default - toggled on under Purging (same menu the
     base screenshot in _feature_tip_forming_purging shows with this off).
 
@@ -701,6 +702,33 @@ def _macro_blobifier(mc, shot):
     mc.select('Have Blobifier?')
     mc.toggle()
     mc.autofit()
+    # Re-enter to force a complete redraw after the conditional hardware fields
+    # appear; otherwise menuconfig can leave the lower purge choices blank until
+    # the next visit.
+    mc.back()  # -> (Top)
+    mc.enter('Purging')
+
+    # An existing config retains its previous standalone-purge choice when the
+    # Blobifier capability is switched on, so select Blobifier explicitly.
+    mc.enter('Select standalone purging option')
+    mc.select('Blobifier')
+    mc.toggle()  # choice auto-closes back to Purging
+    mc.autofit()
+    shot('purging-servo')
+
+    mc.enter('Blobifier tray actuator')
+    mc.select('Stepper (manual_stepper)')
+    mc.toggle()  # choice auto-closes back to Purging
+    mc.autofit()
+    mc.back()  # -> (Top), also gives the expanded menu a clean redraw
+    mc.enter('Purging')
+    shot('purging-stepper')
+
+    # Keep the macro-variable screenshot on the default servo variant.
+    mc.enter('Blobifier tray actuator')
+    mc.select('Servo')
+    mc.toggle()  # choice auto-closes back to Purging
+    mc.autofit()
     mc.back()  # -> (Top)
 
     mc.enter('Macro Variables')
@@ -710,9 +738,14 @@ def _macro_blobifier(mc, shot):
 
 def _macro_purge(mc, shot):
     """
-    For doc/Macro-Purge.md - the _MMU_PURGE macro-vars screen. Unconditional
-    menu, so the boxturtle seed (default) needs no setup.
+    For doc/Macro-Purge.md - the Purging selection and _MMU_PURGE macro-vars
+    screens. Both use the boxturtle seed's default simple bucket purge.
     """
+    mc.enter('Purging')
+    mc.select('Select standalone purging option')
+    shot('purging')  # Blobifier off, simple bucket purge selected
+    mc.back()  # -> (Top)
+
     mc.enter('Macro Variables')
     mc.enter('(_MMU_PURGE)')
     shot('purge')  # single reference-purge speed setting
@@ -907,13 +940,15 @@ SESSIONS = [
     },
     {
         'name': 'macro-blobifier',
-        'caption': 'doc/Macro-Blobifier.md - the _BLOBIFIER macro-vars screen',
+        'caption':
+        'doc/Macro-Blobifier.md - Purging hardware and _BLOBIFIER macro-vars screens',
         'scenes': _macro_blobifier,
         'outdir': 'Macro-Blobifier',
     },
     {
         'name': 'macro-purge',
-        'caption': 'doc/Macro-Purge.md - the _MMU_PURGE macro-vars screen',
+        'caption':
+        'doc/Macro-Purge.md - Purging selection and _MMU_PURGE macro-vars screens',
         'scenes': _macro_purge,
         'outdir': 'Macro-Purge',
     },
