@@ -493,7 +493,7 @@ noted on `Reference-Macro-Vars.md` itself; not a gap in this table.
 | `Troubleshooting-and-Common-Issues.md` | `wiki/Troubleshooting-and-Common-Issues.md` |
 | `FAQ.md` | `wiki/FAQ.md` |
 
-### 12. Developer Guide — **done (all 10 pages)**
+### 12. Developer Guide — **done (all 9 pages)**
 
 | Page | Source | Notes |
 |---|---|---|
@@ -505,7 +505,6 @@ noted on `Reference-Macro-Vars.md` itself; not a gap in this table.
 | `Dev-Test-Command.md` | new — `extras/mmu/commands/mmu_dev_test.py` (`_MMU_TEST`) | **done (item 58, updated item 59)** — the hidden, always-registered developer command (leading underscore = Klipper's hide-from-help convention, not a special build flag; every option is live on any install). Groups its ~25 sub-tests by risk tier (safe introspection / moves real hardware / provokes known bugs on purpose / sequence timing / fake autotune telemetry) rather than repeating the flat parameter list, which now lives on `Dev-Command-Reference.md` instead. Cross-linked from `Dev-Testing.md`'s coverage-map row. |
 | `Dev-Simulator.md` | `test/README.md` §1a — **renamed from "Console"** | Opens with a real colour screenshot (`doc/Dev-Simulator/Simulator.png`, user-supplied) of a live session before the ported detail. |
 | `Dev-Doc-Tooling.md` | `doc_tools/README.md` | Kept in sync with the actual `doc_tools/README.md` — edit both together. Includes a note on the Zensical build-cache bug (see below). |
-| `Dev-Installer-Docker.md` | `installer-dev/README.md`, rewritten after reading the actual Dockerfiles/compose file | Real purpose: cross-**Python-version** testing (Alpine target runs Python 2.7, matching Creality K1's busybox environment) — not just "a clean sandbox", which `-t` already gives you on your own host Python. |
 | `Dev-Contributing.md` | new + `.github/CONTRIBUTING.md` | Community/PR-process guidance ported in, plus the file-header convention and links back to every other Developer Guide page. |
 
 ### 13. Community & Support
@@ -619,9 +618,7 @@ noted on `Reference-Macro-Vars.md` itself; not a gap in this table.
 9. Cleanup pass on the Developer Guide from user feedback: trimmed `Dev-Testing.md`,
    dropped a table from `Dev-Kconfig-Structure.md`, added real detail on
    `install.sh -z`/`-t` (found by reading `install.sh` directly rather than
-   guessing), and rewrote `Dev-Installer-Docker.md` after actually reading the
-   Dockerfiles/compose file for the first time (the real value is Python-2.7/
-   Alpine parity testing, not just "a clean sandbox").
+   guessing).
 10. Swapped the `Dev-Simulator.md` ASCII transcription for a real screenshot the
     user supplied as a file, and added the "Picking a toolhead" step to
     `GettingStarted-BoxTurtle.md` with two new real screenshots generated via

@@ -181,5 +181,4 @@ nav:
       - The Simulator: Dev-Simulator.md
       - Documentation Style Guide: Dev-Documentation-Style-Guide.md
       - Documentation Tooling: Dev-Doc-Tooling.md
-      - Installer Dev (Docker): Dev-Installer-Docker.md
       - Contributing: Dev-Contributing.md
