@@ -166,7 +166,7 @@ the purge bucket for the rest of the toolchange (a
 **Cutting the tip with a fully custom park and purge, no wipe tower at
 all** - the full build plate is available since the wipe tower is disabled,
 tip forming needs no tuning, a dedicated purge system (e.g.
-[Blobifier](Macro-Blobifier.md)) optimizes purge speed/waste,
+[Purge: Blobifier](Macro-Blobifier.md)) optimizes purge speed/waste,
 and a custom park location can reduce ooze; supports sequential printing.
 More setup, more steps - there's more than one way to build this, and this
 is just one example.

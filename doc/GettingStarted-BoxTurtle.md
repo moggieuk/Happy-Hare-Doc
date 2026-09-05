@@ -465,8 +465,8 @@ your first multi-material print: how purging between colors happens.
 - **Slicer-controlled** — your slicer's own wipe tower, printed alongside
   the model. Simplest to set up; costs bed space and filament.
 - **Happy Hare-controlled** — a dedicated purge macro runs at each
-  toolchange instead of a wipe tower: either [Macro:
-  Purge](Macro-Purge.md) (simple, prints a purge line) or [Macro:
+  toolchange instead of a wipe tower: either [Purge:
+  Simple](Macro-Purge.md) (prints a purge line) or [Purge:
   Blobifier](Macro-Blobifier.md) (a dedicated purge/park station, more
   capable but its own hardware). See [Purging without a wipe
   tower](Feature-Tip-Forming-Purging.md#purging-without-a-wipe-tower) for

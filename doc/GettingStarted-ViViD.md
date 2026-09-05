@@ -374,8 +374,8 @@ at each toolchange:
 
 - **Slicer-controlled** — use the slicer's wipe tower. This is the simplest
   starting point, but consumes bed space and filament.
-- **Happy Hare-controlled** — disable the wipe tower and use [Macro:
-  Purge](Macro-Purge.md) for a purge line, or [Macro:
+- **Happy Hare-controlled** — disable the wipe tower and use [Purge:
+  Simple](Macro-Purge.md) for a purge line, or [Purge:
   Blobifier](Macro-Blobifier.md) with a dedicated purge station. The complete
   hand-off is covered under [Purging without a wipe
   tower](Feature-Tip-Forming-Purging.md#purging-without-a-wipe-tower).

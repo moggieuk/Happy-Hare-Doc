@@ -158,11 +158,11 @@ nav:
       - State Change Hooks: Macro-State-Change-Hooks.md
       - Sequence: Macro-Sequence.md
       - Client: Macro-Client.md
-      - Tip Forming: Macro-Tip-Forming.md
-      - Toolhead Tip Cutting: Macro-Toolhead-Tip-Cutting.md
-      - Servo Cutter: Macro-Servo-Cutter.md
-      - Blobifier: Macro-Blobifier.md
-      - Purge: Macro-Purge.md
+      - "Tip Shaping: Forming": Macro-Tip-Forming.md
+      - "Tip Shaping: Toolhead Cutting": Macro-Toolhead-Tip-Cutting.md
+      - "Tip Shaping: MMU Cutting": Macro-Servo-Cutter.md
+      - "Purge: Blobifier": Macro-Blobifier.md
+      - "Purge: Simple": Macro-Purge.md
   - Advanced Customization:
       - Custom Load/Unload Sequences: Custom-Load-Unload-Sequences.md
   - Reference:

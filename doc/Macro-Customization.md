@@ -125,8 +125,9 @@ see [Custom Load/Unload Sequences](Custom-Load-Unload-Sequences.md).
 `form_tip_macro` is the one replacement almost every MMU actually uses,
 since it's how Happy Hare chooses between its two built-in standalone
 tip-shaping methods. Rather than cover both here, each has its own page with
-the full tuning workflow: [Tip Forming](Macro-Tip-Forming.md)
-(`_MMU_FORM_TIP`) and [Toolhead Tip Cutting](Macro-Toolhead-Tip-Cutting.md)
+the full tuning workflow: [Tip Shaping: Forming](Macro-Tip-Forming.md)
+(`_MMU_FORM_TIP`) and [Tip Shaping: Toolhead
+Cutting](Macro-Toolhead-Tip-Cutting.md)
 (`_MMU_CUT_TIP`).
 
 ## See also
@@ -136,10 +137,11 @@ the full tuning workflow: [Tip Forming](Macro-Tip-Forming.md)
 - [Macro: Print Start/End](Macro-Print-Start-End.md),
   [State Change Hooks](Macro-State-Change-Hooks.md),
   [Sequence](Macro-Sequence.md), [Client](Macro-Client.md),
-  [Tip Forming](Macro-Tip-Forming.md),
-  [Toolhead Tip Cutting](Macro-Toolhead-Tip-Cutting.md),
-  [Servo Cutter](Macro-Servo-Cutter.md), [Blobifier](Macro-Blobifier.md),
-  [Purge](Macro-Purge.md) - the macro group each hook and replacement point
+  [Tip Shaping: Forming](Macro-Tip-Forming.md),
+  [Tip Shaping: Toolhead Cutting](Macro-Toolhead-Tip-Cutting.md),
+  [Tip Shaping: MMU Cutting](Macro-Servo-Cutter.md), [Purge:
+  Blobifier](Macro-Blobifier.md), [Purge: Simple](Macro-Purge.md) - the
+  macro group each hook and replacement point
   above belongs to
 - [Custom Load/Unload Sequences](Custom-Load-Unload-Sequences.md) - the
   deepest replacement level, for `load_sequence_macro`/`unload_sequence_macro`

@@ -1,4 +1,4 @@
-# Macro: Tip Forming
+# Tip Shaping: Forming
 
 ## What it does
 
@@ -19,16 +19,33 @@ five steps in order: ramming, nozzle separation, cooling moves, an optional
 skinnydip pass, then parking the result for eject/inspection or the next
 unload step.
 
-`Kconfig.form_tip` is sourced unconditionally in the installer, so this
-screen is visible in menuconfig regardless of whether tip forming or
-toolhead cutting is actually selected - unlike [Toolhead Tip
-Cutting](Macro-Toolhead-Tip-Cutting.md)'s screen, which only appears once a
+The Macro Variables screen is always visible regardless of whether tip
+forming or toolhead cutting is selected. [Tip Shaping: Toolhead
+Cutting](Macro-Toolhead-Tip-Cutting.md)'s screen only appears once a
 toolhead cutter is enabled.
 
 Happy Hare zeroes pressure advance for the duration of the macro call, so
 the ramming/cooling moves aren't distorted by it, then automatically
 restores whatever value was active beforehand once tip forming completes -
 nothing to configure or restore by hand.
+
+## Selecting filament-movement forming
+
+Open menuconfig's **Tip Forming / Cutting --->** screen, then open **Select
+standalone tip shaping option** and choose **Tip shaping using filament
+movement**. This writes `form_tip_macro: _MMU_FORM_TIP` to `mmu.cfg`.
+
+<p align="center">
+  <img src="Macro-Tip-Forming/tip-shaping.png" alt="menuconfig Tip Forming and Cutting screen with filament-movement tip shaping selected" width="85%">
+</p>
+
+The other settings on this screen control when and how forming runs:
+
+| Setting | Purpose |
+|---|---|
+| **Have servo cutter at MMU?** | Enables the separate [MMU-mounted cutter](Macro-Servo-Cutter.md). That cutter is additive and does not replace this tip-shaping selection. |
+| **Happy Hare controlled in-print tip forming/cutting** | Leave enabled to run `_MMU_FORM_TIP` during prints and disable the slicer's own tip forming. Disable it when the slicer will form the tip; menuconfig then exposes **Slicer tip park pos**. |
+| **Extruder tip forming current** | Percentage of normal extruder current to use while forming. `100` disables the boost; increase it only as needed, up to `150`. |
 
 ## Configuration
 
@@ -62,7 +79,7 @@ rather than the shipped default:
   concept and the full `MMU_TEST_FORM_TIP` tuning workflow
 - [Macro Variables: Tip forming](Reference-Macro-Vars.md#tip-forming-_mmu_form_tip_vars) -
   every `_MMU_FORM_TIP_VARS` setting in full
-- [Macro: Toolhead Tip Cutting](Macro-Toolhead-Tip-Cutting.md) - the
+- [Tip Shaping: Toolhead Cutting](Macro-Toolhead-Tip-Cutting.md) - the
   alternative that skips tip forming entirely
 - [Macro Customization](Macro-Customization.md) - `form_tip_macro`, the
   replacement point that chooses between this macro and its alternatives

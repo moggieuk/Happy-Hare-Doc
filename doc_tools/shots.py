@@ -634,6 +634,11 @@ def _macro_tip_forming(mc, shot):
     cut_tip/servo_cutter/blobifier below), so this is visible on the boxturtle
     seed even though tip cutting, not forming, is the seed's actual choice.
     """
+    mc.enter('Tip Forming / Cutting')
+    mc.select('Select standalone tip shaping option')
+    shot('tip-shaping')  # filament-movement forming selected
+    mc.back()  # -> (Top)
+
     mc.enter('Macro Variables')
     mc.enter('(_MMU_FORM_TIP)')
     shot('tip-forming')  # ramming/separation/cooling/skinnydip/parking steps
@@ -643,22 +648,13 @@ def _macro_toolhead_tip_cutting(mc, shot):
     """
     For doc/Macro-Toolhead-Tip-Cutting.md - the _MMU_CUT_TIP macro-vars screen.
     Gated on MMU_HAS_TOOLHEAD_CUTTER, which lives under Toolhead sensors/settings
-    ("Has toolhead cutter?") - not under Tip Forming / Cutting itself. Only once
-    that's on does "Tip cutting using toolhead cutter" even appear as a choice
-    under Tip Forming / Cutting's standalone-option choice (it becomes the
-    choice's new default, but is selected explicitly here anyway).
+    ("Has toolhead cutter?") - not under Tip Forming / Cutting itself. The
+    generated seed starts with that capability and the cutting choice selected,
+    avoiding menuconfig's incomplete redraw after dynamically adding the fields.
     """
-    mc.enter('Toolhead sensors/settings')
-    mc.select('Has toolhead cutter?')
-    mc.toggle()
-    mc.autofit()
-    mc.back()  # -> (Top)
-
     mc.enter('Tip Forming / Cutting')
-    mc.enter('Select standalone tip shaping option')
-    mc.select('Tip cutting using toolhead cutter')
-    mc.toggle()  # choice auto-closes back to Tip Forming / Cutting
-    mc.autofit()
+    mc.select('Select standalone tip shaping option')
+    shot('tip-shaping')  # toolhead cutting selected; bumper options visible
     mc.back()  # -> (Top)
 
     mc.enter('Macro Variables')
@@ -678,6 +674,7 @@ def _macro_servo_cutter(mc, shot):
     mc.select('Have servo cutter at MMU?')
     mc.toggle()
     mc.autofit()
+    shot('tip-shaping')  # MMU cutter enabled alongside the shaping choice
     mc.back()  # -> (Top)
 
     mc.enter('Macro Variables')
@@ -920,21 +917,22 @@ SESSIONS = [
     {
         'name': 'macro-tip-forming',
         'caption':
-        'doc/Macro-Tip-Forming.md - the _MMU_FORM_TIP macro-vars screen',
+        'doc/Macro-Tip-Forming.md - shaping selection and _MMU_FORM_TIP screens',
         'scenes': _macro_tip_forming,
         'outdir': 'Macro-Tip-Forming',
     },
     {
         'name': 'macro-toolhead-tip-cutting',
         'caption':
-        'doc/Macro-Toolhead-Tip-Cutting.md - the _MMU_CUT_TIP macro-vars screen',
+        'doc/Macro-Toolhead-Tip-Cutting.md - shaping selection and _MMU_CUT_TIP screens',
         'scenes': _macro_toolhead_tip_cutting,
         'outdir': 'Macro-Toolhead-Tip-Cutting',
+        'seed': 'boxturtle-toolhead-cutter',
     },
     {
         'name': 'macro-servo-cutter',
         'caption':
-        'doc/Macro-Servo-Cutter.md - the _MMU_SERVO_CUTTER macro-vars screen',
+        'doc/Macro-Servo-Cutter.md - MMU cutter selection and macro-vars screens',
         'scenes': _macro_servo_cutter,
         'outdir': 'Macro-Servo-Cutter',
     },

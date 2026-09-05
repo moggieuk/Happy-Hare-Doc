@@ -17,7 +17,7 @@ Each has the same three-way choice, and they're independent of each other:
   toolhead-mounted filament cutter (`_MMU_CUT_TIP`) instead of forming a tip
   at all, or leave it to the slicer's own in-print tip-forming.
 - **Purging**: Happy Hare's own standalone macro (`_MMU_PURGE`), an add-on
-  purge system like [Blobifier](Macro-Blobifier.md), or leave it
+  purge system like [Purge: Blobifier](Macro-Blobifier.md), or leave it
   to the slicer's wipe tower.
 
 There's also a separate, *additive* cutting option: a servo-driven cutter
@@ -46,7 +46,7 @@ Two independent menus, both unconditional (every MMU type gets them):
 
 | Setting | Purpose |
 |---|---|
-| `Have Blobifier?` | See [Macro: Blobifier](Macro-Blobifier.md) |
+| `Have Blobifier?` | See [Purge: Blobifier](Macro-Blobifier.md) |
 | `Select standalone purging option` | `_MMU_PURGE` / Blobifier / slicer wipe tower / custom macro |
 | `Happy Hare controlled in-print purging` | Forces standalone purging even during a print - turn the slicer's wipe tower off if you enable this |
 | `Extruder purge current` | Same idea as tip-forming current, for purge moves |
@@ -74,7 +74,7 @@ Enabling it under **Tip Forming / Cutting** adds a servo pin prompt and
 generates `[mmu_servo cut_servo]` in `mmu.cfg`; its own tuning (open/close
 angles, feed/cut length, cut attempts) lives in `mmu_macro_vars.cfg`'s
 [`_MMU_SERVO_CUTTER_VARS`](Reference-Macro-Vars.md#servo-cutter-mmu-mounted-_mmu_servo_cutter_vars).
-See [Macro: Servo Cutter](Macro-Servo-Cutter.md) for the build/wiring side.
+See [Tip Shaping: MMU Cutting](Macro-Servo-Cutter.md) for the build/wiring side.
 
 ## Parameter Setup
 
@@ -251,7 +251,7 @@ filament left behind by a cut tip, not just the matrix on its own.
 
 ### Purging without a wipe tower
 
-A dedicated purge system (like [Blobifier](Macro-Blobifier.md))
+A dedicated purge system (like [Purge: Blobifier](Macro-Blobifier.md))
 lets you disable the slicer's wipe tower entirely - it still needs a purge
 volume matrix to work from, which can come from any of: Happy Hare's own
 [g-code preprocessing](Feature-Gcode-Preprocessing.md) of the slicer's
@@ -383,7 +383,7 @@ Filament`/`Purging` states while each of these runs.
 - [Command Reference: `MMU_TEST_PURGE`](Reference-Commands.md#mmu_test_purge)
 - [Command Reference: `MMU_CALC_PURGE_VOLUMES`](Reference-Commands.md#mmu_calc_purge_volumes)
 - [Command Reference: `MMU_SLICER_TOOL_MAP`](Reference-Commands.md#mmu_slicer_tool_map)
-- [Macro: Blobifier](Macro-Blobifier.md) / [Macro: Servo Cutter](Macro-Servo-Cutter.md) - Blobifier and the servo cutter build/wiring
+- [Purge: Blobifier](Macro-Blobifier.md) / [Tip Shaping: MMU Cutting](Macro-Servo-Cutter.md) - Blobifier and the MMU cutter build/wiring
 - [Feature: G-code Preprocessing](Feature-Gcode-Preprocessing.md) - `!purge_volumes!` and friends
 - [Feature: Gate/TTG Maps](Feature-Gate-TTG-Maps.md) - the slicer tool map this all reads from
 - [Feature: Filament Bypass](Feature-Filament-Bypass.md) - the tip-forming tuning timesaver

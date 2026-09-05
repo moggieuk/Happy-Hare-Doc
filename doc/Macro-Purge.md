@@ -1,10 +1,10 @@
-# Macro: Purge
+# Purge: Simple
 
 ## What it does
 
 Happy Hare's simple, standalone reference purge - a basic bucket purge you
 can use as-is, or as a starting point for your own custom purge macro.
-[Blobifier](Macro-Blobifier.md) is the far more capable alternative if
+[Purge: Blobifier](Macro-Blobifier.md) is the far more capable alternative if
 you want tuned blob shaping, brushing, and bucket management; this one is
 deliberately minimal.
 
@@ -57,7 +57,7 @@ purge](Reference-Macro-Vars.md#reference-purge-_mmu_purge_vars).
 
 ## See also
 
-- [Macro: Blobifier](Macro-Blobifier.md) - the more capable alternative
+- [Purge: Blobifier](Macro-Blobifier.md) - the more capable alternative
 - [Feature: Tip Forming and Purging](Feature-Tip-Forming-Purging.md#purge-volumes) -
   purge volume calculation and the `purge_macro` setting
 - [Macro Variables: Reference purge](Reference-Macro-Vars.md#reference-purge-_mmu_purge_vars) -
