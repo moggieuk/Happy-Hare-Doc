@@ -102,6 +102,10 @@ a reader could be shown.
   the same machine) and writes a config. A checked-in `.mmu_config` would go stale
   silently as Kconfig gains options; generating means the seed always matches the
   tree being documented.
+* **`boxturtle-toolhead-cutter`.** The same generated Box Turtle seed with the
+  toolhead-cutter capability and its standalone cutting choice enabled. This
+  gives the cutter screenshot session a clean startup state without relying on
+  menuconfig to redraw a newly gated group in place.
 * **`ercf`.** Generated the same way, selecting `MMU_TYPE_ERCF_3_0` (the
   Kconfig choice's own default version) instead. Reach for this seed when a
   screen's story fits a moving-carriage/servo design better than Box

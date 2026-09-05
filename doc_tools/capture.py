@@ -202,16 +202,21 @@ def doc_env(unit_name='unit0', multi_unit=False, entry_point=False, unit_index=0
 # the tree being documented. The symbol is the one test/hh/profiles.py:111 uses for
 # the same machine, so the docs and the harness describe the same Box Turtle.
 BUILTIN_SEEDS = {
-    'boxturtle': 'MMU_TYPE_BOX_TURTLE_1_0',
-    'ercf': 'MMU_TYPE_ERCF_3_0',
+    'boxturtle': ('MMU_TYPE_BOX_TURTLE_1_0',),
+    'boxturtle-toolhead-cutter': (
+        'MMU_TYPE_BOX_TURTLE_1_0',
+        'MMU_HAS_TOOLHEAD_CUTTER',
+        'CHOICE_FORM_TIP_MACRO_CUT_TIP',
+    ),
+    'ercf': ('MMU_TYPE_ERCF_3_0',),
 }
 DEFAULT_SEED = 'boxturtle'
 
 _seed_cache = {}
 
 
-def generate_seed(symbol, path, env):
-    """Write a .mmu_config with `symbol` selected and everything else defaulted."""
+def generate_seed(symbols, path, env):
+    """Write a .mmu_config with `symbols` selected and all else defaulted."""
     sys.path.insert(0, KCONFIGLIB)
     import kconfiglib
 
@@ -219,11 +224,12 @@ def generate_seed(symbol, path, env):
     os.environ.update({key: str(value) for key, value in env.items()})
     try:
         kconfig = kconfiglib.Kconfig(os.path.join(INSTALLER, 'Kconfig'), warn=False)
-        sym = kconfig.syms.get(symbol)
-        if sym is None:
-            raise ScreenError('no such Kconfig symbol: %s' % symbol)
-        if not sym.set_value(2):                     # 2 == y
-            raise ScreenError('could not select %s' % symbol)
+        for symbol in symbols:
+            sym = kconfig.syms.get(symbol)
+            if sym is None:
+                raise ScreenError('no such Kconfig symbol: %s' % symbol)
+            if not sym.set_value(2):                 # 2 == y
+                raise ScreenError('could not select %s' % symbol)
         kconfig.write_config(path)
     finally:
         for key, value in saved.items():

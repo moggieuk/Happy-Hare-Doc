@@ -95,6 +95,14 @@ a reader could be shown.
   the same machine) and writes a config. A checked-in `.mmu_config` would go stale
   silently as Kconfig gains options; generating means the seed always matches the
   tree being documented.
+* **`boxturtle-toolhead-cutter`.** The same generated Box Turtle seed with the
+  toolhead-cutter capability and its standalone cutting choice enabled. This
+  gives the cutter screenshot session a clean startup state without relying on
+  menuconfig to redraw a newly gated group in place.
+* **`ercf`.** Generated the same way, selecting `MMU_TYPE_ERCF_3_0` (the
+  Kconfig choice's own default version) instead. Use this seed when a screen's
+  story fits a moving-carriage/servo design better than Box Turtle's
+  gear-per-gate layout.
 * **A real config: `--seed path/to/.mmu_config`.** Whatever is on your printer.
 * **A unit of a multi-unit setup: `--seed path/to/.mmu_config_gru`.** The `_gru`
   suffix is recognized, so the session parses as unit `gru` with `F_MULTI_UNIT=y`,
@@ -263,4 +271,3 @@ on a machine with no printer attached**, or the MCU screens will show your hardw
   `gen_command_reference.py` reads independently.
 
 ---
-

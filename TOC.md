@@ -269,6 +269,12 @@ repo root (not under `doc/`) specifically so it's never a candidate for publishi
   position — see §10a Advanced Customization's own precedent — so it's
   numbered §10b here, immediately after §10a, rather than renumbered into
   its actual nav position).
+- **Related purge and tip-shaping Macro pages use shared nav/title prefixes**
+  (added 2026-09-04) — `Purge: Blobifier` / `Purge: Simple` and `Tip
+  Shaping: Forming` / `Tip Shaping: Toolhead Cutting` / `Tip Shaping: MMU
+  Cutting`. Keep their established `Macro-*.md` filenames stable so inbound
+  documentation links do not churn; group each prefixed set adjacently in
+  `mkdocs.yml`.
 
 ## Macro page template
 

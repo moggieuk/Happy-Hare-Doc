@@ -1,4 +1,4 @@
-# Macro: Blobifier
+# Purge: Blobifier
 
 ## What it does
 
@@ -110,6 +110,6 @@ specific build's measurements, not a sensible starting point for yours.
 - [Toolchange Movement](Toolchange-Movement.md#tip-cutting-options) - a
   worked example combining Blobifier with a fully custom park/purge, no
   wipe tower
-- [Macro: Purge](Macro-Purge.md) - the simpler built-in alternative
+- [Purge: Simple](Macro-Purge.md) - the simpler built-in alternative
 
 ---
