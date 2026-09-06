@@ -115,14 +115,16 @@ Turtle, Serial is what you want and there's nothing to change.
 Back out and enter **MMU Features / Additions**:
 
 <p align="center">
-  <img src="GettingStarted-BoxTurtle/07-mmu-features.png" alt="MMU Features panel - LEDs, eSpooler and buffer already enabled" width="70%">
+  <img src="GettingStarted-BoxTurtle/07-mmu-features.png" alt="MMU Features panel with LEDs, eSpooler and sync-feedback buffer fixed on, plus optional environment sensors and managed fans" width="70%">
 </p>
 
 **LEDs**, **eSpooler** and the **sync-feedback buffer** are already switched on
 and marked `(FIXED)`. That means they are part of the Box Turtle profile and
-cannot be disabled here; it does not mean their pins should go unchecked. Fans,
-an environment sensor, RFID readers, eject buttons and an encoder are optional
-and default off — enable only the additions you actually built.
+cannot be disabled here; it does not mean their pins should go unchecked. An
+environment sensor, managed fan, RFID readers, eject buttons and an encoder are
+optional and default off — enable only the additions you actually built. A
+managed fan can use the MCU CPU sensor that is already enabled, or an optional
+environment sensor; see [Feature: Fan Control](Feature-Fan-Control.md).
 
 #### eSpooler configuration
 

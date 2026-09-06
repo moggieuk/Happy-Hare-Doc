@@ -46,7 +46,7 @@ _MMU_STEP_HOMING_MOVE MOVE=100 MOTOR=gear ENDSTOP=encoder STOP_ON_ENDSTOP=1 ...H
 
 ```{.text .console-output}
 LENGTH    = mm   Override the default calibrated bowden length)
-START_POS = mm   Postion of filament past the gate homing point at start of move
+START_POS = mm   Position of filament past the gate homing point at start of move
 ```
 
 ```{.text .console-output}
@@ -253,6 +253,13 @@ NFC_FIELD=1 Classify a tag UID against the gate map (no reader, no motion). Para
 ### __MMU_ENCODER_RUNOUT
 
 *Internal encoder filament runout handler*
+
+**Parameters**
+
+```{.text .console-output}
+EVENTTIME  = #(float)
+GENERATION = #(int)
+```
 
 ### __MMU_SENSOR_CLOG
 

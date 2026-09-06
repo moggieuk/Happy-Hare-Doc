@@ -87,10 +87,12 @@ checks after the configuration is generated.
 
 Open **MMU Features / Additions**. LEDs are fixed on for the MMX profile. Leave
 the sync-feedback buffer, encoder, eSpooler and other additions off unless your
-particular build really includes them.
+particular build really includes them. **Enable managed fan(s)?** is available
+because the default MCU CPU sensor can be used as its temperature source; do
+not enable it unless you have also wired a fan output.
 
 <p align="center">
-  <img src="GettingStarted-MMX/03-mmu-features.png" alt="MMX features menu with LEDs fixed on and optional additions disabled" width="70%">
+  <img src="GettingStarted-MMX/03-mmu-features.png" alt="MMX features menu with LEDs fixed on and optional sensors, managed fan, heater and other additions disabled" width="70%">
 </p>
 
 Open **Filament sensors** and enable both:

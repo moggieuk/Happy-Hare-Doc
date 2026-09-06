@@ -2,147 +2,174 @@
 
 ## Concept
 
-Automatic, hysteresis-based control for cooling fans fitted to the MMU
-unit itself - motors and electronics, not the printer's part-cooling fan.
-Each fan is paired with a temperature sensor; `MMU_FAN` polls the sensor
-on an interval and switches the fan on above a threshold, off below a
-lower one, so it isn't chattering on and off right at the boundary.
+Automatic, hysteresis-based control for ventilation or electronics-cooling
+fans fitted to the MMU unit itself - not the printer's part-cooling fan.
+Happy Hare polls the selected temperature source and switches a fan on at
+the upper threshold and off at the lower threshold, so it does not chatter
+at one boundary temperature.
 
-**This feature requires [Feature: Environment
-Manager](Feature-Environment-Manager.md)'s sensor to also be enabled** -
-Fan Control reuses the same humidity/temperature sensor(s), and its
-config block simply doesn't exist in the generated `mmu_macro_vars.cfg`
-unless both are switched on together. If you only want a fan running off
-a fixed schedule or manual control, `FAN_FORCED=` (below) covers that
-without needing a sensor at all - but the feature itself still can't be
-configured without one enabled.
+Each managed fan can use either of these sources:
 
-Two hardware layouts, matching Environment Manager's own split:
+- **Environment sensor** - the enclosure temperature sensor configured for
+  the unit or gate.
+- **MCU temperature** - the MMU controller's CPU-temperature sensor.
 
-- **Single fan / shared sensor** - one fan for the whole enclosure,
-  paired with the one shared environment sensor. The common case.
-- **Per-gate fans** - one fan per gate, on hardware with a per-gate MCU,
-  paired with that gate's own sensor.
+At least one of those temperature sources must be configured before
+menuconfig offers managed fans. `MMU_FAN` can then change the source,
+thresholds, automatic-control state or forced mode at runtime.
 
-!!! warning "Important"
-    The installer's automatic pairing of sensors to fans doesn't
-    currently work reliably - confirmed directly by rendering the real
-    config template, not assumed. After enabling this feature, check
-    `variable_fan_sensors`/`variable_fans` in `_MMU_FAN_VARS`
-    (`mmu_macro_vars.cfg`) actually name your real sensor/fan sections
-    before relying on automatic control - see [Parameter
-    Setup](#parameter-setup) below for what to set them to.
+Two hardware layouts are supported:
+
+- **Shared fan** - one fan for the whole MMU unit. This is the common case.
+- **Per-gate fans** - a gate-aligned list of fans for modular designs such
+  as EMU; each fan can have its own mode, source and temperature range.
+
+!!! info "Managed fans and heater fans are different"
+    A managed fan is a `[fan_generic]` controlled by `MMU_FAN`. A heater fan
+    is a Klipper `[heater_fan]` tied directly to an enclosure heater and is
+    configured with the heater instead. `MMU_FAN` does not control heater
+    fans.
 
 ## Hardware Setup
 
-Enabled under **MMU Features / Additions** → **Has cooling fans?**,
-alongside **Has environment sensor(s)?** from Environment Manager.
+Enable **MMU Features / Additions → Enable managed fan(s)?**. The option is
+available when either **Has environment sensor(s)?** or **Create MCU CPU
+sensor(s)?** is enabled.
 
 <p align="center">
-  <img src="Feature-Fan-Control/fan-config.png" alt="Fan config screen: fan maximum power, fan kick start time, and fan pin" width="80%">
+  <img src="Feature-Fan-Control/fan-config.png" alt="Managed fan hardware configuration: maximum power, kick-start time and shared fan pin" width="80%">
 </p>
 
 | Setting | Purpose |
 |---|---|
 | `Fan maximum power` | Cap on PWM power, `0.1`-`1.0` (default `1.0` = 100%) |
 | `Fan kick start time` | Seconds to run at full power before settling to target speed - helps a fan that struggles to start from a low duty cycle (default `0.5`) |
-| `Fan pin` | Single shared fan - blank disables it |
+| `Fan pin` | Shared fan output; leaving it blank creates no manageable fan |
 
-A per-gate MCU design shows a **Fan pins** submenu instead, one pin prompt
-per gate - blank for any gate without a fan fitted.
-
-Produces, in `mmu_hardware.cfg`:
+A shared layout generates both the Klipper fan and its association with the
+MMU unit in `mmu_hardware.cfg`:
 
 ```ini
-[fan_generic _mmu_fan]
+[mmu_unit unit0]
+fan            : _unit0_fan
+
+[fan_generic _unit0_fan]
 pin             : PB5
 max_power       : 1.0
 kick_start_time : 0.5
 ```
 
-or, per-gate:
+On a per-gate layout, open **Per-gate config → Gate N config**, enable
+**Managed cooling fan**, then enter **Fan h/w config**. Each gate has its
+own pin, maximum power and kick-start time; leave the fan disabled on gates
+without one. The generated unit association preserves blank positions so
+the list remains aligned with the gate numbers:
 
 ```ini
+[mmu_unit unit0]
+fans           : _unit0_fan0, _unit0_fan1, , _unit0_fan3
+
 [fan_generic _unit0_fan0]
 pin             : PB5
 max_power       : 1.0
 kick_start_time : 0.5
 ```
 
-(one `[fan_generic _<unit>_fan<N>]` section per gate with a pin configured).
-
 ## Parameter Setup
 
 <p align="center">
-  <img src="Feature-Fan-Control/fan-controls.png" alt="Fan controls screen: on/off temperature thresholds, polling time, control enabled toggle, and forced state choice" width="80%">
+  <img src="Feature-Fan-Control/fan-controls.png" alt="Managed fan defaults: temperature source, on and off thresholds, polling interval, automatic control and startup mode" width="80%">
 </p>
 
-Software tuning lives in `mmu_macro_vars.cfg`'s `_MMU_FAN_VARS` block:
+The **Managed fan defaults** menu writes these settings to
+`mmu_parameters.cfg`:
 
 ```ini
-variable_fan_on_temp      : 49.0    # °C - turn fans on above this
-variable_fan_off_temp     : 47.0    # °C - turn fans off below this
-variable_fan_polling_time : 5.0     # Seconds between temperature checks
-variable_fan_control_enabled : True # Automatic control on/off
-variable_fan_forced       : 2       # 0=all OFF, 1=all ON, 2=AUTO (per-sensor hysteresis)
-variable_fan_sensors      : "unit0_Env"  # Comma-separated temperature_sensor names
-variable_fans             : ""           # Comma-separated fan_generic names
+default_fan_temperature_source : environment  # environment or mcu
+default_fan_on_temp            : 49.0         # °C - switch on at or above this
+default_fan_off_temp           : 47.0         # °C - switch off at or below this
+fan_polling_time               : 5.0          # Seconds between checks
+fan_control_enabled            : 1            # 1=enabled, 0=disabled and fans off
+fan_forced                     : 2            # 0=OFF, 1=ON, 2=AUTO
 ```
 
-`fan_on_temp` is deliberately higher than `fan_off_temp` - that gap is the
-hysteresis band, so a temperature sitting right at the boundary doesn't
-flip the fan on and off repeatedly.
-
-`fan_sensors`/`fans` are meant to be paired lists, index for index - the
-first sensor drives the first fan, and so on. In practice, check both by
-hand against what actually got generated:
-
-- **Single fan/sensor**: `fan_sensors` correctly picks up your
-  environment sensor's name (e.g. `unit0_Env`), but `fans` was found to
-  render blank - set it to match the fan section from Hardware Setup
-  above, e.g. `variable_fans: "_mmu_fan"`.
-- **Per-gate**: neither list gets populated automatically - set both by
-  hand, e.g. `variable_fan_sensors: "unit0_Env0, unit0_Env1"` and
-  `variable_fans: "_unit0_fan0, _unit0_fan1"`, matching whichever gates
-  actually have both a sensor and a fan fitted.
+`default_fan_on_temp` must be greater than or equal to
+`default_fan_off_temp`. The gap between them is the hysteresis band. Every
+fan begins with these defaults; per-gate source and threshold changes made
+with `MMU_FAN` remain independent until Happy Hare restarts.
 
 ## Commands
 
-```{.text .console-output}
-MMU_FAN                          # Status report
-MMU_FAN ENABLE=1                 # Turn on automatic monitoring
-MMU_FAN ENABLE=0                 # Turn off monitoring and all fans
-MMU_FAN FAN_FORCED=1             # Force every fan on, bypassing sensors
-MMU_FAN FAN_FORCED=0             # Force every fan off, bypassing sensors
-MMU_FAN FAN_FORCED=2             # Back to automatic per-sensor control
+```text
+MMU_FAN                                      # Status for the current unit
+MMU_FAN UNIT=unit1                           # Status for another unit
+MMU_FAN ENABLE=1                             # Enable automatic management
+MMU_FAN ENABLE=0                             # Disable management and turn all unit fans off
+MMU_FAN FAN_FORCED=1                         # Force all managed fans on
+MMU_FAN FAN_FORCED=0 GATE=2                  # Force gate 2's fan off
+MMU_FAN FAN_FORCED=2 GATES=1,2               # Return gates 1 and 2 to AUTO
+MMU_FAN SOURCE=mcu GATE=2                    # Use gate 2's MCU temperature
+MMU_FAN SOURCE=default GATE=2                # Restore gate 2's configured source
+MMU_FAN ON_TEMP=60 OFF_TEMP=58 GATE=2        # Change gate 2's AUTO range
 ```
 
-A bare call with no arguments reports current status:
+`GATE=` and `GATES=` are only valid for a per-gate fan layout. Without either,
+an action applies to every managed fan on the selected unit. Runtime changes
+are not written back to the config files, so a restart restores the
+menuconfig defaults.
+
+Full parameter reference: [`MMU_FAN`](Reference-Commands.md#mmu_fan).
+
+A bare call reports the controller state, effective AUTO range and each fan's
+mode, speed, source and current temperature:
 
 ```{.text .console-command}
 MMU_FAN
 ```
 
 ```{.text .console-output}
-Status           : Enabled
-Fan polling freq : 5secs
-Fan on temp      : 49°C
-Fan off temp     : 47°C
-Fan forced       : AUTO
+MMU fan control for unit0: ENABLED
+AUTO range in force: OFF <= 47.0°C, ON >= 49.0°C; polling 5.0s
+Fan (_unit0_fan): AUTO, 0%, source environment: 31.4°C
 ```
+
+## Printer variables exposed
+
+The unit metadata exposes `fan` for a shared fan or the gate-aligned `fans`
+list for a per-gate layout. See
+[printer.mmu_machine](Reference-Printer-Variables.md#printermmu_machine).
+
+The underlying `[fan_generic]` objects also expose Klipper's usual fan
+status, including their current `speed`.
+
+## Tuning
+
+Start with a generous hysteresis band - for example, ON at `49°C` and OFF at
+`47°C` - and a polling interval of several seconds. If the fan cycles too
+often, lower the OFF threshold rather than raising the polling rate. Select
+the temperature source that represents what the fan is protecting: enclosure
+temperature for ventilation, MCU temperature for controller cooling.
 
 ## Troubleshooting
 
-- **A fan never turns on** - confirm `fan_sensors`/`fans` in
-  `_MMU_FAN_VARS` actually name real, existing `temperature_sensor`/
-  `fan_generic` sections (see the warning above - these are not reliably
-  auto-populated by the installer). Also confirm `ENABLE=1` and that
-  `FAN_FORCED` is `2` (AUTO), not left at `0`.
-- **A fan runs constantly, or never settles** - check `fan_on_temp` is
-  genuinely above `fan_off_temp`; if they're equal or inverted the
-  hysteresis band collapses and the fan chatters at the boundary.
+- **`No manageable fans on this unit`** - confirm a fan pin is configured,
+  select the intended `UNIT=`, and restart Klipper after regenerating the
+  configuration.
+- **A requested source is unavailable** - enable and configure that
+  environment or MCU sensor for the same unit or gate, then restart Klipper.
+- **A fan never turns on in AUTO** - confirm `ENABLE=1`, return it to AUTO
+  with `FAN_FORCED=2`, check the reported source temperature, and verify the
+  ON threshold is reachable.
+- **A fan cycles too often** - widen the hysteresis band by lowering the OFF
+  threshold. Keep ON greater than or equal to OFF; inverted values are
+  rejected.
+- **`GATE=` or `GATES=` is rejected** - those selectors require a per-gate
+  fan layout. A shared fan always applies to its entire unit.
 
 ## See also
 
-- [Feature: Environment Manager](Feature-Environment-Manager.md) - the sensor this feature requires
-- [Macro Variables: Fan control](Reference-Macro-Vars.md) - every `_MMU_FAN_VARS` setting in full
+- [Feature: Environment Manager](Feature-Environment-Manager.md) - enclosure temperature sensors
+- [Parameters](Reference-Parameters.md#fan-management) - generated fan defaults
+- [`MMU_FAN` command reference](Reference-Commands.md#mmu_fan) - complete syntax
+
+---

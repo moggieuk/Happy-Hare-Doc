@@ -12,7 +12,7 @@ fields.
 Two other config files exist and are **not** covered here:
 `mmu_hardware.cfg` (pins and per-unit hardware wiring - see each Feature
 page's own Hardware Setup section) and `mmu_macro_vars.cfg` (macro tuning
-variables - not yet its own reference page).
+variables - see [Macro Variables](Reference-Macro-Vars.md)).
 
 Defaults below come from a Box Turtle install, generated fresh by
 menuconfig - the same seed this site's other menuconfig screenshots use. A
@@ -126,6 +126,21 @@ for the swap-timing table these columns/rows control.
 | `gcode_load_sequence` | `0` | `1` = use the macro-based load sequence instead of internal logic - see [Custom Load/Unload Sequences](Custom-Load-Unload-Sequences.md) |
 | `gcode_unload_sequence` | `0` | Same, for unloading |
 | `drying_data` | *(11-material dict)* | Per-material `(temperature, time)` drying recipe table - see [Feature: Environment Manager](Feature-Environment-Manager.md#parameter-setup) |
+
+### Fan management
+
+Present when managed fans are enabled with an environment or MCU temperature
+source. See [Feature: Fan Control](Feature-Fan-Control.md) for the hardware
+layouts, tuning workflow and runtime controls.
+
+| Parameter | Default | Description |
+|---|---|---|
+| `default_fan_temperature_source` | `environment`, otherwise `mcu` | Initial AUTO-mode source for every managed fan; `MMU_FAN SOURCE=` can change it at runtime |
+| `default_fan_on_temp` | `49.0`°C | Temperature at or above which an AUTO fan turns on |
+| `default_fan_off_temp` | `47.0`°C | Temperature at or below which a running AUTO fan turns off |
+| `fan_polling_time` | `5.0` s | Interval between automatic temperature checks |
+| `fan_control_enabled` | `1` | `1` enables automatic management; `0` disables it and turns the managed fans off |
+| `fan_forced` | `2` (`AUTO`) | Startup mode for every managed fan: `0`=forced off, `1`=forced on, `2`=AUTO |
 
 ### Klipper tuning
 

@@ -316,31 +316,6 @@ capable alternative.
 |---|---|---|
 | `extruder_purge_speed` | `2` mm/s | Purge speed - as fast as possible without the extruder skipping steps (extruder current can also be raised in [`extruder_purge_current`](Reference-Parameters.md#tip-forming)) |
 
-## Fan control (`_MMU_FAN_VARS`)
-
-Only present with both fans and an environment sensor enabled
-(`MMU_HAS_FANS and MMU_HAS_ENVIRONMENT_SENSOR`) - temperature-driven fan
-automation for the MMU enclosure, distinct from the toolhead's own part
-fan. See [Feature: Fan Control](Feature-Fan-Control.md) for hardware
-setup, commands, and troubleshooting.
-
-| Variable | Default | Description |
-|---|---|---|
-| `fan_on_temp` | `49.0`°C | Temperature threshold to turn fans on |
-| `fan_off_temp` | `47.0`°C | Temperature threshold to turn fans off |
-| `fan_polling_time` | `5.0` s | Interval between temperature checks |
-| `fan_control_enabled` | `True` | Master on/off for the automatic temperature-based control |
-| `fan_forced` | `2` (`AUTO`) | Force override: `0`=all off, `1`=all on, `2`=automatic |
-| `fan_sensors` | *(see below)* | Comma-separated `temperature_sensor` names this control reads |
-| `fans` | *(see below)* | Comma-separated `fan_generic` names this control drives |
-
-`fan_sensors`/`fans` are documented as auto-generated from your fan/sensor
-pins, but confirmed (by rendering the real config template directly) not
-to reliably work: `fan_sensors` picks up the single-sensor case correctly,
-`fans` does not, and neither populates in the per-gate case. Check both
-by hand - see [Feature: Fan Control](Feature-Fan-Control.md#parameter-setup)
-for what to set them to.
-
 ## See also
 
 - [Parameters](Reference-Parameters.md) - the `mmu.cfg`/`mmu_parameters.cfg` config
@@ -350,8 +325,8 @@ for what to set them to.
   deeper override mechanism `_MMU_SEQUENCE_VARS` sits in front of
 - [Feature: Tip Forming and Purging](Feature-Tip-Forming-Purging.md) -
   concept and tuning workflow for tip forming/cutting and purging
-- [Feature: Fan Control](Feature-Fan-Control.md) - concept, hardware
-  setup, and commands for `_MMU_FAN_VARS`
+- [Feature: Fan Control](Feature-Fan-Control.md) - generated hardware,
+  parameters and the `MMU_FAN` command
 - [Purge: Blobifier](Macro-Blobifier.md) / [Tip Shaping: MMU
   Cutting](Macro-Servo-Cutter.md) - Blobifier and the MMU-mounted servo
   cutter builds

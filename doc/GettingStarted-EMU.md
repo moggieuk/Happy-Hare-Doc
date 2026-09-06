@@ -95,14 +95,19 @@ while building your EMU - enter them here now.
 Back out and enter **MMU Features / Additions**:
 
 <p align="center"> <img src="GettingStarted-EMU/06-mmu-features.png" alt="MMU
-  Features panel - LEDs, eject buttons and sync feedback already enabled"
+  Features panel with LEDs, sync feedback, environment sensors and managed fans enabled, plus per-gate config menus"
   width="70%"> </p>
 
-This is worth a look. For an EMU, **LEDs**, **eject buttons**, and the
-**sync-feedback buffer** (analog or digital) are already switched on — these are
-core to the EMU design. An environment sensor, enclosure heaters and RFID readers
-are all genuine build options and default off — enable whichever ones you actually
-built. If you're following this page for a basic EMU, just look and move on.
+This is worth a look. **LEDs** and the selected **sync-feedback buffer** are
+part of the EMU profile. **Environment sensors**, **managed fans** and
+**eject buttons** start enabled as recommended EMU options but can be switched
+off when your build omits them. Enclosure heaters and RFID readers remain
+optional.
+
+The new **Per-gate config** section groups each compartment's environment
+sensor, heater, managed fan and heater fan under **Gate N config**. Review
+those gate menus against what is actually fitted; leave a component disabled
+or its pin blank when that gate does not have one.
 
 ### Pins: gear direction
 
