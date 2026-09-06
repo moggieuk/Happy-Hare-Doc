@@ -34,14 +34,21 @@ make command_reference   # regenerates doc/Reference-Commands.md
 make shots                # regenerates menuconfig screenshots (make shots ARGS='--list' to see sessions)
 ```
 
-By default they shallow-clone Happy Hare at the branch/tag named in
-[`HAPPY_HARE_REF`](HAPPY_HARE_REF) into a gitignored `.happy-hare-src/`. If you
-already have a local Happy Hare checkout (e.g. you're working on both repos at
-once), point at it directly instead of cloning:
+By default they maintain a gitignored `.happy-hare-src/` checkout and refresh it
+to the latest commit at the branch, tag or commit named in
+[`HAPPY_HARE_REF`](HAPPY_HARE_REF) before every run. This is a disposable,
+tool-managed cache, so local changes made inside it are not preserved.
+
+If you already have a local Happy Hare checkout (e.g. you're working on both
+repos at once), point at it directly instead of using the managed cache:
 
 ```bash
 HAPPY_HARE_SRC=/path/to/your/Happy-Hare make shots
 ```
+
+An explicitly supplied checkout is treated as user-owned: the Makefile reads it
+as-is and never fetches, switches revisions, or removes it. `make clean-source`
+only removes the default managed cache.
 
 See `doc_tools/README.md` for how the generators themselves work, and `TOC.md`
 for the planning/status doc behind the current rewrite.

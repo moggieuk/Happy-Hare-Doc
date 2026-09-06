@@ -17,13 +17,18 @@ live in `doc_tools/requirements.txt` and are installed into `./venv` on demand b
 **This repo (Happy-Hare-Doc) is separate from Happy Hare's source code**, so the two
 tools above that read that source directly (`gen_command_reference.py`'s
 `extras/mmu/**` walk, `capture.py`'s `installer/Kconfig` parse) need a Happy-Hare
-checkout to point at. `HAPPY_HARE_SRC` is that pointer - `make shots`/`make
-command_reference` fetch one automatically (pinned to the branch/tag named in
-[`HAPPY_HARE_REF`](../HAPPY_HARE_REF)) into a gitignored `.happy-hare-src/`, or set
-it yourself to a checkout you already have for faster iteration:
-`HAPPY_HARE_SRC=/path/to/Happy-Hare make shots`. `docs`/`docs_build`/`docs_preview`
-need none of this - they only render the `doc/*.md` and images already committed
-here.
+checkout to point at. `HAPPY_HARE_SRC` is that pointer. By default, `make shots`
+and `make command_reference` maintain a gitignored `.happy-hare-src/` cache and
+refresh it to the latest commit at the branch, tag or commit named in
+[`HAPPY_HARE_REF`](../HAPPY_HARE_REF) before every run. The cache is disposable;
+do not make source changes inside it.
+
+For faster iteration against a checkout you manage, use
+`HAPPY_HARE_SRC=/path/to/Happy-Hare make shots`. An explicitly supplied checkout
+is read as-is and is never fetched, switched, or removed by these targets.
+`make clean-source` only removes the default managed cache.
+`docs`/`docs_build`/`docs_preview` need none of this - they only render the
+`doc/*.md` and images already committed here.
 
 ## Generating the Command Reference
 
@@ -97,6 +102,10 @@ a reader could be shown.
   the same machine) and writes a config. A checked-in `.mmu_config` would go stale
   silently as Kconfig gains options; generating means the seed always matches the
   tree being documented.
+* **`boxturtle-toolhead-cutter`.** The same generated Box Turtle seed with the
+  toolhead-cutter capability and its standalone cutting choice enabled. This
+  gives the cutter screenshot session a clean startup state without relying on
+  menuconfig to redraw a newly gated group in place.
 * **`ercf`.** Generated the same way, selecting `MMU_TYPE_ERCF_3_0` (the
   Kconfig choice's own default version) instead. Reach for this seed when a
   screen's story fits a moving-carriage/servo design better than Box
@@ -105,7 +114,7 @@ a reader could be shown.
   vendor without a reader on every gate.
 * **A real config: `--seed path/to/.mmu_config`.** Whatever is on your printer.
 * **A unit of a multi-unit setup: `--seed path/to/.mmu_config_gru`.** The `_gru`
-  suffix is recognised, so the session parses as unit `gru` with `F_MULTI_UNIT=y`,
+  suffix is recognized, so the session parses as unit `gru` with `F_MULTI_UNIT=y`,
   and `UNIT_INDEX` plus the printer-level `HAS_SENSOR_*` capabilities are read out of
   the sibling `.mmu_config` — exactly what `install.sh:435-442` passes down. Point it
   at a top `.mmu_config` that has `CONFIG_MULTI_UNIT=y` and you get the shared-config
@@ -193,8 +202,9 @@ is not using, down to a floor of **30 rows**. The floor is presentation, not a
 technical limit — menuconfig lays out happily in about 15 — but a set of screenshots
 reads badly at wildly different heights, and a two-item menu shrunk to fit looks like a
 cropped fragment rather than the installer. Change it with `--min-rows`, or `min_rows`
-on a session. The eight rows menuconfig reserves for the help pane below the separator
-are fixed, so blank space *there* is overhead that no height can reclaim.
+on a session. The seven rows menuconfig reserves for the help pane below the separator,
+followed by the single row of navigation controls, are fixed, so blank space *there* is
+overhead that no height can reclaim.
 
 Reclaiming never goes all the way, either: **2 rows** (`GAP_ROWS` in
 `doc_tools/capture.py`) always stay between the last menu item and the separator bar,
@@ -207,7 +217,7 @@ arrow that says "too narrow". The default is **110 columns**, wide enough that l
 board names and pin lists sit on one line rather than wrapping; override with `--cols`
 or `'cols'` on a session.
 
-Two things are worth knowing if you touch this:
+Three things are worth knowing if you touch this:
 
 * A menu keeps its **scroll offset** across a resize. Coming back from a submenu on a
   short terminal leaves the list scrolled, and no amount of growing clears the
@@ -217,6 +227,10 @@ Two things are worth knowing if you touch this:
   relayout the menu behind it, and the arrows the edit box draws itself mean the value
   is wider than the field, which no height fixes. `mc.edit()` therefore fits the menu
   before opening the box.
+* **Comment headings are not selectable.** Up/down navigation skips over them to the
+  previous or next config option, and `mc.select()` handles that automatically. Do not
+  use a comment's text as the target of `mc.select()` or `mc.enter()`; navigate to a
+  selectable option within that section instead.
 
 `--no-fit` (or `'fit': False` on a session) pins `--rows` instead. Either way, a shot
 that ends up with arrows on it says so on stderr rather than shipping quietly.

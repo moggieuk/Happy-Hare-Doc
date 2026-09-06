@@ -6,7 +6,7 @@ An encoder measures filament movement directly, as a small wheel or optical
 sensor turned by the filament passing through it. It has no direction
 sense - the position it reports only ever counts up, regardless of whether
 filament is moving into or out of the MMU - so Happy Hare always reads it as
-a distance travelled, not a direction.
+a distance traveled, not a direction.
 
 That one measurement gets reused in several unrelated places once an encoder
 is fitted:
@@ -125,8 +125,11 @@ MMU_ENCODER POS=0    # Reset the encoder position counter to (approximately) zer
 MMU_ENCODER POS=100  # Set the encoder as close as possible to position 100mm
 ```
 
-```{.text .console-output}
+```{.text .console-command}
 MMU_ENCODER
+```
+
+```{.text .console-output}
 Encoder unit0 position: 743.5
 FlowGuard/Runout: Active
 - Detection mode: Automatic detection length
@@ -214,4 +217,3 @@ detection length is fixed or self-tuning.
 - [Feature: Sensors](Feature-Sensors.md) - naming/addressing, querying, and enabling/disabling any sensor at runtime
 
 ---
-

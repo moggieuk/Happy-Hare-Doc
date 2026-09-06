@@ -85,7 +85,7 @@ are tracked for every gate regardless.
     Don't chase a perfect score on every gate - a summary trends back
     towards good on its own once whatever caused a rough patch is fixed, no
     reset needed. Treat it as a comparison between gates rather than an
-    absolute target; a gate that's noticeably worse than its neighbours is
+    absolute target; a gate that's noticeably worse than its neighbors is
     the one worth investigating (calibration, friction, or a move speed
     that's too aggressive for that particular gate).
 
@@ -129,8 +129,11 @@ MMU_STATS COUNTER=cutter_blade LIMIT=-1      # Temporarily disable its limit che
 MMU_STATS COUNTER=cutter_blade DELETE=1      # Remove it entirely
 ```
 
+```{.text .console-command}
+MMU_STATS SHOWCOUNTS=1
+```
+
 ```{.text .console-output}
-> MMU_STATS SHOWCOUNTS=1
 Consumption counters:
 Count cutter_blade: 568 (limit 4000)
 ```
@@ -207,4 +210,3 @@ including gate-map listings elsewhere on this site.
 - [Printer Variables](Reference-Printer-Variables.md#core-state) - `num_toolchanges`/`slicer_tool_map.total_toolchanges`, the only part of this feature exposed as a printer variable; everything else is console/log only
 
 ---
-

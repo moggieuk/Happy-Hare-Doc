@@ -56,7 +56,7 @@ def iter_nav_targets(node):
 
 
 def check_nav():
-    config = yaml.safe_load(MKDOCS_YML.read_text())
+    config = yaml.load(MKDOCS_YML.read_text(), Loader=yaml.BaseLoader)
     errors = []
     for target in iter_nav_targets(config.get("nav", [])):
         if target.endswith(".md") and not (DOCS_DIR / target).is_file():

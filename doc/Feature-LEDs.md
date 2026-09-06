@@ -283,7 +283,7 @@ motion.
 
 - [Command Reference: `MMU_LED`](Reference-Commands.md#mmu_led)
 - [Command Reference: `MMU_SET_LED`](Reference-Commands.md#mmu_set_led)
-- [Feature: Spoolman Integration](Feature-Spoolman.md) - the pending-spool-ID
+- [Feature: Spoolman / Filament Hub](Feature-Spoolman.md) - the pending-spool-ID
   LED overlay
 - [Feature: NFC/RFID Reading](Feature-NFC.md) - the scan-feedback LED overlay
 - [Feature: Gate/TTG Maps](Feature-Gate-TTG-Maps.md) - `gate_color_rgb` and
@@ -291,4 +291,3 @@ motion.
   worked example for driving your own separate LED strip with it
 
 ---
-

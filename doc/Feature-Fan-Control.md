@@ -119,8 +119,11 @@ MMU_FAN FAN_FORCED=2             # Back to automatic per-sensor control
 
 A bare call with no arguments reports current status:
 
-```{.text .console-output}
+```{.text .console-command}
 MMU_FAN
+```
+
+```{.text .console-output}
 Status           : Enabled
 Fan polling freq : 5secs
 Fan on temp      : 49°C

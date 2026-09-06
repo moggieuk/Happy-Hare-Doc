@@ -68,8 +68,11 @@ MMU_SENSORS SENSOR=unit0:mmu_shared_exit ENABLE=0    # Persistently disable it (
 MMU_SENSORS SENSOR=mmu_exit_0 ENABLE=1               # Persistently re-enable it
 ```
 
-```{.text .console-output}
+```{.text .console-command}
 MMU_SENSORS
+```
+
+```{.text .console-output}
 filament_compression  --> Open
 filament_tension      --> TRIGGERED
 mmu_entry_0           --> Open
@@ -90,8 +93,11 @@ it. (A `UNIT=`-scoped report simply won't mention a sensor that belongs to
 a different unit at all, disabled or not - that's normal scoping, not the
 tag.)
 
-```{.text .console-output}
+```{.text .console-command}
 MMU_SENSORS SENSOR=mmu_exit_0 ENABLE=0
+```
+
+```{.text .console-output}
 Sensor 'mmu_exit_0' disabled
 mmu_exit_0            --> Open (DISABLE)
 ```

@@ -22,8 +22,11 @@ it that will look like bugs the first time you see them.
 make console
 ```
 
+```{.text .console-command}
+MMU_CHANGE_TOOL TOOL=1
+```
+
 ```{.text .console-output}
-> MMU_CHANGE_TOOL TOOL=1
 Tool change requested: T1
 ...
 ------------------------------------------------------------------------
@@ -131,13 +134,22 @@ Seconds are shown because the virtual clock usually moves in fractions of one: a
 resolution a whole session reads as a single instant. Only the first line of a reply is
 stamped; the rest are indented to line up under it:
 
+```{.text .console-command}
+MMU_SENSORS
+```
+
 ```{.text .console-output}
-> MMU_SENSORS
 22:45:16 filament_compression  --> Open
          filament_tension      --> TRIGGERED
          mmu_entry_0           --> Open
-> /advance 3725
-> MMU_SENSORS
+```
+
+```{.text .console-command}
+/advance 3725
+MMU_SENSORS
+```
+
+```{.text .console-output}
 23:47:21 filament_compression  --> Open
 ```
 
@@ -244,9 +256,12 @@ insert by 0.5s and no virtual time ever passed. Everything still completes corre
 of **when Happy Hare produced the line**, not when it was printed — `_drain()` runs after a
 command returns, so stamping there gave every line of a load the same end-of-command reading.
 
+```{.text .console-command}
+/pace 1
+MMU_LOAD
+```
+
 ```{.text .console-output}
-> /pace 1
-> MMU_LOAD
 23:05:41 Loading filament...
 23:05:41 [T9] ███◉█┈┈┈┈┈┈┈┈┈ ...  ▷▷▷    0.0mm
 23:05:49 [T9] ███◉██████████ ...  ▷▷▷  680.0mm      <- the bowden move took 8s
@@ -343,7 +358,7 @@ you the brightness on screen is a floor rather than a reading.
 
 A lit LED used to be `##`, which was a problem rather than a shorthand: the glyph was painted
 in the LED's color, and a white or grey LED — `mmu_breathing_white_fast` on `selecting`,
-`mmu_sparkle` on `complete`, `white_light` for an uncoloured gate under `filament_color` — came
+`mmu_sparkle` on `complete`, `white_light` for an uncolored gate under `filament_color` — came
 out indistinguishable from ordinary text, because the terminal's default foreground *is* white.
 A block in the same color still reads as a block.
 
@@ -457,5 +472,4 @@ for the measurements.
 - [Code Layout](Dev-Code-Layout.md) - the real object graph this simulator boots, unmodified.
 
 ---
-
 

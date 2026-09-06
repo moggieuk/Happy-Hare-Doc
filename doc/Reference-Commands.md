@@ -213,9 +213,9 @@ MMU_FLOWGUARD ENABLE=0 UNIT=ALL ...Disable FlowGuard detection on all units
 
 ```{.text .console-output}
 QUIET        = 1 To minimize console reporting
-RESET        = 1 To reset filament attributes to configured defaults
-GATES        = g,g,g comma separated list of gates (don't mix with GATE)
-GATE         = g Specify a single gate (don't mix with GATES)
+RESET        = 1 To reset specified GATE/GATES filament attributes to configured defaults
+GATES        = g,g,g comma separated list of gates; required with RESET unless GATE is used
+GATE         = g Specify a single gate; required with RESET unless GATES is used
 BYPASS       = 1 Set filament attributes for the bypass
 NEXT_SPOOLID = id Specify the spoolman id of the next filament loaded - automatically assigned (0 to cancel)
 NAME         = # Filament name
@@ -225,7 +225,7 @@ COLOR        = # Filament color as w3c name or RRGGBB or RRGGBBaa (without #)
 SPOOLID      = # Optionally the spoolman ID for the filament (don't need to specify other attributes)
 TEMP         = # Default temperature of filament
 SPEED        = % Speed override (use <100 for soft TPU types)
-RFID         = # RFID tag value read from the gate's spool (blank to clear)
+RFID         = # Single hexadecimal RFID tag UID read at the gate (blank to clear)
 AVAILABLE    = [-1|0|1|2] Filament availability: Unknown | Empty | Available | Available from filament buffer
 (no parameters for status report)
 ```
@@ -237,7 +237,7 @@ MMU_GATE_MAP GATE=5 COLOR=red MATERIAL=pla  ...Set filament attributes for gate 
 MMU_GATE_MAP NEXT_SPOOLID=45                ...Automatically mark the next spool preloaded or loaded with spoolman id 45
 MMU_GATE_MAP GATE=0 SPEED=50                ...Set load/unload speed of gate 0 to 50% - great for TPU!
 MMU_GATE_MAP GATE=0 RFID=E2003412           ...Record the RFID tag read for the spool loaded in gate 0
-MMU_GATE_MAP RESET=1                        ...Reset filament attributes (optionally to defaults configured in mmu.cfg file)
+MMU_GATE_MAP RESET=1 GATES=4,5              ...Reset gates 4 and 5 to defaults configured in mmu.cfg
 ```
 
 ### MMU_GRIP
@@ -316,7 +316,6 @@ MMU_HELP INTERNAL=1 PARAMS=1                     ...You are a developer? Caution
 ```{.text .console-output}
 UNIT         = #(int)|_name_|ALL Specify unit by name, number or all-units (optional if single unit)
 TOOL         = #(int) Optionally select tool number after homing
-FORCE_UNLOAD = [0|1]  Force unloaded of filament
 SKIP_HOMED   = [0|1]  Skip homing of units that are already homed
 (no parameters: home selector on single unit setup and select T0)
 ```
@@ -325,7 +324,7 @@ SKIP_HOMED   = [0|1]  Skip homing of units that are already homed
 Examples:
 MMU_HOME UNIT=ALL              ...Home all mmu units with selector kinimatics
 MMU_HOME UNIT=ALL SKIP_HOMED=1 ...Home only units that are not already homed
-MMU_HOME UNIT=1 FORCE_UNLOAD=1 ...Home unit 1 unloading filament if necessary
+MMU_HOME UNIT=1              ...Home unit 1
 ```
 
 ### MMU_LED

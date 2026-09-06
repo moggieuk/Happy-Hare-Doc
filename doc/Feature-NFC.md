@@ -1,12 +1,5 @@
 # Feature: NFC/RFID Reading
 
-!!! warning "Important"
-    NFC/RFID support is **beta**. The core reading and Spoolman-resolution
-    path is solid, but using a reader as a homing target (see
-    [Per-gate readers: automatic reads during preload](#per-gate-readers-automatic-reads-during-preload)
-    below) has only been confirmed on the RC522 (SPI) reader - the PN532 and
-    PN7160 (I2C) haven't yet had the same bench verification.
-
 ## Concept
 
 An NFC/RFID reader scans the tag on a filament spool and reports its UID -
@@ -14,7 +7,7 @@ a fixed identifier unique to that tag. On its own, a UID is just a string;
 what makes it useful is [Spoolman](Feature-Spoolman.md), which resolves that
 UID to a spool record and, from there, to filament attributes and gate
 assignment. **This page covers the readers and the scan itself; what
-happens with a resolved spool is [Feature: Spoolman Integration](Feature-Spoolman.md).**
+happens with a resolved spool is [Feature: Spoolman / Filament Hub](Feature-Spoolman.md).**
 The two pages cross-reference constantly - if you're setting this up for
 the first time, read both.
 
@@ -39,13 +32,13 @@ A read can be shallow or deep:
   already registered in Spoolman.
 - **Deep read** (`nfc_deep_read`, on by default) - also parses the tag's
   own stored data, when the tag carries any. Several third-party tag
-  formats are recognised (Bambu, Creality, and the plain NDEF format used by
+  formats are recognized (Bambu, Creality, and the plain NDEF format used by
   OpenSpool/OpenTag-style tags and printable QR/NFC combo tags), giving
   material, color, vendor and temperature straight from the tag - useful
   on its own, and it's *also* what feeds
   [Spoolman auto-create](Feature-Spoolman.md#parameter-setup) for a tag
   Spoolman has never seen before. A tag in a format Happy Hare doesn't
-  recognise still yields its UID; it just won't have parsed metadata.
+  recognize still yields its UID; it just won't have parsed metadata.
 
 ## Hardware Setup
 
@@ -54,16 +47,82 @@ Enable this in menuconfig with **Has NFC reader(s) for RFID tag?** under
 
 **Shared reader** (toggle **Has common NFC reader?**):
 
-| Setting | Purpose |
-|---|---|
-| `NFC reader name` | Klipper object name - defaults to `<unit>_nfc` |
-| `Reader type` | RC522/SPI, PN5180/SPI, PN532/I2C, PN532/UART, PN532/SPI, or PN7160/I2C |
-| *(SPI types)* `CS pin`, `SPI bus name`, `SPI speed` | Chip-select pin is required; bus/speed are optional (defaults to the MCU's hardware SPI bus, 1MHz) |
-| *(PN5180 only)* `BUSY pin`, `RST pin` | Both required - PN5180 has no interrupt line, so BUSY is how the driver knows a command finished, and RST is the only recovery if the chip stops responding |
-| *(PN532/PN7160)* `I2C MCU name`, `I2C address`, `I2C bus type` | Address defaults to `0x24` (PN532, fixed) or `0x28` (PN7160, range `0x28`-`0x2B`) |
-| *(software I2C)* `SCL pin`, `SDA pin` | Bit-banged I2C on any two GPIO pins - the only way to run more than one PN532 (fixed address) on the same MCU |
-| *(UART)* `Serial device path`, `Baud rate` | PN532 in HSU mode over a USB-serial adapter plugged into the host, not an MCU - one reader per adapter |
-| *(PN7160 only)* `VEN pin`, `IRQ pin` | Both optional; `IRQ pin` is recommended - it lets the presence probe ask the line directly instead of a speculative read every tick |
+!!! example "Reader settings by type"
+
+    === "RC522 (SPI)"
+
+        | Setting | Purpose |
+        |---|---|
+        | `NFC reader name` | Klipper object name - defaults to `<unit>_nfc` |
+        | `Reader type` | Select **RC522 / SPI** |
+        | `CS pin` | Required chip-select pin |
+        | `SPI bus name` | Optional hardware SPI bus; blank uses the MCU's default bus |
+        | `SPI speed` | Defaults to 1MHz; RC522 supports up to 10MHz |
+        | `Receiver gain` | `0` keeps the chip default (33dB); selectable values are 18, 23, 33, 38, 43, or 48dB |
+
+    === "PN5180 (SPI)"
+
+        | Setting | Purpose |
+        |---|---|
+        | `NFC reader name` | Klipper object name - defaults to `<unit>_nfc` |
+        | `Reader type` | Select **PN5180 / SPI** |
+        | `CS pin` | Required chip-select pin |
+        | `SPI bus name` | Optional hardware SPI bus; blank uses the MCU's default bus |
+        | `SPI speed` | Defaults to 1MHz; PN5180 supports up to 7MHz |
+        | `BUSY pin` | Required; signals when a command has completed |
+        | `RST pin` | Required; lets the driver recover an unresponsive reader |
+        | `Receiver gain` | `0` keeps the chip default (50dB); selectable values are 33, 40, 50, or 57dB |
+
+    === "PN532 (I2C)"
+
+        | Setting | Purpose |
+        |---|---|
+        | `NFC reader name` | Klipper object name - defaults to `<unit>_nfc` |
+        | `Reader type` | Select **PN532 / I2C** |
+        | `I2C MCU name` | MCU that owns the I2C bus |
+        | `I2C address` | Fixed at `0x24` |
+        | `I2C bus type` | Hardware I2C, or software I2C on a dedicated GPIO pair |
+        | *(hardware)* `I2C bus name` | Optional hardware I2C bus; blank uses the MCU's default bus |
+        | *(software)* `SCL pin`, `SDA pin` | Required bit-banged bus pins; give each PN532 on the same MCU its own pair |
+        | `I2C speed` | Defaults to 100kHz |
+        | `Receiver gain` | `0` keeps the chip default (33dB); selectable values are 18, 23, 33, 38, 43, or 48dB |
+
+    === "PN532 (UART)"
+
+        | Setting | Purpose |
+        |---|---|
+        | `NFC reader name` | Klipper object name - defaults to `<unit>_nfc` |
+        | `Reader type` | Select **PN532 / UART** |
+        | `Serial device path` | Stable `/dev/serial/by-id/` path for the reader's host USB-serial adapter |
+        | `Baud rate` | Defaults to 115200; one reader requires one adapter |
+        | `Receiver gain` | `0` keeps the chip default (33dB); selectable values are 18, 23, 33, 38, 43, or 48dB |
+
+    === "PN532 (SPI)"
+
+        | Setting | Purpose |
+        |---|---|
+        | `NFC reader name` | Klipper object name - defaults to `<unit>_nfc` |
+        | `Reader type` | Select **PN532 / SPI** |
+        | `CS pin` | Required chip-select pin |
+        | `SPI bus name` | Optional hardware SPI bus; blank uses the MCU's default bus |
+        | `SPI speed` | Defaults to 1MHz |
+        | `Receiver gain` | `0` keeps the chip default (33dB); selectable values are 18, 23, 33, 38, 43, or 48dB |
+
+    === "PN7160 (I2C)"
+
+        | Setting | Purpose |
+        |---|---|
+        | `NFC reader name` | Klipper object name - defaults to `<unit>_nfc` |
+        | `Reader type` | Select **PN7160 / I2C** |
+        | `I2C MCU name` | MCU that owns the I2C bus |
+        | `I2C address` | Defaults to `0x28`; selectable range is `0x28`-`0x2B` |
+        | `I2C bus type` | Hardware I2C, or software I2C on any GPIO pair |
+        | *(hardware)* `I2C bus name` | Optional hardware I2C bus; blank uses the MCU's default bus |
+        | *(software)* `SCL pin`, `SDA pin` | Required bit-banged bus pins |
+        | `I2C speed` | Defaults to 100kHz |
+        | `VEN pin` | Optional reader-enable pin |
+        | `IRQ pin` | Optional but recommended; lets the presence probe check the line directly |
+        | `Receiver gain` | `0` keeps the protocol-profile defaults (53dB for NFC-A, 51dB for ISO15693); selectable values are 18, 26, 32, 39, 44, 51, 53, or 60dB |
 
 <p align="center">
   <img src="Feature-NFC/shared-reader-config.png" alt="NFC reader config menuconfig screen with Has common NFC reader enabled, showing the RC522/SPI defaults - reader name, CS pin, SPI bus and speed" width="70%">
@@ -191,12 +250,14 @@ deciding "nothing there" is really nothing there.
 Spoolman's side of this - `spoolman_nfc_auto_create` (create an unknown tag
 as a new spool) and `spoolman_pending_id_timeout` (how long a shared read
 stays pending) - live in `mmu.cfg` and are documented on
-[Feature: Spoolman Integration](Feature-Spoolman.md#parameter-setup).
+[Feature: Spoolman / Filament Hub](Feature-Spoolman.md#parameter-setup).
 
 ## Commands
 
 Full parameter reference: [`MMU_NFC`](Reference-Commands.md#mmu_nfc),
-[`MMU_NFC_SCAN`](Reference-Commands.md#mmu_nfc_scan).
+[`MMU_NFC_SCAN`](Reference-Commands.md#mmu_nfc_scan),
+[`MMU_GATE_MAP`](Reference-Commands.md#mmu_gate_map), and
+[`MMU_SPOOLMAN_TAG`](Reference-Commands.md#mmu_spoolman_tag).
 
 `MMU_NFC` is the day-to-day status/control command, addressing either the
 shared reader, one gate, or several:
@@ -214,8 +275,11 @@ MMU_NFC GATE=2 INIT=1          # (Re)initialize a reader that isn't responding
 MMU_NFC INIT_ALL=1             # (Re)initialize every reader on every unit
 ```
 
-```{.text .console-output}
+```{.text .console-command}
 MMU_NFC DETAILS=1
+```
+
+```{.text .console-output}
 MMU NFC readers:
 shared:  enabled=1 active=1 alive=1 tag=none
 gate 0:  enabled=1 active=1 alive=1 tag=E2003412
@@ -233,13 +297,60 @@ MMU_NFC_SCAN        # Scan the current gate
 MMU_NFC_SCAN GATE=2 # Scan a specific gate
 ```
 
-`APPEND=1` on a `REGISTER=1` read is for a spool with more than one physical
-tag - e.g. one stuck on each side, so either side scans to the same spool.
-It only makes sense on a per-gate reader whose gate *already* has a spool
-assigned (from an earlier scan, or set manually with
-[`MMU_GATE_MAP`](Feature-Spoolman.md#commands)/[`MMU_SPOOLMAN`](Feature-Spoolman.md#commands)):
-the newly-read tag is bound directly onto that spool instead of being
-resolved/auto-created as if it were unknown. Two cases fall back instead of
+### Managing stored RFID UIDs
+
+Happy Hare keeps two related values: the **gate RFID**, which is the single
+UID physically observed at a gate, and the **Spoolman RFIDs**, which are all
+UIDs registered to a spool.
+
+Successful NFC reads update the gate RFID automatically. A shared-reader UID
+is applied when its gate is loaded or preloaded. You can also set or clear the
+value manually:
+
+```text
+MMU_GATE_MAP GATE=2 RFID=AABBCCDD # Set the UID observed at gate 2
+MMU_GATE_MAP GATE=2 RFID=''       # Clear it
+```
+
+The value must be one even-length hexadecimal UID. It is normalized to
+uppercase; comma-separated or otherwise invalid values are ignored. Resetting
+a gate or marking it empty also clears its gate RFID. Spoolman synchronization
+never replaces this value, so it continues to identify the tag the printer
+actually observed.
+
+Use `MMU_SPOOLMAN_TAG` to manage the complete set of UIDs stored against a
+Spoolman spool. Identify the spool directly with `SPOOLID=`, or use `GATE=`
+to target the spool currently assigned to a gate:
+
+```text
+MMU_SPOOLMAN_TAG SPOOLID=45 RFID=AABBCCDD          # Replace the spool's UID set
+MMU_SPOOLMAN_TAG SPOOLID=45 RFID=AABBCCDD,EEFF0011 # Replace it with multiple UIDs
+MMU_SPOOLMAN_TAG GATE=2 RFID=AABBCCDD              # Replace by assigned gate instead
+MMU_SPOOLMAN_TAG GATE=2 RFID=EEFF0011 APPEND=1     # Add a UID without removing the others
+MMU_SPOOLMAN_TAG GATE=2 RFID=''                    # Clear every UID from the spool
+```
+
+UIDs are normalized and duplicates removed. To register a gate's already
+observed UID against an existing spool, use `REGISTER=1`; add `APPEND=1` to
+preserve that spool's other UIDs:
+
+```text
+MMU_SPOOLMAN_TAG GATE=2 SPOOLID=45 REGISTER=1
+MMU_SPOOLMAN_TAG GATE=2 SPOOLID=45 REGISTER=1 APPEND=1
+```
+
+Alternatively, read and resolve a tag directly through the gate's NFC reader:
+
+```text
+MMU_NFC GATE=2 REGISTER=1          # Resolve the UID, or auto-create a spool from its metadata
+MMU_NFC GATE=2 REGISTER=1 APPEND=1 # Attach a second tag to the gate's assigned spool
+```
+
+`APPEND=1` on an NFC read only makes sense when the addressed per-gate reader
+already has a spool assigned (from an earlier scan, or set manually with
+[`MMU_GATE_MAP`](Feature-Spoolman.md#commands)/[`MMU_SPOOLMAN`](Feature-Spoolman.md#commands)).
+The newly read tag is bound directly onto that spool instead of being
+resolved or auto-created as an unknown tag. Two cases fall back instead of
 binding:
 
 - **`SHARED=1 REGISTER=1 APPEND=1`** - the shared reader has no gate
@@ -250,15 +361,10 @@ binding:
   (logged, not an error) and the read falls back to normal resolve/
   auto-create, the same as without `APPEND=1`.
 
-Two related commands live on the Spoolman side, for binding a UID onto a
-spool record directly rather than scanning for one:
-[`MMU_SPOOLMAN_TAG ... RFID=`](Feature-Spoolman.md#mmu_spoolman_tag-registering-a-tag-uid)
-(which has its own `APPEND=1` for the same "second tag on one spool" case,
-plus `RFID=''` to clear every tag from a spool, and a `REGISTER=1` mode for
-binding a tag that's already been scanned onto a gate but didn't resolve at
-the time - see [Registering an unresolved
-tag](#registering-an-unresolved-tag-after-the-fact) below) and the `RFID=`
-parameter on [`MMU_GATE_MAP`](Reference-Commands.md#mmu_gate_map).
+See [Registering an unresolved tag](#registering-an-unresolved-tag-after-the-fact)
+for a complete after-the-fact workflow, and
+[Feature: Spoolman / Filament Hub](Feature-Spoolman.md#mmu_spoolman_tag-registering-a-tag-uid)
+for Spoolman support-mode restrictions and assignment details.
 
 ### Advanced: raw per-reader commands
 
@@ -346,7 +452,7 @@ of just failing to resolve:
    write to Spoolman, so auto-create is suppressed regardless of this
    setting in those modes.
 
-With all three set, scanning a brand-new tag that carries recognisable
+With all three set, scanning a brand-new tag that carries recognizable
 filament data (see [Concept](#concept)) creates the spool in Spoolman and
 registers the tag against it in the same step - the next scan of that same
 tag resolves normally.
@@ -377,7 +483,7 @@ per-gate reader:
    nothing to look up. Happy Hare binds the gate's already-cached UID onto
    spool 456, and the gate map updates as a result, no re-scan needed.
 
-See [Feature: Spoolman Integration: `MMU_SPOOLMAN_TAG`](Feature-Spoolman.md#mmu_spoolman_tag-registering-a-tag-uid)
+See [Feature: Spoolman / Filament Hub: `MMU_SPOOLMAN_TAG`](Feature-Spoolman.md#mmu_spoolman_tag-registering-a-tag-uid)
 for the command in full, including why `REGISTER=1` needs
 `spoolman_support: readonly` or `push` specifically.
 
@@ -465,7 +571,7 @@ both off by default so a stock setup pays no extra reader I/O:
   (`MMU_NFC ... ENABLE=0`, or it starts that way); re-enable with
   `ENABLE=1`, which also re-initializes it.
 - **A deep read returns the UID but no metadata** - the tag isn't in one of
-  the recognised formats (see [Concept](#concept)), or it's genuinely
+  the recognized formats (see [Concept](#concept)), or it's genuinely
   blank. UID-only resolution still works if the tag is already registered
   in Spoolman.
 - **`MMU_NFC_SCAN` errors "gate is empty"** - it homes filament to find the
@@ -474,14 +580,9 @@ both off by default so a stock setup pays no extra reader I/O:
   `MMU_GATE_MAP GATE=<n> AVAILABLE=1`.
 - **A shared-reader tag never resolves** - confirm Spoolman is reachable and
   at a compatible version (see
-  [Feature: Spoolman Integration troubleshooting](Feature-Spoolman.md#troubleshooting));
+  [Feature: Spoolman / Filament Hub troubleshooting](Feature-Spoolman.md#troubleshooting));
   an unresolved tag also won't retry on its own until it's removed and
   re-presented.
-- **Homing to a per-gate reader behaves oddly on PN532/PN7160** - this path
-  is confirmed only on RC522 so far (see the beta note at the top of this
-  page); fall back to `MMU_NFC_SCAN` (a plain read after the fact, not a
-  homing target) if preload's automatic behaviour is unreliable on your
-  reader.
 - **A scan logs "tag ... was registered to spool X - moving it to spool
   Y"** - informational, not an error: the tag was already bound to a
   different spool and Happy Hare re-pointed it to the one just scanned (see
@@ -497,7 +598,7 @@ both off by default so a stock setup pays no extra reader I/O:
 
 ## See also
 
-- [Feature: Spoolman Integration](Feature-Spoolman.md) - what a resolved
+- [Feature: Spoolman / Filament Hub](Feature-Spoolman.md) - what a resolved
   tag actually does: activation, attributes, auto-create
 - [Command Reference: `MMU_NFC`](Reference-Commands.md#mmu_nfc)
 - [Command Reference: `MMU_NFC_SCAN`](Reference-Commands.md#mmu_nfc_scan)
@@ -507,4 +608,3 @@ both off by default so a stock setup pays no extra reader I/O:
 - [Printer Variables: NFC](Reference-Printer-Variables.md#nfc)
 
 ---
-

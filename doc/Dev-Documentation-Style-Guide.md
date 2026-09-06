@@ -19,7 +19,7 @@ Before opening a pull request, verify:
 - Page appears in [mkdocs.yml](../mkdocs.yml) nav.
 - No `[TOC]` marker is present.
 - Admonitions use `!!!` syntax.
-- Config examples use `yaml` code fences.
+- Config examples use `ini` code fences.
 - New screenshots are readable and centered where needed.
 - Page ends with a single `---` line.
 
@@ -67,17 +67,39 @@ Recommended types:
 | Known issue | `bug` |
 | Worked example | `example` |
 
+Use `???` instead of `!!!` for collapsible admonition content.
+
 Rendered examples:
 
 !!! note "Note"
     Use this for neutral, supporting context.
 
-!!! tip "Tip"
+??? tip "Hidden Tip"
     Use this for shortcuts, defaults, and practical setup hints.
 
 !!! warning "Important"
     Use this when readers can make a costly configuration mistake.
 
+
+Tabbed admonition content using `===`
+!!! example
+  
+    === "Topic 1"
+        Use this to show multiple steps, examples or variations in a single callout to minimize
+        scrolling and clutter.
+    
+        Lorum ipsumque draconis flutare in aetherium spirat. Vexillum quondam 
+        wobblare nunc per orbem fantasticae vagatur.
+
+    === "Topic 2"
+        Lorum ipsumque draconis flutare in aetherium spirat. Vexillum quondam 
+        wobblare nunc per orbem fantasticae vagatur.
+
+    === "Topic 3"
+  
+        Lorum ipsumque draconis flutare in aetherium spirat. Vexillum quondam 
+        wobblare nunc per orbem fantasticae vagatur.
+        
 ## Tables
 
 Use simple pipe tables with short headers. Keep units in headers or in a Notes column.
@@ -101,23 +123,33 @@ Example:
 
 Use fenced code blocks with explicit language.
 
-- Use `yaml` for config examples (including cfg-like snippets).
-- Use `bash` for commands.
-- Use plain `text` only for raw output.
+- Use ````ini` for config examples (including cfg-like snippets).
+    ```ini
+    # mmu_parameters.cfg
+    toolhead_post_load_tighten: 60
+    extruder_homing_max: 50
+    ```
+- Use ````bash` for commands genuinely entered in a Linux shell, such as cd, git, make, or installer commands.
+    ```bash
+    make docs
+    cd ~/Happy-Hare && ./install.sh -z -t -i
+    ```
+- Use ````{.text .console-command}` for console input to the printer. To join a
+  command and its output visually, put its `console-output` fence immediately afterward.
+- Use ````{.text .console-output}` for output returned by the printer.
+    ```{.text .console-command}
+    MMU_SLICER_TOOL_MAP PURGE_MAP=1
+    ```
 
-Examples:
-
-```yaml
-# mmu_parameters.cfg
-toolhead_post_load_tighten: 60
-extruder_homing_max: 50
-```
-
-```bash
-make docs
-make docs_build
-make docs_preview
-```
+    ```{.text .console-output}
+    -------- Slicer MMU Tool Summary ---------
+    2 color print (Purge volume map loaded)
+    T0 (Gate 0, ABS, ff0000, 240°C)
+    ```
+- Use ````text` for unclassified plain text.
+    ```text
+    Regular preformatted text
+    ```
 
 ## Images and screenshots
 

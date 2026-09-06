@@ -52,8 +52,11 @@ like it there.
 
 A plain (no Spoolman) map looks like this:
 
+```{.text .console-command}
+MMU_GATE_MAP
+```
+
 ```{.text .console-output}
-> MMU_GATE_MAP
 Gates / Filaments:
 0: On spool; TPU     | 225C | orange | Orange Pie
 1: Unknown;  PETG    | 220C | red    | eMarble
@@ -64,7 +67,7 @@ Gates / Filaments:
 If you've enabled [Spoolman](Feature-Spoolman.md), the same command gains an
 `Id:` field and everything else about it works identically - it's the same
 command and the same map either way, just with one extra column. See that
-page for the Spoolman-specific console format and sync behaviour.
+page for the Spoolman-specific console format and sync behavior.
 
 !!! tip
     The initial map (and the defaults `MMU_GATE_MAP RESET=1` restores) come
@@ -75,14 +78,15 @@ page for the Spoolman-specific console format and sync behaviour.
     default, meaning gates reset to empty/unknown attributes. Filled in for a
     9-gate MMU, it would look something like this:
 
-        :::ini
-        default_gate_status:         1,      0,      1,      2,      2,     -1,     -1,      0,      1
-        default_gate_filament_name:  one,    two,    three,  four,   five,   six,    seven,  eight,  nine
-        default_gate_material:       PLA,    ABS,    ABS,    ABS+,   PLA,    PLA,    PETG,   TPU,    ABS
-        default_gate_color:          red,    black,  yellow, green,  blue,   indigo, ffffff, grey,   black
-        default_gate_temperature:    210,    240,    235,    245,    210,    200,    215,    240,    240
-        default_gate_spool_id:       3,      2,      1,      4,      5,      6,      7,      -1,     9
-        default_gate_speed_override: 100,    100,    100,    100,    100,    100,    100,    50,     100
+    ```ini
+    default_gate_status:         1,      0,      1,      2,      2,     -1,     -1,      0,      1
+    default_gate_filament_name:  one,    two,    three,  four,   five,   six,    seven,  eight,  nine
+    default_gate_material:       PLA,    ABS,    ABS,    ABS+,   PLA,    PLA,    PETG,   TPU,    ABS
+    default_gate_color:          red,    black,  yellow, green,  blue,   indigo, ffffff, grey,   black
+    default_gate_temperature:    210,    240,    235,    245,    210,    200,    215,    240,    240
+    default_gate_spool_id:       3,      2,      1,      4,      5,      6,      7,      -1,     9
+    default_gate_speed_override: 100,    100,    100,    100,    100,    100,    100,    50,     100
+    ```
 
 Happy Hare also exposes filament color as ready-to-use RGB triples
 (`printer.mmu.gate_color_rgb`) for driving LEDs or anything else that wants a
@@ -130,8 +134,11 @@ printer.mmu.slicer_tool_map:
 
 To see what's currently loaded for the print in progress:
 
+```{.text .console-command}
+MMU_SLICER_TOOL_MAP
+```
+
 ```{.text .console-output}
-> MMU_SLICER_TOOL_MAP
 --------- Slicer MMU Tool Summary ---------
 2 color print (Purge volume map loaded)
 T0 (gate 0, ABS, ff0000, 240°C)
@@ -146,8 +153,11 @@ covered on the Tip Forming and Purging feature page.
 
 ### Tool-to-Gate (TTG) map
 
+```{.text .console-command}
+MMU_TTG_MAP
+```
+
 ```{.text .console-output}
-> MMU_TTG_MAP
 TTG Map:
 T0 -> Gate 0
 T1 -> Gate 1 [SELECTED]
@@ -157,8 +167,11 @@ T3 -> Gate 3
 
 Add `DETAIL=1` to also see EndlessSpool grouping:
 
+```{.text .console-command}
+MMU_TTG_MAP DETAIL=1
+```
+
 ```{.text .console-output}
-> MMU_TTG_MAP DETAIL=1
 TTG Map & EndlessSpool Groups:
 T0 -> Gate 0
 T1 -> Gate 1 Group A: 1> 4> 7 [SELECTED]
@@ -290,9 +303,8 @@ instead of compounding.
 - [Command Reference: `MMU_TTG_MAP`](Reference-Commands.md#mmu_ttg_map)
 - [Command Reference: `MMU_SLICER_TOOL_MAP`](Reference-Commands.md#mmu_slicer_tool_map)
 - [Printer Variables: gate and tool maps](Reference-Printer-Variables.md#gate-and-tool-maps)
-- [Feature: Spoolman Integration](Feature-Spoolman.md)
+- [Feature: Spoolman / Filament Hub](Feature-Spoolman.md)
 - [Feature: EndlessSpool & Runout Detection](Feature-Endless-Spool-Runout.md)
 - [Feature: LEDs](Feature-LEDs.md)
 
 ---
-

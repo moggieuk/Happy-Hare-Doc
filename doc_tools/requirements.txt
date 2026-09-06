@@ -8,7 +8,7 @@
 
 # Terminal emulator. menuconfig is a curses app, so the only way to see what it
 # drew is to run it against a pty and interpret the escape stream. pyte gives the
-# resulting character grid plus per-cell colour, which is what doc/capture.py
+# resulting character grid plus per-cell color, which is what doc/capture.py
 # renders and what its screen assertions read.
 pyte
 
@@ -20,6 +20,6 @@ pillow
 # `make docs_check`). Reads mkdocs.yml (docs_dir: doc) at the repo root directly -
 # one package, no separate theme dependency; it bundles Material's styling itself.
 # Pinned, not floating: this is still a pre-1.0 package, and `make docs_check`'s
-# PR gate depends on its --strict warning behaviour at this exact version - a
+# PR gate depends on its --strict warning behavior at this exact version - a
 # silent minor bump could change what CI does or doesn't catch.
 zensical==0.0.53

@@ -14,6 +14,15 @@ by Happy Hare, the installer or the tests. The dependencies (`pyte`, `Pillow`, `
 live in `doc_tools/requirements.txt` and are installed into `./venv` on demand by the
 `shots`/`docs`/`docs_build` targets.
 
+The generators that read Happy Hare source use a gitignored `.happy-hare-src/`
+checkout by default. This managed cache is refreshed to the latest commit at the
+branch, tag or commit named in `HAPPY_HARE_REF` before every `make shots` or
+`make command_reference` run, so source changes made inside it are not preserved.
+To use a checkout you manage instead, set
+`HAPPY_HARE_SRC=/path/to/Happy-Hare`. Explicitly supplied checkouts are read
+as-is and are never fetched, switched, or removed; `make clean-source` only
+removes the default managed cache.
+
 ## Generating the Command Reference
 
 `doc_tools/gen_command_reference.py` walks the whole `extras/mmu/` tree (not just
@@ -86,9 +95,17 @@ a reader could be shown.
   the same machine) and writes a config. A checked-in `.mmu_config` would go stale
   silently as Kconfig gains options; generating means the seed always matches the
   tree being documented.
+* **`boxturtle-toolhead-cutter`.** The same generated Box Turtle seed with the
+  toolhead-cutter capability and its standalone cutting choice enabled. This
+  gives the cutter screenshot session a clean startup state without relying on
+  menuconfig to redraw a newly gated group in place.
+* **`ercf`.** Generated the same way, selecting `MMU_TYPE_ERCF_3_0` (the
+  Kconfig choice's own default version) instead. Use this seed when a screen's
+  story fits a moving-carriage/servo design better than Box Turtle's
+  gear-per-gate layout.
 * **A real config: `--seed path/to/.mmu_config`.** Whatever is on your printer.
 * **A unit of a multi-unit setup: `--seed path/to/.mmu_config_gru`.** The `_gru`
-  suffix is recognised, so the session parses as unit `gru` with `F_MULTI_UNIT=y`,
+  suffix is recognized, so the session parses as unit `gru` with `F_MULTI_UNIT=y`,
   and `UNIT_INDEX` plus the printer-level `HAS_SENSOR_*` capabilities are read out of
   the sibling `.mmu_config` — exactly what `install.sh:435-442` passes down. Point it
   at a top `.mmu_config` that has `CONFIG_MULTI_UNIT=y` and you get the shared-config
@@ -254,5 +271,3 @@ on a machine with no printer attached**, or the MCU screens will show your hardw
   `gen_command_reference.py` reads independently.
 
 ---
-
-

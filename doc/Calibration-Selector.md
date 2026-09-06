@@ -94,10 +94,16 @@ for three named positions:
 
 Tune one position at a time - move it, check by eye, then save:
 
-```{.text .console-output}
+```{.text .console-command}
 MMU_SERVO POS=up
 MMU_SERVO
+```
+
+```{.text .console-output}
 Current servo angle: 125, Positions: {'down': 45, 'up': 125, 'move': 110}
+```
+
+```text
 MMU_SERVO ANGLE=128
 MMU_SERVO POS=up SAVE=1
 ```
@@ -151,7 +157,7 @@ persisting.
 ## Indexed selectors
 
 BTT ViViD has one index switch per gate rather than a single home switch,
-so calibration is detection rather than measurement. It is highly unlikey
+so calibration is detection rather than measurement. It is highly unlikely
 that you would need to re-calibrate the ViViD, but this command will at
 least ensure that movement from one gate to another is as quick as possible
 and that selection provides maximal filament grip by centering the stopping

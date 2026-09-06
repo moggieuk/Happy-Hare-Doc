@@ -16,8 +16,11 @@ If `extruder_homing_endstop` is `extruder`, `mmu_gear_touch`, or
 `filament_compression`, this is the most accurate method - a real homing
 sensor gives a precise stop point:
 
-```{.text .console-output}
+```{.text .console-command}
 MMU_CALIBRATE_BOWDEN
+```
+
+```{.text .console-output}
 Calibrating bowden length for gate 0 (automatic method) using mmu_gate sensor as gate reference point
 Filament homed to extruder after 724.5mm movement
 Calibrated bowden length is 724.5mm
@@ -38,8 +41,11 @@ longer counting movement), supply a `BOWDEN_LENGTH` **slightly shorter**
 than the real distance - a rule of thumb is your measured selector-to-
 extruder distance minus 40-50mm:
 
-```{.text .console-output}
+```{.text .console-command}
 MMU_CALIBRATE_BOWDEN BOWDEN_LENGTH=650
+```
+
+```{.text .console-output}
 Pass #1: Filament homed to extruder, encoder measured 682.3mm, filament sprung back 3.2mm
 Pass #2: Filament homed to extruder, encoder measured 681.8mm, filament sprung back 3.1mm
 Pass #3: Filament homed to extruder, encoder measured 680.6mm, filament sprung back 3.4mm

@@ -164,7 +164,7 @@ that same step order.
 | `toolchange_fan_speed` | `50`% | Fan speed when fan assist is on |
 | `unloading_speed_start` | `80` mm/s | Initial fast separation speed away from the melt zone |
 | `unloading_speed` | `18` mm/s | Slower speed for the remaining move to the cooling zone |
-| `cooling_tube_position` | `35` mm | Distance from the nozzle tip to the start of the cooling tube - hotend-specific, see [Macro: Tip Forming](Macro-Tip-Forming.md#hotend-starting-points) for reference values |
+| `cooling_tube_position` | `35` mm | Distance from the nozzle tip to the start of the cooling tube - hotend-specific, see [Tip Shaping: Forming](Macro-Tip-Forming.md#hotend-starting-points) for reference values |
 | `cooling_tube_length` | `10` mm | Length of the cooling-move travel - also hotend-specific, see the same reference values |
 | `initial_cooling_speed` | `10` mm/s | Initial slow cooling-move speed |
 | `final_cooling_speed` | `50` mm/s | Final fast cooling-move speed - too fast deforms the tip on eject, too slow leaves a long string |
@@ -198,7 +198,7 @@ for the concept.
 
 ## Blobifier (`_BLOBIFIER_VARS`)
 
-Only present with Blobifier enabled (`MMU_HAS_BLOBIFIER`) - see [Macro:
+Only present with Blobifier enabled (`MMU_HAS_BLOBIFIER`) - see [Purge:
 Blobifier](Macro-Blobifier.md) for what it is and the physical build. This
 is genuinely Blobifier's own large,
 third-party-maintained tuning surface, reproduced here in full rather than
@@ -245,7 +245,7 @@ left to its upstream README alone.
 | `brush_start` | `67` | Start X of a bed-mounted brush - indicative defaults `34`/`67`/`84` for 250/300/350mm builds; for a gantry-mounted brush, set to your nozzle-stop position instead |
 | `brush_width` | `35` mm | Brush width along X |
 | `brush_top` | `6` | Z position of the brush top - start high and lower carefully; `None` for a gantry-mounted brush needing no Z move |
-| `clearance_z` | `2` mm | Z clearance above the brush while travelling |
+| `clearance_z` | `2` mm | Z clearance above the brush while traveling |
 | `wipe_qty` | `2` | Number of full wipe passes |
 | `wipe_spd_xy` | `10000` mm/min | Wipe speed |
 | `brush_y_offset` | `0` | Offset subtracted from max Y for brushing |
@@ -352,9 +352,8 @@ for what to set them to.
   concept and tuning workflow for tip forming/cutting and purging
 - [Feature: Fan Control](Feature-Fan-Control.md) - concept, hardware
   setup, and commands for `_MMU_FAN_VARS`
-- [Macro: Blobifier](Macro-Blobifier.md) / [Macro: Servo
-  Cutter](Macro-Servo-Cutter.md) - Blobifier and the MMU-mounted servo
+- [Purge: Blobifier](Macro-Blobifier.md) / [Tip Shaping: MMU
+  Cutting](Macro-Servo-Cutter.md) - Blobifier and the MMU-mounted servo
   cutter builds
 
 ---
-

@@ -42,7 +42,7 @@ unless noted.
 | `enabled` | bool | Happy Hare is enabled (`MMU ENABLE=1`/`0`) |
 | `num_gates` | int | Total gates across all units |
 | `is_homed` | bool | True only when **every** unit's selector is homed |
-| `print_state` | string | `initialized` \| `standby` \| `started` \| `printing` \| `pause_locked` \| `paused` \| `complete` \| `cancelled` \| `error` \| `ready` |
+| `print_state` | string | `initialized` \| `standby` \| `idle` \| `started` \| `printing` \| `pause_locked` \| `paused` \| `complete` \| `cancelled` \| `error` \| `ready` |
 | `unit` | int | Currently selected unit, `-1` if none |
 | `tool` | int | Currently selected tool, `-1` unknown, `-2` bypass |
 | `gate` | int | Currently selected gate (or the gate about to be selected, mid-toolchange), `-1` unknown |
@@ -176,28 +176,31 @@ themselves.
 
 | Variable | Type | Meaning |
 |---|---|---|
+| `happy_hare_version` | string | Installed Happy Hare version in `<major>.<minor>.<point>` form, for example `4.0.0` |
 | `num_units` | int | Number of configured `mmu_unit`s |
 | `num_gates` | int | Total gates, same value as `printer.mmu.num_gates` |
 | `unit_0`, `unit_1`, ... | dict | One entry per unit, see below |
 
 Each `unit_N` dict:
 
-| Key | Meaning |
-|---|---|
-| `name`, `display_name` | Config name and human-readable name |
-| `vendor`, `version` | e.g. `ERCF`, `1.1sb` |
-| `num_gates`, `first_gate` | Gate count and this unit's first *global* gate number |
-| `selector_type` | e.g. `LinearSelector`, `IndexedSelector`, `RotarySelector`, `ServoSelector`, `VirtualSelector` |
-| `is_homed` | This unit's selector only |
-| `variable_rotation_distances`, `variable_bowden_lengths` | Whether per-gate calibration is used |
-| `require_bowden_move` | Whether this unit's geometry has a bowden move at all |
-| `filament_always_gripped` | True for designs with no release mechanism |
-| `has_bypass` | This unit has a selectable bypass gate |
-| `can_crossload` | Filament can be pushed directly between gates on this unit |
-| `multi_gear` | Unit has one gear motor per gate rather than one shared |
-| `filament_buffer` | Filament (catchment) buffer fitted - catches loose filament on rewind, allowing faster loading speeds |
-| `environment_sensor(s)` / `filament_heater(s)` | Present only if configured (singular for one shared, plural for per-gate) |
-| `nfc_reader(s)` | Present only if configured (singular for one shared, plural for per-gate) |
+| Key | Type | Meaning |
+|---|---|---|
+| `name`, `display_name` | string | Config name and human-readable name |
+| `vendor`, `version` | string | For example `ERCF`, `1.1sb` |
+| `num_gates`, `first_gate` | int | Gate count and this unit's first *global* gate number |
+| `selector_type` | string | For example `LinearSelector`, `IndexedSelector`, `RotarySelector`, `ServoSelector`, `VirtualSelector` |
+| `is_homed` | bool | This unit's selector only |
+| `variable_rotation_distances`, `variable_bowden_lengths` | bool | Whether per-gate calibration is used |
+| `require_bowden_move` | bool | Whether this unit's geometry has a bowden move at all |
+| `filament_always_gripped` | bool | True for designs with no release mechanism |
+| `has_bypass` | bool | This unit has a selectable bypass gate |
+| `can_crossload` | bool | Filament can be pushed directly between gates on this unit |
+| `multi_gear` | bool | Unit has one gear motor per gate rather than one shared |
+| `filament_buffer` | bool | Filament (catchment) buffer fitted - catches loose filament on rewind, allowing faster loading speeds |
+| `environment_sensor`, `filament_heater` | string | Shared object names; present only when shared sensor/heater configuration is used |
+| `environment_sensors`, `filament_heaters` | list[string] | Per-gate object names; present only when per-gate sensor/heater configuration is used |
+| `nfc_reader` | string | Shared reader name; present only when configured |
+| `nfc_readers` | list[string] | Per-gate reader names; present only when configured |
 
 ## Directly-registered per-object status
 
@@ -219,47 +222,22 @@ since Happy Hare units can have independent, differently-named encoders.
 
 ## Deprecated variables
 
-Still present in `printer.mmu`, still computed, but superseded - each is
-marked `# DEPRECATED` at its definition in the code:
+Still present in `printer.mmu`, still computed, but superseded.
 
-| Variable | Replaced by | Why it's still here |
-|---|---|---|
-| `espooler_active` | `espooler` (per-gate list) | May still be read by UIs/custom macros |
-| `runout` | `operation == "runout"` | Still used by Happy Hare's own macros |
-| `is_paused` | `print_state` | Still referenced by Mainsail's interface |
-| `is_locked` | `print_state` (alias of `is_paused`) | Still referenced by Mainsail's interface |
-| `is_in_print` | `print_state` | Still referenced by Mainsail's interface |
-| `has_bypass` (on `printer.mmu`) | `printer.mmu_machine.unit_N.has_bypass` | Bypass selection is always allowed now, so this is hardcoded `True`; kept for display purposes only |
-| `clog_detection` | (removed capability) | Hardcoded `False` |
-| `clog_detection_enabled` | (removed capability) | Hardcoded `False` |
-| `endless_spool` (in the gate-map group) | `endless_spool_enabled` | Still used by KlipperScreen and the Mainsail/Fluidd interfaces |
+| Variable | Replaced by |
+|---|---|
+| `espooler_active` | `espooler` (per-gate list) |
+| `runout` | `operation == "runout"` |
+| `is_paused` | `print_state` |
+| `is_locked` | `print_state` (alias of `is_paused`) |
+| `is_in_print` | `print_state` |
+| `has_bypass` (on `printer.mmu`) | `printer.mmu_machine.unit_N.has_bypass` |
+| `clog_detection` | (removed capability) |
+| `clog_detection_enabled` | (removed capability) |
+| `endless_spool` (in the gate-map group) | `endless_spool_enabled` |
 
-None of these will be removed while KlipperScreen, Mainsail, or Fluidd still
-read them - but new macros should use the replacement column.
+## See also
 
-## Klipper events
-
-Events Happy Hare fires via `printer.send_event(...)`, for anyone writing
-their own handler (`printer.register_event_handler("mmu:xxx", callback)`).
-
-| Event | Parameters | Description |
-|---|---|---|
-| `mmu:mmu_paused` | - | An MMU error paused the print |
-| `mmu:mmu_resumed` | - | Print resumed after an MMU error |
-| `mmu:enabled` | - | `MMU ENABLE=1` |
-| `mmu:disabled` | - | `MMU ENABLE=0` |
-| `mmu:toolchange` | `last_tool, next_tool` | Toolchange initiated (start of) |
-| `mmu:synced` | - | Gear stepper synced to the extruder |
-| `mmu:unsynced` | - | Gear stepper unsynced from the extruder |
-| `mmu:sync_feedback` | `eventtime, state` (`-1.0..+1.0`) | Tension (`-`) / compression (`+`) of the buffer |
-| `mmu:initialized` | - | Happy Hare finished its own init, before Klipper `connect` |
-| `mmu:bootup` | - | `MMU_BOOTUP` sequence completed |
-| `mmu:printing` / `mmu:not_printing` | - | Print-state-machine transitions in/out of an active print |
-| `mmu:tool_selected` / `mmu:gate_selected` / `mmu:unit_selected` | new selection | Fired on each respective selection change (multi-unit aware) |
-| `mmu:spoolid_pending` / `mmu:spoolid_not_pending` | - | A Spoolman spool ID became pending assignment, or stopped being pending |
-| `mmu:espooler_burst` / `mmu:espooler_burst_done` | - | In-print eSpooler assist burst starts/finishes |
-| `mmu:test_gen_finished` | - | Internal - a `_MMU_TEST` generator command finished |
+- [Developer: Klipper Events](Dev-Klipper-Events.md)
 
 ---
-
-

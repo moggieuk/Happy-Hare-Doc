@@ -81,15 +81,21 @@ MMU_FLOWGUARD ENABLE=1 UNIT=ALL  # Enable on every unit
 
 Full parameter reference: [`MMU_FLOWGUARD`](Reference-Commands.md#mmu_flowguard).
 
+```{.text .console-command}
+MMU_FLOWGUARD
+```
+
 ```{.text .console-output}
-> MMU_FLOWGUARD
 FlowGuard monitoring feature is enabled and currently active on unit0
 ```
 
 or, disabled:
 
+```{.text .console-command}
+MMU_FLOWGUARD
+```
+
 ```{.text .console-output}
-> MMU_FLOWGUARD
 FlowGuard monitoring feature is disabled on unit0
 ```
 
@@ -137,27 +143,44 @@ of every print, so copy one elsewhere first if you want to keep it.
 sync_feedback_debug_log: 0   # 0 = normal operation, 1 = write a telemetry log for tuning
 ```
 
-Process a log with the bundled plotting script:
+From the Happy Hare checkout, use the plotting target. It creates or reuses
+the repository's virtual environment, installs the plotting dependencies,
+lists the available telemetry files, and opens the selected log in the
+interactive viewer:
 
-```{.text .console-output}
-~/Happy-Hare/utils/plot_sync_feedback.sh ~/printer_data/logs/sync_5.jsonl
-Saved plot to sim_plot.png
+```bash
+cd ~/Happy-Hare
+make plot_sync
 ```
 
+Log discovery defaults to Klipper's logs directory (normally
+`~/printer_data/logs`). Override it when the files are elsewhere:
+
+```bash
+make plot_sync PLOT_LOG_DIR=/tmp
+Available FlowGuard telemetry logs:
+  1) Gate 0  /tmp/sync_0.jsonl
+  2) Gate 12  /tmp/sync_12.jsonl
+Choose a log [1-2]:
+```
+
+The target also saves `sync_feedback_plot.png` in the Happy Hare checkout.
+Use `LOG=/path/to/sync_5.jsonl` to select a file directly and skip the picker,
+or `PLOT_OUT=/path/to/graph.png` to change the saved image path.
+
 !!! warning
-    Don't run `plot_sync_feedback.sh` on the Pi during an active print -
-    it's CPU-intensive enough to trigger a Timer Too Close (TTC) shutdown.
-    Copy the `.jsonl` file to another machine with Happy Hare's source
-    installed and run it there instead.
+    Don't plot telemetry on the Pi during an active print - it's
+    CPU-intensive enough to trigger a Timer Too Close (TTC) shutdown. Copy
+    the `.jsonl` file to another machine with Happy Hare installed and run
+    `make plot_sync` there instead.
 
 !!! tip "Interactive Plot Viewer"
     Tuning is usually a one-time activity, so it's worth doing on a desktop
-    or laptop rather than the Pi: install Happy Hare there too, copy the
-    telemetry file across, and make sure `matplotlib` is installed with
-    `pip install matplotlib`. Run `plot_sync_feedback.sh <sync.jsonl file>`
-    from a graphical session (not piped through SSH) and, alongside the
-    saved `png`, an interactive plot viewer opens with zoom and pan
-    controls for inspecting a specific region closely:
+    or laptop rather than the Pi: install Happy Hare there too and copy the
+    telemetry file across. Run `make plot_sync PLOT_LOG_DIR=<directory>`
+    from a graphical session (not piped through SSH); the target installs
+    its own plotting dependencies and opens an interactive viewer with zoom
+    and pan controls for inspecting a specific region closely:
 
     <p align="center">
       <img src="Feature-FlowGuard/matplot-viewer.png" alt="The interactive matplotlib plot viewer's toolbar - pan, zoom, and save controls" width="55%">
@@ -226,4 +249,3 @@ Reason for trip: Tension stuck after 63mm motion and 8.3mm relief (triggering pa
 - [Feature: Sensors](Feature-Sensors.md) - naming/addressing, querying, and enabling/disabling any sensor at runtime, including the buffer/encoder sensors that feed FlowGuard
 
 ---
-

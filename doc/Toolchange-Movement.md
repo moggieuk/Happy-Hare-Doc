@@ -8,7 +8,7 @@ worth reading alongside this page.
 
 ## Overview of Toolhead Parking
 
-Happy Hare recognises 7 operations that may need toolhead parking:
+Happy Hare recognizes 7 operations that may need toolhead parking:
 
 - `toolchange` - a normal toolchange, via `Tx` or `MMU_CHANGE_TOOL`
 - `runout` - a forced toolchange triggered by runout
@@ -51,8 +51,8 @@ retraction length. Negative X/Y is fine if your printer can handle it:
 variable_park_pause: 50, 50, 5, 10, 2
 ```
 
-Parks at (50, 50), lifting 5mm with a 10mm horizontal ramp on the way up,
-retracting 2mm. `-999, -999` for X/Y does a z-hop-only move (or nothing at
+Parks at (`50`, `50`), lifting `5mm` with a `10mm` horizontal ramp on the way up,
+retracting `2mm`. `-999, -999` for X/Y does a z-hop-only move (or nothing at
 all, with `-999, -999, 0, 0, 0`).
 
 Every parking move happens above a "toolhead movement plane" - normally the
@@ -166,7 +166,7 @@ the purge bucket for the rest of the toolchange (a
 **Cutting the tip with a fully custom park and purge, no wipe tower at
 all** - the full build plate is available since the wipe tower is disabled,
 tip forming needs no tuning, a dedicated purge system (e.g.
-[Blobifier](Macro-Blobifier.md)) optimizes purge speed/waste,
+[Purge: Blobifier](Macro-Blobifier.md)) optimizes purge speed/waste,
 and a custom park location can reduce ooze; supports sequential printing.
 More setup, more steps - there's more than one way to build this, and this
 is just one example.

@@ -243,6 +243,7 @@ DUMP_MCU_ENDSTOPS=1 Dump steppers registered on each MCU_endstop
 DUMP_ACTIVE_SENSORS=1 Dump raw active sensors map
 UPDATE_STATUS={dict} Force override (update) of mmu get_status() with supplied dict. 'OFF' to remove
 NFC_READ=1 Simulate an NFC tag read. Params: UID={hex} DEEP=[0|1] GATE={n}(per-gate, else shared) UNIT={n} MATERIAL= BRAND= COLOR= DETAIL= MIN_TEMP= MAX_TEMP=
+NFC_FIELD=1 Classify a tag UID against the gate map (no reader, no motion). Params: GATE={n} UID={hex}
 ```
 
 ### __MMU_ENCODER_INSERT

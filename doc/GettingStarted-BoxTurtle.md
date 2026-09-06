@@ -8,14 +8,18 @@ a Box Turtle installed and talking to Klipper.
 
 ## Menuconfig Installer
 
-From your Happy-Hare checkout:
+First clone the Happy Hare repository as described in
+[Cloning Happy Hare](Installation.md#cloning-happy-hare).
+
+Then run the installer:
 
 ```bash
+cd Happy-Hare
 ./install.sh
 ```
 
-The very first time you run this, there's no `.mmu_config` yet, so the installer
-drops you straight into `menuconfig` — no separate flag needed.
+The first run opens `menuconfig` automatically because no `.mmu_config` exists
+yet; no `-i` flag is needed.
 
 <p align="center">
   <img src="GettingStarted-BoxTurtle/01-first-run.png" alt="First run: nothing configured yet" width="70%">
@@ -54,10 +58,17 @@ Enter **Turtle Neck** to see the buffer choice:
   <img src="GettingStarted-BoxTurtle/03-turtleneck-buffer.png" alt="Turtle Neck buffer choice, v2 already selected" width="70%">
 </p>
 
-**Turtle Neck v2** is already the default — it's the buffer most Box Turtles ship
-with, sensing both filament tension and compression. If you have the original v1
-buffer (unsprung) or something else entirely, change it here; otherwise there's
-nothing to do and you can back out with Esc or the Left arrow key.
+The Turtle Neck is Box Turtle's **sync-feedback buffer**. It senses whether
+filament between the MMU and toolhead is under tension or compression so Happy
+Hare can keep the gear motors synchronized with the extruder. It is not a
+filament catchment buffer; those manage unloaded filament slack and are a
+different feature.
+
+**Turtle Neck v2** is the default and uses two switches with a spring that rests
+toward the tension side. **Turtle Neck v1** also has tension and compression
+switches but is unsprung. Choose **Other** for a different switch arrangement or
+an analog proportional buffer. This choice supplies the right starting values,
+but you will review its range and pins under **Buffer config** shortly.
 
 Back out twice (Esc, Esc) to return to the top menu, and look at the warnings
 panel again:
@@ -99,7 +110,7 @@ device if you have more than one board attached. If your board talks CANbus
 instead, this is where you'd switch it — but for a stock, USB-attached Box
 Turtle, Serial is what you want and there's nothing to change.
 
-### MMU Features / Additions
+### Built-in Box Turtle features
 
 Back out and enter **MMU Features / Additions**:
 
@@ -107,13 +118,61 @@ Back out and enter **MMU Features / Additions**:
   <img src="GettingStarted-BoxTurtle/07-mmu-features.png" alt="MMU Features panel - LEDs, eSpooler and buffer already enabled" width="70%">
 </p>
 
-This is worth a look even though — for a stock Box Turtle — there's nothing to
-add. **LEDs**, **eSpooler** and the **sync-feedback buffer** are already switched
-on and marked `(FIXED)`, because a Box Turtle always has them; you can't turn them
-off here. Fans, an environment sensor, RFID readers, eject buttons and an encoder
-are all genuine build options and default off — enable whichever ones you actually
-built. If you're following this page for a plain, stock Box Turtle, just look and
-move on.
+**LEDs**, **eSpooler** and the **sync-feedback buffer** are already switched on
+and marked `(FIXED)`. That means they are part of the Box Turtle profile and
+cannot be disabled here; it does not mean their pins should go unchecked. Fans,
+an environment sensor, RFID readers, eject buttons and an encoder are optional
+and default off — enable only the additions you actually built.
+
+#### eSpooler configuration
+
+Enter **eSpooler config**, then scroll down to the eSpooler pin rows:
+
+<p align="center">
+  <img src="GettingStarted-BoxTurtle/07a-espooler-config.png" alt="Box Turtle eSpooler configuration with AFC Lite enable, rewind and forward pins for all four gates" width="85%">
+</p>
+
+Each gate has separate **enable**, **rewind** and **forward** outputs. The
+selected board profile fills these in automatically. For the stock AFC Lite
+profile they should be:
+
+| Gate | Enable | Rewind | Forward |
+|---:|---|---|---|
+| 0 | `unit0:PA2` | `unit0:PA0` | `unit0:PA1` |
+| 1 | `unit0:PA5` | `unit0:PA6` | `unit0:PA7` |
+| 2 | `unit0:PB13` | `unit0:PB14` | `unit0:PB15` |
+| 3 | `unit0:PD11` | `unit0:PD12` | `unit0:PD13` |
+
+If you selected another controller, use the values supplied for that board and
+compare them with its wiring diagram instead of copying this table. The optional
+trigger pin is normally blank on a stock Box Turtle; it is only needed by an
+eSpooler modified with a dedicated tension-switch burst trigger.
+
+Leave the supplied power and speed settings alone for the first installation.
+They are starting values, not proof that a motor is wired in the correct
+direction. You will safely test each output after installation. See
+[Feature: eSpooler](Feature-Espooler.md) when you are ready to tune rewind,
+load assist and in-print assist.
+
+#### Turtle Neck buffer configuration
+
+Back out once and enter **Buffer config**:
+
+<p align="center">
+  <img src="GettingStarted-BoxTurtle/07b-buffer-config.png" alt="Turtle Neck v2 Buffer config with range, spring state, compression pin and tension pin" width="80%">
+</p>
+
+For Turtle Neck v1 and v2, the profile supplies a sensor range of `8` mm and a
+maximum physical range of `12` mm. V2 also sets **Buffer resting spring state**
+to **Tension / squeezed buffer**; v1 uses **n/a** because it is unsprung. These
+are suitable starting values for an unmodified mechanism.
+
+On an AFC Lite, the normal switch assignments are
+`compression = ^unit0:PE12` and `tension = ^unit0:PE13`. A different controller
+may supply different pins. What matters is not merely that both rows are filled
+in, but that each physical switch later reports the filament condition named by
+its row. See [Feature: Sync-Feedback Buffer](Feature-Sync-Feedback-Buffer.md)
+for range measurement, tuning and proportional-sensor setup.
 
 ### Pins: gear direction
 
@@ -176,36 +235,13 @@ are already filled in — `85.1` and `2` here — measured by someone else on th
 hardware rather than left at the generic default. The other two distances Happy Hare
 can use (toolhead sensor to nozzle, extruder sensor to entry) only appear once you've
 told it you actually have those sensors on your toolhead, higher up this same screen --
-until relevent the values stay hidden here.
+until relevant the values stay hidden here.
 
 This is a shortcut, not a substitute: even with a listed toolhead, you're still
 better off learning to measure and calibrate your own eventually, since small
 build variations and mods add up. But it's a genuinely good starting point,
 and if your exact combo isn't listed, "Other/Unknown" plus manual calibration
 ([`MMU_CALIBRATE_TOOLHEAD`](Calibration-Toolhead.md)) is exactly as normal a path as this one.
-
-### An example software option: Spoolman
-
-From the top menu, enter **Software Options**, then **Select spoolman
-spool manager support**:
-
-<p align="center">
-  <img src="GettingStarted-BoxTurtle/13-spoolman-readonly.png" alt="Spoolman support set to Read-only" width="70%">
-</p>
-
-This is one small example of the many software-side options living under
-**Software Options** — most of them, like this one, default to off and are
-entirely optional. If you run a [Spoolman](https://github.com/Donkie/Spoolman)
-instance and just want Happy Hare to pull filament details (material, color,
-temperatures) onto each gate without pushing anything back, select **Read-only**
-as shown here. The help table on screen lays out exactly what each of the four
-modes does — off, read-only, push, and pull — so you can pick the one that
-matches how you actually use Spoolman.
-
-Notice the row now reads `(Read-only) (NOT DEFAULT)` — menuconfig always flags a
-value that differs from its default this way, which makes it easy to spot your
-own changes later. If you decide you don't want it after all, `R` puts it straight
-back to `Off`.
 
 ### Explore the rest
 
@@ -216,8 +252,11 @@ scroll all the way from the top to **Paths & Services** at the bottom at least
 once. Nothing you look at will break anything: moving the highlight
 costs nothing, and `R` is always there to undo a change you don't
 want. Remember that you don't need to setup everything now — you can come back
-many times and re-run menconfig with `./install.sh -i` and incrementally
+many times and re-run menuconfig with `./install.sh -i` and incrementally
 setup features and macros.
+
+Software integrations such as [Spoolman](Feature-Spoolman.md) are optional and
+can be added after the core hardware is working.
 
 ### Saving, and coming back later
 
@@ -229,6 +268,7 @@ After that, running `./install.sh` again just upgrades in place — it won't reo
 the menu. To go back in and change something, use:
 
 ```bash
+cd ~/Happy-Hare
 ./install.sh -i
 ```
 
@@ -245,72 +285,126 @@ ever hand-edit the generated `.cfg` files directly.
     If you only ever configure through `menuconfig`, as this page assumes, option 2
     (**Refresh**) is the recommended choice because it rebuilds your Happy Hare
     klipper config files ensuring a clean config and any future update made to the
-    Happy Hare sofware.
+    Happy Hare software.
 
 
 ## Validating Hardware Setup
+
+The shared [Hardware Validation](Hardware-Validation.md) checklist covers the
+MCU, optional hardware and movement/homing model in full. The checks below are
+the Box Turtle-specific minimum: every gear drive, every fitted filament
+switch, both Turtle Neck states and both eSpooler directions on all four gates.
 
 With Klipper accepting the config and no startup errors, confirm the
 physical mechanism actually does what Happy Hare thinks it does before
 calibrating anything or trying to print.
 
-**Gear stepper direction.** Each gate has its own gear stepper, and which
-way it spins depends entirely on how its motor cable happens to be
-plugged in. Check each one — feed a scrap of filament in by hand first
-so you can see which way it moves:
+### Gear stepper direction
 
-```{.text .console-output}
+Each gate has its own gear stepper, and which way it spins depends on how its
+motor cable is connected. Check each one with a short, visible piece of
+filament:
+
+```text
 MMU_SELECT GATE=0
-MMU_TEST_MOVE MOVE=50
+MMU_TEST_MOVE MOVE=50 GRIP=1
+MMU_TEST_MOVE MOVE=-50 GRIP=1
 ```
 
-It should feed forward, away from the spool. If a gate runs backward,
-give that gate's **Gear dir pin** a `!` (see [Pins: gear
-direction](#pins-gear-direction) above) and try again. Repeat with
-`GATE=1`, `GATE=2`, `GATE=3`.
+The positive move must feed away from the spool and toward the toolhead; the
+negative move must return toward the spool. If both are reversed, add or remove
+`!` on that gate's **Gear dir pin** in menuconfig (see [Pins: gear
+direction](#pins-gear-direction)), reinstall and try again. Repeat with
+`GATE=1`, `GATE=2` and `GATE=3`.
 
-**Sensors.** Insert a short fragment of filament into a gate's entry by
-hand and check it registers:
+### Filament sensors
+
+Query the sensors, then use a short filament fragment to trigger each physical
+switch in turn:
+
+```{.text .console-command}
+MMU_SENSORS
+```
 
 ```{.text .console-output}
-MMU_SENSORS
 mmu_entry_0           --> TRIGGERED
 mmu_entry_1           --> Open
+mmu_exit_0            --> Open
+mmu_shared_exit       --> Open
 filament_compression  --> Open
 filament_tension      --> Open
 ```
 
-Remove the fragment and confirm it goes back to `Open`. Do this for every
-gate you plan to use, not just the first — a per-gate sensor is exactly
-as likely to be miswired as a gear direction pin.
+Confirm the intended sensor alone changes to `TRIGGERED`, then remove the
+fragment and confirm it returns to `Open`. Repeat for every configured sensor:
 
-**Sync-feedback buffer orientation.** A Turtle Neck buffer trips people up
-here, because the mapping isn't the one you'd guess: filament under
-**compression** (excess being fed in) makes the buffer **extend**;
-filament under **tension** (being pulled taut, not enough slack) makes it
-**fully compress**. Centered, at rest, it should read neutral. Move the
-shuttle by hand to each extreme and confirm:
+- `mmu_entry_0` through `mmu_entry_3` at the four lane entrances;
+- `mmu_exit_0` through `mmu_exit_3` after the four gear drives;
+- `mmu_shared_exit` at the common hub exit.
 
-```{.text .console-output}
+Your list contains only the sensors enabled by your build. If a switch reads
+backward, correct its pin inversion in menuconfig. If it never changes, check
+the selected pin, connector and pull-up before continuing.
+
+### Turtle Neck sync-feedback
+
+A Turtle Neck reports the condition experienced by the filament, which can
+sound opposite to its visible motion. Excess filament under **compression**
+makes the neck extend; taut filament under **tension** squeezes it together.
+
+Run both status commands, move the neck by hand to the middle and both extremes,
+then query it again at each position:
+
+```{.text .console-command}
+MMU_SENSORS
 MMU_SYNC_FEEDBACK
-Sync feedback: Neutral
 ```
 
-If compression and tension read backward from what you expect, swap
-`compression_pin`/`tension_pin` in `mmu_hardware.cfg` (or their inversions)
-rather than second-guessing the mechanism.
+| Position | Expected result |
+|---|---|
+| Mid-travel | Both switches open; sync feedback reports neutral |
+| Extended by excess filament | `filament_compression` is `TRIGGERED` |
+| Squeezed by taut filament | `filament_tension` is `TRIGGERED` |
 
-**eSpooler.** With filament at the gate, confirm the motor spins the right
-way for both directions:
+Do not assume an unloaded Turtle Neck v2 should stay neutral: its spring normally
+returns it toward the squeezed/tension state. V1 is unsprung and may remain
+where it was left. The test is whether the middle and two extremes report the
+right conditions.
 
-```{.text .console-output}
+If compression and tension are exchanged, swap those assignments under
+**MMU Features / Additions → Buffer config**. If one switch reports triggered
+when released, correct that pin's inversion there. Reinstall and repeat the
+test rather than editing the generated `mmu_hardware.cfg` directly.
+
+### eSpooler direction and pins
+
+!!! warning "Keep the stop command ready"
+    Test with an empty or scrap spool first. A wrong direction or excessive
+    power can unwind a full spool very quickly. `MMU_ESPOOLER ALLOFF=1` stops
+    every eSpooler immediately.
+
+Run one short burst in each direction, then stop everything:
+
+```text
 MMU_ESPOOLER GATE=0 BURST=1 OPERATION=rewind
 MMU_ESPOOLER GATE=0 BURST=1 OPERATION=assist
+MMU_ESPOOLER ALLOFF=1
 ```
 
 `rewind` should take up slack onto the spool; `assist` should feed
-filament off it. If either runs backward, invert that gate's espooler
-motor pin the same way as the gear direction fix above.
+filament off it toward the MMU. Repeat for gates 1, 2 and 3.
+
+| Symptom | What to check in **eSpooler config** |
+|---|---|
+| Neither direction moves | Enable pin, motor connection and power |
+| `rewind` feeds out and `assist` takes up | Swap that gate's rewind and forward pin assignments |
+| Motor is active when it should be off | Output and enable-pin active polarity; add or remove `!` only if required by the controller |
+| One direction alone does nothing | That direction's pin assignment and wiring |
+
+Reversed eSpooler direction is not corrected like a stepper `dir_pin`: AFC Lite
+uses two separate directional outputs. See [Feature: eSpooler — Setting up each
+mode](Feature-Espooler.md#setting-up-each-mode) before changing power, speed or
+in-print assist settings.
 
 ## Calibration
 
@@ -321,7 +415,7 @@ buffer this guide assumes), so there's nothing to run by hand for that.
 The one step worth doing anyway is calibrating each gate/lane's gear
 stepper for an accurate `rotation_distance`:
 
-```{.text .console-output}
+```text
 MMU_CALIBRATE_GEAR MEASURED=102.5
 ```
 
@@ -334,24 +428,30 @@ Rotation Distance](Calibration-Gear.md) for the complete procedure.
 
 ## Checking Basic Operation
 
-Outside of a print, confirm the basics work end to end on a gate you've
-already validated above:
+After the individual hardware checks and gear calibration pass, test all three
+mechanisms together on gate 0:
 
-```{.text .console-output}
+```text
 MMU_SELECT GATE=0
 MMU_LOAD
 MMU_UNLOAD
+MMU_ESPOOLER
+MMU_SYNC_FEEDBACK
 ```
 
-Each should complete without error — no pauses, no "not calibrated"
-warnings you weren't expecting. If something goes wrong here, it's much
-easier to diagnose now than mid-print; see [Operation: Debugging
-Problems](Operation.md#debugging-problems) if any of it doesn't behave as
-expected.
+During loading, the gear must feed toward the toolhead and the eSpooler must
+assist by releasing filament. During unloading, the eSpooler must rewind slack
+onto the spool. The Turtle Neck should move through its expected range without
+remaining jammed at an extreme. Each command should complete without an
+unexpected pause or error.
+
+Repeat on the other gates before printing. If something goes wrong here, it is
+much easier to diagnose now than mid-print; see [Operation: Debugging
+Problems](Operation.md#debugging-problems).
 
 ## Slicer Setup
 
-You now need to add some gcode hooks into your favorate slicer for `start g-code`,
+You now need to add some gcode hooks into your favorite slicer for `start g-code`,
 `end g-code`, `after layer change` and `on tool change`. This is to coordinate with
 the MMU during certain phases of a print. This is covered in
 [Slicer Setup](Slicer-Setup.md#start-g-code). Jump to this section, make these
@@ -365,8 +465,8 @@ your first multi-material print: how purging between colors happens.
 - **Slicer-controlled** — your slicer's own wipe tower, printed alongside
   the model. Simplest to set up; costs bed space and filament.
 - **Happy Hare-controlled** — a dedicated purge macro runs at each
-  toolchange instead of a wipe tower: either [Macro:
-  Purge](Macro-Purge.md) (simple, prints a purge line) or [Macro:
+  toolchange instead of a wipe tower: either [Purge:
+  Simple](Macro-Purge.md) (prints a purge line) or [Purge:
   Blobifier](Macro-Blobifier.md) (a dedicated purge/park station, more
   capable but its own hardware). See [Purging without a wipe
   tower](Feature-Tip-Forming-Purging.md#purging-without-a-wipe-tower) for

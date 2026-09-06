@@ -71,68 +71,86 @@ def _getting_started_boxturtle(mc, shot):
     a result of that choice, which requires starting before it happens.
     """
     mc.select('MMU Type')
-    shot('01-first-run')                            # every field still a placeholder
+    shot('01-first-run')  # every field still a placeholder
 
     mc.enter('MMU Type')
     mc.select('Box Turtle')
     mc.toggle()
-    shot('02-mmu-type-boxturtle')                   # (X) Box Turtle; Turtle Neck now offered
+    shot('02-mmu-type-boxturtle')  # (X) Box Turtle; Turtle Neck now offered
 
     mc.enter('Turtle Neck')
-    shot('03-turtleneck-buffer')                    # v2 is the default - nothing to change
+    shot('03-turtleneck-buffer')  # v2 is the default - nothing to change
     mc.back()
-    mc.back()                                       # -> (Top)
+    mc.back()  # -> (Top)
 
     mc.select('MMU Type')
-    shot('04-root-warnings')                        # only the (later-page) toolhead warning remains
+    shot('04-root-warnings')  # only the (later-page) toolhead warning remains
 
     mc.enter('Board type')
-    shot('05-board-type')                           # AFC Lite v1.0 - the board this MMU shipped with
+    shot('05-board-type')  # AFC Lite v1.0 - the board this MMU shipped with
     mc.back()
+    mc.key(b'g')
+    mc.autofit()
+    mc.repaint()
 
     mc.enter('MCU connection')
-    shot('06-mcu-connection')                        # Serial - already right for a USB-attached board
+    shot(
+        '06-mcu-connection')  # Serial - already right for a USB-attached board
     mc.back()
+    mc.key(b'g')
+    mc.autofit()
+    mc.repaint()
 
     mc.enter('MMU Features / Additions')
-    shot('07-mmu-features')                          # LEDs/eSpooler/buffer already on; nothing to add
+    shot('07-mmu-features')  # LEDs/eSpooler/buffer already on; nothing to add
+
+    mc.enter('eSpooler config')
+    mc.select('eSpooler enable 0 pin')
+    shot('07a-espooler-config')  # AFC Lite enable/rewind/forward pins per gate
     mc.back()
+
+    mc.enter('Buffer config')
+    shot('07b-buffer-config')  # Turtle Neck range, spring state and switch pins
+    mc.back()
+    mc.back()
+    mc.key(b'g')
+    mc.autofit()
+    mc.repaint()
 
     mc.enter('Pins / TMC')
     mc.enter('Gear pins')
-    shot('08-gear-pins')                             # every gate's step/dir/enable/diag pin
+    shot('08-gear-pins')  # every gate's step/dir/enable/diag pin
 
     mc.edit('Gear dir pin')
-    shot('09-gear-dir-editor')                       # the pin nobody can predict from a drawing
+    shot('09-gear-dir-editor')  # the pin nobody can predict from a drawing
     mc.write('!unit0:PD3')
-    shot('10-gear-dir-inverted')                     # '!' reverses it - no rewiring, no cfg edits
-    mc.cancel()                                      # this page only shows the move; it does not make it
+    shot('10-gear-dir-inverted')  # '!' reverses it - no rewiring, no cfg edits
+    mc.cancel()  # this page only shows the move; it does not make it
     mc.back()
-    mc.back()                                        # -> (Top)
+    mc.back()  # -> (Top)
+    mc.key(b'g')
+    mc.autofit()
+    mc.repaint()
 
     mc.enter('Toolhead')
     mc.select('Stealthburner Clockwork2 Revo Voron')
     mc.toggle()
-    mc.autofit()                                       # settle the resize (24 items don't fit the
-                                                        # starting height) BEFORE re-selecting - it
-                                                        # re-homes the cursor to the top, and shot()'s
-                                                        # own autofit is a no-op once already fitted
+    # settle the resize (24 items don't fit the starting height) BEFORE re-selecting
+    # - it re-homes the cursor to the top, and shot()'s own autofit is a no-op once
+    # already fitted
+    mc.autofit()
     mc.select('Stealthburner Clockwork2 Revo Voron')
-    shot('11-toolhead-selected')                       # (X) on the choice, highlight on it too
-    mc.back()                                          # -> (Top)
+    shot('11-toolhead-selected')  # (X) on the choice, highlight on it too
+    mc.back()  # -> (Top)
+    mc.key(b'g')
+    mc.autofit()
+    mc.repaint()
 
     mc.enter('Toolhead sensors/settings')
-    shot('12-toolhead-dimensions')                   # extruder-to-nozzle/residual filled in from
-    mc.back()                                        # the choice above - the sensor-gated ones
-                                                      # (toolhead/extruder sensor distances) stay
-                                                      # hidden since this Box Turtle has neither
-                                                      # -> (Top)
-
-    mc.enter('Software Options')
-    mc.enter('Select spoolman spool manager support')
-    mc.select('Read-only')
-    mc.toggle()
-    shot('13-spoolman-readonly')                     # the one setting this page actually changes
+    # extruder-to-nozzle/residual filled in from the choice above - the sensor-gated
+    # ones (toolhead/extruder sensor distances) stay hidden since this Box Turtle
+    # has neither
+    shot('12-toolhead-dimensions')
 
 
 def _getting_started_vivid(mc, shot):
@@ -154,40 +172,199 @@ def _getting_started_vivid(mc, shot):
     mc.enter('MMU Type')
     mc.select('BTT ViViD')
     mc.toggle()
-    shot('01-mmu-type-vivid')                        # (X) BTT ViViD; buffer sub-option auto-checked
-    mc.back()                                        # -> (Top)
+    shot('01-mmu-type-vivid')  # (X) BTT ViViD; buffer sub-option auto-checked
+    mc.back()  # -> (Top)
 
     mc.enter('Board type')
-    shot('02-board-type')                            # BTT ViViD MCU - the only board this type uses
+    shot('02-board-type')  # BTT ViViD MCU - the only board this type uses
     mc.back()
 
     mc.enter('MCU connection')
-    shot('03-mcu-connection')                        # Serial - already right for the ViViD unit's own MCU
+    # Serial - already right for the ViViD unit's own MCU
+    shot('03-mcu-connection')
     mc.back()
 
     mc.enter('Buffer MCU connection')
-    shot('04-mcu-connection-buffer')                 # a SECOND, separate MCU connection - the buffer's own
-    mc.back()                                        # -> (Top)
+    # a SECOND, separate MCU connection - the buffer's own
+    shot('04-mcu-connection-buffer')
+    mc.back()  # -> (Top)
 
     mc.enter('MMU Features / Additions')
-    shot('05-mmu-features')                          # LEDs/env sensor/heater/NFC readers already on
-    mc.back()                                        # -> (Top)
+    shot('05-mmu-features')  # LEDs/env sensor/heater/NFC readers already on
+    mc.back()  # -> (Top)
 
     mc.enter('Toolhead')
     mc.select('Stealthburner Clockwork2 Revo Voron')
     mc.toggle()
-    mc.autofit()                                     # settle the resize before re-selecting (see the
-                                                      # Box Turtle session's identical comment)
+    # settle the resize before re-selecting (see the
+    # Box Turtle session's identical comment)
+    mc.autofit()
     mc.select('Stealthburner Clockwork2 Revo Voron')
-    shot('06-toolhead-selected')                     # same generic choice, not ViViD-specific
-    mc.back()                                        # -> (Top)
+    shot('06-toolhead-selected')  # same generic choice, not ViViD-specific
+    mc.back()  # -> (Top)
 
     mc.enter('Software Options')
     mc.select('Auto-create a Spoolman spool from an unknown NFC/RFID tag?')
     mc.toggle()
-    shot('07-spoolman-nfc-autocreate')               # worth having, since ViViD ships NFC readers already
+    # worth having, since ViViD ships NFC readers already
+    shot('07-spoolman-nfc-autocreate')
     # No mc.enter('Spoolman') step - "Spoolman" is a `comment` section divider on this
     # same Software Options screen, not a submenu; the item above is selectable in place.
+
+
+def _getting_started_mmx(mc, shot):
+    """
+    For doc/GettingStarted-MMX.md - the first menuconfig pass for the original
+    four-gate MMX servo-cam design. Starts bare so the MMX choice itself is part
+    of the walkthrough, then selects the EBB42 reference board used by the MMX
+    project. The scene deliberately enables both real sensor groups from that
+    reference build: four entry sensors and the PB4 shared-exit sensor.
+    """
+    mc.enter('MMU Type')
+    mc.select('MMX  - Multi-Material Extruder')
+    mc.toggle()
+    shot('01-mmu-type-mmx')
+    mc.back()  # -> (Top)
+
+    mc.enter('Board type')
+    mc.select('BTT EBB 42 CANbus V1.2')
+    mc.toggle()
+    mc.autofit()
+    mc.select('BTT EBB 42 CANbus V1.2')
+    shot('02-board-type-ebb42')
+    mc.back()  # -> (Top)
+    mc.autofit()
+
+    mc.enter('MMU Features / Additions')
+    shot('03-mmu-features')
+    mc.enter('Filament sensors')
+    mc.select('gate/lane entry sensors')
+    mc.toggle()
+    mc.select('shared exit sensor')
+    mc.toggle()
+    mc.autofit()
+    mc.select('gate/lane entry sensors')
+    shot('04-filament-sensors')
+    mc.back()
+    mc.back()  # -> (Top)
+    mc.autofit()
+
+    mc.enter('Pins / TMC')
+    shot('05-pins')
+    mc.enter('Mmu entry sensor pins')
+    shot('06-entry-sensor-pins')
+    mc.back()
+    mc.back()  # -> (Top)
+    mc.autofit()
+
+    mc.enter('Endstops and Bowden movement')
+    shot('07-endstops')
+
+
+def _getting_started_multi_unit_shared(mc, shot):
+    """
+    For doc/GettingStarted-Multi-Unit.md - the aquatic-colored shared-config
+    entry point used by install.sh -i -n.
+    """
+    # The shared screen's persistent Help pane makes the general autofit/repaint
+    # cycle inappropriate here. MMU unit names is the initial selection, so open
+    # its array editor directly in the fixed-height capture.
+    mc.step(b'l', lambda menu: menu.in_editor())
+    # The array editor presents one unit per line. The existing unit0 row is
+    # retained and Enter appends a second row for unit1.
+    mc.step(b'\runit1', lambda menu: menu.has('unit1'))
+    shot('02-unit-names-editor')  # array editor with the new unit appended
+    mc.cancel()
+    shot('01-shared-config')  # alternate palette and shared settings
+
+
+def _getting_started_multi_unit_second(mc, shot):
+    """
+    For doc/GettingStarted-Multi-Unit.md - a brand-new unit1. This is a per-unit
+    parse, so it uses menuconfig's normal palette and exposes sharing choices for
+    hardware which may already exist on unit0.
+    """
+    mc.select('MMU Type')
+    shot('03-unit1-config')  # regular palette, Unit: unit1
+
+    mc.enter('MMU Features / Additions')
+    mc.select('Has sync-feedback buffer?')
+    mc.toggle()
+    mc.enter('Buffer config')
+    mc.select('Shared with existing unit?')
+    mc.toggle()
+    shot('04-unit1-shared-buffer')  # sharing enabled for unit1
+
+    mc.edit('Shared buffer name')
+    mc.write('unit0')
+    shot('05-shared-buffer-name')  # object owned by the first unit
+    mc.cancel()
+
+
+def _getting_started_emu(mc, shot):
+    """
+    For doc/GettingStarted-EMU.md - the installer screens a first-time EMU
+    owner walks through, in that order. Runs from a bare Kconfig ('seed': None)
+    rather than the boxturtle seed used elsewhere, because the page is about DRIVING
+    menuconfig - selecting MMU Type is the first real thing a reader does with it,
+    and the root-warnings screen is only informative if the warnings visibly clear as
+    a result of that choice, which requires starting before it happens.
+    """
+    mc.select('MMU Type')
+    shot('01-first-run')  # every field still a placeholder
+
+    mc.enter('MMU Type')
+    mc.select('EMU')
+    mc.toggle()
+    shot('02-mmu-type-emu')  # (X) EMU; PSF now offered
+
+    mc.select('Number of gates/lanes?')
+    shot('03-num-gates')
+    mc.back()  # -> (Top)
+
+    mc.enter('Board type')
+    mc.select('EBB36/42 gen1 MCU')
+    mc.toggle()
+    shot('04-board-type')  # only the (later-page) toolhead warning remains
+    mc.back()
+
+    mc.enter('MMU Features / Additions')
+    shot('06-mmu-features')
+    mc.back()
+
+    mc.enter('MCU connection')
+    mc.enter('MCU connection')
+    shot('05-mcu-connection')
+    mc.back()
+    mc.back()
+
+    mc.enter('Pins / TMC')
+    mc.enter('Gear pins')
+    shot('07-gear-pins')
+    mc.edit('Gear dir pin')
+    shot('08-gear-dir-editor')
+    mc.write('!unit0_gate0:PD1')
+    shot('09-gear-dir-inverted')
+    mc.cancel()
+    mc.back()
+    mc.back()
+
+    mc.enter('Other Settings')
+    mc.enter('Speeds')
+    shot('10-speeds')
+    mc.back()
+    mc.back()
+    mc.autofit()
+
+    mc.enter('Toolhead')
+    mc.autofit()
+    mc.select('A4T WWBMG for A4T Dragon Ace')
+    shot('11-toolhead')
+    mc.back()
+
+    mc.enter('Toolhead sensors/settings')
+    shot('12-toolhead-dimensions')
+    mc.back()
 
 
 def _feature_espooler(mc, shot):
@@ -205,7 +382,7 @@ def _feature_espooler(mc, shot):
     mc.enter('MMU Features / Additions')
     mc.enter('eSpooler config')
     mc.select('eSpooler enable 0 pin')
-    shot('espooler-pins')                            # one row of rewind/forward/enable/trigger per gate
+    shot('espooler-pins')  # one row of rewind/forward/enable/trigger per gate
 
 
 def _feature_sync_feedback_buffer(mc, shot):
@@ -217,13 +394,14 @@ def _feature_sync_feedback_buffer(mc, shot):
     """
     mc.enter('MMU Features / Additions')
     mc.enter('Buffer config')
-    shot('buffer-config')                            # range/maxrange, spring state, both switch pins fitted
+    # range/maxrange, spring state, both switch pins fitted
+    shot('buffer-config')
     mc.back()
-    mc.back()                                        # -> (Top)
+    mc.back()  # -> (Top)
 
     mc.enter('Other Settings')
     mc.enter('MMU/Extruder sync')
-    shot('motor-sync')                                # dynamic sync feedback + synchronized gear current
+    shot('motor-sync')  # dynamic sync feedback + synchronized gear current
 
 
 def _feature_nfc(mc, shot):
@@ -238,13 +416,14 @@ def _feature_nfc(mc, shot):
     mc.enter('MMU Features / Additions')
     mc.select('Has NFC reader(s) for RFID tag?')
     mc.toggle()
-    mc.autofit()                                      # new items just appeared below
+    mc.autofit()  # new items just appeared below
     mc.enter('NFC reader config')
     mc.select('Has common NFC reader?')
     mc.toggle()
-    mc.autofit()                                       # reader name/type/pin fields just appeared
+    mc.autofit()  # reader name/type/pin fields just appeared
     mc.select('Has common NFC reader?')
-    shot('shared-reader-config')                       # name/type/CS pin/SPI bus/speed - RC522 defaults
+    # name/type/CS pin/SPI bus/speed - RC522 defaults
+    shot('shared-reader-config')
 
 
 def _feature_leds(mc, shot):
@@ -256,12 +435,14 @@ def _feature_leds(mc, shot):
     """
     mc.enter('MMU Features / Additions')
     mc.enter('Led config')
-    shot('led-config')                                # enable/animation, frame rate, chain count, color order, segments
+    # enable/animation, frame rate, chain count, color order, segments
+    shot('led-config')
     mc.back()
-    mc.back()                                         # -> (Top)
+    mc.back()  # -> (Top)
 
     mc.enter('Pins / TMC')
-    shot('neopixel-pin')                              # Misc pins section - just the Neopixel pin on this seed
+    # Misc pins section - just the Neopixel pin on this seed
+    shot('neopixel-pin')
 
 
 def _feature_gate_ttg_maps(mc, shot):
@@ -273,7 +454,8 @@ def _feature_gate_ttg_maps(mc, shot):
     mc.enter('Macro Variables')
     mc.enter('(_MMU_SOFTWARE)')
     mc.select('Automap strategy')
-    shot('automap-strategy')                          # strategy choice + reset-TTG-at-end-of-print checkbox
+    # strategy choice + reset-TTG-at-end-of-print checkbox
+    shot('automap-strategy')
 
 
 def _feature_filament_bypass(mc, shot):
@@ -291,7 +473,7 @@ def _feature_filament_bypass(mc, shot):
     # it on this same screen, not behind entering "Box Turtle" itself.
     mc.enter('Design attributes')
     mc.select('Associate bypass with this unit?')
-    shot('design-attributes-bypass')                  # off by default on box turtle
+    shot('design-attributes-bypass')  # off by default on box turtle
 
 
 def _feature_tip_forming_purging(mc, shot):
@@ -303,11 +485,12 @@ def _feature_tip_forming_purging(mc, shot):
     defaults.
     """
     mc.enter('Tip Forming / Cutting')
-    shot('tip-forming-cutting')                       # servo cutter off, form_tip selected, force-standalone on
-    mc.back()                                         # -> (Top)
+    # servo cutter off, form_tip selected, force-standalone on
+    shot('tip-forming-cutting')
+    mc.back()  # -> (Top)
 
     mc.enter('Purging')
-    shot('purging')                                   # Blobifier off, simple bucket purge selected
+    shot('purging')  # Blobifier off, simple bucket purge selected
 
 
 def _feature_eject_buttons(mc, shot):
@@ -319,9 +502,9 @@ def _feature_eject_buttons(mc, shot):
     mc.enter('MMU Features / Additions')
     mc.select('Has eject buttons?')
     mc.toggle()
-    mc.autofit()                                      # "Mmu eject buttons" submenu just appeared
+    mc.autofit()  # "Mmu eject buttons" submenu just appeared
     mc.enter('Mmu eject buttons')
-    shot('eject-buttons')                              # one pin prompt per gate, all blank by default
+    shot('eject-buttons')  # one pin prompt per gate, all blank by default
 
 
 def _feature_flowguard(mc, shot):
@@ -333,7 +516,8 @@ def _feature_flowguard(mc, shot):
     """
     mc.enter('Other Settings')
     mc.enter('FlowGuard')
-    shot('flowguard-config')                          # relief threshold, tangle prevention, encoder mode
+    # relief threshold, tangle prevention, encoder mode
+    shot('flowguard-config')
 
 
 def _feature_environment_manager(mc, shot):
@@ -346,16 +530,18 @@ def _feature_environment_manager(mc, shot):
     mc.enter('MMU Features / Additions')
     mc.select('Has environment sensor(s)?')
     mc.toggle()
-    mc.autofit()                                      # "Environment sensor config" submenu just appeared
+    mc.autofit()  # "Environment sensor config" submenu just appeared
     mc.enter('Environment sensor config')
-    shot('environment-sensor-config')                 # i2c bus type/sensor type/address, single-sensor mode
-    mc.back()                                         # -> MMU Features / Additions
+    # i2c bus type/sensor type/address, single-sensor mode
+    shot('environment-sensor-config')
+    mc.back()  # -> MMU Features / Additions
 
     mc.select('Has enclosure heater(s)?')
     mc.toggle()
-    mc.autofit()                                      # "Heater config" submenu just appeared
+    mc.autofit()  # "Heater config" submenu just appeared
     mc.enter('Heater config')
-    shot('heater-config')                             # per-gate toggle, heater name, drying temp/time/humidity defaults
+    # per-gate toggle, heater name, drying temp/time/humidity defaults
+    shot('heater-config')
 
 
 def _feature_fan_control(mc, shot):
@@ -371,17 +557,17 @@ def _feature_fan_control(mc, shot):
     mc.enter('MMU Features / Additions')
     mc.select('Has environment sensor(s)?')
     mc.toggle()
-    mc.autofit()                                      # still on "MMU Features / Additions" - no submenu entered
+    mc.autofit()  # still on "MMU Features / Additions" - no submenu entered
 
     mc.select('Has cooling fans?')
     mc.toggle()
-    mc.autofit()                                      # "Fan config"/"Fan controls" submenus just appeared
+    mc.autofit()  # "Fan config"/"Fan controls" submenus just appeared
     mc.enter('Fan config')
-    shot('fan-config')                                # max power, kick-start time, single fan pin
-    mc.back()                                         # -> MMU Features / Additions
+    shot('fan-config')  # max power, kick-start time, single fan pin
+    mc.back()  # -> MMU Features / Additions
 
     mc.enter('Fan controls')
-    shot('fan-controls')                              # on/off temps, polling time, forced mode choice
+    shot('fan-controls')  # on/off temps, polling time, forced mode choice
 
 
 def _feature_endless_spool_runout(mc, shot):
@@ -392,7 +578,8 @@ def _feature_endless_spool_runout(mc, shot):
     """
     mc.enter('Software Options')
     mc.select('Enable EndlessSpool?')
-    shot('endless-spool-options')                    # both EndlessSpool checkboxes, off by default
+    # both EndlessSpool checkboxes, off by default
+    shot('endless-spool-options')
 
 
 def _macro_print_start_end(mc, shot):
@@ -402,7 +589,8 @@ def _macro_print_start_end(mc, shot):
     """
     mc.enter('Macro Variables')
     mc.enter('(_MMU_SOFTWARE)')
-    shot('print-start-end')                           # start-checks + automap strategy + end-of-print behavior
+    # start-checks + automap strategy + end-of-print behavior
+    shot('print-start-end')
 
 
 def _macro_state_change_hooks(mc, shot):
@@ -412,7 +600,8 @@ def _macro_state_change_hooks(mc, shot):
     """
     mc.enter('Macro Variables')
     mc.enter('(_MMU_STATE)')
-    shot('state-change-hooks')                        # 3 extension hooks + servo/cutter consumption limits
+    # 3 extension hooks + servo/cutter consumption limits
+    shot('state-change-hooks')
 
 
 def _macro_sequence(mc, shot):
@@ -424,7 +613,7 @@ def _macro_sequence(mc, shot):
     """
     mc.enter('Macro Variables')
     mc.enter('(_MMU_SEQUENCE)')
-    shot('sequence')                                  # park positions, restore-XY choice, user hooks
+    shot('sequence')  # park positions, restore-XY choice, user hooks
 
 
 def _macro_client(mc, shot):
@@ -435,7 +624,7 @@ def _macro_client(mc, shot):
     """
     mc.enter('Macro Variables')
     mc.enter('(_MMU_CLIENT)')
-    shot('client')                                     # cancel behavior + pause/resume/cancel extension hooks
+    shot('client')  # cancel behavior + pause/resume/cancel extension hooks
 
 
 def _macro_tip_forming(mc, shot):
@@ -445,36 +634,33 @@ def _macro_tip_forming(mc, shot):
     cut_tip/servo_cutter/blobifier below), so this is visible on the boxturtle
     seed even though tip cutting, not forming, is the seed's actual choice.
     """
+    mc.enter('Tip Forming / Cutting')
+    mc.select('Select standalone tip shaping option')
+    shot('tip-shaping')  # filament-movement forming selected
+    mc.back()  # -> (Top)
+
     mc.enter('Macro Variables')
     mc.enter('(_MMU_FORM_TIP)')
-    shot('tip-forming')                                # ramming/separation/cooling/skinnydip/parking steps
+    shot('tip-forming')  # ramming/separation/cooling/skinnydip/parking steps
 
 
 def _macro_toolhead_tip_cutting(mc, shot):
     """
     For doc/Macro-Toolhead-Tip-Cutting.md - the _MMU_CUT_TIP macro-vars screen.
     Gated on MMU_HAS_TOOLHEAD_CUTTER, which lives under Toolhead sensors/settings
-    ("Has toolhead cutter?") - not under Tip Forming / Cutting itself. Only once
-    that's on does "Tip cutting using toolhead cutter" even appear as a choice
-    under Tip Forming / Cutting's standalone-option choice (it becomes the
-    choice's new default, but is selected explicitly here anyway).
+    ("Has toolhead cutter?") - not under Tip Forming / Cutting itself. The
+    generated seed starts with that capability and the cutting choice selected,
+    avoiding menuconfig's incomplete redraw after dynamically adding the fields.
     """
-    mc.enter('Toolhead sensors/settings')
-    mc.select('Has toolhead cutter?')
-    mc.toggle()
-    mc.autofit()
-    mc.back()                                          # -> (Top)
-
     mc.enter('Tip Forming / Cutting')
-    mc.enter('Select standalone tip shaping option')
-    mc.select('Tip cutting using toolhead cutter')
-    mc.toggle()                                        # choice auto-closes back to Tip Forming / Cutting
-    mc.autofit()
-    mc.back()                                          # -> (Top)
+    mc.select('Select standalone tip shaping option')
+    shot('tip-shaping')  # toolhead cutting selected; bumper options visible
+    mc.back()  # -> (Top)
 
     mc.enter('Macro Variables')
     mc.enter('(_MMU_CUT_TIP)')
-    shot('toolhead-tip-cutting')                       # blade/pin geometry, cut speeds, gantry servo
+    # blade/pin geometry, cut speeds, gantry servo
+    shot('toolhead-tip-cutting')
 
 
 def _macro_servo_cutter(mc, shot):
@@ -488,16 +674,18 @@ def _macro_servo_cutter(mc, shot):
     mc.select('Have servo cutter at MMU?')
     mc.toggle()
     mc.autofit()
-    mc.back()                                          # -> (Top)
+    shot('tip-shaping')  # MMU cutter enabled alongside the shaping choice
+    mc.back()  # -> (Top)
 
     mc.enter('Macro Variables')
     mc.enter('(_MMU_SERVO_CUTTER)')
-    shot('servo-cutter')                                # servo angles/timing + feed/cut length and attempts
+    shot('servo-cutter')  # servo angles/timing + feed/cut length and attempts
 
 
 def _macro_blobifier(mc, shot):
     """
-    For doc/Macro-Blobifier.md - the _BLOBIFIER macro-vars screen. Gated on
+    For doc/Macro-Blobifier.md - the Blobifier-enabled Purging screen in both
+    actuator modes, followed by the _BLOBIFIER macro-vars screen. Gated on
     MMU_HAS_BLOBIFIER, off by default - toggled on under Purging (same menu the
     base screenshot in _feature_tip_forming_purging shows with this off).
 
@@ -511,46 +699,82 @@ def _macro_blobifier(mc, shot):
     mc.select('Have Blobifier?')
     mc.toggle()
     mc.autofit()
-    mc.back()                                          # -> (Top)
+    # Re-enter to force a complete redraw after the conditional hardware fields
+    # appear; otherwise menuconfig can leave the lower purge choices blank until
+    # the next visit.
+    mc.back()  # -> (Top)
+    mc.enter('Purging')
+
+    # An existing config retains its previous standalone-purge choice when the
+    # Blobifier capability is switched on, so select Blobifier explicitly.
+    mc.enter('Select standalone purging option')
+    mc.select('Blobifier')
+    mc.toggle()  # choice auto-closes back to Purging
+    mc.autofit()
+    shot('purging-servo')
+
+    mc.enter('Blobifier tray actuator')
+    mc.select('Stepper (manual_stepper)')
+    mc.toggle()  # choice auto-closes back to Purging
+    mc.autofit()
+    mc.back()  # -> (Top), also gives the expanded menu a clean redraw
+    mc.enter('Purging')
+    shot('purging-stepper')
+
+    # Keep the macro-variable screenshot on the default servo variant.
+    mc.enter('Blobifier tray actuator')
+    mc.select('Servo')
+    mc.toggle()  # choice auto-closes back to Purging
+    mc.autofit()
+    mc.back()  # -> (Top)
 
     mc.enter('Macro Variables')
     mc.enter('(_BLOBIFIER)')
-    shot('blobifier')                                   # every _BLOBIFIER_VARS setting, one tall screen
+    shot('blobifier')  # every _BLOBIFIER_VARS setting, one tall screen
 
 
 def _macro_purge(mc, shot):
     """
-    For doc/Macro-Purge.md - the _MMU_PURGE macro-vars screen. Unconditional
-    menu, so the boxturtle seed (default) needs no setup.
+    For doc/Macro-Purge.md - the Purging selection and _MMU_PURGE macro-vars
+    screens. Both use the boxturtle seed's default simple bucket purge.
     """
+    mc.enter('Purging')
+    mc.select('Select standalone purging option')
+    shot('purging')  # Blobifier off, simple bucket purge selected
+    mc.back()  # -> (Top)
+
     mc.enter('Macro Variables')
     mc.enter('(_MMU_PURGE)')
-    shot('purge')                                       # single reference-purge speed setting
+    shot('purge')  # single reference-purge speed setting
 
 
 SESSIONS = [
     {
         'name': 'getting-started-boxturtle',
-        'caption': 'doc/GettingStarted-BoxTurtle.md - first menuconfig pass for a Box Turtle',
+        'caption':
+        'doc/GettingStarted-BoxTurtle.md - first menuconfig pass for a Box Turtle',
         'scenes': _getting_started_boxturtle,
         'outdir': 'GettingStarted-BoxTurtle',
         'seed': 'none',
     },
     {
         'name': 'feature-espooler',
-        'caption': 'doc/Feature-Espooler.md - the eSpooler pins menuconfig screen',
+        'caption':
+        'doc/Feature-Espooler.md - the eSpooler pins menuconfig screen',
         'scenes': _feature_espooler,
         'outdir': 'Feature-Espooler',
     },
     {
         'name': 'feature-endless-spool-runout',
-        'caption': 'doc/Feature-Endless-Spool-Runout.md - the EndlessSpool options screen',
+        'caption':
+        'doc/Feature-Endless-Spool-Runout.md - the EndlessSpool options screen',
         'scenes': _feature_endless_spool_runout,
         'outdir': 'Feature-Endless-Spool-Runout',
     },
     {
         'name': 'feature-sync-feedback-buffer',
-        'caption': 'doc/Feature-Sync-Feedback-Buffer.md - buffer hardware and motor-sync screens',
+        'caption':
+        'doc/Feature-Sync-Feedback-Buffer.md - buffer hardware and motor-sync screens',
         'scenes': _feature_sync_feedback_buffer,
         'outdir': 'Feature-Sync-Feedback-Buffer',
     },
@@ -562,25 +786,29 @@ SESSIONS = [
     },
     {
         'name': 'feature-gate-ttg-maps',
-        'caption': 'doc/Feature-Gate-TTG-Maps.md - automap strategy / reset-TTG screen',
+        'caption':
+        'doc/Feature-Gate-TTG-Maps.md - automap strategy / reset-TTG screen',
         'scenes': _feature_gate_ttg_maps,
         'outdir': 'Feature-Gate-TTG-Maps',
     },
     {
         'name': 'feature-filament-bypass',
-        'caption': "doc/Feature-Filament-Bypass.md - the bypass design-attribute screen",
+        'caption':
+        "doc/Feature-Filament-Bypass.md - the bypass design-attribute screen",
         'scenes': _feature_filament_bypass,
         'outdir': 'Feature-Filament-Bypass',
     },
     {
         'name': 'feature-tip-forming-purging',
-        'caption': 'doc/Feature-Tip-Forming-Purging.md - Tip Forming/Cutting and Purging screens',
+        'caption':
+        'doc/Feature-Tip-Forming-Purging.md - Tip Forming/Cutting and Purging screens',
         'scenes': _feature_tip_forming_purging,
         'outdir': 'Feature-Tip-Forming-Purging',
     },
     {
         'name': 'feature-eject-buttons',
-        'caption': 'doc/Feature-Eject-Buttons.md - eject buttons config screen',
+        'caption':
+        'doc/Feature-Eject-Buttons.md - eject buttons config screen',
         'scenes': _feature_eject_buttons,
         'outdir': 'Feature-Eject-Buttons',
     },
@@ -592,45 +820,91 @@ SESSIONS = [
     },
     {
         'name': 'feature-environment-manager',
-        'caption': 'doc/Feature-Environment-Manager.md - environment sensor and heater config screens',
+        'caption':
+        'doc/Feature-Environment-Manager.md - environment sensor and heater config screens',
         'scenes': _feature_environment_manager,
         'outdir': 'Feature-Environment-Manager',
     },
     {
         'name': 'feature-fan-control',
-        'caption': 'doc/Feature-Fan-Control.md - fan config and fan controls screens',
+        'caption':
+        'doc/Feature-Fan-Control.md - fan config and fan controls screens',
         'scenes': _feature_fan_control,
         'outdir': 'Feature-Fan-Control',
     },
     {
         'name': 'feature-nfc',
-        'caption': 'doc/Feature-NFC.md - shared NFC reader config screen (ercf seed)',
+        'caption':
+        'doc/Feature-NFC.md - shared NFC reader config screen (ercf seed)',
         'scenes': _feature_nfc,
         'outdir': 'Feature-NFC',
         'seed': 'ercf',
     },
     {
         'name': 'getting-started-vivid',
-        'caption': 'doc/GettingStarted-ViViD.md - first menuconfig pass for a BTT ViViD',
+        'caption':
+        'doc/GettingStarted-ViViD.md - first menuconfig pass for a BTT ViViD',
         'scenes': _getting_started_vivid,
         'outdir': 'GettingStarted-ViViD',
         'seed': 'none',
     },
     {
+        'name': 'getting-started-mmx',
+        'caption':
+        'doc/GettingStarted-MMX.md - first menuconfig pass for an MMX',
+        'scenes': _getting_started_mmx,
+        'outdir': 'GettingStarted-MMX',
+        'seed': 'none',
+    },
+    {
+        'name': 'getting-started-multi-unit-shared',
+        'caption':
+        'doc/GettingStarted-Multi-Unit.md - shared configuration and unit list',
+        'scenes': _getting_started_multi_unit_shared,
+        'outdir': 'GettingStarted-Multi-Unit',
+        'seed': 'none',
+        'multi_unit': True,
+        'entry_point': True,
+        'fit': False,
+        'rows': 35,
+    },
+    {
+        'name': 'getting-started-multi-unit-second',
+        'caption':
+        'doc/GettingStarted-Multi-Unit.md - unit1 and a shared sync-feedback buffer',
+        'scenes': _getting_started_multi_unit_second,
+        'outdir': 'GettingStarted-Multi-Unit',
+        'seed': 'none',
+        'unit_name': 'unit1',
+        'multi_unit': True,
+        'entry_point': False,
+    },
+    {
+        'name': 'getting-started-emu',
+        'caption':
+        'doc/GettingStarted-EMU.md - first menuconfig pass for an EMU',
+        'scenes': _getting_started_emu,
+        'outdir': 'GettingStarted-EMU',
+        'seed': 'none',
+    },
+    {
         'name': 'macro-print-start-end',
-        'caption': 'doc/Macro-Print-Start-End.md - the _MMU_SOFTWARE macro-vars screen',
+        'caption':
+        'doc/Macro-Print-Start-End.md - the _MMU_SOFTWARE macro-vars screen',
         'scenes': _macro_print_start_end,
         'outdir': 'Macro-Print-Start-End',
     },
     {
         'name': 'macro-state-change-hooks',
-        'caption': 'doc/Macro-State-Change-Hooks.md - the _MMU_STATE macro-vars screen',
+        'caption':
+        'doc/Macro-State-Change-Hooks.md - the _MMU_STATE macro-vars screen',
         'scenes': _macro_state_change_hooks,
         'outdir': 'Macro-State-Change-Hooks',
     },
     {
         'name': 'macro-sequence',
-        'caption': 'doc/Macro-Sequence.md - the _MMU_SEQUENCE macro-vars screen',
+        'caption':
+        'doc/Macro-Sequence.md - the _MMU_SEQUENCE macro-vars screen',
         'scenes': _macro_sequence,
         'outdir': 'Macro-Sequence',
     },
@@ -642,47 +916,62 @@ SESSIONS = [
     },
     {
         'name': 'macro-tip-forming',
-        'caption': 'doc/Macro-Tip-Forming.md - the _MMU_FORM_TIP macro-vars screen',
+        'caption':
+        'doc/Macro-Tip-Forming.md - shaping selection and _MMU_FORM_TIP screens',
         'scenes': _macro_tip_forming,
         'outdir': 'Macro-Tip-Forming',
     },
     {
         'name': 'macro-toolhead-tip-cutting',
-        'caption': 'doc/Macro-Toolhead-Tip-Cutting.md - the _MMU_CUT_TIP macro-vars screen',
+        'caption':
+        'doc/Macro-Toolhead-Tip-Cutting.md - shaping selection and _MMU_CUT_TIP screens',
         'scenes': _macro_toolhead_tip_cutting,
         'outdir': 'Macro-Toolhead-Tip-Cutting',
+        'seed': 'boxturtle-toolhead-cutter',
     },
     {
         'name': 'macro-servo-cutter',
-        'caption': 'doc/Macro-Servo-Cutter.md - the _MMU_SERVO_CUTTER macro-vars screen',
+        'caption':
+        'doc/Macro-Servo-Cutter.md - MMU cutter selection and macro-vars screens',
         'scenes': _macro_servo_cutter,
         'outdir': 'Macro-Servo-Cutter',
     },
     {
         'name': 'macro-blobifier',
-        'caption': 'doc/Macro-Blobifier.md - the _BLOBIFIER macro-vars screen',
+        'caption':
+        'doc/Macro-Blobifier.md - Purging hardware and _BLOBIFIER macro-vars screens',
         'scenes': _macro_blobifier,
         'outdir': 'Macro-Blobifier',
     },
     {
         'name': 'macro-purge',
-        'caption': 'doc/Macro-Purge.md - the _MMU_PURGE macro-vars screen',
+        'caption':
+        'doc/Macro-Purge.md - Purging selection and _MMU_PURGE macro-vars screens',
         'scenes': _macro_purge,
         'outdir': 'Macro-Purge',
     },
 ]
 
 
-def run_session(session, outdir, scale=2, seed=None, min_rows=None, verbose=False):
+def run_session(session,
+                outdir,
+                scale=2,
+                seed=None,
+                min_rows=None,
+                verbose=False):
     """Run one session, returning the images it produced."""
     written = []
-    context = {key: session[key] for key in ('unit_name', 'multi_unit', 'entry_point')
-               if key in session}
+    context = {
+        key: session[key]
+        for key in ('unit_name', 'multi_unit', 'entry_point') if key in session
+    }
     # A session with its own 'outdir' (a getting-started page's image folder) always
     # goes there; --outdir only redirects sessions that did not ask for a home.
-    outdir = os.path.join(DOC, session['outdir']) if 'outdir' in session else outdir
+    outdir = os.path.join(DOC,
+                          session['outdir']) if 'outdir' in session else outdir
 
-    with Menuconfig(cols=session.get('cols', DEFAULT_COLS), rows=session.get('rows', 40),
+    with Menuconfig(cols=session.get('cols', DEFAULT_COLS),
+                    rows=session.get('rows', 40),
                     seed=seed or session.get('seed', DEFAULT_SEED),
                     style=session.get('style'),
                     min_rows=min_rows or session.get('min_rows', MIN_ROWS),
@@ -690,11 +979,14 @@ def run_session(session, outdir, scale=2, seed=None, min_rows=None, verbose=Fals
 
         def shot(name):
             path = os.path.join(outdir, name + '.png')
-            mc.shot(path, trim=session.get('trim', True), scale=scale,
+            mc.shot(path,
+                    trim=session.get('trim', True),
+                    scale=scale,
                     fit=session.get('fit', True))
             if verbose:
                 mc.dump()
-            print('    %-24s %2dx%-3d %s' % (name + '.png', mc.cols, mc.rows, mc.state()))
+            print('    %-24s %2dx%-3d %s' %
+                  (name + '.png', mc.cols, mc.rows, mc.state()))
             written.append(path)
 
         session['scenes'](mc, shot)
@@ -704,17 +996,32 @@ def run_session(session, outdir, scale=2, seed=None, min_rows=None, verbose=Fals
 def main(argv=None):
     parser = argparse.ArgumentParser(
         prog='python -m doc_tools.shots',
-        description='Regenerate the menuconfig screenshots used by the documentation.')
-    parser.add_argument('--only', action='append', default=[], metavar='NAME',
+        description=
+        'Regenerate the menuconfig screenshots used by the documentation.')
+    parser.add_argument('--only',
+                        action='append',
+                        default=[],
+                        metavar='NAME',
                         help='just this session; repeatable')
     parser.add_argument('--outdir', default=IMAGES, help='where the PNGs go')
-    parser.add_argument('--seed', help='override every session\'s seed: a built-in name, '
-                                       'or a path to a .mmu_config / .mmu_config_<unit>')
-    parser.add_argument('--scale', type=int, default=2, help='pixel scale (default 2)')
-    parser.add_argument('--min-rows', type=int,
-                        help='override every session\'s height floor (default %d)' % MIN_ROWS)
-    parser.add_argument('--list', action='store_true', help='list the sessions and exit')
-    parser.add_argument('-v', '--verbose', action='store_true',
+    parser.add_argument(
+        '--seed',
+        help='override every session\'s seed: a built-in name, '
+        'or a path to a .mmu_config / .mmu_config_<unit>')
+    parser.add_argument('--scale',
+                        type=int,
+                        default=2,
+                        help='pixel scale (default 2)')
+    parser.add_argument(
+        '--min-rows',
+        type=int,
+        help='override every session\'s height floor (default %d)' % MIN_ROWS)
+    parser.add_argument('--list',
+                        action='store_true',
+                        help='list the sessions and exit')
+    parser.add_argument('-v',
+                        '--verbose',
+                        action='store_true',
                         help='dump each captured screen as text too')
     args = parser.parse_args(argv)
 
@@ -738,23 +1045,27 @@ def main(argv=None):
     for index, session in enumerate(wanted, 1):
         print('[%d/%d] %s' % (index, len(wanted), session['name']))
         try:
-            written += run_session(session, args.outdir, args.scale,
-                                   args.seed, args.min_rows, args.verbose)
+            written += run_session(session, args.outdir, args.scale, args.seed,
+                                   args.min_rows, args.verbose)
         except (ScreenError, OSError) as exc:
             failed.append(session['name'])
-            print(traceback.format_exc() if args.verbose else '    FAILED: %s' % exc,
-                  file=sys.stderr)
+            print(
+                traceback.format_exc() if args.verbose else '    FAILED: %s' %
+                exc,
+                file=sys.stderr)
 
     if failed:
-        print('\n%d of %d sessions failed: %s' % (len(failed), len(wanted), ', '.join(failed)),
+        print('\n%d of %d sessions failed: %s' %
+              (len(failed), len(wanted), ', '.join(failed)),
               file=sys.stderr)
         return 1
     # Sessions each name their own 'outdir' (see the header above), so a run can
     # easily span several folders - naming just one, as if there were a single
     # shared pool, would be as misleading as recreating that pool would be.
     dirs = sorted({os.path.relpath(os.path.dirname(path)) for path in written})
-    print('\n%d screenshot%s in %s' % (len(written), '' if len(written) == 1 else 's',
-                                       ', '.join(dirs) if dirs else '(nothing written)'))
+    print('\n%d screenshot%s in %s' %
+          (len(written), '' if len(written) == 1 else 's',
+           ', '.join(dirs) if dirs else '(nothing written)'))
     return 0
 
 

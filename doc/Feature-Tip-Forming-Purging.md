@@ -17,7 +17,7 @@ Each has the same three-way choice, and they're independent of each other:
   toolhead-mounted filament cutter (`_MMU_CUT_TIP`) instead of forming a tip
   at all, or leave it to the slicer's own in-print tip-forming.
 - **Purging**: Happy Hare's own standalone macro (`_MMU_PURGE`), an add-on
-  purge system like [Blobifier](Macro-Blobifier.md), or leave it
+  purge system like [Purge: Blobifier](Macro-Blobifier.md), or leave it
   to the slicer's wipe tower.
 
 There's also a separate, *additive* cutting option: a servo-driven cutter
@@ -46,7 +46,7 @@ Two independent menus, both unconditional (every MMU type gets them):
 
 | Setting | Purpose |
 |---|---|
-| `Have Blobifier?` | See [Macro: Blobifier](Macro-Blobifier.md) |
+| `Have Blobifier?` | See [Purge: Blobifier](Macro-Blobifier.md) |
 | `Select standalone purging option` | `_MMU_PURGE` / Blobifier / slicer wipe tower / custom macro |
 | `Happy Hare controlled in-print purging` | Forces standalone purging even during a print - turn the slicer's wipe tower off if you enable this |
 | `Extruder purge current` | Same idea as tip-forming current, for purge moves |
@@ -74,7 +74,7 @@ Enabling it under **Tip Forming / Cutting** adds a servo pin prompt and
 generates `[mmu_servo cut_servo]` in `mmu.cfg`; its own tuning (open/close
 angles, feed/cut length, cut attempts) lives in `mmu_macro_vars.cfg`'s
 [`_MMU_SERVO_CUTTER_VARS`](Reference-Macro-Vars.md#servo-cutter-mmu-mounted-_mmu_servo_cutter_vars).
-See [Macro: Servo Cutter](Macro-Servo-Cutter.md) for the build/wiring side.
+See [Tip Shaping: MMU Cutting](Macro-Servo-Cutter.md) for the build/wiring side.
 
 ## Parameter Setup
 
@@ -107,21 +107,24 @@ section. Tuning by hand:
 2. Cut a ~400mm fragment of the filament you're tuning, heat the extruder,
    and hold the fragment to the gears:
 
-        :::text
-        MMU_LOAD EXTRUDER_ONLY=1
+    ```text
+    MMU_LOAD EXTRUDER_ONLY=1
+    ```
 
 3. Extrude a few mm by hand to prime, then:
 
-        :::text
-        MMU_TEST_FORM_TIP
+    ```text
+    MMU_TEST_FORM_TIP
+    ```
 
     This runs the tip-forming macro and ejects the result for inspection.
 
 4. Adjust one variable at a time on the command line - changes are sticky
    for the session:
 
-        :::text
-        MMU_TEST_FORM_TIP cooling_moves=5 unloading_speed=15
+    ```text
+    MMU_TEST_FORM_TIP cooling_moves=5 unloading_speed=15
+    ```
 
 5. Re-insert the fragment (`MMU_LOAD EXTRUDER_ONLY=1` again) and repeat.
    Expect this to take a few dozen attempts to converge.
@@ -208,8 +211,11 @@ MMU_CALC_PURGE_VOLUMES SOURCE=gatemap MULTIPLIER=1.1     # From the gate map's (
 MMU_CALC_PURGE_VOLUMES SOURCE=slicer MIN=50              # From the slicer's own tool colors, floored at 50mm3
 ```
 
+```{.text .console-command}
+MMU_CALC_PURGE_VOLUMES SOURCE=gatemap MULTIPLIER=1.1
+```
+
 ```{.text .console-output}
-> MMU_CALC_PURGE_VOLUMES SOURCE=gatemap MULTIPLIER=1.1
 Purge map updated. Use 'MMU_SLICER_TOOL_MAP PURGE_MAP=1' to view
 ```
 
@@ -220,8 +226,11 @@ View the result with `MMU_SLICER_TOOL_MAP PURGE_MAP=1` (or
 loaded print) - each cell is the calculated purge volume, in mm³, for that
 row-to-column transition:
 
+```{.text .console-command}
+MMU_SLICER_TOOL_MAP PURGE_MAP=1
+```
+
 ```{.text .console-output}
-> MMU_SLICER_TOOL_MAP PURGE_MAP=1
 Purge Volume Map (mm^3):
 To -> T0   T1   T2   T3   T4   T5   T6   T7   T8
 T0    -   129  230  192  221  221  223  480  223
@@ -242,7 +251,7 @@ filament left behind by a cut tip, not just the matrix on its own.
 
 ### Purging without a wipe tower
 
-A dedicated purge system (like [Blobifier](Macro-Blobifier.md))
+A dedicated purge system (like [Purge: Blobifier](Macro-Blobifier.md))
 lets you disable the slicer's wipe tower entirely - it still needs a purge
 volume matrix to work from, which can come from any of: Happy Hare's own
 [g-code preprocessing](Feature-Gcode-Preprocessing.md) of the slicer's
@@ -266,8 +275,11 @@ MMU_SLICER_TOOL_MAP PURGE_VOLUMES=70,70,70,...                         # NxN (or
 
 A flat `PURGE_VOLUMES=70` fills every transition with the same value:
 
+```{.text .console-command}
+MMU_SLICER_TOOL_MAP PURGE_MAP=1
+```
+
 ```{.text .console-output}
-> MMU_SLICER_TOOL_MAP PURGE_MAP=1
 Purge Volume Map:
 To -> T0   T1   T2   T3   T4   T5   T6   T7   T8
 T0    -   140  140  140  140  140  140  140  140
@@ -371,11 +383,10 @@ Filament`/`Purging` states while each of these runs.
 - [Command Reference: `MMU_TEST_PURGE`](Reference-Commands.md#mmu_test_purge)
 - [Command Reference: `MMU_CALC_PURGE_VOLUMES`](Reference-Commands.md#mmu_calc_purge_volumes)
 - [Command Reference: `MMU_SLICER_TOOL_MAP`](Reference-Commands.md#mmu_slicer_tool_map)
-- [Macro: Blobifier](Macro-Blobifier.md) / [Macro: Servo Cutter](Macro-Servo-Cutter.md) - Blobifier and the servo cutter build/wiring
+- [Purge: Blobifier](Macro-Blobifier.md) / [Tip Shaping: MMU Cutting](Macro-Servo-Cutter.md) - Blobifier and the MMU cutter build/wiring
 - [Feature: G-code Preprocessing](Feature-Gcode-Preprocessing.md) - `!purge_volumes!` and friends
 - [Feature: Gate/TTG Maps](Feature-Gate-TTG-Maps.md) - the slicer tool map this all reads from
 - [Feature: Filament Bypass](Feature-Filament-Bypass.md) - the tip-forming tuning timesaver
 - [Feature: Sync-Feedback Buffer](Feature-Sync-Feedback-Buffer.md) - `sync_form_tip`/`sync_purge`
 
 ---
-

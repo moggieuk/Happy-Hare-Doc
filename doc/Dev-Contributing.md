@@ -3,7 +3,7 @@
 ## Reporting a problem
 
 If you need help with your own setup, the
-[Discord server](https://discord.gg/HXEHUb9W) is the right place - GitHub
+[Discord server](https://discord.gg/98TYYUf6f2) is the right place - GitHub
 issues are for bugs and feature requests, not individual setup problems.
 
 Found an actual bug?
@@ -16,7 +16,7 @@ Found an actual bug?
 
 - **Bug fixes**: open a pull request directly. Describe the problem and the
   solution, and reference the issue number if there is one.
-- **New features or behaviour changes**: don't open an issue *or* a PR
+- **New features or behavior changes**: don't open an issue *or* a PR
   first - gather feedback on the idea (Discord is the usual place) before
   investing the work. Changes that break existing setups are likely to be
   rejected outright, given how many different MMU/AFC combinations this
@@ -83,10 +83,7 @@ you haven't yet, these are the pages worth reading first:
   `menuconfig` choice becomes a running config.
 - [Testing](Dev-Testing.md) and [The Simulator](Dev-Simulator.md) - running
   and exercising Happy Hare with no printer attached.
-- [Documentation Tooling](Dev-Doc-Tooling.md) and
-  [Installer Dev (Docker)](Dev-Installer-Docker.md) - the supporting tooling
-  around both of the above.
+- [Documentation Tooling](Dev-Doc-Tooling.md) - the supporting tooling around
+  both of the above.
 
 ---
-
-

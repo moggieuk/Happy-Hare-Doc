@@ -88,10 +88,10 @@ the full picture.
 | `endless_spool_on_load` | `0` | Also apply EndlessSpool if the gate a load targets turns out to be empty |
 | `endless_spool_eject_gate` | `-1` | Which gate to eject filament remains to - `-1` = the current gate |
 | `endless_spool_groups` | *(empty)* | EndlessSpool grouping list - empty means no groups defined |
-| `spoolman_support` | `off` | `off`/`readonly`/`push`/`pull` - see [Feature: Spoolman Integration](Feature-Spoolman.md) for what each does |
+| `spoolman_support` | `off` | `off`/`readonly`/`push`/`pull` - see [Feature: Spoolman / Filament Hub](Feature-Spoolman.md) for what each does |
 | `spoolman_pending_id_timeout` | `20` s | How long a pending spool ID assignment stays valid before being voided |
 | `spoolman_led_segment` | `gate_status` | Which LED segment(s) show the pending-spool-ID overlay: `gate_status`, `status`, or `both` |
-| `spoolman_nfc_auto_create` | `0` | Auto-create a Spoolman spool from an unrecognised NFC tag's metadata - see [Feature: NFC/RFID Reading](Feature-NFC.md) |
+| `spoolman_nfc_auto_create` | `0` | Auto-create a Spoolman spool from an unrecognized NFC tag's metadata - see [Feature: NFC/RFID Reading](Feature-NFC.md) |
 | `t_macro_color` | `slicer` | Source for the `Tx` macro's color variable: `slicer`, `allgates`, `gatemap`, or `off` |
 
 ### Console
@@ -201,8 +201,8 @@ elsewhere:
 - **Addon hardware** (`[mmu_servo cut_servo]`, the Blobifier tray
   stepper/servo, the gantry-bumper servo) - pin and pulse-width settings
   covered in [Feature: Tip Forming and Purging](Feature-Tip-Forming-Purging.md#servo-cutter-mmu-mounted),
-  [Macro: Servo Cutter](Macro-Servo-Cutter.md), and
-  [Macro: Blobifier](Macro-Blobifier.md).
+  [Tip Shaping: MMU Cutting](Macro-Servo-Cutter.md), and
+  [Purge: Blobifier](Macro-Blobifier.md).
 
 ## Per-unit settings (`mmu_parameters.cfg`)
 
@@ -320,10 +320,10 @@ methods.
 | `extruder_collision_homing_current` | `30`% | Gear stepper current during collision-based homing (`encoder`/`mmu_gear_touch` methods) |
 | `extruder_force_homing` | *(toolhead-sensor-equipped only)* | Force extruder homing even though a toolhead sensor makes it unnecessary |
 
-### Toolhead loading/unloading (behaviour)
+### Toolhead loading/unloading (behavior)
 
 Distinct from `[mmu_toolhead]`'s physical geometry settings above - these
-tune the toolhead-loading *behaviour* itself, per unit.
+tune the toolhead-loading *behavior* itself, per unit.
 
 | Parameter | Default | Description |
 |---|---|---|
@@ -349,7 +349,7 @@ the buffer-based half of this.
 | `sync_feedback_speed_multiplier` | `5`% | Gear speed delta applied to keep filament neutral in the buffer |
 | `sync_feedback_boost_multiplier` | `3`% | Extra gear speed boost while first finding the neutral position |
 | `sync_feedback_extrude_threshold` | `5` mm | Extruder movement between sync-feedback updates - keep small, but above your retract distance |
-| `sync_feedback_debug_log` | `0` | `1` = write a `sync_<gate>.jsonl` telemetry log, readable with `utils/plot_sync_feedback.sh` |
+| `sync_feedback_debug_log` | `0` | `1` = write a `sync_<gate>.jsonl` telemetry log, selectable and viewable with `make plot_sync` |
 
 ### FlowGuard clog and tangle detection
 
@@ -433,7 +433,7 @@ See [Feature: NFC/RFID Reading](Feature-NFC.md) for the full picture.
 ### CAD dimensions for custom designs
 
 Commented out by default - only needed for a `mmu_vendor: Other` custom
-build, or to override the values a recognised vendor/version normally
+build, or to override the values a recognized vendor/version normally
 supplies automatically.
 
 | Parameter | Default (commented) | Description |
@@ -456,4 +456,3 @@ supplies automatically.
   macro-based alternative to internal load/unload logic
 
 ---
-

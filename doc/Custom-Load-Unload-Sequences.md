@@ -29,7 +29,7 @@ regardless of any other setting on this page -
 `_MMU_POST_UNLOAD`, `_MMU_POST_PRELOAD`, and `_MMU_ERROR`. Each one calls out
 to a `user_*_extension` gcode macro variable defined in
 `mmu_macro_vars.cfg` if you set one - the toolchange parking/z-hop/retract
-behaviour, timelapse-frame capture on load, and per-operation park
+behavior, timelapse-frame capture on load, and per-operation park
 positions are all controlled through this same file's `_MMU_SEQUENCE_VARS`
 section (see [Macro Variables: Sequence/parking](Reference-Macro-Vars.md#sequenceparking-_mmu_sequence_vars)
 for the full list), without touching the sequence at all. This is the

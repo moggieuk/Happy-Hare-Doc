@@ -55,11 +55,48 @@ on the same machine, override the paths directly:
 
 !!! note
     An existing install is never overwritten outright - it's moved to a
-    timestamped backup directory (e.g. `mmu-20260807_102329`) and the new one is
+    timestamped backup directory (e.g. `mmu.old-20260807-102329`) and the new one is
     rebuilt from your previous choices plus whatever you change this run.
 
 
-## Other, common install options
+## Arguments & other common install options
+
+=== "Full install.sh flag reference"
+    <br>
+    ```{.text .console-command}
+    ./install.sh --help
+    ```
+    ```{.text .console-output}
+    Usage: ./install.sh [-i] [-u] [-d] [-y] [-l] [-p] [-z] [-s] [-t] [-r]
+                       [-b <branch>]
+                       [-k <klipper_home_dir>] [-c <klipper_config_dir>] [-m <moonraker_home_dir>]
+                       [-a <kiauh_alternate_klipper>] [config_file]
+
+    (no flags for safe re-install / upgrade)
+    [config_file] is optional, if not specified the default config filename (.mmu_config) will be used.
+      -i for interactive install (open menuconfig)
+      -u, -d for uninstall
+      -b <branch> to switch to specified feature branch (sticky)
+      -n to specify a multiple MMU unit setup
+      -k <dir> non-default klipper home directory
+      -c <dir> non-default klipper config directory
+      -m <dir> non-default moonraker home directory
+      -p, --prev choose a MMU backup and recover its configuration
+
+      Advanced:
+      -y, --yes automatically answer yes to all y/n prompts
+      -l, --last recover .mmu_config files from the last config backup
+      -f to just restore klipper/moonraker symlinks (recover after hard klipper update)
+      -z skip github update check (nullifies -b <branch>)
+      -s to skip restart of services
+      -a <name> to specify alternative klipper-service-name when installed with Kiauh
+      -r allow running install.sh from a root login (not through sudo)
+      -e, --emu Enables multi MCU support (e.g. for EMU design)
+      -o override compatibility checks (e.g. Kalico detection)
+      -t  activate test mode - write config to /tmp/mmu_test instead of your real install
+      (-q verbose make for debugging)
+      (-v verbose builder for debugging)
+    ```
 
 === "Test Mode"
 
@@ -92,33 +129,11 @@ on the same machine, override the paths directly:
 === "Per Lane Controllers"
 
     For MMU's like EMU that use dedicated controllers/MCU's per lane, support needs
-    to be enabled by specifying `-e`/`-emu` e.g. 
+    to be enabled by specifying `-e` or `--emu` e.g. 
 
     ```bash 
     ./install.sh -i -e
     ```
-
-=== "Full install flag reference"
-
-    ```text
-    -i for interactive install (open menuconfig)
-    -u, -d for uninstall
-    -f to just restore klipper/moonraker symlinks (recover after hard klipper update)
-    -z skip github update check (nullifies -b <branch>)
-    -s to skip restart of services
-    -b <branch> to switch to specified feature branch (sticky)
-    -n to specify a multiple MMU unit setup
-    -k <dir> non-default klipper home directory
-    -c <dir> non-default klipper config directory
-    -m <dir> non-default moonraker home directory
-    -a <name>  alternative Klipper service name (e.g. when installed via Kiauh)
-    -e, --emu Enables multi MCU support (for EMU design)
-    -o Override compatibility checks (e.g. Kalico detection)
-    -t  test mode - write config to /tmp instead of your real install
-    (-q verbose make for debugging)
-    (-v verbose builder for debugging)
-    ```
-
 ## Client Macros
 
 `menuconfig`'s final section asks:
@@ -179,6 +194,10 @@ default locations and likely miss your actual install.
 
 - [Getting Started with Box Turtle](GettingStarted-BoxTurtle.md)
 - [Getting Started with BTT ViViD](GettingStarted-ViViD.md)
+- [Getting Started with EMU](GettingStarted-EMU.md)
+- [Getting Started with ERCF](GettingStarted-ERCF.md)
+- [Getting Started with Tradrack](GettingStarted-Tradrack.md)
+- [Getting Started with MMX](GettingStarted-MMX.md)
 - [Operation](Operation.md) - what happens when the MMU pauses, and how to
   resume/recover
 

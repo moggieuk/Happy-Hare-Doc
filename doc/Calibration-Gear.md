@@ -2,7 +2,7 @@
 
 Every MMU has at least one gear stepper moving filament, and like any
 extruder, its accuracy depends on `rotation_distance` - how far the
-stepper actually turns the filament per commanded millimetre. Gate 0
+stepper actually turns the filament per commanded millimeter. Gate 0
 always acts as the **reference gate**: it's the one you calibrate first,
 and (on designs with per-gate gears) the one every other gate is measured
 against.
@@ -20,16 +20,20 @@ build to build, so accuracy improves once you measure your own.
 3. Cut the filament flush at that exit point.
 4. Run a measured test move, retaining grip so the cut end doesn't slip:
 
-        :::text
-        MMU_TEST_MOVE MOVE=100 GRIP=1
+    ```text
+    MMU_TEST_MOVE MOVE=100 GRIP=1
+    ```
 
 5. Measure the emitted length with a ruler or calipers, then feed it back:
 
-```{.text .console-output}
-MMU_CALIBRATE_GEAR MEASURED=102.5
-Gear stepper 'rotation_distance' calculated to be 23.117387 (currently: 22.7316868)
-Gear calibration for gate 0 has been saved
-```
+    ```{.text .console-command}
+    MMU_CALIBRATE_GEAR MEASURED=102.5
+    ```
+
+    ```{.text .console-output}
+    Gear stepper 'rotation_distance' calculated to be 23.117387 (currently: 22.7316868)
+    Gear calibration for gate 0 has been saved
+    ```
 
 Happy Hare computes the new rotation distance as
 `current_rd * measured / commanded` and saves it by default. Cut flush
@@ -39,8 +43,11 @@ move exactly the commanded distance.
 A longer test move improves precision on a design where 100mm is hard to
 measure accurately:
 
-```{.text .console-output}
+```text
 MMU_TEST_MOVE MOVE=200 GRIP=1
+```
+
+```text
 MMU_CALIBRATE_GEAR LENGTH=200 MEASURED=205.25
 ```
 
@@ -54,8 +61,11 @@ gate 0's already-calibrated rotation distance as a reference to work out
 each other gate's rotation distance on its own - just feed loose filament
 into the target gate and run:
 
-```{.text .console-output}
+```{.text .console-command}
 MMU_CALIBRATE_GATE GATE=1
+```
+
+```{.text .console-output}
 Calibration move of 6x 400.0mm, average encoder measurement: 404.7mm - Ratio is 1.011872
 Calculated gate 1 rotation_distance: 22.941324 (currently: 22.672165)
 Calibration for gate 1 has been saved

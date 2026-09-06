@@ -12,7 +12,7 @@ filament as it unloads so it doesn't tangle, but it can also assist loading or
 even relieve spool drag during a print. Happy Hare drives it in one of four
 modes, tracked independently per gate:
 
-- **`rewind`** - runs during an *unload* move (filament travelling back
+- **`rewind`** - runs during an *unload* move (filament traveling back
   towards the spool) to take up slack as it comes off the buffer/bowden, so it
   doesn't pile up loosely and tangle.
 - **`assist`** - runs during a *load* move (filament being drawn off the
@@ -86,7 +86,7 @@ printing but sharing the same `espooler_rewind_burst_*` settings.
 ## Hardware Setup
 
 Each gate needs up to four pins on the eSpooler unit, all optional
-independently - a gate with only a rewind pin gets rewind-only behaviour, for
+independently - a gate with only a rewind pin gets rewind-only behavior, for
 example:
 
 | Pin | Purpose |
@@ -251,7 +251,7 @@ or `print` are both valid starting states for this, so you don't strictly
 need to arm print mode first just to test a burst. `TIGHTEN=1`/`LOOSEN=1` are
 shorthand for exactly that combination at the gate's configured rewind/assist
 burst power and duration. `OPERATION=print` arms in-print assist manually on
-a gate - mostly useful for testing burst behaviour outside of an actual print,
+a gate - mostly useful for testing burst behavior outside of an actual print,
 since Happy Hare arms it automatically once filament reaches the extruder.
 `TRIGGER=1` fires a burst exactly as the real trigger source would, for
 testing without extruder movement or a physical switch. `RESET=1` clears
@@ -291,8 +291,11 @@ configuration needed:
 The same information is available as text from the console (remember Klipper
 can't run another command until the current one finishes):
 
-```{.text .console-output}
+```{.text .console-command}
 MMU_ESPOOLER
+```
+
+```{.text .console-output}
 0 : off     (0%)
 1 : print   (0%) [assist for 0.4s at 50% power on trigger, max 3 bursts]
 2 : off     (0%)
@@ -399,4 +402,3 @@ MMU_ESPOOLER
   for the `espooler` status field
 
 ---
-

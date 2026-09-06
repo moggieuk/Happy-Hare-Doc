@@ -3,7 +3,7 @@
 # settings just work"); see doc_tools/README.md for the reasoning. TOC.md, the
 # internal planning doc for this rewrite, lives at the repo root rather than
 # under docs_dir so it's never a candidate for publishing in the first place.
-site_name: Happy Hare (NEW SITE - UNDER CONSTRUCTION)
+site_name: Happy Hare v4
 site_description: Universal Automated Filament Changer / MMU driver for Klipper
 repo_url: https://github.com/moggieuk/Happy-Hare
 docs_dir: doc
@@ -14,7 +14,7 @@ theme:
   variant: classic
   logo: assets/images/doc_logo2.png
   favicon: assets/images/favicon.png
-  # Pink is the brand's own colour, not a pick from Material's swatch list for its
+  # Pink is the brand's own color, not a pick from Material's swatch list for its
   # own sake: HH's warning text is #FF69B4 (see test/README.md, "why a warning
   # shows up on a pink background") and the wiki/README logo is that same hot pink
   # rendered as a neon sign. Black keeps the header/nav that neon-over-brick dark
@@ -39,18 +39,18 @@ theme:
     - navigation.tracking
     - content.code.copy
     - search.suggest
-
 extra_css:
   - assets/stylesheets/extra.css
 
 extra_javascript:
   - assets/javascripts/hh-page-nav.js
+  - assets/javascripts/hh-pinout-embed.js
   # Mermaid, loaded and driven ourselves (hh-mermaid.js) rather than through
   # pymdownx.superfences' custom-fence recipe - see hh-mermaid.js's own header
   # comment and TOC.md's "Zensical rough edges" for why that path is flaky.
   # Pinned to an exact release, not a floating major tag: every other asset on
   # this site is local, and a silent CDN-side 10.x patch bump would change
-  # rendering behaviour with no commit here. mermaid.min.js is the UMD build,
+  # rendering behavior with no commit here. mermaid.min.js is the UMD build,
   # which attaches a synchronous global `mermaid` - the .mjs/ESM build would
   # need type="module" and a different loading order.
   - https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js
@@ -72,44 +72,50 @@ markdown_extensions:
   - toc:
       permalink: true
   - tables
-  - fenced_code
   - codehilite
   - admonition
   - pymdownx.tabbed
   - attr_list
   - md_in_html
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      css_class: codehilite
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.details
-  # NOT pymdownx.superfences/mermaid: Zensical's custom-fence handling was observed
-  # non-deterministic (~1 build in 4 rendered a ```mermaid block as a diagram; the
-  # rest rendered raw source as plain code) even with --clean. Diagrams in this
-  # Developer Guide are plain ASCII in fenced code blocks instead - guaranteed to
-  # render the same everywhere, including a raw GitHub view of the same file.
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:zensical.extensions.emoji.to_svg
+      emoji_index: !!python/name:zensical.extensions.emoji.twemoji
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  # SuperFences is the sole backtick-fence processor; do not also enable Python-
+  # Markdown's fenced_code, because both register the same internal processor name
+  # and SuperFences explicitly does not support loading them together. SuperFences
+  # is required for fences nested in admonitions, lists, and tabs. Its wrapper is
+  # pinned to codehilite so existing theme CSS remains valid; the codehilite
+  # extension above continues to handle traditional indented/:::lang blocks.
   #
-  # codehilite, not pymdownx.highlight, for the SAME reason: adding
-  # pymdownx.highlight + pymdownx.superfences (Material's normal syntax-highlighting
-  # recipe) reproduced the identical flakiness on ordinary (non-mermaid) code fences
-  # - 2 of 4 clean rebuilds silently rendered with zero highlighting. The flakiness
-  # is in superfences' custom-fence machinery generally, not specific to mermaid.
-  # codehilite is Python-Markdown's original highlighter, not part of that
-  # machinery, and was deterministic across 6/6 clean rebuilds in the same test -
-  # but it wraps output in <div class="codehilite">, which Material's shipped CSS
-  # doesn't style (Material only styles pymdownx.highlight's <div class="highlight">).
-  # doc/assets/stylesheets/extra.css re-points codehilite's Pygments token classes
-  # at Material's own --md-code-hl-*-color variables to compensate - see the
-  # comment there before touching either half of this.
+  # This does not enable a SuperFences Mermaid custom fence. Mermaid remains raw
+  # HTML driven by hh-mermaid.js because that custom-fence route was historically
+  # non-deterministic in Zensical; see TOC.md's "Zensical rough edges" section.
 
 nav:
   - Concepts:
       - What Is an MMU?: Conceptual-MMU.md
   - Getting Started:
       - Installation: Installation.md
+      - Menuconfig: GettingStarted-Installer-Configurator.md
       - Upgrading from v3 to v4: Upgrade-v3-v4.md
+      - Hardware Validation: Hardware-Validation.md
       - 3MS: GettingStarted-3MS.md
       - Box Turtle: GettingStarted-BoxTurtle.md
       - BTT ViViD: GettingStarted-ViViD.md
+      - EMU: GettingStarted-EMU.md
+      - ERCF: GettingStarted-ERCF.md
+      - Tradrack: GettingStarted-Tradrack.md
+      - MMX: GettingStarted-MMX.md
+      - Multiple MMU Units: GettingStarted-Multi-Unit.md
   - Calibration:
       - Overview: Calibration.md
       - Selector: Calibration-Selector.md
@@ -121,6 +127,7 @@ nav:
       - Slicer Setup: Slicer-Setup.md
       - Toolchange Movement: Toolchange-Movement.md
   - Operation:
+      - Understanding MMU State: Understanding-Operation.md
       - Operation: Operation.md
       - KlipperScreen: KlipperScreen.md
       - Mainsail / Fluidd: Mainsail-Fluidd-Integration.md
@@ -141,7 +148,7 @@ nav:
       - LEDs: Feature-LEDs.md
       - NFC/RFID Reading: Feature-NFC.md
       - Sensors: Feature-Sensors.md
-      - Spoolman Integration: Feature-Spoolman.md
+      - Spoolman / Filament Hub: Feature-Spoolman.md
       - State Persistence: Feature-State-Persistence.md
       - Statistics & Consumption Counters: Feature-Statistics-Counters.md
       - Sync-Feedback Buffer: Feature-Sync-Feedback-Buffer.md
@@ -152,11 +159,11 @@ nav:
       - State Change Hooks: Macro-State-Change-Hooks.md
       - Sequence: Macro-Sequence.md
       - Client: Macro-Client.md
-      - Tip Forming: Macro-Tip-Forming.md
-      - Toolhead Tip Cutting: Macro-Toolhead-Tip-Cutting.md
-      - Servo Cutter: Macro-Servo-Cutter.md
-      - Blobifier: Macro-Blobifier.md
-      - Purge: Macro-Purge.md
+      - "Tip Shaping: Forming": Macro-Tip-Forming.md
+      - "Tip Shaping: Toolhead Cutting": Macro-Toolhead-Tip-Cutting.md
+      - "Tip Shaping: MMU Cutting": Macro-Servo-Cutter.md
+      - "Purge: Blobifier": Macro-Blobifier.md
+      - "Purge: Simple": Macro-Purge.md
   - Advanced Customization:
       - Custom Load/Unload Sequences: Custom-Load-Unload-Sequences.md
   - Reference:
@@ -167,6 +174,7 @@ nav:
       - MCU Reference: Reference-Mcu.md
   - Developer Guide:
       - Code Layout: Dev-Code-Layout.md
+      - Klipper Events: Dev-Klipper-Events.md
       - Kconfig & Installer Architecture: Dev-Kconfig-Structure.md
       - Testing: Dev-Testing.md
       - Developer Command Reference: Dev-Command-Reference.md
@@ -174,5 +182,4 @@ nav:
       - The Simulator: Dev-Simulator.md
       - Documentation Style Guide: Dev-Documentation-Style-Guide.md
       - Documentation Tooling: Dev-Doc-Tooling.md
-      - Installer Dev (Docker): Dev-Installer-Docker.md
       - Contributing: Dev-Contributing.md

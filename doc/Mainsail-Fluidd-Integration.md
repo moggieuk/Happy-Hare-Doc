@@ -57,7 +57,7 @@ instead.
   <img src="Mainsail-Fluidd-Integration/mainsail_annotated_gate_editor.png" alt="Mainsail Gate Map editor, annotated" width="100%">
 </p>
 
-See [Feature: Spoolman Integration](Feature-Spoolman.md) for the Spoolman
+See [Feature: Spoolman / Filament Hub](Feature-Spoolman.md) for the Spoolman
 side of this.
 
 ## Maintenance and State Recovery
@@ -132,7 +132,7 @@ color to whatever gate 7 has loaded:
 
 - [KlipperScreen](KlipperScreen.md) - the equivalent touchscreen UI
 - [Feature: Gate/TTG Maps](Feature-Gate-TTG-Maps.md)
-- [Feature: Spoolman Integration](Feature-Spoolman.md)
+- [Feature: Spoolman / Filament Hub](Feature-Spoolman.md)
 - [Command Reference: `MMU_SLICER_TOOL_MAP`](Reference-Commands.md#mmu_slicer_tool_map)
 - [Command Reference: `MMU_TTG_MAP`](Reference-Commands.md#mmu_ttg_map)
 

@@ -45,7 +45,7 @@ own config submenu once switched on.
 | `i2c bus type` | Hardware i2c (recommended) or software i2c |
 | `Sensor type` | AHT1X / AHT2X / AHT3X (humidity + temperature) or BME280 (humidity + temperature + pressure) |
 | `i2c bus name` | Which hardware i2c bus to use, if hardware i2c is selected |
-| `i2c address` | Defaults to `56` (`0x38`) for AHT sensors, `119` (`0x77`) for BME280 |
+| `i2c address` | Defaults to `56` (`0x38`) for AHT sensors, `118` (`0x76`) for BME280 |
 | SCL/SDA pins | Only shown for software i2c |
 
 Produces, inside the unit's `[mmu_unit ...]` section in `mmu_hardware.cfg`:
@@ -99,7 +99,7 @@ alongside the drying-recipe table:
 
 ```ini
 heater_max_temp             : 65     # Absolute ceiling; drying never targets above this regardless of drying_data
-heater_default_dry_temp     : 45     # Fallback drying temperature for an unrecognised or empty gate
+heater_default_dry_temp     : 45     # Fallback drying temperature for an unrecognized or empty gate
 heater_default_dry_time     : 300    # Fallback drying time in minutes
 heater_default_dry_humidity : 25     # Default humidity % goal - drying ends early if reached
 heater_vent_macro           : _MMU_VENT  # Name of a macro to call periodically during drying (see Tuning below)
@@ -127,7 +127,7 @@ drying_data: "{'PLA': (45, 240), 'PETG': (55, 300), 'NYLON': (65, 480)}"
 
 - Values are `(temperature_C, time_minutes)`.
 - A material missing from the table falls back to `heater_default_dry_temp`
-  and `heater_default_dry_time`, same as an unrecognised material would.
+  and `heater_default_dry_time`, same as an unrecognized material would.
 
 ## Commands
 
@@ -174,8 +174,11 @@ cycle ends automatically.
 
 A plain `MMU_HEATER` with no drying cycle running just reports that:
 
-```{.text .console-output}
+```{.text .console-command}
 MMU_HEATER
+```
+
+```{.text .console-output}
 Not in drying cycle and heater is off
 ```
 
@@ -296,7 +299,7 @@ sensor supports humidity at all.
 
 - **Humidity always reports as missing** - the sensor chip may not support
   humidity (some report temperature only), or the humidity reading isn't
-  recognised. Drying still runs on the timer; humidity-based early
+  recognized. Drying still runs on the timer; humidity-based early
   termination just won't trigger.
 - **Venting never runs** - `heater_vent_macro` is blank, or
   `heater_vent_interval` is `0`. If it's configured and still not firing,
@@ -321,4 +324,3 @@ sensor supports humidity at all.
   for the `drying_state` field
 
 ---
-

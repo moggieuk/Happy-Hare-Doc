@@ -221,13 +221,13 @@ or with [`MMU_GATE_MAP`](Reference-Commands.md#mmu_gate_map)):
   <img src="KlipperScreen/mmu_spoolman.png" alt="KlipperScreen Spoolman filaments panel" width="80%">
 </p>
 
-See [Feature: Spoolman Integration](Feature-Spoolman.md) for the underlying
-sync behaviour this panel is editing.
+See [Feature: Spoolman / Filament Hub](Feature-Spoolman.md) for the underlying
+sync behavior this panel is editing.
 
 ## MMU Options
 
 A handful of settings in KlipperScreen's own configuration menu adjust MMU
-behaviour on the display side:
+behavior on the display side:
 
 <p align="center">
   <img src="KlipperScreen/mmu_options.png" alt="KlipperScreen MMU options menu" width="80%">
@@ -239,6 +239,6 @@ behaviour on the display side:
   panels
 - [Command Reference: `MMU_GATE_MAP`](Reference-Commands.md#mmu_gate_map)
 - [Feature: Gate/TTG Maps](Feature-Gate-TTG-Maps.md)
-- [Feature: Spoolman Integration](Feature-Spoolman.md)
+- [Feature: Spoolman / Filament Hub](Feature-Spoolman.md)
 
 ---

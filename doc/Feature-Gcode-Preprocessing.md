@@ -17,7 +17,7 @@ that information by hand or rely on a slicer placeholder that may not exist
 yet (`{referenced_tools}`, for example, has been a pending PrusaSlicer
 feature request for years).
 
-This only runs for plain `.gcode` uploads from a recognised slicer
+This only runs for plain `.gcode` uploads from a recognized slicer
 (PrusaSlicer, SuperSlicer, OrcaSlicer, or BambuStudio, detected from the
 file's own generator comment) - binary G-code and `.ufp` uploads, and files
 from anything else, pass through untouched. Re-uploading a file that's
@@ -44,9 +44,10 @@ preprocessor without removing the section entirely.
     than Moonraker's default 20-second metadata-parsing timeout. If you see
     a Moonraker timeout error on upload, raise it in `moonraker.conf`:
 
-        :::ini
-        [file_manager]
-        default_metadata_parser_timeout: 120
+    ```ini
+    [file_manager]
+    default_metadata_parser_timeout: 120
+    ```
 
 ## Parameter Setup
 
@@ -56,7 +57,7 @@ values this preprocessor injects - it always injects them, but whether
 `mmu_macro_vars.cfg`:
 
 ```ini
-variable_restore_xy_pos : "next"   # last|next|none - toolhead XY behaviour after a toolchange
+variable_restore_xy_pos : "next"   # last|next|none - toolhead XY behavior after a toolchange
 ```
 
 Only `next` makes any use of the injected `NEXT_POS=` value described below
@@ -178,7 +179,7 @@ the toolchange-movement page for what happens with it.
 
 - **A placeholder shows up literally as `!something!` in a running print**
   - either `enable_file_preprocessor` is `False`, the slicer isn't one of
-    the four the preprocessor recognises, or the file is a binary
+    the four the preprocessor recognizes, or the file is a binary
     `.bgcode`/`.ufp` upload (neither is scanned at all).
 - **Changed your start g-code but the placeholders didn't update** -
   preprocessing only runs once per file; a file that's already been
@@ -190,7 +191,7 @@ the toolchange-movement page for what happens with it.
 - **The live status doesn't show `Purging` during the slicer's own
   wipe-tower routine** - the preprocessor injects
   `_MMU_STEP_SET_ACTION STATE=12`/`RESTORE=1` markers around that section
-  automatically for a recognised slicer; on an unrecognised one, or a
+  automatically for a recognized slicer; on an unrecognized one, or a
   disabled preprocessor, that marking doesn't happen.
 
 ## See also
@@ -201,7 +202,6 @@ the toolchange-movement page for what happens with it.
 - [Feature: Gate/TTG Maps](Feature-Gate-TTG-Maps.md)
 - [Feature: Tip Forming and Purging](Feature-Tip-Forming-Purging.md) - purge volumes
 - [Feature: LEDs](Feature-LEDs.md)
-- [Feature: Spoolman Integration](Feature-Spoolman.md) - the same `[mmu_server]` Moonraker component
+- [Feature: Spoolman / Filament Hub](Feature-Spoolman.md) - the same `[mmu_server]` Moonraker component
 
 ---
-

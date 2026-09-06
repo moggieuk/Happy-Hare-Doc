@@ -147,7 +147,6 @@ older macros, see the deprecation note on that same page.)
 - [Command Reference: `MMU_RECOVER`](Reference-Commands.md#mmu_recover)
 - [Conceptual: What Is an MMU?](Conceptual-MMU.md) - selector mechanisms and which ones support a physical bypass
 - [Feature: Gate/TTG Maps](Feature-Gate-TTG-Maps.md)
-- [Feature: Spoolman Integration](Feature-Spoolman.md)
+- [Feature: Spoolman / Filament Hub](Feature-Spoolman.md)
 
 ---
-

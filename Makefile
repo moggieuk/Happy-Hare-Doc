@@ -4,6 +4,10 @@ PY    := python
 # For quiet builds, override with make Q= for verbose output
 Q ?= @
 
+# CSpell version used by the opt-in spellcheck target. Keep this compatible with
+# Node versions commonly found on contributor machines.
+CSPELL_VERSION ?= 9.8.0
+
 # Where to fetch Happy-Hare's source from, and which ref to pin to. HAPPY_HARE_REF
 # is a tracked file (one line) rather than a Makefile variable so bumping the pin
 # is a one-line diff, not a Makefile edit. Tracks the 'v4' branch while v4 is still
@@ -12,14 +16,14 @@ Q ?= @
 HAPPY_HARE_REPO_URL ?= https://github.com/moggieuk/Happy-Hare.git
 HAPPY_HARE_REF      := $(shell cat HAPPY_HARE_REF)
 
-# Where the fetched checkout lands - gitignored, never committed here. Override to
+# Where the managed checkout lands - gitignored, never committed here. Override to
 # point at a checkout you already have for fast local iteration, e.g.:
 #   HAPPY_HARE_SRC=/path/to/Happy-Hare make shots
-HAPPY_HARE_SRC ?= $(CURDIR)/.happy-hare-src
+MANAGED_HAPPY_HARE_SRC := $(CURDIR)/.happy-hare-src
+HAPPY_HARE_SRC ?= $(MANAGED_HAPPY_HARE_SRC)
 
-# Stamp files avoid Make target parsing issues when workspace paths contain
+# The stamp avoids Make target parsing issues when workspace paths contain
 # spaces or '#'.
-SOURCE_FETCH_STAMP := .make/source-fetched.stamp
 VENV_READY_STAMP   := .make/venv-ready.stamp
 
 # Shared venv for doc tooling (pyte, Pillow, zensical - see doc_tools/requirements.txt)
@@ -27,7 +31,7 @@ VENV     ?= venv
 VENV_PY  := $(VENV)/bin/python
 BOOTSTRAP_PY := $(if $(shell command -v $(PY) 2>/dev/null),$(PY),python3)
 
-.PHONY: fetch-source clean-source shots command_reference docs docs_build docs_check docs_preview help
+.PHONY: fetch-source clean-source shots command_reference docs docs_build docs_check docs_preview spellcheck help
 
 help:  # Print this help and exit
 	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z0-9_-]+:[^:]*## / {printf "\033[36m%-24s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -43,26 +47,34 @@ help:  # Print this help and exit
 # 'docs'/'docs_build'/'docs_preview' only render already-committed doc/*.md and
 # never touch this, which is also why the CI deploy workflow doesn't fetch it.
 #
-# Tries a fast shallow clone first (works for a branch or tag name); falls back to
-# a full clone + checkout, which is needed if HAPPY_HARE_REF is ever pinned to an
-# arbitrary commit SHA rather than a branch/tag.
-$(SOURCE_FETCH_STAMP):
-	$(Q)echo "Fetching Happy-Hare @ $(HAPPY_HARE_REF) into $(HAPPY_HARE_SRC)"
-	$(Q)mkdir -p "$(dir $@)"
-	$(Q)if ! test -d "$(HAPPY_HARE_SRC)/.git"; then \
-			if git clone --depth 1 --branch "$(HAPPY_HARE_REF)" "$(HAPPY_HARE_REPO_URL)" "$(HAPPY_HARE_SRC)" 2>/dev/null; then \
-				: ; \
-			else \
-				git clone "$(HAPPY_HARE_REPO_URL)" "$(HAPPY_HARE_SRC)" && \
-				cd "$(HAPPY_HARE_SRC)" && git checkout "$(HAPPY_HARE_REF)"; \
+# The default checkout is a disposable managed cache, refreshed every time a
+# source-dependent target runs. An explicitly supplied HAPPY_HARE_SRC is treated
+# as user-owned and is only validated; it is never fetched, checked out or cleaned.
+fetch-source:  ## Fetch or refresh Happy-Hare source
+	$(Q)if [ "$(abspath $(HAPPY_HARE_SRC))" != "$(abspath $(MANAGED_HAPPY_HARE_SRC))" ]; then \
+			git -C "$(HAPPY_HARE_SRC)" rev-parse --is-inside-work-tree >/dev/null 2>&1 || { \
+				echo "HAPPY_HARE_SRC is not a git checkout: $(HAPPY_HARE_SRC)" >&2; exit 2; \
+			}; \
+			echo "Using external Happy-Hare checkout at $(HAPPY_HARE_SRC)"; \
+		else \
+			echo "Refreshing Happy-Hare @ $(HAPPY_HARE_REF) in $(HAPPY_HARE_SRC)"; \
+			if [ ! -e "$(HAPPY_HARE_SRC)" ]; then \
+				git clone --filter=blob:none --no-checkout "$(HAPPY_HARE_REPO_URL)" "$(HAPPY_HARE_SRC)"; \
+			elif [ ! -d "$(HAPPY_HARE_SRC)/.git" ]; then \
+				echo "Managed source path exists but is not a git checkout; run 'make clean-source' first" >&2; exit 2; \
 			fi; \
+			git -C "$(HAPPY_HARE_SRC)" remote set-url origin "$(HAPPY_HARE_REPO_URL)"; \
+			git -C "$(HAPPY_HARE_SRC)" fetch --force --depth 1 origin "$(HAPPY_HARE_REF)" || \
+				git -C "$(HAPPY_HARE_SRC)" fetch --force origin "$(HAPPY_HARE_REF)"; \
+			git -C "$(HAPPY_HARE_SRC)" checkout --detach --force FETCH_HEAD; \
+			git -C "$(HAPPY_HARE_SRC)" clean -ffd; \
 		fi
-	$(Q)touch "$@"
-fetch-source: $(SOURCE_FETCH_STAMP)  ## Fetch Happy-Hare source
 
-clean-source:  ## Remove fetched source
-	$(Q)rm -rf "$(HAPPY_HARE_SRC)"
-	$(Q)rm -f "$(SOURCE_FETCH_STAMP)"
+clean-source:  ## Remove the managed source cache
+	$(Q)if [ "$(abspath $(HAPPY_HARE_SRC))" != "$(abspath $(MANAGED_HAPPY_HARE_SRC))" ]; then \
+			echo "Refusing to remove external HAPPY_HARE_SRC: $(HAPPY_HARE_SRC)" >&2; exit 2; \
+		fi
+	$(Q)rm -rf "$(MANAGED_HAPPY_HARE_SRC)"
 
 
 #######################
@@ -116,6 +128,31 @@ docs_build: $(VENV_READY_STAMP)  ## Build static site
 docs_check: $(VENV_READY_STAMP)  ## Run strict build validation
 	$(Q)"$(VENV)/bin/zensical" build --strict
 	$(Q)"$(VENV_PY)" -m doc_tools.check_refs
+
+# Spell-check tracked, human-maintained documentation and supporting source using
+# the project CSpell configuration. Generated references, project notes and binary
+# assets are excluded.
+# Pass additional CSpell options through ARGS, e.g. make spellcheck ARGS='--no-summary'.
+spellcheck:  ## Spell-check documentation and supporting source
+	$(Q)command -v npx >/dev/null 2>&1 || { \
+		echo "Node.js/npm is required to run CSpell" >&2; \
+		exit 1; \
+	}
+	$(Q)git ls-files -- \
+		'*.md' '*.txt' '*.yml' '*.yaml' '*.py' '*.js' '*.css' \
+		'Makefile' \
+		':(exclude).cspell.config.yml' \
+		':(exclude).project-words.txt' \
+		':(exclude).agents/**' \
+		':(exclude).claude/**' \
+		':(exclude)MMX-Happy-Hare-Guide-Review.md' \
+		':(exclude)TOC.md' \
+		':(exclude)doc/Reference-Commands.md' \
+		':(exclude)doc/Dev-Command-Reference.md' | \
+		while IFS= read -r file; do \
+			[ -f "$$file" ] && printf '%s\n' "$$file"; \
+		done | \
+		npx --yes cspell@$(CSPELL_VERSION) lint --no-progress --file-list stdin $(ARGS)
 
 # Serves the already-built ./site as plain static files - no rebuild, no live
 # reload. This is what GitHub Pages (or any static host) actually does with the

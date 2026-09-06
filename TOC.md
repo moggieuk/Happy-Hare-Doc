@@ -15,9 +15,11 @@ repo root (not under `doc/`) specifically so it's never a candidate for publishi
   pull that down. `doc_tools/gen_command_reference.py` and `doc_tools/capture.py`
   still need to read Happy-Hare's source tree (`extras/mmu/**`,
   `installer/Kconfig*`) to regenerate `Reference-Commands.md`/screenshots — that
-  happens via `HAPPY_HARE_SRC`, fetched automatically by `make
-  shots`/`command_reference` (pinned to the branch/tag in `HAPPY_HARE_REF`, or
-  point it at a checkout you already have). `docs`/`docs_build`/`docs_preview`
+  happens via `HAPPY_HARE_SRC`. The default gitignored `.happy-hare-src/` is a
+  disposable managed cache refreshed to the latest commit at the branch, tag or
+  commit in `HAPPY_HARE_REF` before each source-dependent run. An explicitly
+  supplied checkout is read as-is and never fetched, switched, or removed.
+  `docs`/`docs_build`/`docs_preview`
   (and this repo's CI/Pages deploy) need none of that — they only render the
   `doc/*.md` and images already committed here. See the root `README.md` for the
   contributor-facing version of this, and `doc_tools/README.md` for exactly how
@@ -62,8 +64,8 @@ repo root (not under `doc/`) specifically so it's never a candidate for publishi
   `Reference-Mcu.md`. Renamed from a mix of `Foo-Reference.md`/plain `Foo.md`
   names for consistency across the nav's `Reference:` section; any future
   page added there should follow the same `Reference-XXX.md` pattern. Doesn't
-  apply to `Dev-Command-Reference.md` — that's a Developer Guide page and
-  keeps that section's own `Dev-` prefix convention instead.
+  apply to Developer Guide pages, which keep that section's own `Dev-` prefix
+  convention instead.
 - **v3→v4 flag:** any page ported from `wiki/` gets a ⚠️ in its status table
   entry until someone verifies it against v4 code. The riskiest one flagged
   this way was the Type-A/Type-B taxonomy on `Conceptual-MMU.md` — v4's real
@@ -87,7 +89,8 @@ repo root (not under `doc/`) specifically so it's never a candidate for publishi
   `Reference-Printer-Variables.md` has been retrofitted: removed its "What changed
   since v3" section and the "Not currently exposed here: servo/grip" aside
   (the servo/grip finding itself moved to `Dev-Code-Layout.md`, a developer
-  page, rather than being lost), stripped the `Klipper events` table's
+  page, rather than being lost), stripped the `Dev-Klipper-Events.md`
+  table's
   `Since` column and "signature changed"/"new in v4" language, and dropped a
   stray "(unchanged from v3)". **The only meta-notation that page still
   carries is deprecation status** (the `Deprecated variables` table) — that's
@@ -163,6 +166,13 @@ repo root (not under `doc/`) specifically so it's never a candidate for publishi
   every page (present and future) rather than per-page markup. Added
   2026-08-06 on request ("liked the visual color icons... helps provide
   visual separation").
+- **Article images have rounded corners and a subtle shadow site-wide**, via
+  `doc/assets/stylesheets/extra.css` (`.md-typeset img:not(.no-floating)`) —
+  screenshots and illustrations float by default without affecting theme chrome
+  such as the header logo or footer art. Add `class="no-floating"` to opt out;
+  the home page's `index/universal_mmu_driver.png` hero is the deliberate
+  exception. Slate mode uses a directional light shadow against its dark page
+  background. Added 2026-08-26; opt-out scope clarified 2026-08-27.
 - **Reuse a wiki diagram even if its labels are stale — but only if it's an
   editable diagram, not a screenshot of real output.** Added 2026-08-06 after
   the user pushed back on `Conceptual-MMU.md` skipping the wiki's images
@@ -201,6 +211,13 @@ repo root (not under `doc/`) specifically so it's never a candidate for publishi
     without affecting that box's own height/animation at all;
     `.md-header__inner` separately gets a plain `min-height` bump so there's
     header background for it to float onto.
+- **The primary-sidebar "Happy Hare v4" title links to the home page**
+  (added 2026-08-28) — Zensical only links the adjacent logo by default and
+  emits the site-name text as a bare text node. `hh-page-nav.js` wraps that
+  text in an anchor using the logo's own site-root URL on every
+  `document$` update, so it continues to work with `navigation.instant` and
+  does not require a vendored-template override. `extra.css` preserves the
+  theme's title styling and adds the normal accent hover/focus affordance.
 - **Don't drop wiki illustrations, admonitions, or worked examples without a
   specific reason** (added 2026-08-06) — the first `Feature-Espooler.md` draft
   over-compressed the ported wiki content (dropped the UI screenshots, the
@@ -218,11 +235,11 @@ repo root (not under `doc/`) specifically so it's never a candidate for publishi
   renders with NO icon or colour (silently, no build warning) because
   "important" isn't one of them. Use `!!! warning "Important"` to get a
   styled callout with the original label preserved.
-- **Code blocks are colourised** (added 2026-08-06) via `codehilite`, not
-  Material's normal `pymdownx.highlight` recipe — see **Zensical rough
-  edges** below, this was a deliberate workaround for the same
-  non-determinism bug already known from Mermaid, newly found to affect
-  plain syntax highlighting too. Practical effect for page-writing: fence
+- **Code blocks are colourised** (added 2026-08-06) with SuperFences emitting
+  `codehilite` wrappers, plus the base `codehilite` extension for traditional
+  indented blocks. The site deliberately does not use Material's normal
+  `pymdownx.highlight` wrappers; see **Zensical rough edges** below. Practical
+  effect for page-writing: fence
   `.cfg`-style config examples with `` ```ini `` and gcode command
   examples/lists with `` ```text `` (confirmed 2026-08-13 against every real
   Feature page already on the site — an earlier note here said ` ```yaml `
@@ -231,7 +248,17 @@ repo root (not under `doc/`) specifically so it's never a candidate for publishi
   you'd type, but what comes back), add the `console-output` class -
   `` ```{.text .console-output} `` - which `extra.css` renders in a distinct
   terminal-green instead of the default text colour, so real output reads
-  differently at a glance from a command example or a `.cfg` block.
+  differently at a glance from a command example or a `.cfg` block. To join a
+  command and its returned output into one visual container while preserving
+  those colours, put `` ```{.text .console-command} `` immediately before the
+  `console-output` fence; the stylesheet joins their touching edges.
+  `pymdownx.superfences` is the sole backtick-fence processor so fences work
+  inside admonitions, lists, and tabs. Do not also enable `fenced_code`: both
+  extensions register the same internal processor name and SuperFences does
+  not support loading them together. SuperFences' `css_class` is pinned to
+  `codehilite`; the separate `codehilite` extension remains enabled for
+  traditional indented/`:::lang` blocks, and `extra.css` also styles
+  `.highlight` defensively for stale generated HTML.
 - **"Macros" is its own top-level nav section** (added 2026-08-08, item 51),
   distinct from "Advanced Customization" — the latter is the expert-level
   internal-logic-replacement mechanism (`Custom-Load-Unload-Sequences.md`),
@@ -242,6 +269,12 @@ repo root (not under `doc/`) specifically so it's never a candidate for publishi
   position — see §10a Advanced Customization's own precedent — so it's
   numbered §10b here, immediately after §10a, rather than renumbered into
   its actual nav position).
+- **Related purge and tip-shaping Macro pages use shared nav/title prefixes**
+  (added 2026-09-04) — `Purge: Blobifier` / `Purge: Simple` and `Tip
+  Shaping: Forming` / `Tip Shaping: Toolhead Cutting` / `Tip Shaping: MMU
+  Cutting`. Keep their established `Macro-*.md` filenames stable so inbound
+  documentation links do not churn; group each prefixed set adjacently in
+  `mkdocs.yml`.
 
 ## Macro page template
 
@@ -317,12 +350,15 @@ anything. Don't silently decide something wasn't worth keeping.
 | Page | Source | Status |
 |---|---|---|
 | `Installation.md` | `wiki/Installation.md` | **done** — code-verified against the real `install.sh` (flags, usage text) and `installer/build.py`/`Kconfig.options`. Slots in before the per-type Getting Started pages, deliberately scoped to what those pages *don't* cover: cloning, the real flag reference, client macros, upgrading. Dropped the entire v3 sequential-Q&A "Creating Base Klipper Config" walkthrough (10+ screenshots) - v4 replaced that flow with `menuconfig` entirely, already covered per-type by the two `GettingStarted-*.md` pages; reusing those stale screenshots of a flow that no longer exists would have been wrong. Also dropped the nonfunctional `-r` (Repetier-Server) flag - commented out/TODO in real `install.sh`, doesn't work; corrected the client-macros mechanism from "hand-edit `printer.cfg`" to the real `menuconfig` yes/no prompt (`INSTALL_CLIENT_MACROS`); dropped the `z_hop_height_error`/`z_hop_speed` pause-mechanics paragraph since that setting doesn't exist in v4 (see item 48's `Operation.md` finding on unified parking) - deferred to `Operation.md` instead. |
+| `Hardware-Validation.md` | `wiki/Hardware-Configuration.md` + `wiki/Movement-and-Homing.md` | **done** — shared post-install checklist covering MCU connectivity, every filament switch, gear direction, mechanism-specific selector checks, encoder/eSpooler/sync-feedback options, plus the current named-endstop and coordinated-motor model. Stale pin-alias and old motor-name examples were replaced with the v4 interfaces and links to the deeper Feature/Calibration pages. |
 | `GettingStarted-BoxTurtle.md` | existing `doc/` page | **done**, incl. a "Picking a toolhead" step (shared toolhead/extruder geometry database, optional, reduces calibration) with two real screenshots |
 | `GettingStarted-ViViD.md` | new, from `installer/mmu_types/Kconfig.vvd` + `installer/boards/custom/Kconfig.vvd` + `installer/connection/Kconfig.{mmu_mcu,buffer_mcu}` | **done** - second Getting Started page, with a real `getting-started-vivid` `doc_tools/shots.py` session (7 screenshots) for every screen except the two live serial-device-list screens (see session log for why those stay text). Covers the two-separate-MCU serial selection unique to this design, otherwise a lighter walkthrough than Box Turtle's since almost everything defaults correctly for this fully-specified design. |
+| `GettingStarted-MMX.md` | new, from the v4 MMX/EBB42 menuconfig profiles plus the CN3D MMX installation and wiring guides | **done** - walks the original four-gate servo-cam MMX through the real v4 menus with seven reproducible screenshots. Corrects the external guide's alias-based manual configuration: the EBB42 profile fills fully qualified pins directly, the four PB7/PB5/PB6/PB8 switches are entry sensors, and PB4 is enabled as the shared exit/gate-homing sensor rather than treated as a toolhead sensor. Documents automatic timestamped backup recovery with `--prev` and, by explicit request, the clean uninstall/copy-`mmu.V3`/`-b v3` return path. |
 | `MMU-Types-Overview.md` (comparison table: all 15 Kconfig types, selector class, gate count, status) | new, from `installer/Kconfig.mmu_types/*` | new |
 | `Upgrading-from-v3.md` | `wiki/Upgrade-Notice.md`, `wiki/Change-Log.md` | rewrite for v4 |
 | `GettingStarted-3MS.md` | `wiki/Quick-Start-3MS.md` | new — found during the 2026-08-07 wiki-gap audit (item 47 below), not previously on this table at all. Same genre as the two `GettingStarted-*.md` pages above (real menuconfig screenshots via `doc_tools/shots.py`, not a port of the wiki's raw command transcript). |
 | `GettingStarted-QuattroBox.md` | `wiki/Quick-Start-QuattroBox.md` | new — same finding/genre as 3MS above. |
+| `GettingStarted-Multi-Unit.md` | current installer multi-unit workflow | **initial draft** — conversion from a working single unit, shared and per-unit menuconfig passes, symbolic/display names, dissimilar unit types, shared encoder/buffer, bypass association, global gate/tool numbering, `UNIT=` command targeting, generated per-unit files, and reconfiguration; includes five reproducible menuconfig screenshots plus the three-unit Mainsail panel. |
 
 ### 2. Concepts
 
@@ -395,11 +431,12 @@ to its procedure instead of being repeated across two class-based pages.
 | `Slicer-Setup.md` | `wiki/Slicer-Setup.md` | **done** — user's own expectation ("should be almost the same as v3") held up well: the core `MMU_START_SETUP`/`MMU_START_CHECK`/`MMU_START_LOAD_INITIAL_TOOL`/`MMU_END` macro sequence is essentially unchanged, confirmed directly against `config/macros/mmu_software.cfg`. Corrected: `variable_eject_tool` → real name `variable_unload_tool`; added `variable_automap_strategy` (new, not in wiki); noted `MMU_END`'s new `UNLOAD=` param. Dropped four inline slicer-textbox screenshots that just re-showed text already in a code block (`start_gcode.png`, `end_gcode.png`, `tool_change_gcode.png`, `after_layer_change_gcode.png`); kept `error_dialog_during_start.png` (real UI, not text-representable) and all four tip-forming-settings screenshots. |
 | `Toolchange-Movement.md` | `wiki/Toolchange-Movement.md` | **done** — fixed a real inconsistency: `variable_enabled_park_standalone`/`variable_enabled_park_disabled` (wiki) don't exist; real names are `variable_enable_park_standalone`/`variable_enable_park_disabled` (matching `enable_park_printing`). Bigger finding: the wiki describes *three* z-hop sources (slicer's own, an immediate Happy-Hare blob-prevention lift via `z_hop_height_toolchange`, and the configurable park move) - `z_hop_height_toolchange` doesn't exist anywhere in real v4 config; that immediate lift has been unified into the single `variable_park_*` mechanism this page already documents. Rewrote "Z-Hop Moves" around two real sources, not three. |
 
-### 7. Operation — done (all 3 pages, consolidated from 4 planned)
+### 7. Operation — done (all 4 pages)
 
 | Page | Source | Status |
 |---|---|---|
-| `Operation.md` | `wiki/Basic-Operation.md` + `wiki/Handling-Errors.md` | **done** — merged into one page per explicit request (was two separate rows in this table; the user asked for "the 'Operation' page that should pull from Basic-Operation.md and Handling-Errors.md," singular). Explicitly flagged by the user as possibly stale going in - warranted a full dedicated source-verification pass (not a lighter check like §6 above), which found real corrections: `logfile_level`→`log_file_level`; `encoder_load_retries`→`gate_load_attempts`; `gear_from_spool_speed`→`gear_load_speed`; `gear_from_buffer_speed`/`gear_speed_from_buffer` (wiki uses both, inconsistently)→`gear_from_filament_buffer_speed`; `bowden_allowable_load_delta`→`bowden_allowable_encoder_delta`; `strict_filament_recover`→`strict_filament_recovery`; `extruder_homing_endstop`'s `collision` value is really named `encoder`; a 5th endstop value, `filament_compression`, exists and isn't in the wiki; `mmu_calibration_bowden_length` isn't a real user-facing name (internal persisted state, not something to type). Several settings the wiki locates in `mmu_parameters.cfg` are actually in `mmu.cfg`'s shared section or its `[mmu_toolhead]` section - the same recurring file-location confusion found on multiple other pages. Confirmed accurate as-is: `MMU_PRELOAD`, `MMU_CHECK_GATE TOOLS=`, `MMU_STATUS SHOWCONFIG=`, `MMU_UNLOCK`, `MMU_RECOVER` (all four params, plus a new `BYPASS=1` not in the wiki), `MMU_PAUSE FORCE_IN_PRINT=1`, and the whole pause→fix→resume/recover flow (reproduced as a `<pre class="hh-mermaid">` flowchart, same mechanism as `Feature-Spoolman.md`'s diagrams). Deliberately kept the load/unload sequence walkthrough at overview level and linked out to `Custom-Load-Unload-Sequences.md` for the state-machine/`_MMU_STEP_*` detail that page already owns, rather than duplicating it. Dropped the wiki's "KlipperScreen Happy Hare" subsection entirely - now redundant with the dedicated page below. |
+| `Understanding-Operation.md` | `wiki/Understanding-Operation.md` + current command output | **done** — rebuilt the legacy status walkthrough around a current four-gate Box Turtle snapshot. Covers the machine/selection state and the dynamically calculated preload, load and unload sequences from `MMU_STATUS SHOWCONFIG=1`, then cross-checks that report against the current `MMU_GATE_MAP`, `MMU_TTG_MAP` and `MMU_SENSORS` output. A multi-unit legend explains unit ownership, TTG columns, availability and selection symbols, followed by a left-to-right guide to the live filament-path glyphs, sensors, sync-feedback buffer and tracked distance. The old point-in-time status format, parameter names and version-specific prose were replaced rather than preserved; deeper map/sensor configuration remains on the existing Feature pages. Added first in the Operation navigation so readers learn how to inspect state before acting on it. |
+| `Operation.md` | `wiki/Basic-Operation.md` + `wiki/Handling-Errors.md` + `wiki/Print-Job-State-Machine.md` | **done** — merged into one page per explicit request (was two separate rows in this table; the user asked for "the 'Operation' page that should pull from Basic-Operation.md and Handling-Errors.md," singular). Explicitly flagged by the user as possibly stale going in - warranted a full dedicated source-verification pass (not a lighter check like §6 above), which found real corrections: `logfile_level`→`log_file_level`; `encoder_load_retries`→`gate_load_attempts`; `gear_from_spool_speed`→`gear_load_speed`; `gear_from_buffer_speed`/`gear_speed_from_buffer` (wiki uses both, inconsistently)→`gear_from_filament_buffer_speed`; `bowden_allowable_load_delta`→`bowden_allowable_encoder_delta`; `strict_filament_recover`→`strict_filament_recovery`; `extruder_homing_endstop`'s `collision` value is really named `encoder`; a 5th endstop value, `filament_compression`, exists and isn't in the wiki; `mmu_calibration_bowden_length` isn't a real user-facing name (internal persisted state, not something to type). Several settings the wiki locates in `mmu_parameters.cfg` are actually in `mmu.cfg`'s shared section or its `[mmu_toolhead]` section - the same recurring file-location confusion found on multiple other pages. Confirmed accurate as-is: `MMU_PRELOAD`, `MMU_CHECK_GATE TOOLS=`, `MMU_STATUS SHOWCONFIG=`, `MMU_UNLOCK`, `MMU_RECOVER` (all four params, plus a new `BYPASS=1` not in the wiki), `MMU_PAUSE FORCE_IN_PRINT=1`, and the whole pause→fix→resume/recover flow (reproduced as a `<pre class="hh-mermaid">` flowchart, same mechanism as `Feature-Spoolman.md`'s diagrams). The print-job lifecycle is now included without duplicating that recovery walkthrough, code-verified around `printer.mmu.print_state`, public `MMU_PRINT_START`/`MMU_PRINT_END` bookends, explicit end states, the `pause_locked`→`paused` distinction and the current `idle` wake-up state omitted by the wiki; the wiki's Mermaid diagram was updated and carried forward through the site's stable raw-HTML renderer. Deliberately kept the load/unload sequence walkthrough at overview level and linked out to `Custom-Load-Unload-Sequences.md` for the state-machine/`_MMU_STEP_*` detail that page already owns, rather than duplicating it. Dropped the wiki's "KlipperScreen Happy Hare" subsection entirely - now redundant with the dedicated page below. |
 | `KlipperScreen.md` | `wiki/KlipperScreen.md` | **done** — the wiki source was already fairly accurate (uses the real v4 selector-class taxonomy - Linear/Rotary/Virtual - not the stale Type-A/B binary), so little to correct. The wiki page's own install section was circular ("follow the install directions... included in this wiki here" pointing at itself) - replaced with real install steps fetched directly from the fork's own README (`https://github.com/moggieuk/KlipperScreen-Happy-Hare-Edition`): it replaces stock KlipperScreen rather than running alongside it, clone over `~/KlipperScreen`, `cd happy_hare && ./install_ks.sh -g <num_gates>` (also the correct thing to re-run after every update, not just once). Originally restored all three Manage-panel selector-variant screenshots (linear/rotary/virtual) rather than showing just one - **superseded 2026-08-07, item 50**: the fork's own UI moved on since those screenshots were taken. |
 | `Mainsail-Fluidd-Integration.md` | `wiki/Mainsail-Fluidd-Integration.md` | **done** — panel descriptions and `t_macro_color` (all four values: `slicer`/`allgates`/`gatemap`/`off`) verified unchanged against source. Dropped the wiki's specific "Mainsail PR is in queue, Fluidd PR already integrated" claim - couldn't verify current merge status (checked both `mainsail-happy-hare-edition`/`fluidd-happy-hare-edition` forks directly; still active, but their READMEs don't state a merge-status the way the KlipperScreen fork's does) and this site avoids stale point-in-time claims by rule - reworded to a timeless "forks track the newest enhancements" framing instead. Dropped the celebratory `candy.png`/`thumbs_up.png` images, matching this site's tone elsewhere. |
 
@@ -467,13 +504,13 @@ noted on `Reference-Macro-Vars.md` itself; not a gap in this table.
 | Page | Source | Notes |
 |---|---|---|
 | `Dev-Code-Layout.md` | new — `extras/mmu/` structure | Object-ownership tree, the 3 "extends" relationships (composition / mixin-split / command-pattern), full selector hierarchy incl. genuine multi-inheritance type-C classes, command auto-discovery pipeline, hardware-boundary quotes pulled straight from NFC/sync-feedback docstrings. The flagship page — read it first if picking this session back up. |
+| `Dev-Klipper-Events.md` | Happy Hare `mmu:*` events | Split from `Reference-Printer-Variables.md`; event parameters checked against every current event emission. |
 | `Dev-Kconfig-Structure.md` | new — `installer/Kconfig` tree, `installer/build.py`/`parser.py`/`upgrades.py` | Covers the Kconfig dialect extensions, and `./install.sh -z`/`-t` (git-update skip / sandboxed test-mode install to `/tmp/mmu_test`). Deliberately drops a "Makefile targets" table that was here — too detailed, per feedback. |
 | `Dev-Testing.md` | `test/README.md` §1–7 (minus §1a) | Trimmed: no more exhaustive per-test-file table (it only grows) — one illustrative file (`test_mmu_console.py`) plus "browse `test/test_mmu_*.py`". Counts genericized to `>900`. |
 | `Dev-Command-Reference.md` | new, generated — `doc_tools/gen_command_reference.py`'s `render_dev_page()` | **done (item 59)** — the `CATEGORY_STEPS`/`CATEGORY_INTERNAL` commands `Reference-Commands.md` deliberately excludes (`_MMU_STEP_*`, `_MMU_TEST`, the `CANCEL_PRINT`/`CLEAR_PAUSE`/`PAUSE`/`RESUME` wrappers, `__MMU_*` event handlers), generated by the same script/mechanism as the main reference so both stay in sync with source via `make command_reference`. |
 | `Dev-Test-Command.md` | new — `extras/mmu/commands/mmu_dev_test.py` (`_MMU_TEST`) | **done (item 58, updated item 59)** — the hidden, always-registered developer command (leading underscore = Klipper's hide-from-help convention, not a special build flag; every option is live on any install). Groups its ~25 sub-tests by risk tier (safe introspection / moves real hardware / provokes known bugs on purpose / sequence timing / fake autotune telemetry) rather than repeating the flat parameter list, which now lives on `Dev-Command-Reference.md` instead. Cross-linked from `Dev-Testing.md`'s coverage-map row. |
 | `Dev-Simulator.md` | `test/README.md` §1a — **renamed from "Console"** | Opens with a real colour screenshot (`doc/Dev-Simulator/Simulator.png`, user-supplied) of a live session before the ported detail. |
 | `Dev-Doc-Tooling.md` | `doc_tools/README.md` | Kept in sync with the actual `doc_tools/README.md` — edit both together. Includes a note on the Zensical build-cache bug (see below). |
-| `Dev-Installer-Docker.md` | `installer-dev/README.md`, rewritten after reading the actual Dockerfiles/compose file | Real purpose: cross-**Python-version** testing (Alpine target runs Python 2.7, matching Creality K1's busybox environment) — not just "a clean sandbox", which `-t` already gives you on your own host Python. |
 | `Dev-Contributing.md` | new + `.github/CONTRIBUTING.md` | Community/PR-process guidance ported in, plus the file-header convention and links back to every other Developer Guide page. |
 
 ### 13. Community & Support
@@ -508,24 +545,19 @@ noted on `Reference-Macro-Vars.md` itself; not a gap in this table.
   `` `a` \| `b` ``. Bit twice this session (`Reference-Printer-Variables.md`, then
   `Dev-Simulator.md`) before the pattern stuck; grep any new page for `` \| ``
   before considering it done.
-- **The incremental-build flakiness is in `pymdownx.superfences`'s custom-fence
-  machinery generally, not specific to Mermaid.** Tested directly (2026-08-06,
-  while trying to get colourised code blocks for `Feature-Espooler.md`):
-  enabling `pymdownx.highlight` + `pymdownx.superfences` (Material's normal
-  syntax-highlighting recipe, no Mermaid/custom-fence config involved at all)
-  reproduced the identical bug on ordinary language fences — 2 of 4 clean
-  rebuilds silently rendered with zero highlighting, same failure signature as
-  the Mermaid case above. The base `codehilite` extension (Python-Markdown's
-  original highlighter, not part of superfences) was deterministic across 6/6
-  clean rebuilds in the same test. Fix in use: `codehilite` +
-  `doc/assets/stylesheets/extra.css` re-pointing its Pygments token classes at
-  Material's own `--md-code-hl-*-color` variables (Material's shipped CSS only
-  styles `pymdownx.highlight`'s `<div class="highlight">`, not codehilite's
-  `<div class="codehilite">`) — see the CSS file's own comment for how to
-  regenerate the mapping if Pygments' class names or Material's variable names
-  ever change. **Rule of thumb going forward: avoid `pymdownx.superfences` for
-  anything**, not just Mermaid, until a Zensical release specifically claims to
-  have fixed the underlying cache bug.
+- **SuperFences and Python-Markdown's `fenced_code` must not be enabled
+  together.** The earlier 2026-08-06 investigation attributed inconsistent
+  ordinary-fence output to SuperFences itself. Rechecking on 2026-08-19 found
+  that the configuration loaded both extensions, which compete for the same
+  internal `fenced_code_block` processor registration and are explicitly not
+  supported together. SuperFences is now the sole backtick-fence processor,
+  with `css_class: codehilite`; six consecutive clean builds produced identical
+  `Slicer-Setup.md` HTML, including fences nested in admonitions and tabs. The
+  base `codehilite` extension remains for traditional indented blocks, and
+  `doc/assets/stylesheets/extra.css` maps its Pygments token classes to
+  Material's `--md-code-hl-*-color` variables. This does not overturn the
+  separate Mermaid custom-fence warning above: do not add a SuperFences Mermaid
+  custom fence without retesting that route specifically.
 - None of the above is likely specific to this repo — worth re-checking against
   a newer Zensical release before assuming they still apply.
 
@@ -592,9 +624,7 @@ noted on `Reference-Macro-Vars.md` itself; not a gap in this table.
 9. Cleanup pass on the Developer Guide from user feedback: trimmed `Dev-Testing.md`,
    dropped a table from `Dev-Kconfig-Structure.md`, added real detail on
    `install.sh -z`/`-t` (found by reading `install.sh` directly rather than
-   guessing), and rewrote `Dev-Installer-Docker.md` after actually reading the
-   Dockerfiles/compose file for the first time (the real value is Python-2.7/
-   Alpine parity testing, not just "a clean sandbox").
+   guessing).
 10. Swapped the `Dev-Simulator.md` ASCII transcription for a real screenshot the
     user supplied as a file, and added the "Picking a toolhead" step to
     `GettingStarted-BoxTurtle.md` with two new real screenshots generated via

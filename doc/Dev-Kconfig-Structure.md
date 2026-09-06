@@ -1,7 +1,7 @@
 # Kconfig & Installer Architecture
 
 How a `menuconfig` choice becomes a real `.cfg` file on the printer - the
-pipeline behind [Getting Started with Box Turtle](GettingStarted-BoxTurtle.md)
+pipeline behind guides such as [Getting Started with Box Turtle](GettingStarted-BoxTurtle.md)
 and [doc_tools' screenshot pipeline](Dev-Doc-Tooling.md), from a contributor's
 side rather than a user's.
 

@@ -85,6 +85,32 @@ function ensureBackToTopButton() {
   updateBackToTopVisibility();
 }
 
+// Zensical renders the primary sidebar title as plain text beside a logo that
+// already links to the site root. Make the title itself use that same URL so
+// the whole "Happy Hare v4" brand block offers an obvious route home. This is
+// done here rather than with a theme override because the repo deliberately
+// uses Zensical's vendored templates unchanged.
+function ensureSidebarHomeLink() {
+  var title = document.querySelector(
+    ".md-sidebar--primary nav.md-nav--primary > .md-nav__title"
+  );
+  if (!title || title.querySelector(".hh-sidebar-home-link")) return;
+
+  var logoLink = title.querySelector("a.md-logo[href]");
+  if (!logoLink) return;
+
+  var titleText = Array.prototype.filter.call(title.childNodes, function (node) {
+    return node.nodeType === Node.TEXT_NODE && node.textContent.trim();
+  })[0];
+  if (!titleText) return;
+
+  var homeLink = document.createElement("a");
+  homeLink.href = logoLink.href;
+  homeLink.className = "hh-sidebar-home-link";
+  homeLink.textContent = titleText.textContent.trim();
+  title.replaceChild(homeLink, titleText);
+}
+
 // Registered once, not inside document$.subscribe below - that callback
 // re-fires (and rebuilds .hh-page-nav from scratch) on every in-app
 // navigation, but this script itself only loads once, so a listener
@@ -98,6 +124,8 @@ window.addEventListener("resize", updateBackToTopVisibility);
 window.addEventListener("scroll", updateBackToTopVisibility, { passive: true });
 
 document$.subscribe(function () {
+  ensureSidebarHomeLink();
+
   // Lives inside the real theme <footer> now, not the article - prepended
   // as its first child, directly above .md-footer-meta, so it picks up the
   // footer's own full-width dark background with no styling of its own (see

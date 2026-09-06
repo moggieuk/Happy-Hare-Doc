@@ -31,17 +31,35 @@ thinking twice.
 
 These just report state; none of them move anything.
 
-```{.text .console-output}
+```{.text .console-command}
 _MMU_TEST GET_POS=1
+```
+
+```{.text .console-output}
 Filament pos state: 4 (LOADED_ENCODER)
+```
 
+```{.text .console-command}
 _MMU_TEST GET_POSITION=1
+```
+
+```{.text .console-output}
 Filament position: 683.2
+```
 
+```{.text .console-command}
 _MMU_TEST DUMP_ACTIVE_SENSORS=1
-active_sensors={'mmu_gate_0': True, 'mmu_gate_1': False, ...}
+```
 
+```{.text .console-output}
+active_sensors={'mmu_gate_0': True, 'mmu_gate_1': False, ...}
+```
+
+```{.text .console-command}
 _MMU_TEST DUMP_MCU_ENDSTOPS=1
+```
+
+```{.text .console-output}
 mmu_gate_0(mmu:mmu,PA3,140234...)               Steppers: gear0
 ```
 
@@ -50,8 +68,11 @@ a given filament position, without actually moving anything - useful for
 working out why a load/unload logic branch didn't trigger the sensor
 check you expected:
 
-```{.text .console-output}
+```{.text .console-command}
 _MMU_TEST SENSOR=1 POS=4 GATE=0 LOADING=1
+```
+
+```{.text .console-output}
 check_all_sensors_before(4,0)=True
 sensors before=['mmu_gate_0']
 check_all_sensors_after(4,0)=False

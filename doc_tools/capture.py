@@ -12,7 +12,7 @@
 #
 # No screen recorder, no window manager, no cropping by hand. menuconfig is a
 # curses app, so it is given a pty, its escape stream is fed to a terminal
-# emulator (pyte), and the resulting character grid - text plus per-cell colour -
+# emulator (pyte), and the resulting character grid - text plus per-cell color -
 # is drawn with Pillow. That grid is also what the assertions read, so a shot can
 # state which screen it expects to be on and fail loudly when it is not.
 #
@@ -143,7 +143,7 @@ def hh_version():
 
     Kconfig:91 takes it from $HH_VERSION and renders it into the title bar of every
     screen; left unset the title reads 'Happy Hare v Configuration', which is what a
-    screenshot would then immortalise. Deriving it rather than hardcoding keeps that
+    screenshot would then immortalize. Deriving it rather than hardcoding keeps that
     from going stale. There are two other copies of this regex - install.sh:32 and
     test/hh/cfg.py:90 - and they must agree.
     """
@@ -202,16 +202,21 @@ def doc_env(unit_name='unit0', multi_unit=False, entry_point=False, unit_index=0
 # the tree being documented. The symbol is the one test/hh/profiles.py:111 uses for
 # the same machine, so the docs and the harness describe the same Box Turtle.
 BUILTIN_SEEDS = {
-    'boxturtle': 'MMU_TYPE_BOX_TURTLE_1_0',
-    'ercf': 'MMU_TYPE_ERCF_3_0',
+    'boxturtle': ('MMU_TYPE_BOX_TURTLE_1_0',),
+    'boxturtle-toolhead-cutter': (
+        'MMU_TYPE_BOX_TURTLE_1_0',
+        'MMU_HAS_TOOLHEAD_CUTTER',
+        'CHOICE_FORM_TIP_MACRO_CUT_TIP',
+    ),
+    'ercf': ('MMU_TYPE_ERCF_3_0',),
 }
 DEFAULT_SEED = 'boxturtle'
 
 _seed_cache = {}
 
 
-def generate_seed(symbol, path, env):
-    """Write a .mmu_config with `symbol` selected and everything else defaulted."""
+def generate_seed(symbols, path, env):
+    """Write a .mmu_config with `symbols` selected and all else defaulted."""
     sys.path.insert(0, KCONFIGLIB)
     import kconfiglib
 
@@ -219,11 +224,12 @@ def generate_seed(symbol, path, env):
     os.environ.update({key: str(value) for key, value in env.items()})
     try:
         kconfig = kconfiglib.Kconfig(os.path.join(INSTALLER, 'Kconfig'), warn=False)
-        sym = kconfig.syms.get(symbol)
-        if sym is None:
-            raise ScreenError('no such Kconfig symbol: %s' % symbol)
-        if not sym.set_value(2):                     # 2 == y
-            raise ScreenError('could not select %s' % symbol)
+        for symbol in symbols:
+            sym = kconfig.syms.get(symbol)
+            if sym is None:
+                raise ScreenError('no such Kconfig symbol: %s' % symbol)
+            if not sym.set_value(2):                 # 2 == y
+                raise ScreenError('could not select %s' % symbol)
         kconfig.write_config(path)
     finally:
         for key, value in saved.items():
@@ -474,7 +480,10 @@ class Menuconfig:
     def selection(self):
         """(row, text) of the highlighted item - see note 2 in the header."""
         best, width = -1, 0
-        for y in range(self.rows):
+        # The aquatic multi-unit entry point paints its full-width title and
+        # footer bars blue. They are decorative, not selections, so exclude the
+        # fixed header/footer rows from the width heuristic.
+        for y in range(2, max(2, self.rows - 2)):
             run = self._blue_run(y)
             if run > width:
                 best, width = y, run
@@ -501,16 +510,16 @@ class Menuconfig:
                 for arrow in SCROLL_ARROWS if arrow * 3 in line]
 
     def _bars(self):
-        """Full-width coloured rows: the title bar, and the separator below the menu."""
+        """Full-width colored rows: the title bar, and the separator below the menu."""
         page = Counter(self.screen.buffer[y][x].bg
                        for y in range(self.rows)
                        for x in range(self.cols)).most_common(1)[0][0]
         found = []
         for y in range(self.rows):
             row = self.screen.buffer[y]
-            colours = Counter(row[x].bg for x in range(self.cols))
-            colour, count = colours.most_common(1)[0]
-            if count == self.cols and colour != page:
+            colors = Counter(row[x].bg for x in range(self.cols))
+            color, count = colors.most_common(1)[0]
+            if count == self.cols and color != page:
                 found.append(y)
         return found
 
@@ -536,7 +545,7 @@ class Menuconfig:
         Height that can be given back without crowding the help text against the menu.
 
         The layout is: breadcrumb, title bar, menu window, separator bar, a help pane
-        of a FIXED eight rows (menuconfig.py:251 _SHOW_HELP_HEIGHT), then two rows of
+        of a FIXED seven rows (menuconfig.py:251 _SHOW_HELP_HEIGHT), then one row of
         key hints. Shrinking the terminal takes rows off the menu window only, so the
         blank space inside the help pane is overhead that cannot be reclaimed and must
         not be counted here - subtracting it would cut into the menu and bring the
@@ -600,10 +609,9 @@ class Menuconfig:
         """
         Step the highlight until it lands on `text` or stops moving.
 
-        "Stopped moving" is the whole screen being identical, not the selected text
-        being identical: menus contain blank separator lines, the highlight lands on
-        them, and two of those in a row would otherwise look like the end of the list
-        and abandon the search halfway down.
+        "Stopped moving" is the whole screen being identical, not an assumed change of
+        one displayed row. Comment headings remain visible but are not selectable, so
+        one arrow key can jump across several displayed rows to the next config option.
         """
         for _ in range(limit):
             before = self._snapshot()
@@ -685,7 +693,7 @@ class Menuconfig:
     # The input dialog titles itself '<prompt> (string)' - or (int)/(hex) - which is
     # both how the tool knows an editor opened and the only reliable way to tell an
     # editor from a submenu, since Enter opens whichever the item happens to be.
-    _EDITOR = ('(string)', '(int)', '(hex)')
+    _EDITOR = ('(string)', '(int)', '(hex)', '(string array)')
 
     def in_editor(self):
         return any(self.has(kind) for kind in self._EDITOR)
@@ -871,7 +879,7 @@ class Menuconfig:
 # -- the ad-hoc key language -------------------------------------------------
 #
 # Lets a whole navigation be written on a command line, which is what makes the
-# tool driveable without editing a file first:
+# tool drivable without editing a file first:
 #
 #   --keys 'select:Purging,enter,down,down,help'
 #

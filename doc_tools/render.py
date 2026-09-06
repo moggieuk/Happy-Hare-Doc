@@ -5,8 +5,8 @@
 # work the same on a laptop and on a Pi.
 #
 # Cell-at-a-time is not slow enough to matter (a 100x40 screen is 4000 draws, well
-# under a second) and it is the only way to reproduce curses' colouring exactly -
-# a run of spaces with a background colour is a visible highlight bar, and any
+# under a second) and it is the only way to reproduce curses' coloring exactly -
+# a run of spaces with a background color is a visible highlight bar, and any
 # renderer that skips whitespace loses the selection.
 #
 # This file may be distributed under the terms of the GNU GPLv3 license.
@@ -17,7 +17,7 @@ import os
 from collections import Counter
 
 # The xterm names pyte reports, in the shades a screenshot wants: readable rather
-# than literal. 256-colour and truecolour cells arrive as bare hex and pass through.
+# than literal. 256-color and truecolor cells arrive as bare hex and pass through.
 #
 # The dark end of this palette is load-bearing, not decoration. menuconfig writes
 # white-on-blue for the selection bar and, in the aquatic style the multi-unit entry
@@ -63,7 +63,7 @@ def _colour(value, fallback):
         return fallback
     if value in NAMED:
         return NAMED[value]
-    return '#' + value      # pyte hands 256/truecolour through as raw hex
+    return '#' + value      # pyte hands 256/truecolor through as raw hex
 
 
 def _contrast_fg(bg_hex):
@@ -72,7 +72,7 @@ def _contrast_fg(bg_hex):
 
     It has to be chosen against the CELL's background, not the page's. The aquatic
     style (which the multi-unit entry point forces, see doc_tools/capture.py) paints its
-    title and footer bars blue while leaving the text default: taking the page colour
+    title and footer bars blue while leaving the text default: taking the page color
     there gives dark grey on blue, which is legible in a terminal that resolves
     'default' to its own bright foreground and nearly unreadable in a PNG.
     """
@@ -102,10 +102,10 @@ def _fonts(size):
 
 def page_background(screen):
     """
-    The colour the terminal itself is painted.
+    The color the terminal itself is painted.
 
     menuconfig fills the whole window, so the commonest background across the grid
-    IS the page colour - taking it from the screen rather than assuming means the
+    IS the page color - taking it from the screen rather than assuming means the
     border matches whichever MENUCONFIG_STYLE was captured (the default style is
     light, aquatic is not).
     """
@@ -118,7 +118,7 @@ def visible_rows(screen, trim):
     """
     How many rows to draw.
 
-    Only trailing blank rows are dropped, and only when nothing on them is coloured:
+    Only trailing blank rows are dropped, and only when nothing on them is colored:
     blank space in the MIDDLE of a menu is real layout, and collapsing it would show
     readers a screen menuconfig never draws. In practice the honest lever for dead
     space is a shorter terminal (--rows), which makes the app relayout.

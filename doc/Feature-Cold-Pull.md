@@ -49,7 +49,7 @@ the actual pull:
    assists; you can also disengage it and pull fully by hand if you'd
    rather feel the correct pace yourself.
 
-```text
+```{.text .console-command}
 MMU_COLD_PULL MATERIAL=pla
 ```
 

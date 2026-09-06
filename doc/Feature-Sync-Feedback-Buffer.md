@@ -271,7 +271,7 @@ for a quick glance without opening the meter:
       Switch sensor at an extreme (compression shown)
     </td>
     <td align="center">
-      <img src="Feature-Sync-Feedback-Buffer/p-sensor-position.png" alt="Proportional sensor showing its normalised position" width="90%"><br>
+      <img src="Feature-Sync-Feedback-Buffer/p-sensor-position.png" alt="Proportional sensor showing its normalized position" width="90%"><br>
       Proportional sensor's live position (<code>0.25</code> here)
     </td>
   </tr>
@@ -302,8 +302,11 @@ the wiring works at all before trusting the automatic calibration below.
 Load filament, then move the buffer shuttle by hand to each extreme and
 check the raw value with [`MMU_SENSORS`](Reference-Commands.md#mmu_sensors):
 
+```{.text .console-command}
+MMU_SENSORS
+```
+
 ```{.text .console-output}
-> MMU_SENSORS
 unit0:filament_proportional --> 0.02 (raw: 0.0064)
 ```
 
@@ -318,8 +321,11 @@ automatically calibrate the sensor by moving the gear stepper in small
 increments in both directions until readings plateau at each extreme.
 You need to enter the reported values into `mmu_hardware.cfg`:
 
+```{.text .console-command}
+MMU_CALIBRATE_PSENSOR
+```
+
 ```{.text .console-output}
-> MMU_CALIBRATE_PSENSOR
 Finding compression limit stepping up to 28.00mm
 Seeking ... ADC compressed limit: 0.2311
 Seeking ... ADC compressed limit: 0.6419
@@ -388,4 +394,3 @@ plateau at either end.
 - [Feature: Sensors](Feature-Sensors.md) - naming/addressing, querying, and enabling/disabling any sensor at runtime
 
 ---
-

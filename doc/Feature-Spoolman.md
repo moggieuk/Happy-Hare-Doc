@@ -1,4 +1,4 @@
-# Feature: Spoolman Integration
+# Feature: Spoolman / Filament Hub
 
 ## Concept
 
@@ -84,11 +84,10 @@ version" message on the console). Once connected, it adds three extra
 fields to Spoolman's spool records: `Printer Name`, `MMU Gate`, and `RFID`
 (the tag UID(s) bound to that spool - a spool can carry more than one, e.g.
 a tag stuck on each side, see [NFC/RFID Reading](Feature-NFC.md)).
-They're hidden by default in the Spoolman web UI - open **Hide Columns** and
-select them to see gate assignments there:
+They show up below the spool's main data in the details view in Spoolman:
 
 <p align="center">
-  <img src="Feature-Spoolman/moonraker-extra-columns.png" alt="Spoolman's Hide Columns menu with Printer Name and MMU Gate selected" width="60%">
+  <img src="Feature-Spoolman/moonraker-extra-columns.png" alt="Spoolman's spool detail view with the new columns highlighted" width="60%">
 </p>
 
 An alternative to showing these columns is Spoolman's own "Location" field,
@@ -137,10 +136,6 @@ MMU_GATE_MAP GATE=0 SPOOLID=-1         # Unset gate 0's spool (other attributes 
 MMU_GATE_MAP NEXT_SPOOLID=45           # Auto-assign spool 45 to whichever gate is loaded/preloaded next (0 cancels)
 ```
 
-<p align="center">
-  <img src="Feature-Spoolman/gate-map-update-example.png" alt="Spoolman web interface showing a spool's Printer Name and MMU Gate after an MMU_GATE_MAP update" width="100%">
-</p>
-
 `NEXT_SPOOLID` isn't available in `pull` mode - Spoolman already owns the
 gate assignment there, so a locally-pending one has nothing to attach to;
 Happy Hare rejects it with an error naming `push`/`readonly` as the modes
@@ -161,8 +156,11 @@ MMU_SPOOLMAN REFRESH=1 FIX=1            # As above, and clear any gate with more
 MMU_SPOOLMAN CLEAR=1                    # Clear every gate assignment for this printer in Spoolman
 ```
 
-```{.text .console-output}
+```{.text .console-command}
 MMU_SPOOLMAN SPOOLINFO=1
+```
+
+```{.text .console-output}
 Spool is: Matte Green (id: 1)
 - Material: n/a
 - Used: 56 g
@@ -293,12 +291,17 @@ weight) alongside each gate, and lets you edit a gate's `SpoolId` directly:
   <img src="Feature-Spoolman/klipperscreen-gate-view.png" alt="KlipperScreen Happy Hare Edition gate list showing Spoolman material, color and remaining weight per gate" width="60%">
 </p>
 
-And in Spoolman's own web UI, once the extra columns are shown (see
-[Moonraker Setup](#moonraker-setup) above), every spool's row shows which
+And in Spoolman's own web UI, every spool's row in the library view shows which
 printer and gate it's currently assigned to:
 
 <p align="center">
-  <img src="Feature-Spoolman/spoolman-web-table.png" alt="Spoolman web UI spool table with Printer Name and MMU Gate columns visible" width="100%">
+  <img src="Feature-Spoolman/spoolman-location-library.png" alt="Spoolman web UI spool library with location visible">
+</p>
+
+You can also group the dashboard by printer name:
+
+<p align="center">
+  <img src="Feature-Spoolman/spoolman-location-dashboard.png" alt="Spoolman web UI dashboard grouped by printer">
 </p>
 
 ## Tuning
@@ -451,7 +454,7 @@ assignments are managed centrally rather than per-printer. `MMU_SPOOLMAN`
 with no parameters lists this printer's own gate assignments; add
 `PRINTER=<name>` to check another printer sharing the same database:
 
-```text
+```{.text .console-command}
 MMU_SPOOLMAN PRINTER=BigRed
 ```
 
@@ -501,6 +504,75 @@ reader. Whatever the source, the workflow is the same:
 The gate that ends up loaded gets that `SpoolId`, with material/color
 pulled from Spoolman - governed by the same `spoolman_pending_id_timeout`
 that bounds a shared NFC/RFID scan.
+
+## FilamentHub
+
+[FilamentHub](https://filamenthub.ru/) is a filament and spool manager with a
+Spoolman-compatible API. It can be used as an alternative backend for Happy
+Hare's existing Spoolman integration, while Happy Hare continues to use
+Moonraker's normal `[spoolman]` component and the same synchronization workflow.
+
+To let FilamentHub manage the remote gate map:
+
+1. On FilamentHub's **My Filaments** page, select the physical printer and
+   create a **Happy Hare** material system. When opened inside FilamentHub's
+   OrcaSlicer plugin, the setup can use the Moonraker connection already stored
+   in the selected OrcaSlicer printer profile.
+2. Set [`spoolman_support: pull`](#working-with-a-remote-gate-map-pull) in
+   `mmu.cfg`. FilamentHub also recommends `t_macro_color: gatemap` for the
+   displayed tool colors; see [Extruder/Filament Color](Mainsail-Fluidd-Integration.md#extruderfilament-color)
+   for what that option changes.
+3. Copy the generated block into `moonraker.conf`:
+
+    ```ini
+    [spoolman]
+    server: https://filamenthub.ru/api/v1/spool_compat/<device-key>
+    sync_rate: 5
+    ```
+
+    `sync_rate: 5` uses Moonraker's default. It isn't a FilamentHub requirement;
+    choose another interval if appropriate for the installation. See
+    [Moonraker's `[spoolman]` configuration](https://moonraker.readthedocs.io/en/latest/configuration/#spoolman)
+    for the option's definition.
+
+    !!! warning "Keep the connection URL private"
+        The generated URL contains a device key. Treat the complete URL like a
+        credential rather than sharing it as an ordinary server address.
+
+4. Restart Moonraker, then use **Check printer** in the FilamentHub OrcaSlicer
+   plugin. This reads the real gate count, state, and spool assignments through
+   OrcaSlicer's local Moonraker connection without changing either map.
+5. Assign spools to gates in FilamentHub. They arrive through the normal Happy
+   Hare sync; use **Sync Spoolman** in the panel, or the
+   [re-sync commands](#re-syncing-recovering), when an immediate refresh is
+   needed.
+
+### Comparing the two gate maps
+
+**Check printer** always starts with a read-only comparison: the actual Happy
+Hare map is shown separately from the assignments saved in FilamentHub. Nothing
+changes until a direction is selected and confirmed:
+
+- **Use Happy Hare map** accepts recognized printer assignments in
+  FilamentHub.
+- **Restore the link** can re-associate an unambiguous spool that FilamentHub
+  previously knew in that same gate when Happy Hare still sees filament but has
+  lost the spool ID.
+- **Apply to printer** sends the saved FilamentHub assignments to Happy Hare.
+  This is available only with `spoolman_support: pull` and while the printer is
+  idle; the plugin runs the normal refresh and reads the map again to verify it.
+
+Unknown, unavailable, duplicate, or conflicting spools are never replaced
+automatically. They remain unresolved for the user to review.
+
+Gate state and spool identity also remain independent. A `spool_id` of `-1`
+means that the spool hasn't been identified - it does not make the gate empty.
+In the real eight-gate setup below, gate 0 contains buffered filament from an
+unknown spool, while gates 3 and 5 are the gates Happy Hare reported as empty.
+
+<p align="center">
+  <img src="Feature-Spoolman/filamenthub-gate-map.png" alt="FilamentHub showing a synchronized eight-gate Happy Hare map with an unidentified spool in gate 0 and empty gates 3 and 5" width="100%">
+</p>
 
 ## Troubleshooting
 
@@ -555,4 +627,3 @@ that bounds a shared NFC/RFID scan.
   resolution, auto-create, and the hardware readers themselves
 
 ---
-

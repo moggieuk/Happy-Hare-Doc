@@ -190,7 +190,7 @@ dirty the same way an eject normally would:
 
 With the nozzle now "dirty," measure how much filament that leaves behind:
 
-```text
+```{.text .console-command}
 MMU_CALIBRATE_TOOLHEAD DIRTY=1
 ```
 
@@ -246,17 +246,18 @@ next load.
 4. `MMU_UNLOAD SKIP_TIP=1` - unload without re-running tip forming.
 5. With filament unloaded/parked and the nozzle cold:
 
-        :::text
-        MMU_CALIBRATE_TOOLHEAD CUT=1
+    ```{.text .console-command}
+    MMU_CALIBRATE_TOOLHEAD CUT=1
+    ```
 
-```{.text .console-output}
------------------------------------
-Calibration Results (cut tip):
-> variable_blade_pos: 36.2 (currently: 37.5)
-> variable_retract_length: 5.0-36.2, recommend: 32.2 (currently: 32.5)
------------------------------------
-New calibrated variables active until restart. Update mmu_macro_vars.cfg to persist
-```
+    ```{.text .console-output}
+    -----------------------------------
+    Calibration Results (cut tip):
+    > variable_blade_pos: 36.2 (currently: 37.5)
+    > variable_retract_length: 5.0-36.2, recommend: 32.2 (currently: 32.5)
+    -----------------------------------
+    New calibrated variables active until restart. Update mmu_macro_vars.cfg to persist
+    ```
 
 !!! tip
     Rather than load/cut/cool, you can instead leave the extruder unloaded
