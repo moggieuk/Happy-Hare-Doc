@@ -18,7 +18,7 @@ The very first time you run this, there's no `.mmu_config` yet, so the installer
 drops you straight into `menuconfig` — no separate flag needed.
 
 <p align="center">
-  <img src="GettingStarted-3MS/01-first-run.png" alt="First run: nothing configured yet" width="70%">
+  <img src="GettingStarted-3MS/01-first-run.png" class="no-floating" alt="First run: nothing configured yet" width="70%">
 </p>
 
 This is the installer's default state: `MMU Type` is `Custom Design`, the board is
@@ -40,13 +40,13 @@ A quick word on the controls, since you'll use them constantly:
 Highlight **MMU Type** and press Enter. Use the arrow keys to navigate up to **3MS** and press Space to select it:
 
 <p align="center">
-  <img src="GettingStarted-3MS/02-mmu-type-3ms.png" alt="MMU Type list, with 3MS selected" width="70%">
+  <img src="GettingStarted-3MS/02-mmu-type-3ms.png" class="no-floating" alt="MMU Type list, with 3MS selected" width="70%">
 </p>
 
 Use the left arrow key to go back to the main screen:
 
 <p align="center">
-  <img src="GettingStarted-3MS/03-root-warnings.png" alt="Root menu after choosing 3MS" width="70%">
+  <img src="GettingStarted-3MS/03-root-warnings.png" class="no-floating" alt="Root menu after choosing 3MS" width="70%">
 </p>
 
 If you scroll to the bottom, you'll notice two warnings because Happy Hare still doesn't know your
@@ -58,7 +58,7 @@ about it here.
 Enter **Board type**:
 
 <p align="center">
-  <img src="GettingStarted-3MS/04-board-type.png" alt="Board type list, BTT SKR Pico v1.0 already selected" width="70%">
+  <img src="GettingStarted-3MS/04-board-type.png" class="no-floating" alt="Board type list, BTT SKR Pico v1.0 already selected" width="70%">
 </p>
 
 Because you already told it this is a 3MS, Happy Hare has pre-selected
@@ -72,7 +72,7 @@ the menu come from whatever you choose here.
 Back out to the top and enter **MCU connection**:
 
 <p align="center">
-  <img src="GettingStarted-3MS/05-mcu-connection.png" alt="MCU connection, Serial already selected" width="70%">
+  <img src="GettingStarted-3MS/05-mcu-connection.png" class="no-floating" alt="MCU connection, Serial already selected" width="70%">
 </p>
 
 Again, already right for a board like the SKR Pico that plugs in over USB:
@@ -85,7 +85,7 @@ instead, this is where you'd switch it — but for a stock, USB-attached 3MS, Se
 Back out and enter **MMU Features / Additions**:
 
 <p align="center">
-  <img src="GettingStarted-3MS/06-mmu-features.png" alt="MMU Features panel - MCU temperature sensor already enabled" width="70%">
+  <img src="GettingStarted-3MS/06-mmu-features.png" class="no-floating" alt="MMU Features panel - MCU temperature sensor already enabled" width="70%">
 </p>
 
 This is worth a look even though — for a stock 3MS — there's nothing to
@@ -98,7 +98,7 @@ move on.
 Back out to the top, enter **Pins / TMC**, then **Gear pins**:
 
 <p align="center">
-  <img src="GettingStarted-3MS/07-gear-pins.png" alt="Gear pins list - one row per gate" width="70%">
+  <img src="GettingStarted-3MS/07-gear-pins.png" class="no-floating" alt="Gear pins list - one row per gate" width="70%">
 </p>
 
 Every gate has its own UART, step, dir, enable and diag pin, all filled in from
@@ -111,14 +111,14 @@ runs backwards.
 Highlight **Gear dir pin** and press Enter to open its editor:
 
 <p align="center">
-  <img src="GettingStarted-3MS/08-gear-dir-editor.png" alt="Gear dir pin editor, showing the default pin" width="70%">
+  <img src="GettingStarted-3MS/08-gear-dir-editor.png" class="no-floating" alt="Gear dir pin editor, showing the default pin" width="70%">
 </p>
 
 If that gear needs reversing, add a `!` in front of the pin name — Klipper's
 standard way of inverting a pin's polarity:
 
 <p align="center">
-  <img src="GettingStarted-3MS/09-gear-dir-inverted.png" alt="Gear dir pin editor, with ! typed to invert it" width="70%">
+  <img src="GettingStarted-3MS/09-gear-dir-inverted.png" class="no-floating" alt="Gear dir pin editor, with ! typed to invert it" width="70%">
 </p>
 
 !!! tip
@@ -135,7 +135,7 @@ to whatever Happy Hare would have picked on its own.
 From the top menu, enter **Toolhead**:
 
 <p align="center">
-  <img src="GettingStarted-3MS/10-toolhead-selected.png" alt="Toolhead list" width="70%">
+  <img src="GettingStarted-3MS/10-toolhead-selected.png" class="no-floating" alt="Toolhead list" width="70%">
 </p>
 
 This step is entirely optional — skip it and Happy Hare falls back to generic
@@ -148,7 +148,7 @@ what selecting one does.
 Back out and enter **Toolhead sensors/settings** to see the effect:
 
 <p align="center">
-  <img src="GettingStarted-3MS/11-toolhead-dimensions.png" alt="Toolhead dimensions, pre-filled from the selected combo" width="70%">
+  <img src="GettingStarted-3MS/11-toolhead-dimensions.png" class="no-floating" alt="Toolhead dimensions, pre-filled from the selected combo" width="70%">
 </p>
 
 **Extruder entrance to nozzle** and **Residual filament**, under **Toolhead dimensions**,
@@ -170,7 +170,7 @@ From the top menu, enter **Software Options**, then **Select spoolman
 spool manager support**:
 
 <p align="center">
-  <img src="GettingStarted-3MS/12-spoolman-push.png" alt="Spoolman support set to Push" width="70%">
+  <img src="GettingStarted-3MS/12-spoolman-push.png" class="no-floating" alt="Spoolman support set to Push" width="70%">
 </p>
 
 This is one small example of the many software-side options living under
