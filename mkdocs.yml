@@ -107,6 +107,7 @@ nav:
   - Getting Started:
       - Installation: Installation.md
       - Upgrading from v3 to v4: Upgrade-v3-v4.md
+      - 3MS: GettingStarted-3MS.md
       - Box Turtle: GettingStarted-BoxTurtle.md
       - BTT ViViD: GettingStarted-ViViD.md
   - Calibration:

@@ -7,9 +7,11 @@ This page covers the parts that are the same regardless of which MMU you're
 setting up — cloning, the installer's command-line flags, the optional client
 macros, and upgrading later. The actual first-run walkthrough (the
 `menuconfig` screens you'll see and the choices worth pausing on) is one page
-per MMU type - see the getting started guides for popular machines as examples
-[Getting Started with Box Turtle](GettingStarted-BoxTurtle.md)
-or [Getting Started with BTT ViViD](GettingStarted-ViViD.md).
+per MMU type - see the getting started guides for popular machines as examples:
+
+- [3MS](GettingStarted-3MS.md)
+- [Box Turtle](GettingStarted-BoxTurtle.md)
+- [BTT ViViD](GettingStarted-ViViD.md)
 
 ## Cloning Happy Hare
 
