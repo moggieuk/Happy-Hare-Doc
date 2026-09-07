@@ -142,6 +142,10 @@ guesses, for free - here we've picked **Stealthburner Clockwork2 Revo
 Voron** at random, just to show what selecting one does. This choice is the
 same regardless of MMU type - it isn't ViViD-specific.
 
+Contributions to the toolhead list are always welcome! If you would like to contribute 
+your parameters to this toolhead database, please visit [here](https://www.3dcoded.xyz/tipconfigs/) 
+to add your parameters to future installer updates.
+
 ## An example software option: Spoolman NFC auto-create
 
 From the top menu, enter **Software Options**. Since a stock ViViD already

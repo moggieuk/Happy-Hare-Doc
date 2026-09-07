@@ -190,6 +190,10 @@ Happy Hare can use (toolhead sensor to nozzle, extruder sensor to entry) only
 appear once you've told it you actually have those sensors on your toolhead,
 higher up this same screen -- until relevant the values stay hidden here.
 
+Contributions to the toolhead list are always welcome! If you would like to contribute 
+your parameters to this toolhead database, please visit [here](https://www.3dcoded.xyz/tipconfigs/) 
+to add your parameters to future installer updates.
+
 This is a shortcut, not a substitute: even with a listed toolhead, you're still
 better off learning to measure and calibrate your own eventually, since small
 build variations and mods add up. But it's a genuinely good starting point, and

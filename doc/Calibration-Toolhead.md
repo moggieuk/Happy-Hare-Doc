@@ -22,7 +22,10 @@ your actual hotend/extruder combo from a list of community-measured
 values, pre-filling `toolhead_extruder_to_nozzle` and
 `toolhead_residual_filament` for you. If your exact combination is
 listed, this is a genuinely good starting point - accurate enough for
-most users without ever running the calibration command.
+most users without ever running the calibration command. Contributions 
+to the toolhead list are always welcome! If you would like to contribute 
+your parameters to this toolhead database, please visit [here](https://www.3dcoded.xyz/tipconfigs/) 
+to add your parameters to future installer updates.
 
 **It's effectively required for an unknown or heavily modified
 toolhead.** If your combo isn't listed - or you picked "Other/Unknown" -
