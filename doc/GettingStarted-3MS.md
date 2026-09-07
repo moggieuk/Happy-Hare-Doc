@@ -85,13 +85,16 @@ instead, this is where you'd switch it — but for a stock, USB-attached 3MS, Se
 Back out and enter **MMU Features / Additions**:
 
 <p align="center">
-  <img src="GettingStarted-3MS/06-mmu-features.png" class="no-floating" alt="MMU Features panel - MCU temperature sensor already enabled" width="70%">
+  <img src="GettingStarted-3MS/06-mmu-features.png" class="no-floating" alt="3MS MMU Features panel with the MCU temperature sensor enabled and optional environment sensor, managed fan, heater and other additions" width="70%">
 </p>
 
 This is worth a look even though — for a stock 3MS — there's nothing to
-add. The MCU temperature sensor is already switched
-on. Since the 3MS is an open-ended design, you can add any features unique to your build. If you're following this page for a plain, stock 3MS, just look and
-move on.
+add. The MCU temperature sensor is already switched on. That makes the
+managed-fan option available, but it remains off until you enable it; only
+do so when a fan output is actually wired. Since the 3MS is an open-ended
+design, you can also add an environment sensor, heater or any other feature
+present in your build. If you're following this page for a plain, stock 3MS,
+just look and move on.
 
 ### Pins: gear direction
 

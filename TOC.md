@@ -49,9 +49,12 @@ repo root (not under `doc/`) specifically so it's never a candidate for publishi
   blocks instead. `Feature-Spoolman.md` later re-introduced Mermaid via a
   different mechanism (raw `<pre class="mermaid">` HTML, not a fence) — see
   item 33 below before assuming this bullet still means "no Mermaid anywhere."
-- **Getting Started scope (v1):** Box Turtle only, walked deep. Everything else gets
-  a comparison table + "same pattern, different Kconfig starter" note. Multi-unit and
-  additional MMUs come later as their own pages.
+- **Getting Started scope:** per-type walkthroughs now cover 3MS, Box Turtle,
+  BTT ViViD, EMU, ERCF, Tradrack and MMX, with a separate multi-unit guide.
+  QuattroBox and an all-types overview remain planned. Because these guides
+  show real shared `menuconfig` screens, changes to common Kconfig menus must
+  be checked across every per-type guide, not only the guide for the profile
+  used while developing the change.
 - **Generated vs hand-written:** Command Reference and Printer Variable Reference
   are *generated*/*code-verified* respectively from source (see §10 below) rather
   than hand-transcribed — same "code in `doc_tools/`, output in `doc/`" split
@@ -350,15 +353,19 @@ anything. Don't silently decide something wasn't worth keeping.
 | Page | Source | Status |
 |---|---|---|
 | `Installation.md` | `wiki/Installation.md` | **done** — code-verified against the real `install.sh` (flags, usage text) and `installer/build.py`/`Kconfig.options`. Slots in before the per-type Getting Started pages, deliberately scoped to what those pages *don't* cover: cloning, the real flag reference, client macros, upgrading. Dropped the entire v3 sequential-Q&A "Creating Base Klipper Config" walkthrough (10+ screenshots) - v4 replaced that flow with `menuconfig` entirely, already covered per-type by the two `GettingStarted-*.md` pages; reusing those stale screenshots of a flow that no longer exists would have been wrong. Also dropped the nonfunctional `-r` (Repetier-Server) flag - commented out/TODO in real `install.sh`, doesn't work; corrected the client-macros mechanism from "hand-edit `printer.cfg`" to the real `menuconfig` yes/no prompt (`INSTALL_CLIENT_MACROS`); dropped the `z_hop_height_error`/`z_hop_speed` pause-mechanics paragraph since that setting doesn't exist in v4 (see item 48's `Operation.md` finding on unified parking) - deferred to `Operation.md` instead. |
+| `GettingStarted-Installer-Configurator.md` | current installer/configurator workflow | **done** — navigation, saved configuration, updates, recovery and the relationship between menuconfig choices and generated files. |
+| `Upgrade-v3-v4.md` | `wiki/Upgrade-Notice.md` + the current installer upgrade workflow | **done** — explains both supported paths, backup/recovery and the required installer rerun. |
 | `Hardware-Validation.md` | `wiki/Hardware-Configuration.md` + `wiki/Movement-and-Homing.md` | **done** — shared post-install checklist covering MCU connectivity, every filament switch, gear direction, mechanism-specific selector checks, encoder/eSpooler/sync-feedback options, plus the current named-endstop and coordinated-motor model. Stale pin-alias and old motor-name examples were replaced with the v4 interfaces and links to the deeper Feature/Calibration pages. |
+| `GettingStarted-3MS.md` | `wiki/Quick-Start-3MS.md` + current 3MS menuconfig profile | **done** — full first-pass walkthrough for the stock SKR Pico profile, including the MMU additions screen, gear direction, toolhead selection, validation, calibration, Spoolman and slicer setup. The shared additions screenshot has a reproducible targeted session in `doc_tools/shots.py`. |
 | `GettingStarted-BoxTurtle.md` | existing `doc/` page | **done**, incl. a "Picking a toolhead" step (shared toolhead/extruder geometry database, optional, reduces calibration) with two real screenshots |
 | `GettingStarted-ViViD.md` | new, from `installer/mmu_types/Kconfig.vvd` + `installer/boards/custom/Kconfig.vvd` + `installer/connection/Kconfig.{mmu_mcu,buffer_mcu}` | **done** - second Getting Started page, with a real `getting-started-vivid` `doc_tools/shots.py` session (7 screenshots) for every screen except the two live serial-device-list screens (see session log for why those stay text). Covers the two-separate-MCU serial selection unique to this design, otherwise a lighter walkthrough than Box Turtle's since almost everything defaults correctly for this fully-specified design. |
+| `GettingStarted-EMU.md` | current EMU menuconfig profile and hardware workflow | **done** — first-pass setup for the modular per-gate design, including gate count, board, additions, pins, movement and toolhead geometry. |
+| `GettingStarted-ERCF.md` | current ERCF menuconfig profiles and project variants | **done** — initial setup across the supported ERCF family, including selector, servo, encoder, board, additions, pins, endstops and toolhead geometry. |
+| `GettingStarted-Tradrack.md` | current Tradrack menuconfig profile and project workflow | **done** — initial selector, board, additions, pins, endstops and toolhead setup for Tradrack. |
 | `GettingStarted-MMX.md` | new, from the v4 MMX/EBB42 menuconfig profiles plus the CN3D MMX installation and wiring guides | **done** - walks the original four-gate servo-cam MMX through the real v4 menus with seven reproducible screenshots. Corrects the external guide's alias-based manual configuration: the EBB42 profile fills fully qualified pins directly, the four PB7/PB5/PB6/PB8 switches are entry sensors, and PB4 is enabled as the shared exit/gate-homing sensor rather than treated as a toolhead sensor. Documents automatic timestamped backup recovery with `--prev` and, by explicit request, the clean uninstall/copy-`mmu.V3`/`-b v3` return path. |
-| `MMU-Types-Overview.md` (comparison table: all 15 Kconfig types, selector class, gate count, status) | new, from `installer/Kconfig.mmu_types/*` | new |
-| `Upgrading-from-v3.md` | `wiki/Upgrade-Notice.md`, `wiki/Change-Log.md` | rewrite for v4 |
-| `GettingStarted-3MS.md` | `wiki/Quick-Start-3MS.md` | new — found during the 2026-08-07 wiki-gap audit (item 47 below), not previously on this table at all. Same genre as the two `GettingStarted-*.md` pages above (real menuconfig screenshots via `doc_tools/shots.py`, not a port of the wiki's raw command transcript). |
-| `GettingStarted-QuattroBox.md` | `wiki/Quick-Start-QuattroBox.md` | new — same finding/genre as 3MS above. |
 | `GettingStarted-Multi-Unit.md` | current installer multi-unit workflow | **initial draft** — conversion from a working single unit, shared and per-unit menuconfig passes, symbolic/display names, dissimilar unit types, shared encoder/buffer, bypass association, global gate/tool numbering, `UNIT=` command targeting, generated per-unit files, and reconfiguration; includes five reproducible menuconfig screenshots plus the three-unit Mainsail panel. |
+| `MMU-Types-Overview.md` | current menuconfig MMU type profiles | **planned** — comparison of supported designs, selector class, gate count and status. |
+| `GettingStarted-QuattroBox.md` | `wiki/Quick-Start-QuattroBox.md` + current QuattroBox menuconfig profile | **planned** — same per-type walkthrough genre as the completed guides above. |
 
 ### 2. Concepts
 
@@ -494,7 +501,7 @@ here: they have no variables of their own and are already covered as part of
 | `Troubleshooting-and-Common-Issues.md` | `wiki/Troubleshooting-and-Common-Issues.md` |
 | `FAQ.md` | `wiki/FAQ.md` |
 
-### 12. Developer Guide — **done (all 9 pages)**
+### 12. Developer Guide — **done**
 
 | Page | Source | Notes |
 |---|---|---|
@@ -505,6 +512,7 @@ here: they have no variables of their own and are already covered as part of
 | `Dev-Command-Reference.md` | new, generated — `doc_tools/gen_command_reference.py`'s `render_dev_page()` | **done (item 59)** — the `CATEGORY_STEPS`/`CATEGORY_INTERNAL` commands `Reference-Commands.md` deliberately excludes (`_MMU_STEP_*`, `_MMU_TEST`, the `CANCEL_PRINT`/`CLEAR_PAUSE`/`PAUSE`/`RESUME` wrappers, `__MMU_*` event handlers), generated by the same script/mechanism as the main reference so both stay in sync with source via `make command_reference`. |
 | `Dev-Test-Command.md` | new — `extras/mmu/commands/mmu_dev_test.py` (`_MMU_TEST`) | **done (item 58, updated item 59)** — the hidden, always-registered developer command (leading underscore = Klipper's hide-from-help convention, not a special build flag; every option is live on any install). Groups its ~25 sub-tests by risk tier (safe introspection / moves real hardware / provokes known bugs on purpose / sequence timing / fake autotune telemetry) rather than repeating the flat parameter list, which now lives on `Dev-Command-Reference.md` instead. Cross-linked from `Dev-Testing.md`'s coverage-map row. |
 | `Dev-Simulator.md` | `test/README.md` §1a — **renamed from "Console"** | Opens with a real colour screenshot (`doc/Dev-Simulator/Simulator.png`, user-supplied) of a live session before the ported detail. |
+| `Dev-Documentation-Style-Guide.md` | site conventions in this file and the rendered theme | Contributor-facing checklist for headings, admonitions, code blocks, tables, images, links and page footers. |
 | `Dev-Doc-Tooling.md` | `doc_tools/README.md` | Kept in sync with the actual `doc_tools/README.md` — edit both together. Includes a note on the Zensical build-cache bug (see below). |
 | `Dev-Contributing.md` | new + `.github/CONTRIBUTING.md` | Community/PR-process guidance ported in, plus the file-header convention and links back to every other Developer Guide page. |
 
@@ -2800,12 +2808,12 @@ here: they have no variables of their own and are already covered as part of
       for, flagging the page-wide inconsistency here rather than fixing it
       silently.
 
-**To pick this back up:** with §1, §4, §5, §6, §7, §8, and now §10b Macros
-all done, and §10 down to just its own remaining ⚠️-flagged pages, the next
-open sections are §1's remaining pages (`MMU-Types-Overview.md` - remember
-HTLF, new per item 56 above - `Upgrading-from-v3.md`, and the
-`GettingStarted-3MS.md`/`GettingStarted-QuattroBox.md` pair from
-item 47), §2's other two pages (`Understanding-Operation.md`,
+**To pick this back up:** with §1's published pages, §4, §5, §6, §7, §8,
+and §10b Macros all done, and §10 down to just its own remaining
+⚠️-flagged pages, the next open work includes §1's two planned pages
+(`MMU-Types-Overview.md` - remember HTLF, new per item 56 above - and
+`GettingStarted-QuattroBox.md` from item 47), §2's other two pages
+(`Understanding-Operation.md`,
 `Print-Job-State-Machine.md` - lean on `Conceptual-MMU.md`'s terminology
 rather than re-defining it), §3's four `Configuring-mmu*.cfg.md` generators
 (follow the `gen_command_reference.py` pattern already proven out), §11

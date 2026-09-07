@@ -261,6 +261,21 @@ def _getting_started_mmx(mc, shot):
     shot('07-endstops')
 
 
+def _getting_started_3ms_additions(mc, shot):
+    """
+    Refresh the MMU Features / Additions screen embedded in
+    doc/GettingStarted-3MS.md. The contributed guide's other screenshots are
+    not generated here, so keep this deliberately narrow and select the 3MS
+    profile from a bare configuration before entering the shared menu.
+    """
+    mc.enter('MMU Type')
+    mc.select('3MS  - Modular Multi Material System')
+    mc.toggle()
+    mc.back()
+    mc.enter('MMU Features / Additions')
+    shot('06-mmu-features')
+
+
 def _getting_started_ercf_additions(mc, shot):
     """
     Refresh the MMU Features / Additions screen embedded in
@@ -891,6 +906,14 @@ SESSIONS = [
         'doc/GettingStarted-MMX.md - first menuconfig pass for an MMX',
         'scenes': _getting_started_mmx,
         'outdir': 'GettingStarted-MMX',
+        'seed': 'none',
+    },
+    {
+        'name': 'getting-started-3ms-additions',
+        'caption':
+        'doc/GettingStarted-3MS.md - MMU Features / Additions screen',
+        'scenes': _getting_started_3ms_additions,
+        'outdir': 'GettingStarted-3MS',
         'seed': 'none',
     },
     {
