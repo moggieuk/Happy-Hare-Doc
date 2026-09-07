@@ -108,6 +108,7 @@ nav:
       - Menuconfig: GettingStarted-Installer-Configurator.md
       - Upgrading from v3 to v4: Upgrade-v3-v4.md
       - Hardware Validation: Hardware-Validation.md
+      - 3MS: GettingStarted-3MS.md
       - Box Turtle: GettingStarted-BoxTurtle.md
       - BTT ViViD: GettingStarted-ViViD.md
       - EMU: GettingStarted-EMU.md
