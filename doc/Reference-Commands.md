@@ -137,7 +137,7 @@ MMU_ENCODER POS=100 ...Set the encoder as close as possible to position 100mm
 
 ### MMU_ENDLESS_SPOOL
 
-*Diplay or Manage EndlessSpool functionality and groups*
+*Display or Manage EndlessSpool functionality and groups*
 
 **Parameters**
 
@@ -152,7 +152,7 @@ GROUPS = comma separated list of group membership
 Examples:
 MMU_ENDLESS_SPOOL GROUPS=1,1,1,1   ...Put all four gates into same endless spool group
 MMU_ENDLESS_SPOOL RESET=1          ...Reset to default grouping. Typically each gate is in own group
-MMU_ENDLESS_SPOOL ENABLE=0 QUIET=1 ...Disable endspool feature supressing console/log output
+MMU_ENDLESS_SPOOL ENABLE=0 QUIET=1 ...Disable endless spool feature suppressing console/log output
 ```
 
 ### MMU_ESPOOLER
@@ -186,6 +186,37 @@ MMU_ESPOOLER GATE=2 OPERATION=rewind ...Set gate 2 espooler to rewind (in-print)
 MMU_ESPOOLER ALLOFF=1                ...Turn all espoolers off
 ```
 
+### MMU_FAN
+
+*Control MMU fan(s)*
+
+**Parameters**
+
+```{.text .console-output}
+UNIT       = #(int/name) Optional if only one unit is fitted
+ENABLE     = [0|1] Disable/enable automatic fan management
+FAN_FORCED = [0|1|2] Force OFF, force ON, or return to AUTO
+SOURCE     = [environment|mcu|default] AUTO temperature source
+ON_TEMP    = # (20-80) AUTO mode fan-on temperature
+OFF_TEMP   = # (20-80) AUTO mode fan-off temperature
+GATE       = # Gate to control (per-gate fans only)
+GATES      = g1,g2 Gates to control (per-gate fans only)
+(no action parameters for status report)
+```
+
+```{.text .console-output}
+Examples:
+MMU_FAN                              ...Show fan status
+MMU_FAN FAN_FORCED=1                 ...Force all managed fans on
+MMU_FAN FAN_FORCED=0 GATE=2          ...Force gate 2 fan off
+MMU_FAN FAN_FORCED=2 GATES=1,2       ...Return gate 1 and 2 fans to AUTO
+MMU_FAN SOURCE=mcu GATE=2            ...Use gate 2 MCU temperature
+MMU_FAN SOURCE=default GATE=2        ...Restore gate 2 default source
+MMU_FAN ON_TEMP=55 OFF_TEMP=52       ...Set the unit AUTO temperature range
+MMU_FAN ON_TEMP=60 OFF_TEMP=58 GATE=2 ...Set gate 2 AUTO temperature range
+MMU_FAN ENABLE=0                     ...Disable control and turn all unit fans off
+```
+
 ### MMU_FLOWGUARD
 
 *Enable/disable FlowGuard (clog-tangle detection)*
@@ -213,6 +244,7 @@ MMU_FLOWGUARD ENABLE=0 UNIT=ALL ...Disable FlowGuard detection on all units
 
 ```{.text .console-output}
 QUIET        = 1 To minimize console reporting
+DETAILS      = 1 Include the complete Spoolman RFID UID set for each gate
 RESET        = 1 To reset specified GATE/GATES filament attributes to configured defaults
 GATES        = g,g,g comma separated list of gates; required with RESET unless GATE is used
 GATE         = g Specify a single gate; required with RESET unless GATES is used
@@ -232,6 +264,7 @@ AVAILABLE    = [-1|0|1|2] Filament availability: Unknown | Empty | Available | A
 
 ```{.text .console-output}
 Examples:
+MMU_GATE_MAP DETAILS=1                      ...Display the gate map with all cached RFID UIDs
 MMU_GATE_MAP GATES=0,1,2,3 AVAILABLE=1      ...Mark gates 0-3 as having filament available
 MMU_GATE_MAP GATE=5 COLOR=red MATERIAL=pla  ...Set filament attributes for gate 5
 MMU_GATE_MAP NEXT_SPOOLID=45                ...Automatically mark the next spool preloaded or loaded with spoolman id 45
@@ -257,7 +290,7 @@ DRYING_DATA     = [0|1] Dump configured drying data for filament types
 DRY             = [0|1] Disable/enable filament heater for filament drying cycle
 TIMER           = #(mins) Force drying time
 TEMP            = #(degrees) Force temperature
-HUMIDITY        = % Terminate drying when humidty goal is reached
+HUMIDITY        = % Terminate drying when humidity goal is reached
 GATES           = g1,g2 Gates to control ONLY IF MMU has per-gate heaters/dryers
 ROTATE          = [0|1] Rotate spool (requires eSpooler and explicit GATES)
 ROTATE_INTERVAL = #(mins) How often to rotate spools when drying (requires eSpooler)
@@ -322,7 +355,7 @@ SKIP_HOMED   = [0|1]  Skip homing of units that are already homed
 
 ```{.text .console-output}
 Examples:
-MMU_HOME UNIT=ALL              ...Home all mmu units with selector kinimatics
+MMU_HOME UNIT=ALL              ...Home all mmu units with selector kinematics
 MMU_HOME UNIT=ALL SKIP_HOMED=1 ...Home only units that are not already homed
 MMU_HOME UNIT=1              ...Home unit 1
 ```
@@ -837,7 +870,7 @@ MAP       = g,g,g Comma separated list of gates where index is the tool number. 
 GATE      = g 
 GATE      = g Specify the gate
 TOOL      = t Specify the tool
-AVAILABLE = [0|1] Optionally specify the filament availablity in the gate
+AVAILABLE = [0|1] Optionally specify the filament availability in the gate
 (no parameters for status report)
 ```
 
@@ -1064,7 +1097,7 @@ MMU_CALIBRATE_SELECTOR_INDEXES RESET=1 ...reset selector index calibration
 UNIT    = #(int) Optional if only one unit fitted to printer
 ANGLE   = #(int) Move servo to designated angle
 GATE    = #(int) Specify the gate by it's global logical index
-LGATE   = #(int) Speficy gate by the local mmu unit index (same as GATE with single MMU unit)
+LGATE   = #(int) Specify gate by the local mmu unit index (same as GATE with single MMU unit)
 SAVE    = 1      To persist the calibration results else they will just be reported
 SINGLE  = 1      To force the calibration of a single gate only
 SPACING = #(int) Angle between gates for quick setting all gates
@@ -1233,7 +1266,7 @@ ENDSTOP      = _endstop_name_
 ENDSTOPS     = Comma separated list of endstops (only physical switch endstop possible)
 STOP_ON_ENDSTOP = [-1|0|1] 1 for extrude, -1 for retract, 0 for don't stop
 SPEED        = mm/s   Optionally override the default speed
-ACCEL        = mm/s^2 Optionally override the default accelarateion
+ACCEL        = mm/s^2 Optionally override the default acceleration
 MOTOR        = [gear|extruder|gear+extruder] Select motor to operation on (default: gear)
 WAIT         = [0|1]  Wait for move to complete (make move synchronous)
 DEBUG        = [0|1]  Turn on developer stepper movement debugging
@@ -1274,7 +1307,7 @@ MMU_TEST_LOAD FULL=1    ...Test a full load from gate to the extruder
 ALLOW_BYPASS = [0|1]  Ignore bypass check
 MOVE         = mm     Specify the move distance (default 100)
 SPEED        = mm/s   Optionally override the default speed
-ACCEL        = mm/s^2 Optionally override the default accelarateion
+ACCEL        = mm/s^2 Optionally override the default acceleration
 MOTOR        = [gear|extruder|gear+extruder|synced] Select motor to operation on (default: gear)
 GRIP         = 1      To retain grip on filament after move for type-A testing
 WAIT         = 0      Don't wait for move to complete (default 1 makes move synchronous)

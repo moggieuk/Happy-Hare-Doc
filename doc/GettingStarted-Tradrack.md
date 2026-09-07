@@ -194,9 +194,11 @@ starting point. If your exact combo isn't listed, select **`Other/Unknown`** and
 Optional Tradrack features can be enabled or disabled based on your Tradrack build here. Tradrack is a deceptively simple, 
 modular design with a basic set of out-of-the-box features. Popular community contributed extensions like Sync-feedback
 buffers (sensors) such as Annex Belay or more recent analog Proportional Sync Feedback sensors, Encoder, etc. can be 
-enabled here. 
+enabled here. **Enable managed fan(s)?** requires either the default MCU CPU
+temperature sensor or an enabled environment sensor, as well as a wired fan
+output.
 <p align="center">
-  <img src="GettingStarted-Tradrack/12-mmu-features.png" alt="MMU features" width="70%">
+  <img src="GettingStarted-Tradrack/12-mmu-features.png" alt="Tradrack MMU Features / Additions with optional sensors, managed fan, heater and other additions" width="70%">
 </p>
 
 ## Validating Hardware setup & initial calibration

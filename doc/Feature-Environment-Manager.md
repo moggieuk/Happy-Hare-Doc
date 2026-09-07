@@ -18,10 +18,9 @@ Two hardware layouts are supported:
   this page defaults to it.
 - **Per-gate heaters** - each gate has its own heater and sensor (for
   example, the modular EMU design, where every gate is its own small
-  enclosure). A basic power-management queue limits how many heaters run
-  simultaneously so you don't trip a PSU. Configuring both a single
-  heater/sensor and per-gate lists at the same time is a config error - pick
-  one.
+  enclosure). Sensor, heater and fan hardware are grouped together under
+  each gate's config menu. A basic power-management queue limits how many
+  heaters run simultaneously so you don't trip a PSU.
 
 !!! warning
     A drying cycle can keep a heater powered for hours. Build and wire the
@@ -30,13 +29,14 @@ Two hardware layouts are supported:
 
 ## Hardware Setup
 
-Both pieces are enabled under **MMU Features / Additions**, and each gets its
-own config submenu once switched on.
+Both pieces are enabled under **MMU Features / Additions**. Shared layouts
+get separate sensor and heater hardware submenus; modular layouts collect
+the corresponding hardware under **Per-gate config → Gate N config**.
 
 ### Environment sensor
 
 <p align="center">
-  <img src="Feature-Environment-Manager/environment-sensor-config.png" alt="Environment sensor config screen: sensor name, i2c bus type and bus, sensor type (AHT2X shown), and i2c address" width="80%">
+  <img src="Feature-Environment-Manager/environment-sensor-config.png" alt="Environment sensor hardware configuration: sensor name, i2c bus type and bus, sensor type and i2c address" width="80%">
 </p>
 
 | Setting | Purpose |
@@ -54,9 +54,9 @@ Produces, inside the unit's `[mmu_unit ...]` section in `mmu_hardware.cfg`:
 environment_sensor : temperature_sensor unit0_Env
 ```
 
-A per-gate design (`MMU_HAS_PER_GATE_ENV_SENSORS`, only available on
-hardware with a per-gate MCU) repeats the same prompts once per gate instead,
-and produces a comma-separated list:
+A per-gate design repeats these prompts inside each **Gate N config** menu
+and produces a gate-aligned list. It can use one MCU for the whole unit or
+one MCU per gate; those choices are independent.
 
 ```ini
 environment_sensors : temperature_sensor unit0_Env0, temperature_sensor unit0_Env1, ...
@@ -65,15 +65,20 @@ environment_sensors : temperature_sensor unit0_Env0, temperature_sensor unit0_En
 ### Heater(s)
 
 <p align="center">
-  <img src="Feature-Environment-Manager/heater-config.png" alt="Heater config screen: per-gate heaters toggle, enclosure heater name, and the heater controller defaults - max temp, default dry temp/time/humidity, vent macro, vent interval, rotate interval" width="80%">
+  <img src="Feature-Environment-Manager/heater-config.png" alt="Shared heater hardware configuration, associating an existing Klipper enclosure heater with the MMU unit" width="80%">
 </p>
+
+Happy Hare associates an existing Klipper heater with the MMU; it does not
+create the heater object itself. For a shared enclosure, enter the existing
+`[heater_generic]` object's name under **Heater h/w config**. In a per-gate
+layout, enable **Enclosure heater** and enter the object name inside each
+**Gate N config** menu.
 
 | Setting | Purpose |
 |---|---|
-| `Per-gate Heaters?` | Switches to the per-gate layout described above |
-| `Enclosure heater name` | Klipper object name for the single shared heater |
-| `List of enclosure heaters` | Comma-separated heater names, per-gate layout only |
-| `Maximum concurrent heaters` | Power-management cap, per-gate layout only |
+| `Enclosure heater name` | Existing Klipper heater object for a shared enclosure |
+| `Enclosure heater` | Per-gate switch that associates a heater with that gate |
+| `Heater name` | Existing Klipper heater object for that gate |
 
 Produces, alongside the sensor key in the same `[mmu_unit ...]` section:
 
@@ -88,11 +93,23 @@ filament_heaters       : heater_generic unit0_heater0, heater_generic unit0_heat
 max_concurrent_heaters : 1
 ```
 
-!!! warning "Important"
-    Configure only a single heater/sensor pair, or a per-gate list - not
-    both. Configuring both is a config error.
+Optional **heater fans** are configured beside the heater. These are fixed
+Klipper `[heater_fan]` objects that follow their associated heater, not
+temperature-managed fans controlled by `MMU_FAN`. A shared layout offers
+**Configure heater fan(s)? → Heater fan h/w config**; a per-gate layout puts
+the same choice inside each gate menu. Set the output pin, maximum power,
+kick-start time, normal fan speed and shutdown speed there. The generated
+object is named `_unit0_heater_fan` for a shared enclosure or
+`_unit0_heater_fan0`, `_unit0_heater_fan1`, and so on for per-gate heaters.
 
 ## Parameter Setup
+
+The **Heater and humidity control** submenu contains the drying limits and
+defaults. A per-gate layout also shows **Maximum concurrent heaters** here.
+
+<p align="center">
+  <img src="Feature-Environment-Manager/heater-control.png" alt="Heater and humidity control: concurrency limit, drying defaults, venting and spool rotation settings" width="80%">
+</p>
 
 The heater controller's own tuning constants live in `mmu_parameters.cfg`,
 alongside the drying-recipe table:

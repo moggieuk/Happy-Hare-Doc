@@ -191,10 +191,12 @@ supported depending on your specific build.
 
 Optional ERCF features also can be enabled or disabled here - entry sensors, LED's, 
 and popular community contributed extensions like Sync-feedback buffers (sensors) such as 
-Annex Belay or more recent analog Proportional Sync Feedback sensors, etc.
+Annex Belay or more recent analog Proportional Sync Feedback sensors, etc. A
+managed environment fan can use either the MCU CPU temperature or an enabled
+environment sensor; only enable it when a fan output is actually wired.
   
 <p align="center">
-  <img src="GettingStarted-ERCF/12-mmu-features.png" alt="MMU Features" width="70%">
+  <img src="GettingStarted-ERCF/12-mmu-features.png" alt="ERCF MMU Features / Additions with optional sensors, managed fan, heater and other additions, plus the fixed encoder" width="70%">
 </p>
 <br>
 

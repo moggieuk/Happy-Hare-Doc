@@ -261,6 +261,53 @@ def _getting_started_mmx(mc, shot):
     shot('07-endstops')
 
 
+def _getting_started_3ms_additions(mc, shot):
+    """
+    Refresh the MMU Features / Additions screen embedded in
+    doc/GettingStarted-3MS.md. The contributed guide's other screenshots are
+    not generated here, so keep this deliberately narrow and select the 3MS
+    profile from a bare configuration before entering the shared menu.
+    """
+    mc.enter('MMU Type')
+    mc.select('3MS  - Modular Multi Material System')
+    mc.toggle()
+    mc.back()
+    mc.enter('MMU Features / Additions')
+    shot('06-mmu-features')
+
+
+def _getting_started_ercf_additions(mc, shot):
+    """
+    Refresh the MMU Features / Additions screen embedded in
+    doc/GettingStarted-ERCF.md. The rest of that imported guide's screenshots are
+    not generated here, so keep this as a deliberately narrow session. Start
+    bare and choose ERCF interactively so family-level fixed capabilities are
+    applied just as they are in the guide.
+    """
+    mc.enter('MMU Type')
+    mc.select('ERCF - Enraged Rabbit Carrot Feeder')
+    mc.toggle()
+    mc.back()
+    mc.enter('MMU Features / Additions')
+    mc.autofit()
+    mc.select('Encoder config')
+    shot('12-mmu-features')
+
+
+def _getting_started_tradrack_additions(mc, shot):
+    """
+    Refresh the MMU Features / Additions screen embedded in
+    doc/GettingStarted-Tradrack.md. Start bare so the scene can select Tradrack;
+    there is no dedicated Tradrack seed.
+    """
+    mc.enter('MMU Type')
+    mc.select('Tradrack')
+    mc.toggle()
+    mc.back()
+    mc.enter('MMU Features / Additions')
+    shot('12-mmu-features')
+
+
 def _getting_started_multi_unit_shared(mc, shot):
     """
     For doc/GettingStarted-Multi-Unit.md - the aquatic-colored shared-config
@@ -530,44 +577,49 @@ def _feature_environment_manager(mc, shot):
     mc.enter('MMU Features / Additions')
     mc.select('Has environment sensor(s)?')
     mc.toggle()
-    mc.autofit()  # "Environment sensor config" submenu just appeared
-    mc.enter('Environment sensor config')
+    mc.autofit()  # "Environment sensor h/w config" submenu just appeared
+    mc.enter('Environment sensor h/w config')
     # i2c bus type/sensor type/address, single-sensor mode
     shot('environment-sensor-config')
     mc.back()  # -> MMU Features / Additions
 
     mc.select('Has enclosure heater(s)?')
     mc.toggle()
-    mc.autofit()  # "Heater config" submenu just appeared
-    mc.enter('Heater config')
-    # per-gate toggle, heater name, drying temp/time/humidity defaults
+    mc.autofit()  # hardware and control submenus just appeared
+    mc.enter('Heater h/w config')
+    # shared heater object association
     shot('heater-config')
+    mc.back()  # -> MMU Features / Additions
+
+    mc.enter('Heater and humidity control')
+    # drying temp/time/humidity defaults and vent/rotation settings
+    shot('heater-control')
 
 
 def _feature_fan_control(mc, shot):
     """
-    For doc/Feature-Fan-Control.md - the fan config and fan controls screens.
-    Both MMU_HAS_FANS is off by default on every MMU type including boxturtle, and
-    the feature's own _MMU_FAN_VARS block only renders when an environment sensor is
-    ALSO enabled (config/base/mmu_macro_vars.cfg's `if MMU_HAS_FANS and
-    MMU_HAS_ENVIRONMENT_SENSOR` guard - verified directly against the real Jinja
-    template, not assumed) - so this scene toggles both, same pattern as
-    _feature_environment_manager.
+    For doc/Feature-Fan-Control.md - managed-fan hardware and startup defaults.
+    A Box Turtle already creates an MCU temperature sensor, but enabling the
+    environment sensor here makes both temperature-source choices visible.
     """
     mc.enter('MMU Features / Additions')
     mc.select('Has environment sensor(s)?')
     mc.toggle()
     mc.autofit()  # still on "MMU Features / Additions" - no submenu entered
 
-    mc.select('Has cooling fans?')
+    mc.select('Enable managed fan(s)?')
     mc.toggle()
-    mc.autofit()  # "Fan config"/"Fan controls" submenus just appeared
-    mc.enter('Fan config')
+    mc.autofit()  # hardware/defaults submenus just appeared
+    # Enter the short submenus from the 30-row floor. Otherwise their first
+    # repaint can retain stale rows from the much taller additions menu.
+    mc.select('Fan h/w config')
+    mc.resize(MIN_ROWS)
+    mc.enter()
     shot('fan-config')  # max power, kick-start time, single fan pin
     mc.back()  # -> MMU Features / Additions
 
-    mc.enter('Fan controls')
-    shot('fan-controls')  # on/off temps, polling time, forced mode choice
+    mc.enter('Managed fan defaults')
+    shot('fan-controls')  # source, thresholds, polling, enabled and initial mode
 
 
 def _feature_endless_spool_runout(mc, shot):
@@ -828,7 +880,7 @@ SESSIONS = [
     {
         'name': 'feature-fan-control',
         'caption':
-        'doc/Feature-Fan-Control.md - fan config and fan controls screens',
+        'doc/Feature-Fan-Control.md - managed-fan hardware and defaults screens',
         'scenes': _feature_fan_control,
         'outdir': 'Feature-Fan-Control',
     },
@@ -854,6 +906,30 @@ SESSIONS = [
         'doc/GettingStarted-MMX.md - first menuconfig pass for an MMX',
         'scenes': _getting_started_mmx,
         'outdir': 'GettingStarted-MMX',
+        'seed': 'none',
+    },
+    {
+        'name': 'getting-started-3ms-additions',
+        'caption':
+        'doc/GettingStarted-3MS.md - MMU Features / Additions screen',
+        'scenes': _getting_started_3ms_additions,
+        'outdir': 'GettingStarted-3MS',
+        'seed': 'none',
+    },
+    {
+        'name': 'getting-started-ercf-additions',
+        'caption':
+        'doc/GettingStarted-ERCF.md - MMU Features / Additions screen',
+        'scenes': _getting_started_ercf_additions,
+        'outdir': 'GettingStarted-ERCF',
+        'seed': 'none',
+    },
+    {
+        'name': 'getting-started-tradrack-additions',
+        'caption':
+        'doc/GettingStarted-Tradrack.md - MMU Features / Additions screen',
+        'scenes': _getting_started_tradrack_additions,
+        'outdir': 'GettingStarted-Tradrack',
         'seed': 'none',
     },
     {

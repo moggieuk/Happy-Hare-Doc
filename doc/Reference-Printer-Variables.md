@@ -197,6 +197,8 @@ Each `unit_N` dict:
 | `can_crossload` | bool | Filament can be pushed directly between gates on this unit |
 | `multi_gear` | bool | Unit has one gear motor per gate rather than one shared |
 | `filament_buffer` | bool | Filament (catchment) buffer fitted - catches loose filament on rewind, allowing faster loading speeds |
+| `fan` | string | Shared managed-fan object name; present only when a shared fan is configured |
+| `fans` | list[string] | Gate-aligned managed-fan object names; present only when per-gate fans are configured |
 | `environment_sensor`, `filament_heater` | string | Shared object names; present only when shared sensor/heater configuration is used |
 | `environment_sensors`, `filament_heaters` | list[string] | Per-gate object names; present only when per-gate sensor/heater configuration is used |
 | `nfc_reader` | string | Shared reader name; present only when configured |
