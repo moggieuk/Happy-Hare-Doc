@@ -43,7 +43,7 @@ A read can be shallow or deep:
 ## Hardware Setup
 
 Enable this in menuconfig with **Has NFC reader(s) for RFID tag?** under
-**_RFID (BETA)**, which opens an **NFC reader config** menu:
+**_RFID (BETA)**, which opens an **NFC reader h/w config** menu:
 
 **Shared reader** (toggle **Has common NFC reader?**):
 
@@ -125,7 +125,7 @@ Enable this in menuconfig with **Has NFC reader(s) for RFID tag?** under
         | `Receiver gain` | `0` keeps the protocol-profile defaults (53dB for NFC-A, 51dB for ISO15693); selectable values are 18, 26, 32, 39, 44, 51, 53, or 60dB |
 
 <p align="center">
-  <img src="Feature-NFC/shared-reader-config.png" alt="NFC reader config menuconfig screen with Has common NFC reader enabled, showing the RC522/SPI defaults - reader name, CS pin, SPI bus and speed" width="70%">
+  <img src="Feature-NFC/shared-reader-config.png" alt="NFC reader h/w config menuconfig screen with Has common NFC reader enabled, showing the RC522/SPI defaults - reader name, CS pin, SPI bus and speed" width="70%">
 </p>
 
 A single shared reader - one physical reader a spool is presented to by

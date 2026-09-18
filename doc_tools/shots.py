@@ -396,14 +396,13 @@ def _getting_started_emu(mc, shot):
     mc.back()
     mc.back()
 
-    mc.enter('Other Settings')
     mc.enter('Speeds')
     shot('10-speeds')
     mc.back()
-    mc.back()
-    mc.autofit()
 
-    mc.enter('Toolhead')
+    # 'Toolhead (' not bare 'Toolhead': from this position in the list the walk
+    # would otherwise land on 'Toolhead sensors/settings' first
+    mc.enter('Toolhead (')
     mc.autofit()
     mc.select('A4T WWBMG for A4T Dragon Ace')
     shot('11-toolhead')
@@ -464,7 +463,7 @@ def _feature_nfc(mc, shot):
     mc.select('Has NFC reader(s) for RFID tag?')
     mc.toggle()
     mc.autofit()  # new items just appeared below
-    mc.enter('NFC reader config')
+    mc.enter('NFC reader h/w config')
     mc.select('Has common NFC reader?')
     mc.toggle()
     mc.autofit()  # reader name/type/pin fields just appeared
@@ -475,13 +474,13 @@ def _feature_nfc(mc, shot):
 
 def _feature_leds(mc, shot):
     """
-    For doc/Feature-LEDs.md - the Led config screen and the Neopixel pin
+    For doc/Feature-LEDs.md - the LED config screen and the Neopixel pin
     prompt (a different menu entirely - Pins / TMC, not MMU Features /
     Additions). Uses the boxturtle seed (default), which already has LEDs
     enabled, so no scene setup is needed.
     """
     mc.enter('MMU Features / Additions')
-    mc.enter('Led config')
+    mc.enter('LED config')
     # enable/animation, frame rate, chain count, color order, segments
     shot('led-config')
     mc.back()
@@ -832,7 +831,7 @@ SESSIONS = [
     },
     {
         'name': 'feature-leds',
-        'caption': 'doc/Feature-LEDs.md - Led config and Neopixel pin screens',
+        'caption': 'doc/Feature-LEDs.md - LED config and Neopixel pin screens',
         'scenes': _feature_leds,
         'outdir': 'Feature-LEDs',
     },

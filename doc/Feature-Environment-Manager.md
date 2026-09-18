@@ -111,8 +111,9 @@ defaults. A per-gate layout also shows **Maximum concurrent heaters** here.
   <img src="Feature-Environment-Manager/heater-control.png" alt="Heater and humidity control: concurrency limit, drying defaults, venting and spool rotation settings" width="80%">
 </p>
 
-The heater controller's own tuning constants live in `mmu_parameters.cfg`,
-alongside the drying-recipe table:
+The heater controller's own tuning constants live in `mmu_parameters.cfg`;
+the drying-recipe table ships in `mmu.cfg` in the same `[mmu_parameters]`
+section:
 
 ```ini
 heater_max_temp             : 65     # Absolute ceiling; drying never targets above this regardless of drying_data
@@ -216,7 +217,7 @@ or, per-gate:
 ```{.text .console-output}
 MMU is in filament drying cycle:
 Drying filaments in gates: 1,2,5,6,7,8
-Per-gate dryer mode (max concurrent heaters: 3). Humidty target 25.0%
+Per-gate dryer mode (max concurrent heaters: 3). Humidity target 25.0%
 Gate 1: (timer complete, final humidity: 22.3%)
 Gate 2: Drying ABS 27.3°C (target 65.0°C), humidity 62.9%, 1 hour 1 minute remaining
 Gate 5: Drying PLA 27.3°C (target 45.0°C), humidity 63.1%, 1 hour 1 minute remaining
