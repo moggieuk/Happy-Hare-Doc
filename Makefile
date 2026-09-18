@@ -10,9 +10,9 @@ CSPELL_VERSION ?= 9.8.0
 
 # Where to fetch Happy-Hare's source from, and which ref to pin to. HAPPY_HARE_REF
 # is a tracked file (one line) rather than a Makefile variable so bumping the pin
-# is a one-line diff, not a Makefile edit. Tracks the 'v4' branch while v4 is still
-# under active development - move to a tagged release once Happy-Hare starts
-# cutting them, for reproducible regeneration.
+# is a one-line diff, not a Makefile edit. Pinned to a specific commit for
+# reproducible regeneration - bump the SHA when re-tracking newer upstream
+# development.
 HAPPY_HARE_REPO_URL ?= https://github.com/moggieuk/Happy-Hare.git
 HAPPY_HARE_REF      := $(shell cat HAPPY_HARE_REF)
 

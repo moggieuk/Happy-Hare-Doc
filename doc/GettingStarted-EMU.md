@@ -143,7 +143,7 @@ resets to whatever Happy Hare would have picked on its own.
 
 ### Speeds configuration
 
-Back out to the top and enter **Other Settings** and **Speeds** to review the
+Back out to the top and enter **Speeds** to review the
 motion parameters. The EMU defaults are conservative by design:
 
 <p align="center"> <img src="GettingStarted-EMU/10-speeds.png" alt="Speeds
