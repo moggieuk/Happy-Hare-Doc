@@ -8,11 +8,9 @@ Q ?= @
 # Node versions commonly found on contributor machines.
 CSPELL_VERSION ?= 9.8.0
 
-# Where to fetch Happy-Hare's source from, and which ref to pin to. HAPPY_HARE_REF
-# is a tracked file (one line) rather than a Makefile variable so bumping the pin
-# is a one-line diff, not a Makefile edit. Pinned to a specific commit for
-# reproducible regeneration - bump the SHA when re-tracking newer upstream
-# development.
+# Where to fetch Happy-Hare's source from, and which ref to follow. HAPPY_HARE_REF
+# is a tracked one-line file, currently main, so each source-dependent run picks
+# up the latest upstream main commit. Set it to a tag or commit for a fixed ref.
 HAPPY_HARE_REPO_URL ?= https://github.com/moggieuk/Happy-Hare.git
 HAPPY_HARE_REF      := $(shell cat HAPPY_HARE_REF)
 
