@@ -1,5 +1,7 @@
 # Feature: TD-1 Filament Measurement
 
+!!! info "Available in v4.1"
+
 ## Concept
 
 A TD-1 scanner adds two measured attributes to the filament at a gate:
