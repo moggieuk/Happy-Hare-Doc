@@ -160,13 +160,16 @@ individual gate's own LEDs - browse `mmu.cfg` for the full list if you want
 to point a setting at a different built-in effect, or define your own
 alongside them.
 
-Two more segments overlay briefly on top of whatever's already showing, and
+Reader feedback and pending-assignment effects overlay whatever is already showing, and
 are configured on the pages that own those features rather than here:
 [Spoolman's](Feature-Spoolman.md) pending-spool-ID prompt
 (`effect_pending_spoolid`/`effect_pending_spoolid_expiring`, governed by
 `spoolman_led_segment` in `mmu.cfg`) and [NFC's](Feature-NFC.md) scan
 feedback (`effect_nfc_read`/`effect_nfc_deep_read`/`effect_nfc_fail`,
 governed by `nfc_led_segment` in `mmu_parameters.cfg`).
+[TD-1 feedback](Feature-TD1.md#color-and-led-feedback) uses
+`effect_td1_read` / `effect_td1_fail` and `td1_led_segment`. A pending TD-1
+measurement also activates the pending-assignment countdown.
 
 ## Commands
 

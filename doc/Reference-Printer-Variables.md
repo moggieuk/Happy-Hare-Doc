@@ -46,7 +46,7 @@ unless noted.
 | `unit` | int | Currently selected unit, `-1` if none |
 | `tool` | int | Currently selected tool, `-1` unknown, `-2` bypass |
 | `gate` | int | Currently selected gate (or the gate about to be selected, mid-toolchange), `-1` unknown |
-| `active_filament` | dict | `filament_name`, `material`, `vendor`, `color`, `spool_id`, `temperature` for the current gate; `{}` if none selected |
+| `active_filament` | dict | `filament_name`, `material`, `vendor`, `color`, `spool_id`, `temperature`, `td` for the current gate; `{}` if none selected. `td` is `None` when unmeasured |
 | `num_toolchanges` | int | Toolchanges performed so far this print |
 | `last_tool` / `next_tool` | int | Tool indices either side of an in-progress toolchange |
 | `slicer_purge` | float | Slicer-supplied purge volume for the in-progress toolchange |
@@ -58,6 +58,7 @@ unless noted.
 | `filament_pos` | int | Fine-grained filament position, `-1` unknown to `10` fully loaded in the extruder (11 named positions in total) |
 | `filament_direction` | int | `1` load, `-1` unload, `0` unknown |
 | `pending_spool_id` | int | Spoolman spool ID that will auto-assign to the next filament inserted, `-1` if none pending |
+| `pending_td` | float or None | Off-path TD-1 measurement waiting for the next load/preload, `None` if none pending |
 | `tool_extrusion_multipliers` / `tool_speed_multipliers` | list[float] | Current `M221`/`M220` multipliers, one per tool |
 | `action` | string | `Idle` \| `Loading` \| `Unloading` \| `Loading Ext` \| `Exiting Ext` \| `Forming Tip` \| `Cutting Tip` \| `Heating` \| `Checking` \| `Homing` \| `Selecting` \| `Cutting Filament` \| `Purging` \| `Preload` \| `Unknown` |
 | `sync_drive` | bool | Gear stepper currently synced to the extruder |
@@ -81,6 +82,8 @@ everywhere else (contiguous across units, see `printer.mmu_machine` below).
 | `gate_material` | list[string] | Material per gate |
 | `gate_vendor` | list[string] | Filament vendor per gate |
 | `gate_color` | list[string] | Color name per gate |
+| `gate_td` | list[float or None] | Transmission distance per gate, `None` when unmeasured |
+| `gate_td1_color` | list[string] | Measured `RRGGBB` color per gate, empty string when unmeasured |
 | `gate_temperature` | list[int] | Print temperature per gate |
 | `gate_spool_id` | list[int] | Spoolman spool ID per gate |
 | `gate_speed_override` | list[int] | Per-gate speed override (%) |
@@ -168,6 +171,14 @@ an NFC/RFID reader configured. Each entry:
 where each reader dict is `enabled`, `active`, `alive`, `present`, `uid` (the
 cached tag from the last read, not a live scan).
 
+### TD-1
+
+`td1` is a flat per-gate list, aggregated across all units: `''` (no scanner),
+`enabled`, `auto`, or `disabled`. It describes capture policy, not scanner
+connectivity. Gate measurements are in `gate_td` / `gate_td1_color` above;
+live device data is available from Moonraker's `/machine/td1/data` endpoint.
+See [Feature: TD-1 Filament Measurement](Feature-TD1.md).
+
 ## `printer.mmu_machine`
 
 The multi-unit aggregation object. `is_homed`, `unit`, `tool` etc. above
@@ -203,6 +214,8 @@ Each `unit_N` dict:
 | `environment_sensors`, `filament_heaters` | list[string] | Per-gate object names; present only when per-gate sensor/heater configuration is used |
 | `nfc_reader` | string | Shared reader name; present only when configured |
 | `nfc_readers` | list[string] | Per-gate reader names; present only when configured |
+| `td1_device` | string | Off-path TD-1 USB serial; present only when configured |
+| `td1_devices` | list[string] | In-path TD-1 USB serials in local gate order, with blank entries for gates without scanners; present only when configured |
 
 ## Directly-registered per-object status
 
