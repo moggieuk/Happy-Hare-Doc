@@ -147,6 +147,7 @@ nav:
       - Gate/TTG Maps: Feature-Gate-TTG-Maps.md
       - LEDs: Feature-LEDs.md
       - NFC/RFID Reading: Feature-NFC.md
+      - TD-1 Filament Measurement: Feature-TD1.md
       - Sensors: Feature-Sensors.md
       - Spoolman / Filament Hub: Feature-Spoolman.md
       - State Persistence: Feature-State-Persistence.md

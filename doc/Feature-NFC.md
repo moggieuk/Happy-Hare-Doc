@@ -273,7 +273,21 @@ MMU_NFC GATE=2 REGISTER=1 APPEND=1  # Read a 2nd tag on gate 2 and bind it onto 
 MMU_NFC GATE=2 ENABLE=0        # Hard-disable the reader on gate 2 (a disabled reader is never read)
 MMU_NFC GATE=2 INIT=1          # (Re)initialize a reader that isn't responding
 MMU_NFC INIT_ALL=1             # (Re)initialize every reader on every unit
+MMU_NFC CLEAR_PENDING=1        # Discard a staged tag and its resolved spool ID
 ```
+
+`CLEAR_PENDING=1` cancels the shared reader's staged tag and the spool ID
+resolved from it, preserving any [TD-1 measurement](Feature-TD1.md) or
+hand-set spool ID staged without a tag. It does not renew the pending
+window; the countdown ends only when nothing remains to apply. A tag left
+on the reader does not immediately re-stage after this explicit clear.
+The option is `CLEAR_PENDING=1`, not `CANCEL_PENDING=1`.
+
+Use `MMU_TD1 CLEAR_PENDING=1` to discard only a pending TD-1 measurement,
+or `MMU_GATE_MAP NEXT_SPOOLID=0` to cancel all pending data. Tags, spool IDs
+and TD-1 measurements share the same timeout, renewed by a new staging from
+any of them. Even an unresolved UID with no metadata expires; it simply
+does not activate the pending LED countdown on its own.
 
 ```{.text .console-command}
 MMU_NFC DETAILS=1
@@ -598,6 +612,7 @@ both off by default so a stock setup pays no extra reader I/O:
 
 ## See also
 
+- [Feature: TD-1 Filament Measurement](Feature-TD1.md) - stage a bench measurement alongside a tag
 - [Feature: Spoolman / Filament Hub](Feature-Spoolman.md) - what a resolved
   tag actually does: activation, attributes, auto-create
 - [Command Reference: `MMU_NFC`](Reference-Commands.md#mmu_nfc)

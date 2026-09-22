@@ -109,7 +109,9 @@ spoolman_nfc_auto_create    : 0     # Auto-create a Spoolman spool from an unkno
 `spoolman_pending_id_timeout` governs how long a "pending" `SpoolId` (set
 with `NEXT_SPOOLID`, see [Tuning](#tuning) below, or by a shared NFC/RFID
 scan) stays valid waiting for the next spool to be loaded, before it's
-forgotten. `spoolman_led_segment` picks which LED segment(s) show the
+forgotten. A pending [TD-1 measurement](Feature-TD1.md) shares this window;
+staging a new measurement, tag or spool ID renews it for all pending data.
+`spoolman_led_segment` picks which LED segment(s) show the
 pending-assignment overlay, if LEDs are fitted. `spoolman_nfc_auto_create`
 only has any effect on a unit with an NFC/RFID reader and `nfc_deep_read`
 enabled, and only in `push`/`pull` mode (auto-creating a spool is a write,
@@ -136,7 +138,12 @@ MMU_GATE_MAP GATE=0 SPOOLID=-1         # Unset gate 0's spool (other attributes 
 MMU_GATE_MAP NEXT_SPOOLID=45           # Auto-assign spool 45 to whichever gate is loaded/preloaded next (0 cancels)
 ```
 
-`NEXT_SPOOLID` isn't available in `pull` mode - Spoolman already owns the
+`MMU_GATE_MAP NEXT_SPOOLID=0` cancels everything pending: spool ID, tag and
+TD-1 measurement. For a targeted clear, use `MMU_NFC CLEAR_PENDING=1`
+(tag and its resolved spool ID) or `MMU_TD1 CLEAR_PENDING=1` (measurement).
+Targeted clears preserve other pending data without extending its timeout.
+
+Assigning a positive `NEXT_SPOOLID` isn't available in `pull` mode - Spoolman already owns the
 gate assignment there, so a locally-pending one has nothing to attach to;
 Happy Hare rejects it with an error naming `push`/`readonly` as the modes
 that support it.

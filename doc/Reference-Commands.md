@@ -85,6 +85,8 @@ GATES  = comma,separated,gates
 TOOL   = t (single tool)
 GATE   = g (single gate)
 ALL    = [0|1]
+TD1    = [0|1] Also capture TD/color on unmeasured gates (costs a bowden traverse)
+TD1_UPDATE = [0|1] As TD1=1 but re-measure gates that already have a reading
 ```
 
 ```{.text .console-output}
@@ -244,18 +246,20 @@ MMU_FLOWGUARD ENABLE=0 UNIT=ALL ...Disable FlowGuard detection on all units
 
 ```{.text .console-output}
 QUIET        = 1 To minimize console reporting
-DETAILS      = 1 Include the complete Spoolman RFID UID set for each gate
+DETAILS      = 1 Include measured TD/color and the complete Spoolman RFID UID set for each gate
 RESET        = 1 To reset specified GATE/GATES filament attributes to configured defaults
 GATES        = g,g,g comma separated list of gates; required with RESET unless GATE is used
 GATE         = g Specify a single gate; required with RESET unless GATES is used
 BYPASS       = 1 Set filament attributes for the bypass
-NEXT_SPOOLID = id Specify the spoolman id of the next filament loaded - automatically assigned (0 to cancel)
+NEXT_SPOOLID = id Specify the spoolman id of the next filament loaded - automatically assigned (0 cancels anything staged)
 NAME         = # Filament name
 MATERIAL     = # Material type
 VENDOR       = # Filament vendor/brand name
 COLOR        = # Filament color as w3c name or RRGGBB or RRGGBBaa (without #)
 SPOOLID      = # Optionally the spoolman ID for the filament (don't need to specify other attributes)
 TEMP         = # Default temperature of filament
+TD           = Positive transmission distance, or blank to clear (also clears measured color)
+               With BYPASS=1 sets the measured TD of the bypass filament
 SPEED        = % Speed override (use <100 for soft TPU types)
 RFID         = # Single hexadecimal RFID tag UID read at the gate (blank to clear)
 AVAILABLE    = [-1|0|1|2] Filament availability: Unknown | Empty | Available | Available from filament buffer
@@ -264,7 +268,7 @@ AVAILABLE    = [-1|0|1|2] Filament availability: Unknown | Empty | Available | A
 
 ```{.text .console-output}
 Examples:
-MMU_GATE_MAP DETAILS=1                      ...Display the gate map with all cached RFID UIDs
+MMU_GATE_MAP DETAILS=1                      ...Display the gate map with measured TD/color and cached RFID UIDs
 MMU_GATE_MAP GATES=0,1,2,3 AVAILABLE=1      ...Mark gates 0-3 as having filament available
 MMU_GATE_MAP GATE=5 COLOR=red MATERIAL=pla  ...Set filament attributes for gate 5
 MMU_GATE_MAP NEXT_SPOOLID=45                ...Automatically mark the next spool preloaded or loaded with spoolman id 45
@@ -327,7 +331,7 @@ STEPS     = [0|1] Advanced load/unload sequence and steps commands
 MACROS    = [0|1] Print start/end or slicer macros (defined in mmu_software.cfg)
 CALLBACKS = [0|1] Callbacks macros (defined in mmu_sequence.cfg, mmu_state.cfg)
 INTERNAL  = [0|1] Internal commands/macros (Caution!)
-OTHER     = [0|1] Alias or not categorised
+OTHER     = [0|1] Alias or not categorized
 CMD       = _cmd_ Show help on command (same as _cmd_ HELP=1)
 (without parameters it will summarize just major commands)
 ```
@@ -460,6 +464,9 @@ REGISTER = [0|1] Read tag (implies READ=1 DEEP=1) and resolve it in Spoolman (ma
 APPEND   = [0|1] With REGISTER=1 on a gate that already has a spool assigned, bind the newly scanned tag onto that spool instead of resolving/auto-creating (e.g. a second tag on the same spool)
 INIT     = [0|1] (Re)initialize the addressed reader
 RELEASE  = [0|1] Release the current target on the addressed reader
+CLEAR_PENDING = [0|1] Discard a tag staged by the shared reader (and any spool id resolved
+           from it). Leaves a TD-1 measurement or a hand-set NEXT_SPOOLID in place, and only
+           ends the pending countdown if nothing is left to apply
 INIT_ALL = [0|1] (Re)initialize every reader on every unit
 DETAILS  = [0|1] Include actual cached tag UIDs in the status report
 (no parameters for status report of all readers)
@@ -470,6 +477,7 @@ Examples:
 MMU_NFC                        ...Report status of all readers (which have a cached tag)
 MMU_NFC DETAILS=1              ...As above but show the actual cached UIDs
 MMU_NFC SHARED=1 ENABLE=0      ...Disable the shared reader
+MMU_NFC CLEAR_PENDING=1        ...Discard a staged tag without touching other pending data
 MMU_NFC GATE=3 READ=1          ...Read the reader on gate 3 and report the result
 MMU_NFC SHARED=1 READ=1 DEEP=1 ...Read the shared reader and report the parsed tag metadata
 MMU_NFC SHARED=1 REGISTER=1    ...Read tag and resolve/register it in Spoolman (report only, no assignment)
@@ -513,7 +521,7 @@ FORCE_IN_PRINT = [0|1]
 Examples:
 MMU_PAUSE                          ...Pause the MMU and enter the error/recovery state
 MMU_PAUSE MSG="Filament tangle"    ...Pause with a custom reason shown to the user
-MMU_PAUSE FORCE_IN_PRINT=1         ...Pause using in-print behaviour even when not detected as printing
+MMU_PAUSE FORCE_IN_PRINT=1         ...Pause using in-print behavior even when not detected as printing
 ```
 
 ### MMU_PRELOAD
@@ -804,6 +812,7 @@ UNIT           = #(int)|_name_ Implied by gate else specify name or number
 ENABLE         = [1|0] enable/disable sync feedback control
 RESET          = 1 reset sync controller and return RD to last known good value
 ADJUST_TENSION = 1 apply correction to neutralize filament tension
+RELEASE        = 1 park buffer at its spring rest position ('buffer_spring_state')
 AUTOTUNE       = [1|0] allow saving of autotuned rotation distance
 (no parameters for status report)
 ```
@@ -814,6 +823,7 @@ MMU_SYNC_FEEDBACK                  ...Report sync feedback controller status
 MMU_SYNC_FEEDBACK ENABLE=1         ...Enable sync feedback control on the active unit
 MMU_SYNC_FEEDBACK ENABLE=0         ...Disable sync feedback control
 MMU_SYNC_FEEDBACK RESET=1          ...Reset the controller and restore last known good rotation distance
+MMU_SYNC_FEEDBACK RELEASE=1        ...Relieve the buffer spring by parking it at its resting state
 ```
 
 ### MMU_SYNC_GEAR_MOTOR
@@ -832,6 +842,61 @@ Examples:
 MMU_SYNC_GEAR_MOTOR        ...Sync the gear motor to the extruder (SYNC defaults to 1)
 MMU_SYNC_GEAR_MOTOR SYNC=1 ...Force the gear motor synced to the extruder
 MMU_SYNC_GEAR_MOTOR SYNC=0 ...Unsync the gear motor from the extruder
+```
+
+### MMU_TD1
+
+*Inspect TD-1 scanners or capture filament TD and measured color*
+
+**Parameters**
+
+```{.text .console-output}
+SHARED   = [0|1] Target the unit's off-path scanner (the one you present filament to)
+GATE     = #(int) Target the scanner for this gate (implies the unit)
+GATES    = g,g,g Target multiple gates' scanners (don't mix with GATE/SHARED)
+UNIT     = #(int)/name Only needed to disambiguate multiple units with off-path scanners
+SERIAL   = # Target one physical scanner by USB serial (including one no gate uses)
+ENABLE   = [0|1] Top-level on/off for Happy Hare's use of the scanner
+AUTO     = [0|1] Apply new readings automatically when the owning gate is known
+           (overrides the unit's td1_auto_update; needs UNIT= if nothing else implies one)
+READ     = [0|1] Poll Moonraker for the addressed scanner now, instead of using the cache
+REGISTER  = [0|1] Apply the addressed scanner's measurement to GATE
+SET_COLOR = [0|1] Overwrite GATE/GATES filament_color with the measured color
+INIT     = [0|1] Reboot the addressed scanner through Moonraker and await recovery
+INIT_ALL = [0|1] Reboot every scanner on every unit
+CLEAR_PENDING = [0|1] Discard a measurement staged by the off-path scanner. Leaves a
+           staged tag or a hand-set NEXT_SPOOLID in place, and only ends the pending
+           countdown if nothing is left to apply
+DETAILS  = [0|1] Include attribution and per-gate measurements
+QUIET    = [0|1] Don't report non-essential status
+(no parameters for status report of all scanners)
+```
+
+```{.text .console-output}
+Examples:
+MMU_TD1                        ...Report status of all scanners
+MMU_TD1 DETAILS=1              ...As above but show attribution and per-gate measurements
+MMU_TD1 SHARED=1 ENABLE=0      ...Disable the off-path scanner
+MMU_TD1 CLEAR_PENDING=1        ...Discard a staged measurement, keeping other pending data
+MMU_TD1 GATE=3 READ=1          ...Poll the scanner serving gate 3 and report the result
+MMU_TD1 GATE=2 REGISTER=1      ...Apply a measurement to gate 2 (as if auto-scanned)
+MMU_TD1 GATES=0,1 ENABLE=0     ...Disable selected per-gate scanners
+MMU_TD1 GATES=0,1 SET_COLOR=1  ...Use the measured color as those gates' filament color
+MMU_TD1 GATE=2 INIT=1          ...Reboot the scanner on gate 2
+MMU_TD1 INIT_ALL=1             ...Reboot every scanner on all units
+
+This command never moves filament. To measure gates, use MMU_CHECK_GATE TD1=1,
+which runs filament down its normal path past the scanner (TD1_UPDATE=1 to
+re-read gates that already have a measurement).
+An off-path scanner ('td1_device') needs no gate: present filament to it and the
+reading is held for the next gate you preload, like a tag on a shared NFC reader.
+REGISTER attributes it to a gate you won't preload; the gate keeps it even if you
+assign a spool afterwards.
+A measured color becomes the gate's filament_color when nothing else has set
+one - Spoolman and a hand-set color both win. SET_COLOR=1 overrides that, though
+on a gate with a Spoolman spool the next refresh will put Spoolman's color back.
+It carries an alpha channel derived from the TD (RRGGBBaa), so a translucent
+filament reads as one: a low TD is opaque, a high one is clear.
 ```
 
 ### MMU_TOOL_OVERRIDES
@@ -1156,7 +1221,7 @@ Reminder - run with this sequence of options:
 UNIT   = #(int)|_name_ Optional to constrain test to specific unit
 LOOP   = #(int)        How many times to do complete T0-Tx test loops (default 1)
 RANDOM = 1             Randomize tool selection (tools may be skipped)
-FULL   = [0|1]         Whether to perform full load to extruder enntry or quick partial bowden load
+FULL   = [0|1]         Whether to perform full load to extruder entry or quick partial bowden load
 ```
 
 ```{.text .console-output}

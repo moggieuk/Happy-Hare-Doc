@@ -472,6 +472,22 @@ def _feature_nfc(mc, shot):
     shot('shared-reader-config')
 
 
+def _feature_td1(mc, shot):
+    """TD-1 assignment and capture policy; no attached USB hardware needed."""
+    mc.enter('MMU Features / Additions')
+    mc.select('Has TD-1 scanner(s)?')
+    mc.toggle()
+    mc.autofit()
+    mc.enter('TD-1 scanner config')
+    mc.select('Separate scanner to present filament to?')
+    mc.toggle()
+    mc.autofit()
+    shot('scanner-config')
+    mc.back()
+    mc.enter('TD-1 params')
+    shot('capture-policy')
+
+
 def _feature_leds(mc, shot):
     """
     For doc/Feature-LEDs.md - the LED config screen and the Neopixel pin
@@ -882,6 +898,13 @@ SESSIONS = [
         'doc/Feature-Fan-Control.md - managed-fan hardware and defaults screens',
         'scenes': _feature_fan_control,
         'outdir': 'Feature-Fan-Control',
+    },
+    {
+        'name': 'feature-td1',
+        'caption': 'doc/Feature-TD1.md - scanner assignment and capture policy',
+        'scenes': _feature_td1,
+        'outdir': 'Feature-TD1',
+        'seed': 'ercf',
     },
     {
         'name': 'feature-nfc',
