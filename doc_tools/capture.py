@@ -670,20 +670,47 @@ class Menuconfig:
         correct; only the capture is wrong, which is the worst kind of wrong because
         the resulting PNG looks entirely plausible.
 
-        WHY A DIALOG AND NOT A RESIZE. Resizing looks like the obvious answer and does
-        not work: ncurses raises KEY_RESIZE only on a real dimension change, and even
-        bounced to a different height and back it emits nothing but cursor motion,
-        because its model still matches what it thinks is on screen. Opening a dialog
-        genuinely overwrites the middle of the display, so closing it forces those
-        cells to be written again for real - and that is what re-syncs the two models.
+        WHY A SUBMENU ROUND TRIP. The rewrite is forced by briefly entering a menu
+        entry and leaving it with ESC: the submenu fills the whole menu window with
+        different content, and the parent is then redrawn over it, so ncurses
+        rewrites the cells in between. It is the same overwrite-and-restore idea the
+        '?' info dialog used to provide, for a fork that has disabled that key
+        (menuconfig.py: `elif False and c == "?"`), so the dialog can no longer be
+        opened - and probing for it cost a full STEP_TIMEOUT on every call.
 
-        Safe when there is nothing to open: if '?' changes nothing, no ESC is sent
-        (ESC in a menu would back out a level, quietly capturing the wrong screen).
+        Only the CURRENTLY SELECTED entry is entered: _enter_menu/_leave_menu
+        (menuconfig.py:1124,1235) save the parent's screen row and restore it on the
+        way out, so a round trip on the selected entry leaves the highlight and the
+        scroll exactly where they were - no walking to find an entry, no restoring
+        afterwards. The '  --->' text test (the exact separator _node_str appends
+        to menu entries) is precise: parameters and choice symbols do not show it,
+        and the one entry that shows an arrow but cannot be entered - a force-shown
+        menu with unmet dependencies - shows '--- [DISABLED]' instead
+        (menuconfig.py:3526). When the selection is not a menu entry there is
+        nothing to enter, so this returns immediately: no healing, no waiting.
+
+        WHY NOT A RESIZE. Resizing looks like the obvious answer and does not work:
+        ncurses raises KEY_RESIZE only on a real dimension change, and even bounced
+        to a different height and back its model still matches what it thinks is on
+        screen, so it rewrites only the cells whose position moved - the separator
+        bars and the help pane. The menu rows that stay put, exactly the rows where
+        stale tails live, are never touched.
+
+        ENTER is still awaited with the usual STEP_TIMEOUT, because a swallowed
+        ENTER (a '-->' menu whose children are all comments; _enter_menu returns
+        False, menuconfig.py:1149) is indistinguishable from a slow redraw, and
+        bailing early would strand the session in the submenu. In that case the
+        breadcrumb check below absorbs the ENTER without sending an ESC (ESC in a
+        menu would back out a level, quietly landing on the wrong screen).
         """
-        crumb, before = self.breadcrumb, self._snapshot()
-        self.key(HELP)
-        if self._snapshot() == before:
-            return self                              # no dialog appeared; leave it alone
+        if self.in_dialog():
+            return self                              # ENTER would land in the open editor
+        if '  --->' not in self.selected:
+            return self                              # nothing to enter
+        crumb = self.breadcrumb
+        self.key(ENTER)
+        if self.breadcrumb == crumb:
+            return self                              # ENTER was swallowed; leave it alone
         self.key(ESC)
         if self.breadcrumb != crumb:
             raise ScreenError('repaint left the screen on %r, expected %r'
@@ -702,8 +729,9 @@ class Menuconfig:
         """
         Anything floating above the menu - an editor, or a help pane.
 
-        repaint() opens a dialog to force a redraw, so it cannot tidy up a screen that
-        IS one; shot() asks this before healing.
+        repaint() enters a submenu to force a redraw, so it cannot tidy up a screen
+        that IS one (the ENTER would land in the open editor); shot() asks this
+        before healing.
         """
         return self.in_editor() or self.breadcrumb.endswith('information')
 
@@ -849,13 +877,15 @@ class Menuconfig:
 
         `fit` sizes the terminal to the screen first, so no image ever contains the
         scroll arrows that mean "cut off here" - pass False to keep whatever height
-        the session was started with. `heal` defaults to "unless this is a dialog" -
-        see repaint(), which opens one and so cannot be used to tidy up another.
+        the session was started with. `heal` only applies with fit=False (a fitted
+        shot is already repainted at the end of autofit) and defaults to "unless
+        this is a dialog" - a repaint cannot tidy up a screen that IS one (see
+        repaint()).
         """
         from .render import render                   # deferred: needs Pillow
         if fit:
             self.autofit()
-        if heal or (heal is None and not self.in_dialog()):
+        elif heal or (heal is None and not self.in_dialog()):
             self.repaint()
         # Post-condition, not an assumption: the whole point of autofit is that no
         # published image says "cut off here", and healing happens after it.
