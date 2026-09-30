@@ -1,4 +1,24 @@
+# Documentation migration archive
+
+This is a frozen historical record, not current repository instructions.
+Use [AGENTS.md](../../AGENTS.md), [CONTRIBUTING.md](../../CONTRIBUTING.md),
+[the tooling guide](../../doc_tools/README.md), and [the roadmap](../roadmap.md)
+for maintained guidance. Do not append new work logs here.
+
+The original planning document is preserved verbatim below, including outdated
+rules, conflicting status entries, old paths, and links relative to its former
+repository-root location. Those historical references are not active links to
+maintained guidance. Research findings describe the source revision examined at
+the time; verify them before reusing them.
+
+Preservation SHA-256: `dd5ceb4be0c06ae84f385ac0197decf2c48ed69ba8cc6c0eba1913cb86dbfc9f`.
+
+<!-- BEGIN ORIGINAL PLANNING DOCUMENT -->
 # Happy Hare v4 documentation — table of contents (planning)
+
+> Current repository instructions live in [AGENTS.md](AGENTS.md), and documentation
+> conventions and templates live in [CONTRIBUTING.md](CONTRIBUTING.md). Maintain
+> rules there; those guides supersede the historical wording retained below.
 
 This is the working plan for the new documentation site. It maps every planned page to
 its source material and status, so writing sessions can pick up a page without

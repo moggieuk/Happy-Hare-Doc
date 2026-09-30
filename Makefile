@@ -144,7 +144,7 @@ spellcheck:  ## Spell-check documentation and supporting source
 		':(exclude).agents/**' \
 		':(exclude).claude/**' \
 		':(exclude)MMX-Happy-Hare-Guide-Review.md' \
-		':(exclude)TOC.md' \
+		':(exclude)maintainer/archive/**' \
 		':(exclude)doc/Reference-Commands.md' \
 		':(exclude)doc/Dev-Command-Reference.md' | \
 		while IFS= read -r file; do \
