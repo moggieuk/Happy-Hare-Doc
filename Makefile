@@ -49,7 +49,8 @@ help:  # Print this help and exit
 # source-dependent target runs. An explicitly supplied HAPPY_HARE_SRC is treated
 # as user-owned and is only validated; it is never fetched, checked out or cleaned.
 fetch-source:  ## Fetch or refresh Happy-Hare source
-	$(Q)if [ "$(abspath $(HAPPY_HARE_SRC))" != "$(abspath $(MANAGED_HAPPY_HARE_SRC))" ]; then \
+	$(Q)set -e; \
+		if [ "$(abspath $(HAPPY_HARE_SRC))" != "$(abspath $(MANAGED_HAPPY_HARE_SRC))" ]; then \
 			git -C "$(HAPPY_HARE_SRC)" rev-parse --is-inside-work-tree >/dev/null 2>&1 || { \
 				echo "HAPPY_HARE_SRC is not a git checkout: $(HAPPY_HARE_SRC)" >&2; exit 2; \
 			}; \

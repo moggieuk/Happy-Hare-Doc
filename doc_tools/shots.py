@@ -41,8 +41,13 @@ import argparse
 import os
 import sys
 import traceback
+import shutil
+import tempfile
+from contextlib import ExitStack
+from pathlib import Path
 
-from .capture import DEFAULT_COLS, DEFAULT_SEED, DOC, IMAGES, MIN_ROWS, Menuconfig, ScreenError
+from .capture import (DEFAULT_COLS, DEFAULT_SEED, DOC, IMAGES, MIN_ROWS,
+                      Menuconfig, ScreenError, symbol, menu_of)
 
 # ---------------------------------------------------------------------------
 # The sessions. Extend these; the runner needs no changes.
@@ -70,23 +75,23 @@ def _getting_started_boxturtle(mc, shot):
     and the root-warnings screen is only informative if the warnings visibly clear as
     a result of that choice, which requires starting before it happens.
     """
-    mc.select('MMU Type')
+    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
     shot('01-first-run')  # every field still a placeholder
 
-    mc.enter('MMU Type')
-    mc.select('Box Turtle')
+    mc.enter(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    mc.select(symbol('MMU_TYPE_BOX_TURTLE_1_0'))
     mc.toggle()
     shot('02-mmu-type-boxturtle')  # (X) Box Turtle; Turtle Neck now offered
 
-    mc.enter('Turtle Neck')
+    mc.enter(symbol('CHOICE_TURTLE_NECK'))
     shot('03-turtleneck-buffer')  # v2 is the default - nothing to change
     mc.back()
     mc.back()  # -> (Top)
 
-    mc.select('MMU Type')
+    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
     shot('04-root-warnings')  # only the (later-page) toolhead warning remains
 
-    mc.enter('Board type')
+    mc.enter(symbol('BOARD_TYPE'))
     shot('05-board-type')  # AFC Lite v1.0 - the board this MMU shipped with
     mc.back()
     mc.key(b'g')
@@ -105,7 +110,7 @@ def _getting_started_boxturtle(mc, shot):
     shot('07-mmu-features')  # LEDs/eSpooler/buffer already on; nothing to add
 
     mc.enter('eSpooler config')
-    mc.select('eSpooler enable 0 pin')
+    mc.select(symbol('PIN_ESPOOLER_EN_0'))
     shot('07a-espooler-config')  # AFC Lite enable/rewind/forward pins per gate
     mc.back()
 
@@ -118,10 +123,10 @@ def _getting_started_boxturtle(mc, shot):
     mc.repaint()
 
     mc.enter('Pins / TMC')
-    mc.enter('Gear pins')
+    mc.enter(menu_of('PIN_GEAR_DIR'))
     shot('08-gear-pins')  # every gate's step/dir/enable/diag pin
 
-    mc.edit('Gear dir pin')
+    mc.edit(symbol('PIN_GEAR_DIR'))
     shot('09-gear-dir-editor')  # the pin nobody can predict from a drawing
     mc.write('!unit0:PD3')
     shot('10-gear-dir-inverted')  # '!' reverses it - no rewiring, no cfg edits
@@ -132,14 +137,14 @@ def _getting_started_boxturtle(mc, shot):
     mc.autofit()
     mc.repaint()
 
-    mc.enter('Toolhead')
-    mc.select('Stealthburner Clockwork2 Revo Voron')
+    mc.enter(symbol('CHOICE_TOOLHEAD_TYPE'))
+    mc.select(symbol('TOOLHEAD_TYPE_STEALTHBURNER_CLOCKWORK2_REVO_VORON'))
     mc.toggle()
     # settle the resize (24 items don't fit the starting height) BEFORE re-selecting
     # - it re-homes the cursor to the top, and shot()'s own autofit is a no-op once
     # already fitted
     mc.autofit()
-    mc.select('Stealthburner Clockwork2 Revo Voron')
+    mc.select(symbol('TOOLHEAD_TYPE_STEALTHBURNER_CLOCKWORK2_REVO_VORON'))
     shot('11-toolhead-selected')  # (X) on the choice, highlight on it too
     mc.back()  # -> (Top)
     mc.key(b'g')
@@ -169,13 +174,13 @@ def _getting_started_vivid(mc, shot):
     each shows its connection-type row (Serial, already right for a USB board) and
     the resolved-device row alongside it, without depending on what is plugged in.
     """
-    mc.enter('MMU Type')
-    mc.select('BTT ViViD')
+    mc.enter(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    mc.select(symbol('MMU_TYPE_VVD_1_0'))
     mc.toggle()
     shot('01-mmu-type-vivid')  # (X) BTT ViViD; buffer sub-option auto-checked
     mc.back()  # -> (Top)
 
-    mc.enter('Board type')
+    mc.enter(symbol('BOARD_TYPE'))
     shot('02-board-type')  # BTT ViViD MCU - the only board this type uses
     mc.back()
 
@@ -193,18 +198,18 @@ def _getting_started_vivid(mc, shot):
     shot('05-mmu-features')  # LEDs/env sensor/heater/NFC readers already on
     mc.back()  # -> (Top)
 
-    mc.enter('Toolhead')
-    mc.select('Stealthburner Clockwork2 Revo Voron')
+    mc.enter(symbol('CHOICE_TOOLHEAD_TYPE'))
+    mc.select(symbol('TOOLHEAD_TYPE_STEALTHBURNER_CLOCKWORK2_REVO_VORON'))
     mc.toggle()
     # settle the resize before re-selecting (see the
     # Box Turtle session's identical comment)
     mc.autofit()
-    mc.select('Stealthburner Clockwork2 Revo Voron')
+    mc.select(symbol('TOOLHEAD_TYPE_STEALTHBURNER_CLOCKWORK2_REVO_VORON'))
     shot('06-toolhead-selected')  # same generic choice, not ViViD-specific
     mc.back()  # -> (Top)
 
     mc.enter('Software Options')
-    mc.select('Auto-create a Spoolman spool from an unknown NFC/RFID tag?')
+    mc.select(symbol('PARAM_SPOOLMAN_NFC_AUTO_CREATE'))
     mc.toggle()
     # worth having, since ViViD ships NFC readers already
     shot('07-spoolman-nfc-autocreate')
@@ -220,17 +225,17 @@ def _getting_started_mmx(mc, shot):
     project. The scene deliberately enables both real sensor groups from that
     reference build: four entry sensors and the PB4 shared-exit sensor.
     """
-    mc.enter('MMU Type')
-    mc.select('MMX  - Multi-Material Extruder')
+    mc.enter(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    mc.select(symbol('MMU_TYPE_MMX_1_0'))
     mc.toggle()
     shot('01-mmu-type-mmx')
     mc.back()  # -> (Top)
 
-    mc.enter('Board type')
-    mc.select('BTT EBB 42 CANbus V1.2')
+    mc.enter(symbol('BOARD_TYPE'))
+    mc.select(symbol('BOARD_TYPE_EBB_GEN1'))
     mc.toggle()
     mc.autofit()
-    mc.select('BTT EBB 42 CANbus V1.2')
+    mc.select(symbol('BOARD_TYPE_EBB_GEN1'))
     shot('02-board-type-ebb42')
     mc.back()  # -> (Top)
     mc.autofit()
@@ -238,12 +243,12 @@ def _getting_started_mmx(mc, shot):
     mc.enter('MMU Features / Additions')
     shot('03-mmu-features')
     mc.enter('Filament sensors')
-    mc.select('gate/lane entry sensors')
+    mc.select(symbol('MMU_HAS_SENSOR_ENTRY'))
     mc.toggle()
-    mc.select('shared exit sensor')
+    mc.select(symbol('MMU_HAS_SENSOR_SHARED_EXIT'))
     mc.toggle()
     mc.autofit()
-    mc.select('gate/lane entry sensors')
+    mc.select(symbol('MMU_HAS_SENSOR_ENTRY'))
     shot('04-filament-sensors')
     mc.back()
     mc.back()  # -> (Top)
@@ -268,8 +273,8 @@ def _getting_started_3ms_additions(mc, shot):
     not generated here, so keep this deliberately narrow and select the 3MS
     profile from a bare configuration before entering the shared menu.
     """
-    mc.enter('MMU Type')
-    mc.select('3MS  - Modular Multi Material System')
+    mc.enter(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    mc.select(symbol('MMU_TYPE_3MS_1_0'))
     mc.toggle()
     mc.back()
     mc.enter('MMU Features / Additions')
@@ -284,8 +289,8 @@ def _getting_started_ercf_additions(mc, shot):
     bare and choose ERCF interactively so family-level fixed capabilities are
     applied just as they are in the guide.
     """
-    mc.enter('MMU Type')
-    mc.select('ERCF - Enraged Rabbit Carrot Feeder')
+    mc.enter(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    mc.select(symbol('MMU_FAMILY_ERCF'))
     mc.toggle()
     mc.back()
     mc.enter('MMU Features / Additions')
@@ -300,8 +305,8 @@ def _getting_started_tradrack_additions(mc, shot):
     doc/GettingStarted-Tradrack.md. Start bare so the scene can select Tradrack;
     there is no dedicated Tradrack seed.
     """
-    mc.enter('MMU Type')
-    mc.select('Tradrack')
+    mc.enter(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    mc.select(symbol('MMU_TYPE_TRADRACK_1_0'))
     mc.toggle()
     mc.back()
     mc.enter('MMU Features / Additions')
@@ -313,14 +318,10 @@ def _getting_started_multi_unit_shared(mc, shot):
     For doc/GettingStarted-Multi-Unit.md - the aquatic-colored shared-config
     entry point used by install.sh -i -n.
     """
-    # The shared screen's persistent Help pane makes the general autofit/repaint
-    # cycle inappropriate here. MMU unit names is the initial selection, so open
-    # its array editor directly in the fixed-height capture.
+    # Open the initially selected unit list without resizing under the dialog.
     mc.step(b'l', lambda menu: menu.in_editor())
-    # The array editor presents one unit per line. The existing unit0 row is
-    # retained and Enter appends a second row for unit1.
-    mc.step(b'\runit1', lambda menu: menu.has('unit1'))
-    shot('02-unit-names-editor')  # array editor with the new unit appended
+    mc.append_entry('unit1')
+    shot('02-unit-names-editor')
     mc.cancel()
     shot('01-shared-config')  # alternate palette and shared settings
 
@@ -331,18 +332,18 @@ def _getting_started_multi_unit_second(mc, shot):
     parse, so it uses menuconfig's normal palette and exposes sharing choices for
     hardware which may already exist on unit0.
     """
-    mc.select('MMU Type')
+    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
     shot('03-unit1-config')  # regular palette, Unit: unit1
 
     mc.enter('MMU Features / Additions')
-    mc.select('Has sync-feedback buffer?')
+    mc.select(symbol('MMU_HAS_SYNC_FEEDBACK_BUFFER'))
     mc.toggle()
     mc.enter('Buffer config')
-    mc.select('Shared with existing unit?')
+    mc.select(symbol('MMU_SHARED_SYNC_FEEDBACK_BUFFER'))
     mc.toggle()
     shot('04-unit1-shared-buffer')  # sharing enabled for unit1
 
-    mc.edit('Shared buffer name')
+    mc.edit(symbol('PARAM_SYNC_FEEDBACK_BUFFER_NAME'))
     mc.write('unit0')
     shot('05-shared-buffer-name')  # object owned by the first unit
     mc.cancel()
@@ -357,20 +358,20 @@ def _getting_started_emu(mc, shot):
     and the root-warnings screen is only informative if the warnings visibly clear as
     a result of that choice, which requires starting before it happens.
     """
-    mc.select('MMU Type')
+    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
     shot('01-first-run')  # every field still a placeholder
 
-    mc.enter('MMU Type')
-    mc.select('EMU')
+    mc.enter(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    mc.select(symbol('MMU_TYPE_EMU_1_0'))
     mc.toggle()
     shot('02-mmu-type-emu')  # (X) EMU; PSF now offered
 
-    mc.select('Number of gates/lanes?')
+    mc.select(symbol('PARAM_NUM_GATES'))
     shot('03-num-gates')
     mc.back()  # -> (Top)
 
-    mc.enter('Board type')
-    mc.select('EBB36/42 gen1 MCU')
+    mc.enter(symbol('BOARD_TYPE'))
+    mc.select(symbol('BOARD_TYPE_EBB_GEN1'))
     mc.toggle()
     shot('04-board-type')  # only the (later-page) toolhead warning remains
     mc.back()
@@ -386,9 +387,9 @@ def _getting_started_emu(mc, shot):
     mc.back()
 
     mc.enter('Pins / TMC')
-    mc.enter('Gear pins')
+    mc.enter(menu_of('PIN_GEAR_DIR'))
     shot('07-gear-pins')
-    mc.edit('Gear dir pin')
+    mc.edit(symbol('PIN_GEAR_DIR'))
     shot('08-gear-dir-editor')
     mc.write('!unit0_gate0:PD1')
     shot('09-gear-dir-inverted')
@@ -400,11 +401,10 @@ def _getting_started_emu(mc, shot):
     shot('10-speeds')
     mc.back()
 
-    # 'Toolhead (' not bare 'Toolhead': from this position in the list the walk
-    # would otherwise land on 'Toolhead sensors/settings' first
-    mc.enter('Toolhead (')
+    # Resolve the named choice without matching 'Toolhead sensors/settings'.
+    mc.enter(symbol('CHOICE_TOOLHEAD_TYPE'))
     mc.autofit()
-    mc.select('A4T WWBMG for A4T Dragon Ace')
+    mc.select(symbol('TOOLHEAD_TYPE_A4T_WWBMG_FOR_A4T_DRAGON_ACE'))
     shot('11-toolhead')
     mc.back()
 
@@ -427,7 +427,7 @@ def _feature_espooler(mc, shot):
     """
     mc.enter('MMU Features / Additions')
     mc.enter('eSpooler config')
-    mc.select('eSpooler enable 0 pin')
+    mc.select(symbol('PIN_ESPOOLER_EN_0'))
     shot('espooler-pins')  # one row of rewind/forward/enable/trigger per gate
 
 
@@ -460,14 +460,14 @@ def _feature_nfc(mc, shot):
     matching how the page itself frames a shared reader.
     """
     mc.enter('MMU Features / Additions')
-    mc.select('Has NFC reader(s) for RFID tag?')
+    mc.select(symbol('MMU_HAS_NFC_READER'))
     mc.toggle()
     mc.autofit()  # new items just appeared below
     mc.enter('NFC reader h/w config')
-    mc.select('Has common NFC reader?')
+    mc.select(symbol('MMU_HAS_COMMON_NFC_READER'))
     mc.toggle()
     mc.autofit()  # reader name/type/pin fields just appeared
-    mc.select('Has common NFC reader?')
+    mc.select(symbol('MMU_HAS_COMMON_NFC_READER'))
     # name/type/CS pin/SPI bus/speed - RC522 defaults
     shot('shared-reader-config')
 
@@ -475,11 +475,11 @@ def _feature_nfc(mc, shot):
 def _feature_td1(mc, shot):
     """TD-1 assignment and capture policy; no attached USB hardware needed."""
     mc.enter('MMU Features / Additions')
-    mc.select('Has TD-1 scanner(s)?')
+    mc.select(symbol('MMU_HAS_TD1'))
     mc.toggle()
     mc.autofit()
     mc.enter('TD-1 scanner config')
-    mc.select('Separate scanner to present filament to?')
+    mc.select(symbol('MMU_HAS_OFFPATH_TD1'))
     mc.toggle()
     mc.autofit()
     shot('scanner-config')
@@ -515,7 +515,7 @@ def _feature_gate_ttg_maps(mc, shot):
     """
     mc.enter('Macro Variables')
     mc.enter('(_MMU_SOFTWARE)')
-    mc.select('Automap strategy')
+    mc.select(symbol('CHOICE_SOFTWARE_AUTOMAP_STRATEGY'))
     # strategy choice + reset-TTG-at-end-of-print checkbox
     shot('automap-strategy')
 
@@ -529,12 +529,12 @@ def _feature_filament_bypass(mc, shot):
     rather than guessing, since it's nested differently per MMU type
     (Box Turtle's own path used here). Uses the boxturtle seed (default).
     """
-    mc.enter('MMU Type')
+    mc.enter(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
     # Box Turtle is a choice radio button, already selected by the seed - its
     # own "Design attributes" submenu appears as a nested item directly below
     # it on this same screen, not behind entering "Box Turtle" itself.
     mc.enter('Design attributes')
-    mc.select('Associate bypass with this unit?')
+    mc.select(symbol('PARAM_HAS_BYPASS'))
     shot('design-attributes-bypass')  # off by default on box turtle
 
 
@@ -562,7 +562,7 @@ def _feature_eject_buttons(mc, shot):
     (same pattern as _feature_nfc/_feature_environment_manager).
     """
     mc.enter('MMU Features / Additions')
-    mc.select('Has eject buttons?')
+    mc.select(symbol('MMU_HAS_EJECT_BUTTONS'))
     mc.toggle()
     mc.autofit()  # "Mmu eject buttons" submenu just appeared
     mc.enter('Mmu eject buttons')
@@ -590,7 +590,7 @@ def _feature_environment_manager(mc, shot):
     _feature_nfc) rather than needing a different seed.
     """
     mc.enter('MMU Features / Additions')
-    mc.select('Has environment sensor(s)?')
+    mc.select(symbol('MMU_HAS_ENVIRONMENT_SENSOR'))
     mc.toggle()
     mc.autofit()  # "Environment sensor h/w config" submenu just appeared
     mc.enter('Environment sensor h/w config')
@@ -598,7 +598,7 @@ def _feature_environment_manager(mc, shot):
     shot('environment-sensor-config')
     mc.back()  # -> MMU Features / Additions
 
-    mc.select('Has enclosure heater(s)?')
+    mc.select(symbol('MMU_HAS_HEATER'))
     mc.toggle()
     mc.autofit()  # hardware and control submenus just appeared
     mc.enter('Heater h/w config')
@@ -618,11 +618,11 @@ def _feature_fan_control(mc, shot):
     environment sensor here makes both temperature-source choices visible.
     """
     mc.enter('MMU Features / Additions')
-    mc.select('Has environment sensor(s)?')
+    mc.select(symbol('MMU_HAS_ENVIRONMENT_SENSOR'))
     mc.toggle()
     mc.autofit()  # still on "MMU Features / Additions" - no submenu entered
 
-    mc.select('Enable managed fan(s)?')
+    mc.select(symbol('MMU_HAS_FANS'))
     mc.toggle()
     mc.autofit()  # hardware/defaults submenus just appeared
     # Enter the short submenus from the 30-row floor. Otherwise their first
@@ -644,7 +644,7 @@ def _feature_endless_spool_runout(mc, shot):
     no setup - this section is always present.
     """
     mc.enter('Software Options')
-    mc.select('Enable EndlessSpool?')
+    mc.select(symbol('PARAM_ENDLESS_SPOOL_ENABLED'))
     # both EndlessSpool checkboxes, off by default
     shot('endless-spool-options')
 
@@ -702,7 +702,7 @@ def _macro_tip_forming(mc, shot):
     seed even though tip cutting, not forming, is the seed's actual choice.
     """
     mc.enter('Tip Forming / Cutting')
-    mc.select('Select standalone tip shaping option')
+    mc.select(symbol('CHOICE_FORM_TIP_MACRO'))
     shot('tip-shaping')  # filament-movement forming selected
     mc.back()  # -> (Top)
 
@@ -720,7 +720,7 @@ def _macro_toolhead_tip_cutting(mc, shot):
     avoiding menuconfig's incomplete redraw after dynamically adding the fields.
     """
     mc.enter('Tip Forming / Cutting')
-    mc.select('Select standalone tip shaping option')
+    mc.select(symbol('CHOICE_FORM_TIP_MACRO'))
     shot('tip-shaping')  # toolhead cutting selected; bumper options visible
     mc.back()  # -> (Top)
 
@@ -738,7 +738,7 @@ def _macro_servo_cutter(mc, shot):
     with this off).
     """
     mc.enter('Tip Forming / Cutting')
-    mc.select('Have servo cutter at MMU?')
+    mc.select(symbol('MMU_HAS_SERVO_CUTTER'))
     mc.toggle()
     mc.autofit()
     shot('tip-shaping')  # MMU cutter enabled alongside the shaping choice
@@ -763,7 +763,7 @@ def _macro_blobifier(mc, shot):
     themselves selectable, which is why this doesn't use mc.select() on them.
     """
     mc.enter('Purging')
-    mc.select('Have Blobifier?')
+    mc.select(symbol('MMU_HAS_BLOBIFIER'))
     mc.toggle()
     mc.autofit()
     # Re-enter to force a complete redraw after the conditional hardware fields
@@ -774,14 +774,14 @@ def _macro_blobifier(mc, shot):
 
     # An existing config retains its previous standalone-purge choice when the
     # Blobifier capability is switched on, so select Blobifier explicitly.
-    mc.enter('Select standalone purging option')
-    mc.select('Blobifier')
+    mc.enter(symbol('CHOICE_PURGE_MACRO'))
+    mc.select(symbol('CHOICE_PURGE_MACRO_BLOBIFIER'))
     mc.toggle()  # choice auto-closes back to Purging
     mc.autofit()
     shot('purging-servo')
 
-    mc.enter('Blobifier tray actuator')
-    mc.select('Stepper (manual_stepper)')
+    mc.enter(symbol('CHOICE_BLOBIFIER_TYPE'))
+    mc.select(symbol('CHOICE_BLOBIFIER_TYPE_STEPPER'))
     mc.toggle()  # choice auto-closes back to Purging
     mc.autofit()
     mc.back()  # -> (Top), also gives the expanded menu a clean redraw
@@ -789,8 +789,8 @@ def _macro_blobifier(mc, shot):
     shot('purging-stepper')
 
     # Keep the macro-variable screenshot on the default servo variant.
-    mc.enter('Blobifier tray actuator')
-    mc.select('Servo')
+    mc.enter(symbol('CHOICE_BLOBIFIER_TYPE'))
+    mc.select(symbol('CHOICE_BLOBIFIER_TYPE_SERVO'))
     mc.toggle()  # choice auto-closes back to Purging
     mc.autofit()
     mc.back()  # -> (Top)
@@ -806,7 +806,7 @@ def _macro_purge(mc, shot):
     screens. Both use the boxturtle seed's default simple bucket purge.
     """
     mc.enter('Purging')
-    mc.select('Select standalone purging option')
+    mc.select(symbol('CHOICE_PURGE_MACRO'))
     shot('purging')  # Blobifier off, simple bucket purge selected
     mc.back()  # -> (Top)
 
@@ -1056,7 +1056,8 @@ def run_session(session,
                 scale=2,
                 seed=None,
                 min_rows=None,
-                verbose=False):
+                verbose=False,
+                staging=None):
     """Run one session, returning the images it produced."""
     written = []
     context = {
@@ -1077,7 +1078,8 @@ def run_session(session,
 
         def shot(name):
             path = os.path.join(outdir, name + '.png')
-            mc.shot(path,
+            capture_path = os.path.join(staging, session['name'], name + '.png') if staging else path
+            mc.shot(capture_path,
                     trim=session.get('trim', True),
                     scale=scale,
                     fit=session.get('fit', True))
@@ -1091,6 +1093,52 @@ def run_session(session,
     return written
 
 
+def publish_images(images):
+    """Replace completed captures, restoring earlier files on a publication error.
+
+    Each replacement is atomic. The whole set is rollback-protected against Python
+    exceptions, but is not a filesystem transaction across a power loss.
+    """
+    destinations = [os.path.abspath(dst) for _, dst in images]
+    if len(set(destinations)) != len(destinations):
+        raise ScreenError('Multiple captures target the same output file')
+    with ExitStack() as stack:
+        prepared = []
+        for source, destination in images:
+            dst = Path(destination)
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            directory = Path(tempfile.mkdtemp(prefix='.hh-shot-', dir=dst.parent))
+            stack.callback(shutil.rmtree, directory, ignore_errors=True)
+            new, backup = directory / 'new.png', directory / 'old.png'
+            shutil.copy2(source, new)
+            existed = dst.exists()
+            if existed:
+                shutil.copy2(dst, backup)
+            prepared.append((new, dst, backup, existed))
+        replaced = []
+        try:
+            for new, dst, backup, existed in prepared:
+                os.replace(new, dst)
+                replaced.append((dst, backup, existed))
+        except BaseException:
+            recovery_errors = []
+            for dst, backup, existed in reversed(replaced):
+                try:
+                    if existed:
+                        os.replace(backup, dst)
+                    else:
+                        dst.unlink()
+                except OSError:
+                    recovery_errors.append(str(backup.parent))
+            if recovery_errors:
+                # Do not delete the only surviving originals if the filesystem
+                # also refuses the rollback. Leave named recovery directories.
+                stack.pop_all()
+                raise ScreenError('Rollback incomplete; recovery files retained in: %s' %
+                                  ', '.join(recovery_errors))
+            raise
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(
         prog='python -m doc_tools.shots',
@@ -1102,6 +1150,7 @@ def main(argv=None):
                         metavar='NAME',
                         help='just this session; repeatable')
     parser.add_argument('--outdir', default=IMAGES, help='where the PNGs go')
+    parser.add_argument('--output-root', help='redirect all per-page image folders to this directory')
     parser.add_argument(
         '--seed',
         help='override every session\'s seed: a built-in name, '
@@ -1140,23 +1189,33 @@ def main(argv=None):
     # for a session with no 'outdir' of its own - creating it eagerly would recreate
     # exactly the unused doc/images/ this file's header says not to write to.
     failed, written = [], []
-    for index, session in enumerate(wanted, 1):
-        print('[%d/%d] %s' % (index, len(wanted), session['name']))
+    with tempfile.TemporaryDirectory(prefix='hh-shots-stage-') as staging:
+        images = []
+        for index, original in enumerate(wanted, 1):
+            session = dict(original)
+            if args.output_root and 'outdir' in session:
+                session['outdir'] = os.path.abspath(os.path.join(args.output_root, session['outdir']))
+            print('[%d/%d] %s' % (index, len(wanted), session['name']), flush=True)
+            try:
+                paths = run_session(session, args.outdir, args.scale, args.seed,
+                                    args.min_rows, args.verbose, staging=staging)
+                written += paths
+                images.extend((os.path.join(staging, session['name'], os.path.basename(p)), p)
+                              for p in paths)
+            except (ScreenError, OSError) as exc:
+                failed.append(session['name'])
+                detail = traceback.format_exc() if args.verbose else str(exc).splitlines()[0]
+                print('    FAILED: %s' % detail, file=sys.stderr)
+        if failed:
+            print('\n%d of %d sessions failed: %s. No screenshots replaced. '
+                  'Use -v for full diagnostics.' %
+                  (len(failed), len(wanted), ', '.join(failed)), file=sys.stderr)
+            return 1
         try:
-            written += run_session(session, args.outdir, args.scale, args.seed,
-                                   args.min_rows, args.verbose)
-        except (ScreenError, OSError) as exc:
-            failed.append(session['name'])
-            print(
-                traceback.format_exc() if args.verbose else '    FAILED: %s' %
-                exc,
-                file=sys.stderr)
-
-    if failed:
-        print('\n%d of %d sessions failed: %s' %
-              (len(failed), len(wanted), ', '.join(failed)),
-              file=sys.stderr)
-        return 1
+            publish_images(images)
+        except (OSError, ScreenError) as exc:
+            print('Could not publish screenshots: %s' % exc, file=sys.stderr)
+            return 1
     # Sessions each name their own 'outdir' (see the header above), so a run can
     # easily span several folders - naming just one, as if there were a single
     # shared pool, would be as misleading as recreating that pool would be.
