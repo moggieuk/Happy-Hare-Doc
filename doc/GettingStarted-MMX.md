@@ -10,6 +10,12 @@ assembly, power and wiring. This page starts once the mechanism is built and
 the controller is flashed, and covers the Happy Hare choices that turn that
 hardware into a working Klipper MMU.
 
+The examples use the default Klipper object name `unit0`. You can choose a
+different name under **Name → Klipper object name** on the first install, and set
+a separate **Display name** for the UI. See
+[Naming an MMU unit](Installation.md#naming-an-mmu-unit); use your chosen name
+where these examples show unit-specific names or pin prefixes.
+
 ## Before You Begin
 
 Confirm the following before starting the installer:

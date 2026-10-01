@@ -7,6 +7,12 @@ rather than bling. Other sections cover toolhead calibration and multi‑unit se
 get a Tradrack installed and up and running with Klipper.
 
 
+The examples use the default Klipper object name `unit0`. You can choose a
+different name under **Name → Klipper object name** on the first install, and set
+a separate **Display name** for the UI. See
+[Naming an MMU unit](Installation.md#naming-an-mmu-unit); use your chosen name
+where these examples show unit-specific names or pin prefixes.
+
 ## Menuconfig Installer
 
 First clone the Happy Hare repository as described in
@@ -28,7 +34,7 @@ yet; no `-i` flag is needed.
 <br>
 
 This is the installer's default state: `MMU Type` is `Custom Design`, the board is unknown, and the
-**`CONFIG WARNINGS / ERRORS`** panel at the bottom lists exactly that — four things still need a decision. 
+**`CONFIG WARNINGS / ERRORS`** panel at the bottom lists the choices still needed.
 As soon as you pick a real MMU type, most of these clear themselves.
 
 ### Choosing the MMU type
@@ -69,8 +75,8 @@ Next, review applicable Project Options. If you added an optional Binky encoder,
 </p>
 <br>
 <br>
-Back out twice (++esc++, ++esc++) to return to the top menu, and review the warnings panel again. Three of the 
-four warnings are already gone. The one that's left — *"`Toolhead type is 'other'`"* — is exactly what it sounds
+Back out twice (++esc++, ++esc++) to return to the top menu, and review the warnings panel again. The hardware
+warnings have cleared. The remaining warning — *"`Toolhead type is 'other'`"* — is exactly what it sounds
 like: Happy Hare still doesn't know your toolhead, and that's covered in a different getting-started page. 
 Don't worry about it here.
 

@@ -15,6 +15,14 @@ lives in `mkdocs.yml`. Check existing coverage before creating a new page.
 | Community and support | The planned `Change-Log.md`, `Donations.md`, and `Getting-Help.md` do not exist. Review existing home-page and social links before porting wiki material. |
 | External link migration | Assess redirects or an old-to-new URL map for links from the wiki, README files, Discord, KlipperScreen, and videos once destination URLs are stable. |
 
+## Publication dependencies
+
+- Unit naming and restructuring documentation targets Happy Hare
+  [PR #1277](https://github.com/moggieuk/Happy-Hare/pull/1277) and
+  [PR #1281](https://github.com/moggieuk/Happy-Hare/pull/1281), verified against
+  `c190474c`. Both PRs were open on 2026-10-01; confirm the merged behavior before
+  publishing these pages with a release.
+
 ## Existing coverage and historical entries to reconcile
 
 - `Understanding-Operation.md` exists and has a completed entry in the old
@@ -22,9 +30,6 @@ lives in `mkdocs.yml`. Check existing coverage before creating a new page.
   flag as an outstanding task without a specific new finding.
 - The print-job lifecycle is covered in `Operation.md`. The old standalone
   `Print-Job-State-Machine.md` proposal is not automatically a missing page.
-- `GettingStarted-Multi-Unit.md` exists; the later planning entry called it an
-  initial draft. Review its completeness rather than reviving the older deferred
-  `Multi-MMU.md` placeholder.
 - `Hardware-Configuration.md`, `Movement-and-Homing.md`, and
   `Macro-Configuration.md` are old proposed filenames, not current pages. Check
   `Hardware-Validation.md`, Calibration pages, `Macro-Customization.md`, and

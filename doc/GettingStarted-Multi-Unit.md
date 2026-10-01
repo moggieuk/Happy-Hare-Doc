@@ -19,7 +19,10 @@ Started guide for that design:
 ```
 
 Complete the configuration, save it, and validate that unit before adding another.
-The initial unit is configured under the symbolic name `unit0` by default.
+In **Name → Klipper object name**, choose the unit's symbolic name or keep the
+`unit0` default. The name is not fixed, even for the first MMU. This walkthrough
+uses `unit0` and `unit1` as examples; substitute your own names throughout.
+See [Naming an MMU unit](Installation.md#naming-an-mmu-unit).
 
 !!! warning "Before adding another unit"
     Do not start with two untested configurations. Confirm the first unit's MCU,
@@ -39,11 +42,10 @@ The `-n` flag converts the existing configuration to multi-unit mode. It causes
 `menuconfig` to run once for shared settings and then once for every unit in the
 unit list.
 
-!!! warning "Keep the first unit named unit0 during conversion"
-    When converting an existing single-unit installation, the first entry must
-    remain `unit0`. That is the name associated with the configuration being
-    carried forward. Changing it at this point would create a new unit rather than
-    preserve the existing one.
+The shared unit list starts with the first unit's existing name and carries its
+configuration forward, including when that name is something other than `unit0`.
+To rename it during conversion, choose **Replace (option 2)** and use the list
+editor's rename action as described under [Unit renaming](#unit-renaming).
 
 !!! tip "Try the multi-unit installer safely first"
     Add the `-t` flag to rehearse the complete multi-unit installer workflow in
@@ -76,29 +78,47 @@ Printer-wide settings on this screen include the toolhead and its sensors,
 software options, tip forming and cutting, purging, speeds, macro variables,
 shared pins, and installation paths and services.
 
-Select **MMU unit names** and add the new symbolic name. The editor presents one
-unit per line; add `unit1` below the existing `unit0` entry.
+Select **MMU units** to open the list editor. Press **a** to append a unit, enter
+`unit1`, and press **Enter**. The new entry is marked **[new]**.
 
 <p align="center">
-  <img src="GettingStarted-Multi-Unit/02-unit-names-editor.png" alt="MMU unit names editor containing unit0 and unit1" width="80%">
+  <img src="GettingStarted-Multi-Unit/02-unit-names-editor.png" alt="MMU units list with unit1 marked as a new addition after unit0" width="80%">
 </p>
 
-Press **Ctrl-D** to save the unit-name editor, then press **Q** and save the shared
-configuration as usual. `menuconfig` now knows that two unit-specific passes are
-required.
+Press **Enter** to finish editing the list, then press **Q** and save the shared
+configuration. The installer reviews the unit-list changes before opening the
+unit-specific passes. A rename, removal or reorder also requires confirmation.
+
+The list editor uses these controls:
+
+| Key | Action |
+| --- | --- |
+| **Up / Down** | Select an entry |
+| **a** | Add a unit at the end |
+| **i** | Insert a unit before the selected entry |
+| **r** | Rename the selected unit while retaining its identity |
+| **d** | Delete the selected unit; at least one must remain |
+| **K / J** | Move the selected unit up / down |
+| **u** | Undo all pending list changes |
+| **Enter / Esc** | Finish / cancel editing the list |
+
+**Shift-Up / Shift-Down** also move entries when the terminal passes those keys
+through. Use uppercase **K / J** if the terminal intercepts them. For an installed
+setup, **Refresh** and **Merge** modes only allow appending units; choose
+**Replace (option 2)** for the other changes.
 
 ### Symbolic names and display names
 
-`unit0` and `unit1` are recommended symbolic names, but that naming pattern is not
-mandatory for newly added units. The symbolic name associates Klipper objects and
-generated configuration files with the physical unit, so keep it short, unique,
-and alphanumeric. Avoid renaming an established unit unless you intend to
-reconfigure it under a new identity.
+A symbolic name is the **Klipper object name**: it identifies the unit in Klipper
+sections, pin prefixes, generated filenames, and saved state. Names must be unique,
+start with a lowercase letter, and contain only lowercase letters, digits, `_` or
+`-`. Names such as `left`, `ercf` and `box_2` work just as well as `unit0`.
 
-Each unit also has a **Display name** setting. Use that for a friendlier label such
-as `ERCF Left` or `Box Turtle`, including spaces. Mainsail, Fluidd and
-KlipperScreen use the display name where appropriate without changing the
-symbolic names in the configuration.
+Each unit's **Name → Display name** is a separate, friendly label such as
+`ERCF Left` or `Box Turtle`, including spaces. Mainsail, Fluidd and KlipperScreen
+use it where appropriate. Changing it does not rename Klipper objects or files.
+In multi-unit mode, the **Name** menu shows the Klipper object name for reference;
+change that name in the shared **MMU units** editor.
 
 ## Pass 2: review existing unit0
 
@@ -122,7 +142,7 @@ The installer then opens a fresh unit-specific configuration labelled
 Configure this unit as thoroughly as a first installation:
 
 1. Select its **MMU Type**, version, and any design-specific project options.
-2. Set its user-facing **Display name**.
+2. Set its user-facing **Name → Display name**.
 3. Select its controller board and configure its MCU connection.
 4. Review its fitted features and additions.
 5. Configure and verify its pins, steppers, TMC drivers, sensors and endstops.
@@ -130,34 +150,94 @@ Configure this unit as thoroughly as a first installation:
    with an existing unit.
 7. Resolve every configuration warning, press **Q**, and save.
 
-## Removing a unit
+## Unit renaming
 
-From the `Happy-Hare` directory, rerun the interactive installer:
+To change only the label shown in the UI, edit **Name → Display name** in the
+unit's configuration. To change the Klipper object name of an installed unit:
 
-```bash
-./install.sh -i
-```
+1. Run `./install.sh -i` and choose **Replace (option 2)**.
+2. In multi-unit mode, open **MMU units** in **Shared Config**, select the unit,
+   press **r**, and enter the new name. For a single-unit installation, edit
+   **Name → Klipper object name** instead.
+3. Finish the editor and save the configuration. Review and confirm the installer's
+   change summary, then review and save each unit-specific pass if applicable.
+4. Complete the install and review any warnings about manually edited references.
 
-On the first, teal-colored **Shared Config** pass, open **MMU unit names** and
-remove the symbolic name of the unit you no longer want. Save the shared
-configuration, then complete the remaining unit-specific passes. When the
-installer finishes, it removes the generated configuration for the deleted unit.
+Use **r** to rename, rather than deleting the old entry and adding a new one.
+The rename action tells the installer to retain that unit's configuration,
+calibration and saved state. It updates generated objects and filenames, saved
+pin and shared-component references, and unit-specific saved-state keys. A rename
+alone keeps the selected gate and tool because no gates change number.
 
-!!! warning "Symbolic names cannot be renamed"
-    The installer cannot currently rename an established unit's symbolic name.
-    The only workaround is to edit `.mmu_config` and every affected per-unit file,
-    such as `.mmu_config_unit0` and `.mmu_config_unit1`, by hand so that all names
-    remain consistent. Use the unit's **Display name** instead when you only want
-    to change the name shown in Mainsail, Fluidd or KlipperScreen.
+On a first installation there is no installed state to migrate, so names can be
+chosen freely without selecting Replace mode.
 
-!!! note "Where menuconfig choices are stored"
-    `.mmu_config` contains the shared choices used by `menuconfig`, while files
-    such as `.mmu_config_unit0` and `.mmu_config_unit1` contain each unit's
-    choices. The installer also copies these files into
-    `~/printer_data/config/mmu/`. Before applying an installation, it backs up
-    the previous `mmu` directory to a timestamped location such as
-    `~/printer_data/config/mmu.old-20260827-143000`, so the earlier menuconfig
-    choices remain available if they are needed for recovery.
+!!! warning "Replace mode and manual edits"
+    Replace rebuilds generated configuration from your saved menuconfig choices
+    and overwrites direct edits to generated `.cfg` settings. Review those edits
+    first and carry required settings into menuconfig. The installer flags old
+    names it finds in preserved custom sections, `printer.cfg` and add-on `.cfg`
+    files, but you must update your own macros and other external references.
+    Check commands such as `UNIT=unit0` and any explicit pin or object names.
+
+## Unit reordering
+
+Run `./install.sh -i`, choose **Replace (option 2)**, and open **MMU units** in the
+shared pass. Select a unit and press **K** to move it up or **J** to move it down.
+Finish the editor, save, confirm the change summary, and complete the per-unit
+passes and installation.
+
+List order determines unit ordinals and global gate numbers. For example, moving
+six-gate `unit1` before four-gate `unit0` gives `unit1` gates 0–5 and `unit0` gates
+6–9. `UNIT=0` now refers to `unit1`; `UNIT=unit0` still refers to the same physical
+unit. Local gate numbers within each unit do not change.
+
+Calibration and saved gate data move with the units. The installer remaps the
+saved tool-to-gate map, endless-spool groups and sensor-enabled state as well.
+Review macros with numeric `UNIT=`, `GATE=` or `TOOL=` arguments and any configured
+per-gate lists; arbitrary user configuration is not automatically reordered.
+
+When existing gates are renumbered or removed, the selected gate and tool reset
+to **unknown (-1)**. Unload filament before restructuring, then select or home
+again after installation and check the gate and tool maps before printing.
+
+## Unit adding/removing
+
+To add a unit to an existing multi-unit setup, run `./install.sh -i` and press
+**a** in **Shared Config → MMU units**. Appending works in **Refresh**, **Merge**
+or **Replace** mode. Existing units retain their settings and gate numbers, and
+the new unit gets its own configuration pass. Configure and validate its hardware
+before printing. Use `./install.sh -i -n` when first converting from single-unit
+mode, as shown above.
+
+To insert a unit before an existing one, choose **Replace (option 2)** and press
+**i** on the entry it should precede. This shifts later gates, so follow the same
+checks as [Unit reordering](#unit-reordering).
+
+To remove a unit, choose **Replace (option 2)**, select it in **MMU units**, and
+press **d**. At least one unit must remain. Finish the editor, save, confirm the
+removal, and complete the remaining passes. The installer removes the deleted
+unit's generated hardware and parameter files and its unit-specific saved state,
+and adjusts the remaining gate data. Review the tool-to-gate map and per-gate
+settings after removal, especially tools that previously used the deleted unit.
+
+If another unit still shares the removed unit's encoder, buffer or NFC reader,
+the installer refuses removal. Reconfigure that dependency and save it in a
+separate run before removing the owner.
+
+### Backups and saved state
+
+In multi-unit mode, `.mmu_config` contains the shared menuconfig choices and files
+such as `.mmu_config_unit0` contain each unit's choices. The installer copies them
+into `~/printer_data/config/mmu/` and backs up the previous `mmu` directory to a
+timestamped location before installing.
+
+Check the saved-state path printed in the change summary. Migration uses the
+installed `[save_variables] filename` in `mmu_macro_vars.cfg`, falling back to the
+menuconfig **save_variables path**. An override elsewhere, such as `printer.cfg`,
+is not followed automatically. A saved-state file outside the `mmu` directory
+gets its own `.old-<timestamp>` backup; restoring an MMU backup with `--prev` does
+not restore that external file.
 
 ## Sharing components
 
@@ -269,7 +349,7 @@ MMU_HOME UNIT=1
 MMU_HOME UNIT=unit1
 ```
 
-Unit ordinals follow the order in **MMU unit names**: the first unit is `0`, the
+Unit ordinals follow the order in **MMU units**: the first unit is `0`, the
 second is `1`, and so on. Symbolic names are usually clearer in macros and saved
 configuration because they show which hardware is being addressed.
 
@@ -348,11 +428,11 @@ Once the installation is multi-unit, rerun the normal interactive command:
 
 The installer detects the saved multi-unit configuration automatically. It opens
 the shared configuration first and then opens one unit-specific pass for every
-name in **MMU unit names**.
+name in **MMU units**.
 
 To add a third or later unit, add another name in the shared pass and save. The
-installer will review each existing unit in order and then open a fresh
-configuration for the new unit. The `-n` flag is only needed when converting the
+installer opens unit-specific passes in list order, retaining existing settings
+and starting a fresh configuration for each new unit. The `-n` flag is only needed when converting the
 original single-unit installation.
 
 After changing the setup, repeat [Hardware Validation](Hardware-Validation.md) for

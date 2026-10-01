@@ -55,6 +55,32 @@ on the same machine, override the paths directly:
     rebuilt from your previous choices plus whatever you change this run.
 
 
+## Naming an MMU unit
+
+On a first installation, open **Name → Klipper object name** in `menuconfig` to
+choose the first unit's name. It defaults to `unit0`, but is not fixed. Use a
+lowercase letter first, followed by lowercase letters, digits, `_` or `-`.
+
+For example, choosing `box` produces sections such as `[mcu box]` and
+`[mmu_unit box]`, pin prefixes such as `box:PA1`, and per-unit files such as
+`mmu_hardware_box.cfg` and `mmu_parameters_box.cfg`. Configuration examples in
+these guides commonly use `unit0`; substitute your configured name when copying
+unit-specific sections, pins or commands.
+
+**Name → Display name** is a separate label for Mainsail, Fluidd and KlipperScreen
+and may contain spaces. Changing this label leaves the Klipper object name intact.
+
+<p align="center">
+  <img src="Installation/01-unit-name.png" alt="Name menu with separate Klipper object name and Display name settings" width="70%">
+</p>
+
+To rename an already installed unit, run `./install.sh -i` and choose
+**Replace (option 2)** so the installer can migrate its files and saved state.
+In multi-unit mode, names are edited in the shared **MMU units** list; each unit's
+**Name** menu displays its object name but does not edit it. See
+[Unit renaming](GettingStarted-Multi-Unit.md#unit-renaming) for the complete
+procedure and the effect of Replace mode on manual configuration edits.
+
 ## Arguments & other common install options
 
 === "Full install.sh flag reference"
@@ -113,14 +139,19 @@ on the same machine, override the paths directly:
 
 === "Multiple MMU's"
 
-    Happy Hare can manage multiple MMU's connected to the same printer. Each MMU can
-    can be named to make it easier to identify its configuration.
+    Happy Hare can manage multiple MMUs connected to the same printer. Each unit
+    has its own Klipper object name and display name.
 
     This is enabled by specifying `-n` e.g.
 
     ```bash
     ./install.sh -i -n
     ```
+
+    The existing unit keeps its chosen name when converting to multi-unit mode.
+    Later runs detect multi-unit mode automatically with `./install.sh -i`.
+    See [Multiple MMU Units](GettingStarted-Multi-Unit.md) for adding, renaming,
+    reordering and removing units.
 
 === "Per Lane Controllers"
 

@@ -6,6 +6,12 @@ worth pausing on. It's the first of a set of getting-started pages; other pages
 cover toolhead calibration and multi-unit setups in more depth. Here we're just
 getting an EMU installed and talking to Klipper.
 
+The examples use the default Klipper object name `unit0`. You can choose a
+different name under **Name → Klipper object name** on the first install, and set
+a separate **Display name** for the UI. See
+[Naming an MMU unit](Installation.md#naming-an-mmu-unit); use your chosen name
+where these examples show unit-specific names or pin prefixes.
+
 ## Menuconfig Installer
 
 First clone the Happy Hare repository as described in
@@ -31,7 +37,7 @@ yet; no `-i` flag is needed.
 
 This is the installer's default state: `MMU Type` is `Custom Design`, the board
 is unknown, and the **CONFIG WARNINGS / ERRORS** panel at the bottom lists
-exactly that — four things still need a decision. As soon as you pick a real MMU
+the choices still needed. As soon as you pick a real MMU
 type, most of these clear themselves.
 
 A quick word on the controls, since you'll use them constantly:

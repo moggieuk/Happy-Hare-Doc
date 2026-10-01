@@ -37,6 +37,10 @@ rather than silently resolved against whichever gate happens to be selected
 right now - name it with `UNIT=`, or use the fully-qualified form
 [`MMU_SENSORS`](Reference-Commands.md#mmu_sensors) itself prints.
 
+The `unit0` prefix in these examples is the default
+[Klipper object name](Installation.md#naming-an-mmu-unit). Use the actual
+component name shown by `MMU_SENSORS` for your configuration.
+
 ## Hardware Setup
 
 Nothing new to wire for this page specifically - it's the query/enable

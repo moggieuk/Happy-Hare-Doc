@@ -268,31 +268,35 @@ def _getting_started_mmx(mc, shot):
 
 def _getting_started_3ms_additions(mc, shot):
     """
-    Refresh the MMU Features / Additions screen embedded in
-    doc/GettingStarted-3MS.md. The contributed guide's other screenshots are
-    not generated here, so keep this deliberately narrow and select the 3MS
-    profile from a bare configuration before entering the shared menu.
+    Refresh the top menus and MMU Features / Additions screen embedded in
+    doc/GettingStarted-3MS.md, selecting 3MS from a bare configuration.
     """
+    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    shot('01-first-run')
     mc.enter(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
     mc.select(symbol('MMU_TYPE_3MS_1_0'))
     mc.toggle()
     mc.back()
+    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    shot('03-root-warnings')
     mc.enter('MMU Features / Additions')
     shot('06-mmu-features')
 
 
 def _getting_started_ercf_additions(mc, shot):
     """
-    Refresh the MMU Features / Additions screen embedded in
-    doc/GettingStarted-ERCF.md. The rest of that imported guide's screenshots are
-    not generated here, so keep this as a deliberately narrow session. Start
-    bare and choose ERCF interactively so family-level fixed capabilities are
-    applied just as they are in the guide.
+    Refresh the top menus and MMU Features / Additions screen embedded in
+    doc/GettingStarted-ERCF.md. Choose ERCF interactively so family-level fixed
+    capabilities are applied just as they are in the guide.
     """
+    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    shot('01-first-run')
     mc.enter(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
     mc.select(symbol('MMU_FAMILY_ERCF'))
     mc.toggle()
     mc.back()
+    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    shot('06-root-warnings')
     mc.enter('MMU Features / Additions')
     mc.autofit()
     mc.select('Encoder config')
@@ -301,16 +305,33 @@ def _getting_started_ercf_additions(mc, shot):
 
 def _getting_started_tradrack_additions(mc, shot):
     """
-    Refresh the MMU Features / Additions screen embedded in
+    Refresh the top menus and MMU Features / Additions screen embedded in
     doc/GettingStarted-Tradrack.md. Start bare so the scene can select Tradrack;
     there is no dedicated Tradrack seed.
     """
+    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    shot('01-first-run')
     mc.enter(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
     mc.select(symbol('MMU_TYPE_TRADRACK_1_0'))
     mc.toggle()
     mc.back()
+    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    shot('06-root-warnings')
     mc.enter('MMU Features / Additions')
     shot('12-mmu-features')
+
+
+def _installer_top(mc, shot):
+    """Current top menu for the general menuconfig guide."""
+    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    shot('GettingStarted-Installer-Configurator')
+
+
+def _installation_unit_name(mc, shot):
+    """Show the separate object name and UI label for the first MMU."""
+    mc.enter(menu_of('PARAM_DISPLAY_NAME'))
+    mc.select(symbol('UNIT_NAME'))
+    shot('01-unit-name')
 
 
 def _getting_started_multi_unit_shared(mc, shot):
@@ -953,6 +974,20 @@ SESSIONS = [
         'scenes': _getting_started_tradrack_additions,
         'outdir': 'GettingStarted-Tradrack',
         'seed': 'none',
+    },
+    {
+        'name': 'installer-top',
+        'caption': 'General menuconfig guide - top menu',
+        'scenes': _installer_top,
+        'outdir': 'GettingStarted-Installer-Configurator',
+        'seed': 'none',
+    },
+    {
+        'name': 'installation-unit-name',
+        'caption': 'doc/Installation.md - first-unit object name and display name',
+        'scenes': _installation_unit_name,
+        'outdir': 'Installation',
+        'seed': 'boxturtle',
     },
     {
         'name': 'getting-started-multi-unit-shared',

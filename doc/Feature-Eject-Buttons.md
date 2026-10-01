@@ -12,7 +12,9 @@ Enable under **MMU Features / Additions**:
 
 Each configured pin produces a `[gcode_button ...]` in `mmu_hardware.cfg`
 that calls [`MMU_EJECT`](Reference-Commands.md#mmu_eject) for that specific
-gate:
+gate. This example uses `unit0`; substitute your configured
+[Klipper object name](Installation.md#naming-an-mmu-unit) in the section name,
+MCU pin prefix and `UNIT=` argument:
 
 ```ini
 [gcode_button unit0_eject0]

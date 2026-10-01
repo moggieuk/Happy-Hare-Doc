@@ -32,6 +32,10 @@ Two hardware layouts are supported:
 
 ## Hardware Setup
 
+Examples below use the default unit name `unit0`. Substitute your configured
+[Klipper object name](Installation.md#naming-an-mmu-unit) in unit-specific
+sections, object references and pin prefixes.
+
 Enable **MMU Features / Additions → Enable managed fan(s)?**. The option is
 available when either **Has environment sensor(s)?** or **Create MCU CPU
 sensor(s)?** is enabled.
