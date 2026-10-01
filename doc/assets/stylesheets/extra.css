@@ -204,8 +204,7 @@ body {
 
 
 /*
- * Closing footer (every page - see TOC.md's "Structure decisions locked
- * in"). Plain <pre>/<p>, not a fenced ```text block: a fenced block goes
+ * Closing footer (every page - see CONTRIBUTING.md's footer conventions). Plain <pre>/<p>, not a fenced ```text block: a fenced block goes
  * through codehilite and picks up ITS box/background styling (see above),
  * which reads as "a code sample" - wrong register for what's decoration, not
  * something to copy. A bare <pre> still gets the browser's/Material's
@@ -223,7 +222,7 @@ body {
  * "Happy Hare Ready" ASCII art now lives in the real theme footer bar, not
  * the article body - injected by hh-page-nav.js as the middle of the three
  * flex children in .hh-page-nav, between the Previous and Next links (moved
- * there 2026-08-07 from .md-footer-meta__inner, see TOC.md). align-self
+ * there 2026-08-07 from .md-footer-meta__inner, see maintainer/archive/documentation-migration.md). align-self
  * centres it on the row's cross axis regardless of how tall the two link
  * blocks are; no horizontal margin of its own since .hh-page-nav's own
  * `gap` already spaces all three children evenly. Color follows the
@@ -247,7 +246,7 @@ body {
 /*
  * Copyright line ("Copyright (C) ... Paul Morgan"), the .md-copyright__highlight
  * div Zensical's own partials/copyright.html renders above "Made with
- * Zensical" when `copyright:` is set in mkdocs.yml (see TOC.md) - a touch
+ * Zensical" when `copyright:` is set in mkdocs.yml (see maintainer/archive/documentation-migration.md) - a touch
  * smaller than the theme's own default so it reads as a fine-print line
  * introducing "Made with Zensical" rather than a same-weight sibling of it.
  */
@@ -280,7 +279,7 @@ body {
  * miss), hence building it ourselves.
  */
 /*
- * Lives inside the real theme <footer> now (moved 2026-08-07, see TOC.md),
+ * Lives inside the real theme <footer> now (moved 2026-08-07, see maintainer/archive/documentation-migration.md),
  * as the first child of footer.md-footer, directly above .md-footer-meta -
  * not a separate band with its own background/margin. That placement does
  * three things at once, all for free:

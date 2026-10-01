@@ -1,8 +1,7 @@
 # Built with Zensical (https://zensical.org), not mkdocs - this file keeps the
 # mkdocs.yml name/format because Zensical reads it natively ("your current
-# settings just work"); see doc_tools/README.md for the reasoning. TOC.md, the
-# internal planning doc for this rewrite, lives at the repo root rather than
-# under docs_dir so it's never a candidate for publishing in the first place.
+# settings just work"); see doc_tools/README.md for the reasoning. Maintainer
+# guidance lives outside docs_dir so it is never a candidate for publishing.
 site_name: Happy Hare v4
 site_description: Universal Automated Filament Changer / MMU driver for Klipper
 repo_url: https://github.com/moggieuk/Happy-Hare
@@ -47,7 +46,7 @@ extra_javascript:
   - assets/javascripts/hh-pinout-embed.js
   # Mermaid, loaded and driven ourselves (hh-mermaid.js) rather than through
   # pymdownx.superfences' custom-fence recipe - see hh-mermaid.js's own header
-  # comment and TOC.md's "Zensical rough edges" for why that path is flaky.
+  # comment and doc_tools/README.md's "Build limitations and workarounds" for why that path is flaky.
   # Pinned to an exact release, not a floating major tag: every other asset on
   # this site is local, and a silent CDN-side 10.x patch bump would change
   # rendering behavior with no commit here. mermaid.min.js is the UMD build,
@@ -98,7 +97,7 @@ markdown_extensions:
   #
   # This does not enable a SuperFences Mermaid custom fence. Mermaid remains raw
   # HTML driven by hh-mermaid.js because that custom-fence route was historically
-  # non-deterministic in Zensical; see TOC.md's "Zensical rough edges" section.
+  # non-deterministic in Zensical; see doc_tools/README.md's "Build limitations and workarounds" section.
 
 nav:
   - Concepts:

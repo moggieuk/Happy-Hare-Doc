@@ -1,5 +1,5 @@
 // Mermaid diagram rendering - deliberately NOT via pymdownx.superfences' custom-fence
-// mechanism. TOC.md's "Zensical rough edges" documents that path as non-deterministic
+// mechanism. doc_tools/README.md's "Build limitations and workarounds" documents that path as non-deterministic
 // across clean rebuilds (a ```mermaid fence rendered a real diagram in roughly 1 of 4
 // rebuilds and fell back to raw source text as plain paragraph content the other 3,
 // with no build warning either way) - and traced the flakiness to the fence-extraction

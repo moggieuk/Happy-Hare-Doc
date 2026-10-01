@@ -53,6 +53,19 @@ fix is in `extras/mmu/`, not in the generated page. See
 [Code Layout](../doc/Dev-Code-Layout.md#command-discovery-and-registration) for how commands
 get discovered at runtime by the same underlying mechanism.
 
+### Command reference scope
+
+The generator produces both `doc/Reference-Commands.md` and
+`doc/Dev-Command-Reference.md`. Registered commands are separated by category;
+step and internal commands belong in the developer reference.
+
+The additional scan of macro configuration files intentionally includes only
+`CATEGORY_MACROS` and `CATEGORY_CALLBACKS`. Other macro-only matches include
+commands already documented elsewhere, legacy aliases, variable containers, and
+internal helpers. Expanding this scan requires a case-by-case documentation
+decision, not automatic inclusion of every macro name. Keep that scope in sync
+with `MACRO_CATEGORIES_INCLUDED` in the generator.
+
 ## Building the site
 
 The site is built with [Zensical](https://zensical.org) reading `mkdocs.yml` at the repo
@@ -73,6 +86,30 @@ looks stale, drop the cache once rather than debugging the content:
 ```bash
 ./venv/bin/zensical build --clean
 ```
+
+### Build limitations and workarounds
+
+These observations came from earlier Zensical builds. Retest them when upgrading
+the generator; they are not claims about every future release.
+
+- Keep maintainer guidance outside `docs_dir`. Earlier builds did not honor
+  `exclude_docs`, so relying on it could publish internal notes.
+- If a build appears stale or reports missing pages that exist, try
+  `venv/bin/zensical build --clean --strict` before changing correct source files.
+  The incremental cache has produced inconsistent results.
+- Mermaid custom fences rendered inconsistently across clean builds. The site
+  instead initializes raw HTML diagrams through `hh-mermaid.js`; do not restore
+  Mermaid fences without testing that route across repeated clean builds.
+- SuperFences and `fenced_code` compete for the same Markdown processor and must
+  not be enabled together. Keep SuperFences as the sole backtick-fence processor,
+  using `css_class: codehilite`, plus the separate `codehilite` extension for
+  traditional indented blocks. This conflict explained earlier ordinary-fence
+  failures; it did not resolve the separate Mermaid custom-fence problem.
+
+Writing conventions, including table escaping, are maintained in
+[CONTRIBUTING.md](../CONTRIBUTING.md). The
+[migration archive](../maintainer/archive/documentation-migration.md) preserves
+the original experiments and rationale if further investigation is needed.
 
 ## Page conventions
 
