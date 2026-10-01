@@ -60,6 +60,8 @@ import tempfile
 import termios
 import time
 from collections import Counter
+from dataclasses import dataclass
+from functools import cached_property
 
 # Two separate roots, deliberately not one REPO_ROOT: this file lives in the
 # Happy-Hare-Doc repo (DOC_ROOT - where screenshots get written) but parses
@@ -322,6 +324,55 @@ class ScreenError(RuntimeError):
     """A step did not land where the shot said it would."""
 
 
+def normalized(text):
+    """Ignore Kconfig display markup and padding, not meaningful wording."""
+    return ' '.join(re.sub(r'\[\[/?[A-Z]+\]\]', '', text).split())
+
+
+@dataclass(frozen=True)
+class SymbolTarget:
+    """A symbol's prompt, or its nearest enclosing menu/choice's prompt."""
+    name: str
+    parent_menu: bool = False
+
+
+def symbol(name):
+    return SymbolTarget(name)
+
+
+def menu_of(name):
+    return SymbolTarget(name, parent_menu=True)
+
+
+class PromptIndex:
+    def __init__(self, kconfig):
+        self.kconfig = kconfig
+
+    def prompts(self, target):
+        item = self.kconfig.syms.get(target.name)
+        if item is None:
+            item = self.kconfig.named_choices.get(target.name)
+        if item is None:
+            raise ScreenError('Kconfig symbol/choice %s no longer exists' % target.name)
+        prompts = set()
+        for node in item.nodes:
+            # Board defaults also define these symbols, without a UI prompt.
+            if not node.prompt:
+                continue
+            if target.parent_menu:
+                node = node.parent
+                while node and not node.is_menuconfig:
+                    node = node.parent
+                if node is None or node is self.kconfig.top_node:
+                    continue
+            if node.prompt:
+                prompts.add(normalized(node.prompt[0]))
+        if not prompts:
+            raise ScreenError('No prompted %s for %s' %
+                              ('parent menu' if target.parent_menu else 'setting', target.name))
+        return prompts
+
+
 class Menuconfig:
     """
     A live menuconfig in a pty, plus everything needed to ask what it is showing.
@@ -396,7 +447,11 @@ class Menuconfig:
     # -- context manager ------------------------------------------------------
 
     def __enter__(self):
-        return self.start()
+        try:
+            return self.start()
+        except BaseException:
+            self.close()
+            raise
 
     def __exit__(self, *exc):
         self.close()
@@ -563,6 +618,9 @@ class Menuconfig:
 
     def state(self):
         """One line naming where we are - used in errors and by --dump."""
+        if self.in_editor():
+            kind = next(kind for kind in self._EDITOR if self.has(kind))
+            return 'breadcrumb=%r editor=%r' % (self.breadcrumb, kind)
         return 'breadcrumb=%r selected=%r' % (self.breadcrumb, self.selected)
 
     # -- driving it -----------------------------------------------------------
@@ -605,9 +663,26 @@ class Menuconfig:
                               % (keys, expect, self.state(), self.text))
         return self
 
-    def _walk(self, text, direction, limit):
+    @cached_property
+    def prompt_index(self):
+        """Parse the selected source with this session's unit context, lazily."""
+        sys.path.insert(0, KCONFIGLIB)
+        import kconfiglib
+        env = doc_env(**self.context)
+        saved = {key: os.environ.get(key) for key in env}
+        os.environ.update(env)
+        try:
+            return PromptIndex(kconfiglib.Kconfig(os.path.join(INSTALLER, 'Kconfig'), warn=False))
+        finally:
+            for key, value in saved.items():
+                if value is None:
+                    os.environ.pop(key, None)
+                else:
+                    os.environ[key] = value
+
+    def _walk(self, matches, direction, limit):
         """
-        Step the highlight until it lands on `text` or stops moving.
+        Step the highlight until `matches` accepts it or it stops moving.
 
         "Stopped moving" is the whole screen being identical, not an assumed change of
         one displayed row. Comment headings remain visible but are not selectable, so
@@ -616,7 +691,7 @@ class Menuconfig:
         for _ in range(limit):
             before = self._snapshot()
             self.key(direction)
-            if text in self.selected:
+            if matches(self.selected):
                 return True
             if self._snapshot() == before:
                 return False                         # end of the menu; it does not wrap
@@ -624,16 +699,32 @@ class Menuconfig:
 
     def select(self, text, limit=200):
         """
-        Put the highlight on the first item containing `text`.
+        Select a symbol's current prompt, or an item containing a text label.
 
         Searches down, then back up, because menuconfig does not wrap and the item
         may be above where the highlight starts - or off-screen entirely in a menu
         longer than the window, which is why this cannot just look at what is
         currently displayed.
         """
-        if text in self.selected:
+        if isinstance(text, SymbolTarget):
+            prompts = self.prompt_index.prompts(text)
+            # Match the full source prompt using the same substring semantics as
+            # text navigation. Scrolling can leave stale trailing characters in
+            # pyte; requiring the entire rendered row to match rejects valid rows.
+            matches = lambda selected: any(p in normalized(selected) for p in prompts)
+            if text.parent_menu or text.name in self.prompt_index.kconfig.named_choices:
+                # Menu/choice titles are often prefixes of another menu (e.g.
+                # Toolhead versus Toolhead sensors/settings). Require the value
+                # or submenu delimiter after their complete title.
+                def matches(selected):
+                    selected = normalized(selected)
+                    return any(re.search(re.escape(p) + r'(?=$|\s+(?:\(|--->))', selected)
+                               for p in prompts)
+        else:
+            matches = lambda selected: normalized(text) in normalized(selected)
+        if matches(self.selected):
             return self
-        if self._walk(text, DOWN, limit) or self._walk(text, UP, limit):
+        if self._walk(matches, DOWN, limit) or self._walk(matches, UP, limit):
             return self
         raise ScreenError('could not put the highlight on %r (%s)\n%s'
                           % (text, self.state(), self.text))
@@ -670,20 +761,47 @@ class Menuconfig:
         correct; only the capture is wrong, which is the worst kind of wrong because
         the resulting PNG looks entirely plausible.
 
-        WHY A DIALOG AND NOT A RESIZE. Resizing looks like the obvious answer and does
-        not work: ncurses raises KEY_RESIZE only on a real dimension change, and even
-        bounced to a different height and back it emits nothing but cursor motion,
-        because its model still matches what it thinks is on screen. Opening a dialog
-        genuinely overwrites the middle of the display, so closing it forces those
-        cells to be written again for real - and that is what re-syncs the two models.
+        WHY A SUBMENU ROUND TRIP. The rewrite is forced by briefly entering a menu
+        entry and leaving it with ESC: the submenu fills the whole menu window with
+        different content, and the parent is then redrawn over it, so ncurses
+        rewrites the cells in between. It is the same overwrite-and-restore idea the
+        '?' info dialog used to provide, for a fork that has disabled that key
+        (menuconfig.py: `elif False and c == "?"`), so the dialog can no longer be
+        opened - and probing for it cost a full STEP_TIMEOUT on every call.
 
-        Safe when there is nothing to open: if '?' changes nothing, no ESC is sent
-        (ESC in a menu would back out a level, quietly capturing the wrong screen).
+        Only the CURRENTLY SELECTED entry is entered: _enter_menu/_leave_menu
+        (menuconfig.py:1124,1235) save the parent's screen row and restore it on the
+        way out, so a round trip on the selected entry leaves the highlight and the
+        scroll exactly where they were - no walking to find an entry, no restoring
+        afterwards. The '  --->' text test (the exact separator _node_str appends
+        to menu entries) is precise: parameters and choice symbols do not show it,
+        and the one entry that shows an arrow but cannot be entered - a force-shown
+        menu with unmet dependencies - shows '--- [DISABLED]' instead
+        (menuconfig.py:3526). When the selection is not a menu entry there is
+        nothing to enter, so this returns immediately: no healing, no waiting.
+
+        WHY NOT A RESIZE. Resizing looks like the obvious answer and does not work:
+        ncurses raises KEY_RESIZE only on a real dimension change, and even bounced
+        to a different height and back its model still matches what it thinks is on
+        screen, so it rewrites only the cells whose position moved - the separator
+        bars and the help pane. The menu rows that stay put, exactly the rows where
+        stale tails live, are never touched.
+
+        ENTER is still awaited with the usual STEP_TIMEOUT, because a swallowed
+        ENTER (a '-->' menu whose children are all comments; _enter_menu returns
+        False, menuconfig.py:1149) is indistinguishable from a slow redraw, and
+        bailing early would strand the session in the submenu. In that case the
+        breadcrumb check below absorbs the ENTER without sending an ESC (ESC in a
+        menu would back out a level, quietly landing on the wrong screen).
         """
-        crumb, before = self.breadcrumb, self._snapshot()
-        self.key(HELP)
-        if self._snapshot() == before:
-            return self                              # no dialog appeared; leave it alone
+        if self.in_dialog():
+            return self                              # ENTER would land in the open editor
+        if '  --->' not in self.selected:
+            return self                              # nothing to enter
+        crumb = self.breadcrumb
+        self.key(ENTER)
+        if self.breadcrumb == crumb:
+            return self                              # ENTER was swallowed; leave it alone
         self.key(ESC)
         if self.breadcrumb != crumb:
             raise ScreenError('repaint left the screen on %r, expected %r'
@@ -693,7 +811,7 @@ class Menuconfig:
     # The input dialog titles itself '<prompt> (string)' - or (int)/(hex) - which is
     # both how the tool knows an editor opened and the only reliable way to tell an
     # editor from a submenu, since Enter opens whichever the item happens to be.
-    _EDITOR = ('(string)', '(int)', '(hex)', '(string array)')
+    _EDITOR = ('(string)', '(int)', '(hex)', '(float)', '(string array)', '(list)')
 
     def in_editor(self):
         return any(self.has(kind) for kind in self._EDITOR)
@@ -702,8 +820,9 @@ class Menuconfig:
         """
         Anything floating above the menu - an editor, or a help pane.
 
-        repaint() opens a dialog to force a redraw, so it cannot tidy up a screen that
-        IS one; shot() asks this before healing.
+        repaint() enters a submenu to force a redraw, so it cannot tidy up a screen
+        that IS one (the ENTER would land in the open editor); shot() asks this
+        before healing.
         """
         return self.in_editor() or self.breadcrumb.endswith('information')
 
@@ -723,6 +842,28 @@ class Menuconfig:
     def cancel(self):
         """Close the editor WITHOUT applying it."""
         return self.step(ESC, lambda mc: not mc.in_editor())
+
+    def append_entry(self, value):
+        """Append to an open unit editor, leaving it open for a screenshot."""
+        if not re.fullmatch(r'[a-z][a-z0-9_-]*', value):
+            raise ScreenError('Invalid unit name: %r' % value)
+        if self.has('(list)'):
+            self.step(b'a', 'Name of new entry')
+            return self.step(value.encode() + ENTER,
+                             lambda mc: mc.has('(list)') and mc.has(value)
+                             and not mc.has('Name of new entry') and not mc.has('Error'))
+        if self.has('(string array)'):
+            # The legacy editor starts on its first line. Follow its cursor to
+            # the last row (including scrolling) before inserting a new line.
+            for _ in range(200):
+                before = (self.text, self.screen.cursor.x, self.screen.cursor.y)
+                self.key(DOWN, timeout=0.5)
+                if before == (self.text, self.screen.cursor.x, self.screen.cursor.y):
+                    break
+            else:
+                raise ScreenError('Could not find the end of the unit array')
+            return self.step(b'\x05' + ENTER + value.encode(), lambda mc: mc.has(value))
+        raise ScreenError('Unsupported unit editor (%s)' % self.state())
 
     def resize(self, rows):
         """
@@ -849,20 +990,22 @@ class Menuconfig:
 
         `fit` sizes the terminal to the screen first, so no image ever contains the
         scroll arrows that mean "cut off here" - pass False to keep whatever height
-        the session was started with. `heal` defaults to "unless this is a dialog" -
-        see repaint(), which opens one and so cannot be used to tidy up another.
+        the session was started with. `heal` only applies with fit=False (a fitted
+        shot is already repainted at the end of autofit) and defaults to "unless
+        this is a dialog" - a repaint cannot tidy up a screen that IS one (see
+        repaint()).
         """
         from .render import render                   # deferred: needs Pillow
         if fit:
             self.autofit()
-        if heal or (heal is None and not self.in_dialog()):
+        elif heal or (heal is None and not self.in_dialog()):
             self.repaint()
         # Post-condition, not an assumption: the whole point of autofit is that no
         # published image says "cut off here", and healing happens after it.
         arrows = self.scroll_arrows()
         if arrows and not self.in_editor():
-            print('    WARNING: %s is being captured with scroll arrows on row %d'
-                  % (os.path.basename(path), arrows[0][0]), file=sys.stderr)
+            raise ScreenError('%s would be captured with scroll arrows on row %d'
+                              % (os.path.basename(path), arrows[0][0]))
         os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
         render(self.screen, path, trim=trim, scale=scale)
         return path

@@ -23,6 +23,12 @@ refresh it to the latest commit at the branch, tag or commit named in
 [`HAPPY_HARE_REF`](../HAPPY_HARE_REF) before every run. The cache is disposable;
 do not make source changes inside it.
 
+Override the source ref for a single run with
+`make shots HAPPY_HARE_REF=feat/unit-restructure` (or `development`). This does
+not switch the documentation branch: images are written into the current
+Happy-Hare-Doc checkout. If the source refresh fails, the command stops rather
+than generating images from the previous cached ref.
+
 For faster iteration against a checkout you manage, use
 `HAPPY_HARE_SRC=/path/to/Happy-Hare make shots`. An explicitly supplied checkout
 is read as-is and is never fetched, switched, or removed by these targets.
@@ -84,12 +90,51 @@ new pages; it's been removed from the ones that had it (`doc/Reference-Printer-V
 ## Regenerating the images
 
 ```bash
-make shots                                       # everything, into doc/images
+make shots                                       # everything, into per-page image folders
 make shots ARGS='--list'                         # the sessions and what each covers
-make shots ARGS='--only installer-tour'          # just one session
-make shots ARGS='--only installer-tour -v'       # ...and print each screen as text
+make shots ARGS='--only getting-started-boxturtle'          # just one session
+make shots ARGS='--only getting-started-boxturtle -v'       # ...and print each screen as text
 make shots ARGS='--seed ~/printer_data/.mmu_config'   # against a real machine
+make shots ARGS='--output-root /tmp/hh-preview'       # preview all per-page folders elsewhere
 ```
+
+Captures are staged in a temporary directory. Only after every requested session
+succeeds are the images copied into their destination folders. A failed capture
+leaves the existing images untouched; `--only` applies this rule to the selected
+sessions. A file-replacement error rolls back replacements already made. Individual
+file replacements are atomic, but the whole set is not a transaction across a
+power loss or forced process termination.
+
+Normal errors report the failed session and expected target. Use `-v` for full
+screen dumps and tracebacks. A screenshot that still contains menu scroll arrows
+is rejected instead of publishing a truncated menu.
+
+### Keeping sessions resilient
+
+Use `symbol('PIN_GEAR_DIR')` with `mc.select()`, `mc.enter()`, or `mc.edit()`
+for settings and named choices. The driver reads their current prompts from the
+selected Happy Hare source. For unnamed menus, `menu_of('PIN_GEAR_DIR')` resolves
+the nearest enclosing menu from a setting inside it. Padding and display markup
+are ignored when matching. Plain text remains supported for menus without a
+convenient stable symbol.
+
+Happy Hare disables menuconfig's symbol-search shortcut, so this resolves labels
+from Kconfig and still drives the real UI. It does not bypass visibility rules or
+automatically follow a setting moved into another menu. Removed symbols, changed
+dependencies, and redesigned workflows still need deliberate session updates.
+
+Use `mc.append_entry('unit1')` for the open unit editor; the driver handles the
+list and legacy string-array editors. Unsupported editor types fail explicitly.
+
+Run the navigation and publication regression tests with:
+
+```bash
+HAPPY_HARE_SRC="$PWD/.happy-hare-src" venv/bin/python -m unittest doc_tools.test_shots
+```
+
+Then exercise the real sessions with `--output-root` before replacing published
+images. `--outdir` remains the fallback for sessions without a per-page folder;
+`--output-root` redirects the per-page folders too.
 
 ## Seeds — which machine the screenshots show
 
