@@ -29,8 +29,9 @@ installer, which may require unlearning older habits of editing configuration fi
 directly.
 
 All menuconfig selections are mastered and stored in the `Happy-Hare/.mmu_config`
-settings file with a backup maintained in `printer_data/config/mmu/.mmu_config` to
-ensure it's included in popular GitHub‑based printer configuration backup mechanisms.
+settings file, with per-unit `.mmu_config_<name>` files in multi-unit mode. Copies
+are maintained in `printer_data/config/mmu/` so they are included in popular
+GitHub-based printer configuration backup mechanisms.
 
 ## Navigation
 <img src="GettingStarted-Installer-Configurator/GettingStarted-Installer-Configurator.png" alt="Menuconfig installer and configurator" align=right width="50%">
@@ -57,6 +58,14 @@ designation  e.g. `-*- Has LEDs? (FIXED)`
 
 **Config Warnings / Errors** are highlighted for you to review and correct before saving
 and applying updates to your configuration.
+
+## Unit names
+
+The **Name** menu separates the **Klipper object name** used in configuration
+from the **Display name** shown in the UI. The first unit defaults to `unit0`,
+but you can choose another name during installation. In multi-unit mode, edit
+object names in the shared **MMU units** list. See
+[Naming an MMU unit](Installation.md#naming-an-mmu-unit).
 
 ## Managing Configuration Changes
 When the `menuconfig` installer is launched after your initial setup and configuration,
@@ -89,6 +98,11 @@ Applies simple parameter updates from `menuconfig` while preserving other manual
 your Happy Hare `.cfg` files. Useful when most settings are managed through `menuconfig` but
 want hardware‑specific settings or tuning to remain untouched.
 <br><br>
+
+Renaming, removing or reordering installed units requires **Replace (option 2)**.
+Appending a unit also works in **Refresh** and **Merge** modes. See
+[Multiple MMU Units](GettingStarted-Multi-Unit.md#unit-renaming) for the editor
+controls, migration of saved state, and checks after changing the unit list.
 
 !!! note "Notes"
     * `menuconfig` will never overwrite your existing configuration outright - it's copied

@@ -76,6 +76,10 @@ covers the sensor itself, synchronizing gear to extruder, and AutoTune.
 
 ## Hardware Setup
 
+Examples below use the default unit name `unit0`. Substitute your configured
+[Klipper object name](Installation.md#naming-an-mmu-unit) in unit-specific
+sections, object references and pin prefixes.
+
 Enable this under **MMU Features / Additions**, in a **Buffer config**
 submenu that only appears once **Has sync-feedback buffer?** is selected:
 

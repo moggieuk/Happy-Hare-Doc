@@ -8,6 +8,12 @@ small: whether you have the official ViViD buffer board, and which of your
 computer's serial devices is which - because a ViViD unit and its buffer are
 two separate controller boards, not one.
 
+The examples use the default Klipper object name `unit0`. You can choose a
+different name under **Name → Klipper object name** on the first install, and set
+a separate **Display name** for the UI. See
+[Naming an MMU unit](Installation.md#naming-an-mmu-unit); use your chosen name
+where these examples show unit-specific names or pin prefixes.
+
 ## Menuconfig Installer
 
 First clone the Happy Hare repository as described in

@@ -160,6 +160,12 @@ from Kconfig and still drives the real UI. It does not bypass visibility rules o
 automatically follow a setting moved into another menu. Removed symbols, changed
 dependencies, and redesigned workflows still need deliberate session updates.
 
+The `installer-top` and `installation-unit-name` sessions capture the general
+installer menu and its **Name** submenu. The `getting-started-3ms-additions`,
+`getting-started-ercf-additions` and `getting-started-tradrack-additions` sessions
+also refresh their guides' first-run and configured top menus. Include those
+sessions when a shared top-level prompt changes.
+
 Use `mc.append_entry('unit1')` for the open unit editor; the driver handles the
 list and legacy string-array editors. Unsupported editor types fail explicitly.
 

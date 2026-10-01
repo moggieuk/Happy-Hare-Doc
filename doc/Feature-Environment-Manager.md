@@ -29,6 +29,10 @@ Two hardware layouts are supported:
 
 ## Hardware Setup
 
+Examples below use the default unit name `unit0`. Substitute your configured
+[Klipper object name](Installation.md#naming-an-mmu-unit) in unit-specific
+sections, object references and pin prefixes.
+
 Both pieces are enabled under **MMU Features / Additions**. Shared layouts
 get separate sensor and heater hardware submenus; modular layouts collect
 the corresponding hardware under **Per-gate config → Gate N config**.

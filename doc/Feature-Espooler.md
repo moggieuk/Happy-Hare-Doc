@@ -85,6 +85,10 @@ printing but sharing the same `espooler_rewind_burst_*` settings.
 
 ## Hardware Setup
 
+Examples below use the default unit name `unit0`. Substitute your configured
+[Klipper object name](Installation.md#naming-an-mmu-unit) in unit-specific
+sections, object references and pin prefixes.
+
 Each gate needs up to four pins on the eSpooler unit, all optional
 independently - a gate with only a rewind pin gets rewind-only behavior, for
 example:

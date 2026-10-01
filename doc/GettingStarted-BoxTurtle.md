@@ -6,6 +6,12 @@ pausing on. It's the first of a set of getting-started pages; other pages cover
 toolhead calibration and multi-unit setups in more depth. Here we're just getting
 a Box Turtle installed and talking to Klipper.
 
+The examples use the default Klipper object name `unit0`. You can choose a
+different name under **Name → Klipper object name** on the first install, and set
+a separate **Display name** for the UI. See
+[Naming an MMU unit](Installation.md#naming-an-mmu-unit); use your chosen name
+where these examples show unit-specific names or pin prefixes.
+
 ## Menuconfig Installer
 
 First clone the Happy Hare repository as described in
@@ -26,9 +32,9 @@ yet; no `-i` flag is needed.
 </p>
 
 This is the installer's default state: `MMU Type` is `Custom Design`, the board is
-unknown, and the **CONFIG WARNINGS / ERRORS** panel at the bottom lists exactly
-that — four things still need a decision. As soon as you pick a real MMU type,
-most of these clear themselves.
+unknown, and the **CONFIG WARNINGS / ERRORS** panel at the bottom lists the
+choices still needed. As soon as you pick a real MMU type, most of these clear
+themselves.
 
 A quick word on the controls, since you'll use them constantly:
 
@@ -77,7 +83,7 @@ panel again:
   <img src="GettingStarted-BoxTurtle/04-root-warnings.png" alt="Root menu after choosing Box Turtle - one warning left" width="70%">
 </p>
 
-Three of the four warnings are already gone. The one that's left — *"Toolhead type
+The hardware warnings have cleared. The remaining warning — *"Toolhead type
 is 'other'"* — is exactly what it sounds like: Happy Hare still doesn't know your
 toolhead, and that's covered in a different getting-started page. Don't worry
 about it here.

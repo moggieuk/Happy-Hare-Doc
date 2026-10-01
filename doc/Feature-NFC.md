@@ -42,6 +42,10 @@ A read can be shallow or deep:
 
 ## Hardware Setup
 
+Examples below use the default unit name `unit0`. Substitute your configured
+[Klipper object name](Installation.md#naming-an-mmu-unit) in unit-specific
+sections, object references and pin prefixes.
+
 Enable this in menuconfig with **Has NFC reader(s) for RFID tag?** under
 **_RFID (BETA)**, which opens an **NFC reader h/w config** menu:
 
