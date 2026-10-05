@@ -41,9 +41,9 @@ heater, sensor and vent setup.
 
 
 These schematic cutaways show a standalone MMU/AFC unit, separate from the
-printer, with four filament spools. Orange arrows show heater airflow; teal
-arrows show managed or controller fan airflow. T/H marks a temperature/humidity
-sensor. Component positions are illustrative.
+printer, with four filament spools. Fans and airflow arrows use orange for
+heater fans, teal for managed fans, and blue for controller fans. T/H marks a
+temperature/humidity sensor. Component positions are illustrative.
 
 #### 1. Unheated dry box
 

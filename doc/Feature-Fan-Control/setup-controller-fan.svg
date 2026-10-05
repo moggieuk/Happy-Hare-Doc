@@ -7,7 +7,7 @@
       <path d="M0,0 L11,5 L0,10 Z" fill="#db782c"/>
     </marker>
     <marker id="cool" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse">
-      <path d="M0,0 L11,5 L0,10 Z" fill="#168a96"/>
+      <path d="M0,0 L11,5 L0,10 Z" fill="#2864d7"/>
     </marker>
   </defs>
   <g font-family="Arial, Helvetica, sans-serif">
@@ -123,15 +123,15 @@
     <g transform="translate(631 339) scale(1)">
       <rect x="-27" y="-27" width="54" height="54" rx="8" fill="#f9fcfe" stroke="#71869a" stroke-width="2"/>
       <circle r="22" fill="#e7eef4" stroke="#a5b5c4"/>
-      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(0)"/>
-      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(90)"/>
-      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(180)"/>
-      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(270)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#2864d7" transform="rotate(0)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#2864d7" transform="rotate(90)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#2864d7" transform="rotate(180)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#2864d7" transform="rotate(270)"/>
       <circle r="6" fill="#20344b"/>
     </g>
-    <path d="M598,339 H563" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
+    <path d="M598,339 H563" fill="none" stroke="#2864d7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
     <text x="484" y="389" font-size="18" fill="#20344b" font-weight="400" text-anchor="middle">MCU + drivers</text>
-    <text x="688" y="389" font-size="18" fill="#168a96" font-weight="600" text-anchor="middle">Controller fan</text>
+    <text x="688" y="389" font-size="18" fill="#2864d7" font-weight="600" text-anchor="middle">Controller fan</text>
     <rect x="730" y="304" width="55" height="40" rx="7" fill="#eef5f8" stroke="#71869a" stroke-width="2"/>
     <text x="757.5" y="330" font-size="17" fill="#20344b" font-weight="600" text-anchor="middle">T/H</text>
     <path d="M32,457 H1008" fill="none" stroke="#d0dbe5" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
