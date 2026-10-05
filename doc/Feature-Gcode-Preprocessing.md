@@ -175,6 +175,53 @@ MMU_CHANGE_TOOL TOOL=2 NEXT_POS="26.456,156.4363" ; T2
 value unless that setting asks for it. See "return to next position" on
 the toolchange-movement page for what happens with it.
 
+## Toolchange Time Estimation (`klipper_estimator`)
+
+When printing multi-material models, standard slicer time estimates are often inaccurate because Happy Hare toolchanges execute via complex Klipper macros involving tip forming, unloading, selector travel, loading, and purging. 
+
+By setting `average_toolchange_time` in your Moonraker configuration, the Happy Hare G-code preprocessor automatically injects `; ESTIMATOR_ADD_TIME` hints into your preprocessed G-code files. This allows [klipper_estimator](https://github.com/moggieuk/klipper-estimator) to parse these directives and accurately account for macro overhead when predicting total print duration.
+
+---
+
+## Configuration
+
+Add or update the `average_toolchange_time` parameter in your `moonraker.conf` file under the `[mmu_server]` section:
+
+```ini
+[mmu_server]
+# ...
+# Average duration of a toolchange in seconds.
+# Used by the Happy Hare G-code preprocessor to inject time estimation comments
+# for klipper_estimator during toolchange macro substitution.
+average_toolchange_time: 0.0
+```
+
+### Parameter Reference
+
+| Parameter | Type | Default | Unit | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| <nobr>`average_toolchange_time`</nobr> | float | `0.0` | Seconds | The estimated average duration of a completetoolchange cycle (from unload start to reload and resume). When set above `0.0`, the G-code preprocessor generates time hints for `klipper_estimator`. |
+
+!!! note "Finding Your Average Toolchange Duration"
+    You can check your printer's historical average toolchange duration using the Happy Hare statistics engine. Run `MMU_STATS` in your console or check the Happy Hare panel in Mainsail/Fluidd to find your actual average swap cycle time.
+
+---
+
+## How It Works
+
+1. **Toolchange Substitution**: When the Happy Hare G-code preprocessor converts standard slicer toolchange commands (`T0`, `T1`, etc.) into `MMU_CHANGE_TOOL` macros, it reads `average_toolchange_time` from the `[mmu_server]` section in `moonraker.conf`.
+2. **Comment Injection**: For every toolchange command replaced, the preprocessor appends an estimation directive directly into the preprocessed G-code output:
+   ```gcode
+   MMU_CHANGE_TOOL TOOL=0
+   ; ESTIMATOR_ADD_TIME 45.0 Tool Change
+   ```
+3. **`klipper_estimator` Parsing**: When `klipper_estimator` analyzes the preprocessed G-code file, it detects these `; ESTIMATOR_ADD_TIME <duration> Tool Change` directives and adds the specified time to its total print calculation
+
+!!! tip "Hardware Adjustments"
+    Toolchange times vary significantly depending on hardware setup. Printers with direct-drive toolheads and short Bowden paths may take 30–40 seconds per swap, while long Bowden setups or extended wiping/purging routines may take 50–70 seconds. Adjusting `average_toolchange_time` to match your specific setup ensures accurate print completion times.
+
+---
+
 ## Troubleshooting
 
 - **A placeholder shows up literally as `!something!` in a running print**
@@ -203,5 +250,6 @@ the toolchange-movement page for what happens with it.
 - [Feature: Tip Forming and Purging](Feature-Tip-Forming-Purging.md) - purge volumes
 - [Feature: LEDs](Feature-LEDs.md)
 - [Feature: Spoolman / Filament Hub](Feature-Spoolman.md) - the same `[mmu_server]` Moonraker component
+- [Klipper print time estimator: `klipper_estimator`](https://github.com/Annex-Engineering/klipper_estimator)
 
 ---
