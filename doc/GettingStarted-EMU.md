@@ -101,7 +101,7 @@ while building your EMU - enter them here now.
 Back out and enter **MMU Features / Additions**:
 
 <p align="center"> <img src="GettingStarted-EMU/06-mmu-features.png" alt="MMU
-  Features panel with LEDs, sync feedback, environment sensors and managed fans enabled, plus per-gate config menus"
+  Features panel with LEDs, sync feedback, environment sensors and managed fans enabled, with hardware menus for each feature"
   width="70%"> </p>
 
 This is worth a look. **LEDs** and the selected **sync-feedback buffer** are
@@ -110,10 +110,59 @@ part of the EMU profile. **Environment sensors**, **managed fans** and
 off when your build omits them. Enclosure heaters and RFID readers remain
 optional.
 
-The new **Per-gate config** section groups each compartment's environment
-sensor, heater, managed fan and heater fan under **Gate N config**. Review
-those gate menus against what is actually fitted; leave a component disabled
-or its pin blank when that gate does not have one.
+Each feature's hardware menu lists the gates it serves. Review every gate
+against what is fitted; disable optional components or leave their pins
+blank where the hardware is absent. MCU selection remains separate from
+sensor, fan and heater configuration.
+
+| Hardware menu | Per-gate settings |
+|---|---|
+| Environment sensor h/w config | Sensor name, chip, bus, address and reporting options |
+| Fan h/w config | Managed circulation fan pin, maximum power and kick-start time |
+| Controller fan h/w config | Optional electronics fan pin, speed and idle timeout |
+| Heater h/w config | Optional existing heater object for each gate |
+| Heater fan h/w config | Optional fan dedicated to each gate's heater |
+| Vent servo h/w config | Optional servo pin and individual PWM range |
+
+<p align="center">
+  <img src="GettingStarted-EMU/06a-environment-gates.png" alt="EMU environment sensor hardware menu listing each gate's sensor" width="70%">
+</p>
+
+<p align="center">
+  <img src="GettingStarted-EMU/06b-fan-gates.png" alt="EMU managed fan menu with per-gate hardware settings and one UI visibility switch" width="70%">
+</p>
+
+EMU's managed fans use each gate's MCU temperature as their default AUTO
+source. Change the default under **Managed fan defaults**, or select a
+source and mode for individual gates with `MMU_FAN`, for example
+`MMU_FAN SOURCE=environment GATE=2` when that gate has an environment sensor.
+Each fan type has one **Hide in Mainsail / Fluidd** switch for all its gates.
+See [Fans & Airflow](Feature-Fan-Control.md) for choosing the appropriate fan
+role and avoiding reuse of the same pin.
+
+#### Optional heated compartments
+
+Enable **Has enclosure heater(s)?** in the **Heated Chamber** group to
+associate each gate's heater. These examples show the additional menus;
+heaters and vents are not enabled by the standard EMU profile.
+
+<p align="center">
+  <img src="GettingStarted-EMU/06c-heater-gates.png" alt="EMU heater hardware menu listing existing heater object names for each gate" width="70%">
+</p>
+
+For servo-operated vents, also enable **Has enclosure vent servo?**. Each
+gate can have its own servo pin, pulse range and hardware maximum angle:
+
+<p align="center">
+  <img src="GettingStarted-EMU/06d-vent-gates.png" alt="EMU vent menu with independent servo hardware configuration for each gate" width="70%">
+</p>
+
+Set **Maximum concurrent heaters** under **Heater and humidity control** to
+match your power budget. For example, `MMU_HEATER DRY=1 GATES=0,2` dries
+those gates, queuing one if the limit is `1`. Per-gate vent servos and
+managed fans operate for actively heating gates, while queued gates wait.
+See [Heater & Environment Manager](Feature-Environment-Manager.md) for the
+complete drying and vent setup.
 
 ### Pins: gear direction
 

@@ -125,22 +125,22 @@ for the swap-timing table these columns/rows control.
 | `print_start_detection` | `1` | Automatically detect print start/end and call `MMU_PRINT_START`/`MMU_PRINT_END` |
 | `gcode_load_sequence` | `0` | `1` = use the macro-based load sequence instead of internal logic - see [Custom Load/Unload Sequences](Custom-Load-Unload-Sequences.md) |
 | `gcode_unload_sequence` | `0` | Same, for unloading |
-| `drying_data` | *(11-material dict)* | Per-material `(temperature, time)` drying recipe table - see [Feature: Environment Manager](Feature-Environment-Manager.md#parameter-setup) |
+| `drying_data` | *(11-material dict)* | Per-material `(temperature, time)` drying recipe table - see [Heater & Environment Manager](Feature-Environment-Manager.md#parameter-setup) |
 
 ### Fan management
 
 Present when managed fans are enabled with an environment or MCU temperature
-source. See [Feature: Fan Control](Feature-Fan-Control.md) for the hardware
+source. See [Fans & Airflow](Feature-Fan-Control.md) for the hardware
 layouts, tuning workflow and runtime controls.
 
 | Parameter | Default | Description |
 |---|---|---|
-| `default_fan_temperature_source` | `environment`, otherwise `mcu` | Initial AUTO-mode source for every managed fan; `MMU_FAN SOURCE=` can change it at runtime |
+| `default_fan_temperature_source` | `environment`, otherwise `mcu`; EMU selects `mcu` | Initial AUTO-mode source for every managed fan; `MMU_FAN SOURCE=` can change it at runtime |
 | `default_fan_on_temp` | `49.0`°C | Temperature at or above which an AUTO fan turns on |
 | `default_fan_off_temp` | `47.0`°C | Temperature at or below which a running AUTO fan turns off |
 | `fan_polling_time` | `5.0` s | Interval between automatic temperature checks |
 | `fan_control_enabled` | `1` | `1` enables automatic management; `0` disables it and turns the managed fans off |
-| `fan_forced` | `2` (`AUTO`) | Startup mode for every managed fan: `0`=forced off, `1`=forced on, `2`=AUTO |
+| `fan_forced` | `2` (`AUTO`) | Startup mode for every managed fan: `0`=forced off, `1`=forced on, `2`=AUTO; drying vent control can temporarily override the mode |
 
 ### Klipper tuning
 
@@ -400,12 +400,12 @@ including the PWM power curve formula these settings feed.
 | `espooler_assist_burst_duration` | `0.4` s | Duration of an assist burst move |
 | `espooler_assist_burst_trigger` | `0` | Enable a trigger-switch-driven assist burst |
 | `espooler_assist_burst_trigger_max` | `3` | Max back-to-back trigger-driven bursts |
-| `espooler_rewind_burst_power` | `100`% | Power of a rewind burst move (used during drying-cycle spool rotation - see [Feature: Environment Manager](Feature-Environment-Manager.md#spool-rotation)) |
+| `espooler_rewind_burst_power` | `100`% | Power of a rewind burst move (used during drying-cycle spool rotation - see [Heater & Environment Manager](Feature-Environment-Manager.md#spool-rotation)) |
 | `espooler_rewind_burst_duration` | `0.4` s | Duration of a rewind burst move |
 
 ### Heater / environment management
 
-See [Feature: Environment Manager](Feature-Environment-Manager.md) for the
+See [Heater & Environment Manager](Feature-Environment-Manager.md) for the
 full drying-cycle picture.
 
 | Parameter | Default | Description |
@@ -414,9 +414,14 @@ full drying-cycle picture.
 | `heater_default_dry_temp` | `45`°C | Fallback drying temperature for an unmatched or empty gate |
 | `heater_default_dry_time` | `300` min | Fallback drying cycle time |
 | `heater_default_dry_humidity` | `25`% | Default humidity goal - drying ends early if reached |
-| `heater_vent_macro` | `_MMU_VENT` | Macro called periodically during drying to vent humid air |
-| `heater_vent_interval` | `0` min | Interval between vent-macro calls - `0` disables venting |
-| `heater_rotate_interval` | `5` min *(eSpooler-equipped)* | Interval between spool-rotation bursts during drying |
+| `heater_vent_macro` | Empty with a vent servo, otherwise `_MMU_VENT` | Optional callback on opening and closing: `UNIT`, `OPEN`, and `GATES` with per-gate heaters |
+| `heater_vent_interval` | `0` min | Interval between vent openings during drying; `0` disables venting |
+| `heater_vent_duration` | `10` s | Time to leave the vent open |
+| `heater_vent_run_fan` | `1` | Force relevant managed fans on while venting, then restore their previous modes |
+| `heater_vent_open_angle` | `90`° | Vent servo open position |
+| `heater_vent_close_angle` | `0`° | Vent servo closed position |
+| `heater_vent_servo_duration` | `1.0` s | Servo drive time per move; `0` keeps it powered |
+| `heater_rotate_interval` | `5` min *(eSpooler or spool-driving gear motor)* | Interval between spool-rotation bursts during drying |
 
 ### NFC reader
 

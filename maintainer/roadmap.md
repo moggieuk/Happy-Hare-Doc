@@ -17,6 +17,13 @@ lives in `mkdocs.yml`. Check existing coverage before creating a new page.
 
 ## Publication dependencies
 
+- Fans & Airflow, Heater & Environment Manager, and the refreshed menuconfig
+  screenshots target Happy Hare `development` at `d74fdd24` (2026-10-05).
+  These cover built-in vent control, controller fans, fan UI visibility and
+  feature-specific per-gate hardware menus. Confirm release availability
+  before publishing them as released behavior. `HAPPY_HARE_REF` remains `main`;
+  use the verified development commit when regenerating this material.
+
 - Unit naming and restructuring documentation targets Happy Hare
   [PR #1277](https://github.com/moggieuk/Happy-Hare/pull/1277) and
   [PR #1281](https://github.com/moggieuk/Happy-Hare/pull/1281), verified against

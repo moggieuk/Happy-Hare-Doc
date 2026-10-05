@@ -78,7 +78,7 @@ Either way, the burst runs the motor at `espooler_assist_burst_power`% for
 mode (or `off`, if print mode was cancelled in the meantime). A burst already
 in progress for a gate blocks a second one from starting on that same gate.
 
-Filament drying (`MMU_HEATER ... ROTATE=1`, see the Environment Manager
+Filament drying (`MMU_HEATER ... ROTATE=1`, see the Heater & Environment Manager
 feature) uses the same burst mechanism, just in the `rewind` direction, to
 periodically rotate a spool a fraction of a turn while it dries - unrelated to
 printing but sharing the same `espooler_rewind_burst_*` settings.
@@ -399,7 +399,7 @@ MMU_ESPOOLER
 ## See also
 
 - [Command Reference: `MMU_ESPOOLER`](Reference-Commands.md#mmu_espooler)
-- [Feature: Environment Manager](Feature-Environment-Manager.md) - its
+- [Heater & Environment Manager](Feature-Environment-Manager.md) - its
   `MMU_HEATER DRY=1 ROTATE=1` drying option reuses the espooler's rewind
   burst mechanism
 - [Printer Variables: per-gate arrays](Reference-Printer-Variables.md#per-gate-arrays-merged-across-every-unit)

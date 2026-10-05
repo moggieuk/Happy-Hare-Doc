@@ -157,7 +157,7 @@ def hh_version():
 
 
 def doc_env(unit_name='unit0', multi_unit=False, entry_point=False, unit_index=0,
-            capabilities=None):
+            capabilities=None, units_restructure=False, parent_config=None):
     """
     The environment a documentation capture parses Kconfig under.
 
@@ -181,6 +181,8 @@ def doc_env(unit_name='unit0', multi_unit=False, entry_point=False, unit_index=0
         'UNIT_INDEX': str(unit_index),
         'F_MULTI_UNIT': 'y' if multi_unit else '',
         'F_MULTI_UNIT_ENTRY_POINT': 'y' if entry_point else '',
+        'F_UNITS_RESTRUCTURE': 'y' if units_restructure else 'n',
+        'KCONFIG_PARENT': parent_config or '',
         # Makefile:620-623 switches style for the multi-unit entry point, so a
         # capture of that screen gets the palette a user would really see.
         'MENUCONFIG_STYLE': 'aquatic' if entry_point else 'default',
@@ -209,6 +211,21 @@ BUILTIN_SEEDS = {
         'MMU_TYPE_BOX_TURTLE_1_0',
         'MMU_HAS_TOOLHEAD_CUTTER',
         'CHOICE_FORM_TIP_MACRO_CUT_TIP',
+    ),
+    'boxturtle-environment': (
+        'MMU_TYPE_BOX_TURTLE_1_0',
+        'MMU_HAS_ENVIRONMENT_SENSOR',
+        'MMU_HAS_FANS',
+        'MMU_HAS_HEATER',
+        'MMU_HAS_HEATER_FANS',
+        'MMU_HAS_CONTROLLER_FAN',
+        'MMU_HAS_VENT_SERVO',
+    ),
+    'emu-environment': (
+        'MMU_TYPE_EMU_1_0',
+        'BOARD_TYPE_EBB_GEN1',
+        'MMU_HAS_HEATER',
+        'MMU_HAS_VENT_SERVO',
     ),
     'ercf': ('MMU_TYPE_ERCF_3_0',),
 }
@@ -383,7 +400,7 @@ class Menuconfig:
     """
 
     def __init__(self, cols=DEFAULT_COLS, rows=40, seed=DEFAULT_SEED, style=None,
-                 min_rows=MIN_ROWS, **context):
+                 min_rows=MIN_ROWS, shared_buffer_owner=None, **context):
         """
         `seed` is a built-in name, a path to an existing .mmu_config, or None for
         Kconfig defaults. `min_rows` is the shortest a fitted screenshot may be.
@@ -415,6 +432,17 @@ class Menuconfig:
                                     if seed_path else '.mmu_config')
         if seed_path:
             shutil.copyfile(seed_path, self._config)
+
+        if shared_buffer_owner:
+            # Give the real shared-component chooser an existing owner, without
+            # depending on a printer's saved configuration or modifying it.
+            parent = os.path.join(self._tmpdir, '.mmu_config_parent')
+            with open(parent, 'w', encoding='utf-8') as config:
+                config.write('CONFIG_MMU_UNITS="%s,%s"\n' %
+                             (shared_buffer_owner, self.context['unit_name']))
+            generate_seed(BUILTIN_SEEDS['boxturtle'], parent + '_' + shared_buffer_owner,
+                          doc_env(unit_name=shared_buffer_owner, multi_unit=True))
+            self.context['parent_config'] = parent
 
         env = dict(os.environ)
         env.update(doc_env(**self.context))

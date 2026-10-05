@@ -251,24 +251,27 @@ than one filament path:
 | Sync-feedback buffer | Can be owned by one unit and referenced by another when it sits in their common filament path |
 
 !!! warning "Shared means physically shared"
-    Do not select **Shared with existing unit?** merely to avoid configuring a
+    Do not share hardware merely to avoid configuring a
     second component. A shared encoder must measure filament from every unit that
     references it. A shared sync-feedback buffer must likewise be in their common
     filament path, typically after a combiner near the toolhead.
 
 For example, to make `unit1` use the sync-feedback buffer configured for `unit0`,
-enable the buffer for `unit1`, open **Buffer config**, and select **Shared with
-existing unit?**.
+enable the buffer for `unit1`, open **Buffer config**, and select **Use another
+unit's buffer?**. This option appears when another unit can supply a buffer,
+or when a saved configuration already uses a shared one.
 
 <p align="center">
-  <img src="GettingStarted-Multi-Unit/04-unit1-shared-buffer.png" alt="Buffer configuration for unit1 with Shared with existing unit enabled" width="80%">
+  <img src="GettingStarted-Multi-Unit/04-unit1-shared-buffer.png" alt="Buffer configuration for unit1 with Use another unit's buffer enabled" width="80%">
 </p>
 
-Set **Shared buffer name** to the symbolic name of the unit that owns the buffer,
-in this example `unit0`.
+Open **Shared buffer** and choose the unit that owns it, in this example
+`unit0`. The list includes units with their own buffer and units not yet
+configured. Configure the owner first so the installer can show its actual
+sensor settings.
 
 <p align="center">
-  <img src="GettingStarted-Multi-Unit/05-shared-buffer-name.png" alt="Shared buffer name editor for unit1 containing unit0" width="80%">
+  <img src="GettingStarted-Multi-Unit/05-shared-buffer-name.png" alt="Shared buffer chooser for unit1 with unit0 selected" width="80%">
 </p>
 
 See [Encoder](Feature-Encoder.md) and

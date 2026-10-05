@@ -66,6 +66,20 @@ from .capture import (DEFAULT_COLS, DEFAULT_SEED, DOC, IMAGES, MIN_ROWS,
 # ---------------------------------------------------------------------------
 
 
+def _additions(mc):
+    """Fit the grouped additions menu before navigating off-screen settings."""
+    mc.enter('MMU Features / Additions')
+    mc.autofit()
+
+
+def _hardware_menu(mc, title):
+    """Enter a hardware submenu from a short terminal to avoid stale parent rows."""
+    mc.autofit()
+    mc.select(title)
+    mc.resize(MIN_ROWS)
+    mc.enter()
+
+
 def _getting_started_boxturtle(mc, shot):
     """
     For doc/GettingStarted-BoxTurtle.md - the installer screens a first-time Box
@@ -106,15 +120,15 @@ def _getting_started_boxturtle(mc, shot):
     mc.autofit()
     mc.repaint()
 
-    mc.enter('MMU Features / Additions')
+    _additions(mc)
     shot('07-mmu-features')  # LEDs/eSpooler/buffer already on; nothing to add
 
-    mc.enter('eSpooler config')
+    _hardware_menu(mc, 'eSpooler config')
     mc.select(symbol('PIN_ESPOOLER_EN_0'))
     shot('07a-espooler-config')  # AFC Lite enable/rewind/forward pins per gate
     mc.back()
 
-    mc.enter('Buffer config')
+    _hardware_menu(mc, 'Buffer config')
     shot('07b-buffer-config')  # Turtle Neck range, spring state and switch pins
     mc.back()
     mc.back()
@@ -194,7 +208,7 @@ def _getting_started_vivid(mc, shot):
     shot('04-mcu-connection-buffer')
     mc.back()  # -> (Top)
 
-    mc.enter('MMU Features / Additions')
+    _additions(mc)
     shot('05-mmu-features')  # LEDs/env sensor/heater/NFC readers already on
     mc.back()  # -> (Top)
 
@@ -240,9 +254,9 @@ def _getting_started_mmx(mc, shot):
     mc.back()  # -> (Top)
     mc.autofit()
 
-    mc.enter('MMU Features / Additions')
+    _additions(mc)
     shot('03-mmu-features')
-    mc.enter('Filament sensors')
+    _hardware_menu(mc, 'Filament sensors')
     mc.select(symbol('MMU_HAS_SENSOR_ENTRY'))
     mc.toggle()
     mc.select(symbol('MMU_HAS_SENSOR_SHARED_EXIT'))
@@ -279,7 +293,7 @@ def _getting_started_3ms_additions(mc, shot):
     mc.back()
     mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
     shot('03-root-warnings')
-    mc.enter('MMU Features / Additions')
+    _additions(mc)
     shot('06-mmu-features')
 
 
@@ -297,7 +311,7 @@ def _getting_started_ercf_additions(mc, shot):
     mc.back()
     mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
     shot('06-root-warnings')
-    mc.enter('MMU Features / Additions')
+    _additions(mc)
     mc.autofit()
     mc.select('Encoder config')
     shot('12-mmu-features')
@@ -317,7 +331,7 @@ def _getting_started_tradrack_additions(mc, shot):
     mc.back()
     mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
     shot('06-root-warnings')
-    mc.enter('MMU Features / Additions')
+    _additions(mc)
     shot('12-mmu-features')
 
 
@@ -356,18 +370,26 @@ def _getting_started_multi_unit_second(mc, shot):
     mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
     shot('03-unit1-config')  # regular palette, Unit: unit1
 
-    mc.enter('MMU Features / Additions')
+    _additions(mc)
     mc.select(symbol('MMU_HAS_SYNC_FEEDBACK_BUFFER'))
     mc.toggle()
-    mc.enter('Buffer config')
+    _hardware_menu(mc, 'Buffer config')
     mc.select(symbol('MMU_SHARED_SYNC_FEEDBACK_BUFFER'))
     mc.toggle()
+    # Re-enter after the toggle replaces the local hardware fields.
+    mc.back()
+    mc.back()
+    _additions(mc)
+    _hardware_menu(mc, 'Buffer config')
+    mc.select(symbol('MMU_SHARED_SYNC_FEEDBACK_BUFFER'))
     shot('04-unit1-shared-buffer')  # sharing enabled for unit1
 
-    mc.edit(symbol('PARAM_SYNC_FEEDBACK_BUFFER_NAME'))
-    mc.write('unit0')
-    shot('05-shared-buffer-name')  # object owned by the first unit
-    mc.cancel()
+    mc.select(symbol('CHOICE_SHARED_BUFFER'))
+    mc.resize(MIN_ROWS)
+    mc.enter()
+    mc.select(symbol('CHOICE_SHARED_BUFFER_UNIT0'))
+    shot('05-shared-buffer-name')  # choose the unit that owns the buffer
+    mc.back()
 
 
 def _getting_started_emu(mc, shot):
@@ -397,7 +419,7 @@ def _getting_started_emu(mc, shot):
     shot('04-board-type')  # only the (later-page) toolhead warning remains
     mc.back()
 
-    mc.enter('MMU Features / Additions')
+    _additions(mc)
     shot('06-mmu-features')
     mc.back()
 
@@ -434,6 +456,20 @@ def _getting_started_emu(mc, shot):
     mc.back()
 
 
+def _getting_started_emu_environment(mc, shot):
+    """Per-gate hardware menus on an EMU with optional heater and vent enabled."""
+    _additions(mc)
+    for title, name in (
+        ('Environment sensor h/w config', '06a-environment-gates'),
+        ('Fan h/w config', '06b-fan-gates'),
+        ('Heater h/w config', '06c-heater-gates'),
+        ('Vent servo h/w config', '06d-vent-gates'),
+    ):
+        _hardware_menu(mc, title)
+        shot(name)
+        mc.back()
+
+
 def _feature_espooler(mc, shot):
     """
     For doc/Feature-Espooler.md - the per-gate pin entry screen for the eSpooler
@@ -446,8 +482,8 @@ def _feature_espooler(mc, shot):
     section of the now much longer 'eSpooler config' menu instead - select into
     the first pin row rather than trying to enter a submenu that no longer exists.
     """
-    mc.enter('MMU Features / Additions')
-    mc.enter('eSpooler config')
+    _additions(mc)
+    _hardware_menu(mc, 'eSpooler config')
     mc.select(symbol('PIN_ESPOOLER_EN_0'))
     shot('espooler-pins')  # one row of rewind/forward/enable/trigger per gate
 
@@ -459,8 +495,8 @@ def _feature_sync_feedback_buffer(mc, shot):
     a Turtle Neck v2 (dual switch) buffer fitted, so both menus are reachable without
     any setup in the scene itself.
     """
-    mc.enter('MMU Features / Additions')
-    mc.enter('Buffer config')
+    _additions(mc)
+    _hardware_menu(mc, 'Buffer config')
     # range/maxrange, spring state, both switch pins fitted
     shot('buffer-config')
     mc.back()
@@ -480,11 +516,11 @@ def _feature_nfc(mc, shot):
     spool to one shared reader by hand" than Box Turtle's gear-per-gate layout,
     matching how the page itself frames a shared reader.
     """
-    mc.enter('MMU Features / Additions')
+    _additions(mc)
     mc.select(symbol('MMU_HAS_NFC_READER'))
     mc.toggle()
     mc.autofit()  # new items just appeared below
-    mc.enter('NFC reader h/w config')
+    _hardware_menu(mc, 'NFC reader h/w config')
     mc.select(symbol('MMU_HAS_COMMON_NFC_READER'))
     mc.toggle()
     mc.autofit()  # reader name/type/pin fields just appeared
@@ -495,17 +531,17 @@ def _feature_nfc(mc, shot):
 
 def _feature_td1(mc, shot):
     """TD-1 assignment and capture policy; no attached USB hardware needed."""
-    mc.enter('MMU Features / Additions')
+    _additions(mc)
     mc.select(symbol('MMU_HAS_TD1'))
     mc.toggle()
     mc.autofit()
-    mc.enter('TD-1 scanner config')
+    _hardware_menu(mc, 'TD-1 scanner config')
     mc.select(symbol('MMU_HAS_OFFPATH_TD1'))
     mc.toggle()
     mc.autofit()
     shot('scanner-config')
     mc.back()
-    mc.enter('TD-1 params')
+    _hardware_menu(mc, 'TD-1 params')
     shot('capture-policy')
 
 
@@ -516,8 +552,8 @@ def _feature_leds(mc, shot):
     Additions). Uses the boxturtle seed (default), which already has LEDs
     enabled, so no scene setup is needed.
     """
-    mc.enter('MMU Features / Additions')
-    mc.enter('LED config')
+    _additions(mc)
+    _hardware_menu(mc, 'LED config')
     # enable/animation, frame rate, chain count, color order, segments
     shot('led-config')
     mc.back()
@@ -582,11 +618,11 @@ def _feature_eject_buttons(mc, shot):
     Off by default on every MMU type including boxturtle, so toggled on here
     (same pattern as _feature_nfc/_feature_environment_manager).
     """
-    mc.enter('MMU Features / Additions')
+    _additions(mc)
     mc.select(symbol('MMU_HAS_EJECT_BUTTONS'))
     mc.toggle()
     mc.autofit()  # "Mmu eject buttons" submenu just appeared
-    mc.enter('Mmu eject buttons')
+    _hardware_menu(mc, 'Mmu eject buttons')
     shot('eject-buttons')  # one pin prompt per gate, all blank by default
 
 
@@ -604,58 +640,38 @@ def _feature_flowguard(mc, shot):
 
 
 def _feature_environment_manager(mc, shot):
-    """
-    For doc/Feature-Environment-Manager.md - the environment-sensor and heater
-    config screens. Both are off by default on every MMU type including
-    boxturtle, so this scene toggles them on itself (same pattern as
-    _feature_nfc) rather than needing a different seed.
-    """
-    mc.enter('MMU Features / Additions')
-    mc.select(symbol('MMU_HAS_ENVIRONMENT_SENSOR'))
-    mc.toggle()
-    mc.autofit()  # "Environment sensor h/w config" submenu just appeared
-    mc.enter('Environment sensor h/w config')
-    # i2c bus type/sensor type/address, single-sensor mode
+    """Sensor, heater and vent screens with all required hardware enabled."""
+    _additions(mc)
+    _hardware_menu(mc, 'Environment sensor h/w config')
     shot('environment-sensor-config')
-    mc.back()  # -> MMU Features / Additions
-
-    mc.select(symbol('MMU_HAS_HEATER'))
-    mc.toggle()
-    mc.autofit()  # hardware and control submenus just appeared
-    mc.enter('Heater h/w config')
-    # shared heater object association
+    mc.back()
+    _hardware_menu(mc, 'Heater h/w config')
     shot('heater-config')
-    mc.back()  # -> MMU Features / Additions
-
-    mc.enter('Heater and humidity control')
-    # drying temp/time/humidity defaults and vent/rotation settings
+    mc.back()
+    _hardware_menu(mc, 'Vent servo h/w config')
+    shot('vent-config')
+    mc.back()
+    _hardware_menu(mc, 'Heater and humidity control')
     shot('heater-control')
 
 
 def _feature_fan_control(mc, shot):
-    """
-    For doc/Feature-Fan-Control.md - managed-fan hardware and startup defaults.
-    A Box Turtle already creates an MCU temperature sensor, but enabling the
-    environment sensor here makes both temperature-source choices visible.
-    """
-    mc.enter('MMU Features / Additions')
-    mc.select(symbol('MMU_HAS_ENVIRONMENT_SENSOR'))
-    mc.toggle()
-    mc.autofit()  # still on "MMU Features / Additions" - no submenu entered
-
-    mc.select(symbol('MMU_HAS_FANS'))
-    mc.toggle()
-    mc.autofit()  # hardware/defaults submenus just appeared
-    # Enter the short submenus from the 30-row floor. Otherwise their first
-    # repaint can retain stale rows from the much taller additions menu.
-    mc.select('Fan h/w config')
-    mc.resize(MIN_ROWS)
-    mc.enter()
-    shot('fan-config')  # max power, kick-start time, single fan pin
-    mc.back()  # -> MMU Features / Additions
-
-    mc.enter('Managed fan defaults')
-    shot('fan-controls')  # source, thresholds, polling, enabled and initial mode
+    """All three fan roles, including heater association and UI visibility."""
+    _additions(mc)
+    _hardware_menu(mc, 'Fan h/w config')
+    shot('fan-config')
+    mc.back()
+    mc.autofit()
+    _hardware_menu(mc, 'Managed fan defaults')
+    shot('fan-controls')
+    mc.back()
+    mc.autofit()
+    _hardware_menu(mc, 'Heater fan h/w config')
+    shot('heater-fan-config')
+    mc.back()
+    mc.autofit()
+    _hardware_menu(mc, 'Controller fan h/w config')
+    shot('controller-fan-config')
 
 
 def _feature_endless_spool_runout(mc, shot):
@@ -909,16 +925,18 @@ SESSIONS = [
     {
         'name': 'feature-environment-manager',
         'caption':
-        'doc/Feature-Environment-Manager.md - environment sensor and heater config screens',
+        'doc/Feature-Environment-Manager.md - environment sensor, heater and vent config screens',
         'scenes': _feature_environment_manager,
         'outdir': 'Feature-Environment-Manager',
+        'seed': 'boxturtle-environment',
     },
     {
         'name': 'feature-fan-control',
         'caption':
-        'doc/Feature-Fan-Control.md - managed-fan hardware and defaults screens',
+        'doc/Feature-Fan-Control.md - managed, heater and controller fan screens',
         'scenes': _feature_fan_control,
         'outdir': 'Feature-Fan-Control',
+        'seed': 'boxturtle-environment',
     },
     {
         'name': 'feature-td1',
@@ -988,6 +1006,7 @@ SESSIONS = [
         'scenes': _installation_unit_name,
         'outdir': 'Installation',
         'seed': 'boxturtle',
+        'units_restructure': True,
     },
     {
         'name': 'getting-started-multi-unit-shared',
@@ -998,6 +1017,7 @@ SESSIONS = [
         'seed': 'none',
         'multi_unit': True,
         'entry_point': True,
+        'units_restructure': True,
         'fit': False,
         'rows': 35,
     },
@@ -1009,6 +1029,8 @@ SESSIONS = [
         'outdir': 'GettingStarted-Multi-Unit',
         'seed': 'none',
         'unit_name': 'unit1',
+        'unit_index': 1,
+        'shared_buffer_owner': 'unit0',
         'multi_unit': True,
         'entry_point': False,
     },
@@ -1019,6 +1041,13 @@ SESSIONS = [
         'scenes': _getting_started_emu,
         'outdir': 'GettingStarted-EMU',
         'seed': 'none',
+    },
+    {
+        'name': 'getting-started-emu-environment',
+        'caption': 'doc/GettingStarted-EMU.md - per-gate sensors, fans, heaters and vents',
+        'scenes': _getting_started_emu_environment,
+        'outdir': 'GettingStarted-EMU',
+        'seed': 'emu-environment',
     },
     {
         'name': 'macro-print-start-end',
@@ -1097,7 +1126,8 @@ def run_session(session,
     written = []
     context = {
         key: session[key]
-        for key in ('unit_name', 'multi_unit', 'entry_point') if key in session
+        for key in ('unit_name', 'unit_index', 'multi_unit', 'entry_point',
+                    'units_restructure', 'shared_buffer_owner') if key in session
     }
     # A session with its own 'outdir' (a getting-started page's image folder) always
     # goes there; --outdir only redirects sessions that did not ask for a home.

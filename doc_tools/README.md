@@ -166,6 +166,22 @@ installer menu and its **Name** submenu. The `getting-started-3ms-additions`,
 also refresh their guides' first-run and configured top menus. Include those
 sessions when a shared top-level prompt changes.
 
+The grouped **MMU Features / Additions** screen is taller than the initial
+terminal. Screenshot sessions use `_additions(mc)` to fit it before walking
+to settings below the visible area. Refit after returning from a shorter
+submenu when navigating between its groups; this avoids stale terminal rows
+during scrolling. `_hardware_menu(mc, title)` then enters the selected
+submenu from the minimum terminal height so parent rows do not survive in
+short hardware captures.
+
+First-install naming and the editable multi-unit list need the installer's
+`F_UNITS_RESTRUCTURE=y` context. Their sessions set `units_restructure: True`;
+ordinary captures leave it off, matching an installed unit outside Replace
+mode. The second-unit session supplies a generated Box Turtle owner through
+`shared_buffer_owner: unit0`; a temporary parent configuration makes the real
+shared-buffer chooser list that unit. This changes only the temporary
+capture environment and does not read an installed printer's config.
+
 Use `mc.append_entry('unit1')` for the open unit editor; the driver handles the
 list and legacy string-array editors. Unsupported editor types fail explicitly.
 
@@ -194,6 +210,15 @@ a reader could be shown.
   toolhead-cutter capability and its standalone cutting choice enabled. This
   gives the cutter screenshot session a clean startup state without relying on
   menuconfig to redraw a newly gated group in place.
+* **`boxturtle-environment`.** A Box Turtle with environment sensing, managed
+  fans, a heater, heater fans, a controller fan and a vent servo enabled. The
+  fan and environment Feature sessions use it to show all related settings,
+  including heater association and servo angles, without relying on an
+  in-session redraw of newly visible menus.
+* **`emu-environment`.** An EMU on EBB gen1 boards with optional heaters
+  and vent servos enabled. The separate `getting-started-emu-environment`
+  session captures per-gate hardware menus without changing the normal
+  first-install walkthrough's starter configuration.
 * **`ercf`.** Generated the same way, selecting `MMU_TYPE_ERCF_3_0` (the
   Kconfig choice's own default version) instead. Reach for this seed when a
   screen's story fits a moving-carriage/servo design better than Box

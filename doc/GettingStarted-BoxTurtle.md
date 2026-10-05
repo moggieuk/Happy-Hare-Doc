@@ -130,7 +130,7 @@ cannot be disabled here; it does not mean their pins should go unchecked. An
 environment sensor, managed fan, RFID readers, eject buttons and an encoder are
 optional and default off — enable only the additions you actually built. A
 managed fan can use the MCU CPU sensor that is already enabled, or an optional
-environment sensor; see [Feature: Fan Control](Feature-Fan-Control.md).
+environment sensor; see [Fans & Airflow](Feature-Fan-Control.md).
 
 #### eSpooler configuration
 
