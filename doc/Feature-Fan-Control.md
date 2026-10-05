@@ -40,18 +40,14 @@ heater, sensor and vent setup.
 ### Example setups
 
 
-In the drawings: `(O)` is a spool, `[####]` a heater, `(@)` a fan, `{T/H}` a temperature/humidity sensor and `[MCU]` the MMU's board.
+These schematic cutaways show a standalone MMU/AFC unit, separate from the
+printer, with four filament spools. Orange arrows show heater airflow; teal
+arrows show managed or controller fan airflow. T/H marks a temperature/humidity
+sensor. Component positions are illustrative.
 
 #### 1. Unheated dry box
 
-```text
-   ┌──────────────────────────────────┐
-   │   (O)     (O)     (O)     (O)    │
-   │                                  │
-   │   desiccant          {T/H}       │
-   └──────────────────────────────────┘
-          sealed, no heater, no fan
-```
+![Four filament spools in a sealed MMU dry box with desiccant and a humidity sensor, without fans or a heater](Feature-Fan-Control/setup-dry-box.svg)
 
 - **Environment sensor:** yes, to watch humidity.
 - **Fans:** none needed. Add a **managed fan** (AUTO, source environment) only if the box can get too warm, for example next to a heated printer chamber.
@@ -59,15 +55,7 @@ In the drawings: `(O)` is a spool, `[####]` a heater, `(@)` a fan, `{T/H}` a tem
 
 #### 2. Heated dryer with a heater fan (the most common design)
 
-```text
-   ┌──────────────────────────────────┐
-   │   (O)     (O)     (O)     (O)    │
-   │      ^       ^       ^       ^   │
-   │      └─── warm air circulates ┘  │
-   │   (@)──►[####]           {T/H}   │
-   │ heater fan  heater               │
-   └──────────────────────────────────┘
-```
+![Four-spool MMU dryer with a heater fan circulating warm air through the enclosure](Feature-Fan-Control/setup-heated-dryer.svg)
 
 - **Heater:** an existing `[heater_generic]`, named in menuconfig (or provided by your board's supplied hardware configuration).
 - **Heater fan:** on the fan that blows across the element. It runs for the whole drying cycle at any drying temperature, and keeps running until the element has cooled.
@@ -76,16 +64,7 @@ In the drawings: `(O)` is a spool, `[####]` a heater, `(@)` a fan, `{T/H}` a tem
 
 #### 3. Heated dryer with an exhaust vent (e.g. QuattroBox v2)
 
-```text
-                                         vent flap    exhaust fan
-                                         (servo)      (managed fan)
-   ┌──────────────────────────────────┐    │           ┌─────┐
-   │   (O)     (O)     (O)     (O)    ├────┤  ──────►  │ (@) ├──► out
-   │                                  │    │           └─────┘
-   │   (@)──►[####]           {T/H}   │
-   │ heater fan  heater               │
-   └──────────────────────────────────┘
-```
+![Four-spool MMU dryer with a heater fan, servo-operated vent and separate managed exhaust fan](Feature-Fan-Control/setup-exhaust-vent.svg)
 
 - **Heater and heater fan:** as in example 2.
 - **Vent servo:** opens the flap every `heater_vent_interval` minutes while drying.
@@ -98,31 +77,14 @@ In the drawings: `(O)` is a spool, `[####]` a heater, `(@)` a fan, `{T/H}` a tem
 
 #### 4. Board inside the heated enclosure
 
-```text
-   ┌──────────────────────────────────┐
-   │   (O)     (O)     (O)     (O)    │
-   │                                  │
-   │   (@)──►[####]           {T/H}   │
-   │                                  │
-   │   [MCU]◄──(@) controller fan     │
-   └──────────────────────────────────┘
-```
+![Heated four-spool MMU enclosure with a separate controller fan cooling the MCU and stepper drivers](Feature-Fan-Control/setup-controller-fan.svg)
 
 - **Controller fan** on the board fan.
 - **Turn on "Also run while the enclosure heater is on".** During a drying cycle the steppers are usually idle, so without this the board fan stays off while the board sits in a hot box.
 
 #### 5. A separate enclosure per filament (e.g. EMU)
 
-```text
-   ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────┐
-   │    (O)     │ │    (O)     │ │    (O)     │ │    (O)     │
-   │   ~ (@)    │ │   ~ (@)    │ │   ~ (@)    │ │   ~ (@)    │
-   │   {T/H}    │ │   {T/H}    │ │   {T/H}    │ │   {T/H}    │
-   │  [MCU]     │ │  [MCU]     │ │  [MCU]     │ │  [MCU]     │
-   └────────────┘ └────────────┘ └────────────┘ └────────────┘
-      gate 0         gate 1         gate 2         gate 3
-           each spool has its own enclosure, sensor and board
-```
+![Four separate MMU compartments, each containing a spool, managed circulation fan, sensor and MCU](Feature-Fan-Control/setup-per-gate.svg)
 
 - **Per-gate configuration:** each feature's hardware menu lists its gates. Configure the sensor, fans, heater and vent for each fitted compartment there.
 - **Circulation fan per gate:** EMU's per-gate fans circulate the air in that one filament's enclosure. With no heater involved they're **managed fans**, one per gate. EMU defaults their AUTO source to the gate's MCU temperature. Control them one gate at a time, e.g. `MMU_FAN FAN_FORCED=1 GATE=2`.

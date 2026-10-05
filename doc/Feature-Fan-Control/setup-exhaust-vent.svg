@@ -1,0 +1,151 @@
+<?xml version="1.0" ?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="550" viewBox="0 0 1040 550" role="img" aria-labelledby="title desc">
+  
+
+  <title id="title">03  Heated dryer with controlled exhaust</title>
+  <desc id="desc">A separate four-spool MMU dryer with heater and heater fan. A servo opens the right-side vent; a managed exhaust fan pushes damp air out.</desc>
+  
+
+  <defs>
+    <marker id="warm" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L11,5 L0,10 Z" fill="#db782c"/>
+    </marker>
+    <marker id="cool" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L11,5 L0,10 Z" fill="#168a96"/>
+    </marker>
+  </defs>
+  
+
+  <g font-family="Arial, Helvetica, sans-serif">
+    <rect x="0" y="0" width="1040" height="550" rx="16" fill="#f6f8fb" stroke="none" stroke-width="2"/>
+    
+
+    <text x="32" y="39" font-size="25" fill="#20344b" font-weight="700" text-anchor="start">03  Heated dryer with controlled exhaust</text>
+    <text x="32" y="68" font-size="17" fill="#52677d" font-weight="400" text-anchor="start">Standalone MMU / AFC · schematic cutaway · printer not shown</text>
+    <ellipse cx="460" cy="427" rx="377" ry="13" fill="#e1e7ed"/>
+    <path d="M 78,118 L 99,99 H 836 V 389 L 815,411" fill="none" stroke="#9babbb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M78,118 L99,99 H836 L815,118 Z" fill="#e1e9f0"/>
+    <path d="M815,118 l21,-19 v290 l-21,22 Z" fill="#d8e3ec"/>
+    <rect x="78" y="118" width="737" height="293" rx="12" fill="#edf3f7" stroke="#74899e" stroke-width="2"/>
+    <rect x="92" y="133" width="709" height="263" rx="7" fill="#fffdf8" stroke="#bdcbd8" stroke-width="2"/>
+    <rect x="111" y="411" width="40" height="12" rx="4" fill="#71869a" stroke="none" stroke-width="2"/>
+    <rect x="742" y="411" width="40" height="12" rx="4" fill="#71869a" stroke="none" stroke-width="2"/>
+    <g transform="translate(185 213) scale(1)">
+      <rect x="-43" y="53" width="86" height="10" rx="5" fill="#c6d2dd" stroke="none" stroke-width="2"/>
+      <ellipse cx="7" cy="0" rx="55" ry="60" fill="#d3dce6" stroke="#8799ac" stroke-width="2"/>
+      <circle r="56" fill="#f5f8fb" stroke="#71869a" stroke-width="3"/>
+      <circle r="45" fill="#e983a9"/>
+      <circle r="21" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="26" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="31" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="36" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="41" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="15" fill="#e7eef4" stroke="#71869a" stroke-width="2"/>
+      <circle r="6" fill="#52677d"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(0)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(120)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(240)"/>
+    </g>
+    <g transform="translate(351 213) scale(1)">
+      <rect x="-43" y="53" width="86" height="10" rx="5" fill="#c6d2dd" stroke="none" stroke-width="2"/>
+      <ellipse cx="7" cy="0" rx="55" ry="60" fill="#d3dce6" stroke="#8799ac" stroke-width="2"/>
+      <circle r="56" fill="#f5f8fb" stroke="#71869a" stroke-width="3"/>
+      <circle r="45" fill="#73adbe"/>
+      <circle r="21" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="26" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="31" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="36" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="41" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="15" fill="#e7eef4" stroke="#71869a" stroke-width="2"/>
+      <circle r="6" fill="#52677d"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(0)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(120)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(240)"/>
+    </g>
+    <g transform="translate(517 213) scale(1)">
+      <rect x="-43" y="53" width="86" height="10" rx="5" fill="#c6d2dd" stroke="none" stroke-width="2"/>
+      <ellipse cx="7" cy="0" rx="55" ry="60" fill="#d3dce6" stroke="#8799ac" stroke-width="2"/>
+      <circle r="56" fill="#f5f8fb" stroke="#71869a" stroke-width="3"/>
+      <circle r="45" fill="#e7bd65"/>
+      <circle r="21" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="26" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="31" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="36" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="41" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="15" fill="#e7eef4" stroke="#71869a" stroke-width="2"/>
+      <circle r="6" fill="#52677d"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(0)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(120)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(240)"/>
+    </g>
+    <g transform="translate(683 213) scale(1)">
+      <rect x="-43" y="53" width="86" height="10" rx="5" fill="#c6d2dd" stroke="none" stroke-width="2"/>
+      <ellipse cx="7" cy="0" rx="55" ry="60" fill="#d3dce6" stroke="#8799ac" stroke-width="2"/>
+      <circle r="56" fill="#f5f8fb" stroke="#71869a" stroke-width="3"/>
+      <circle r="45" fill="#909fca"/>
+      <circle r="21" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="26" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="31" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="36" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="41" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="15" fill="#e7eef4" stroke="#71869a" stroke-width="2"/>
+      <circle r="6" fill="#52677d"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(0)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(120)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(240)"/>
+    </g>
+    <g transform="translate(165 350) scale(1)">
+      <rect x="-27" y="-27" width="54" height="54" rx="8" fill="#f9fcfe" stroke="#71869a" stroke-width="2"/>
+      <circle r="22" fill="#e7eef4" stroke="#a5b5c4"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#db782c" transform="rotate(0)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#db782c" transform="rotate(90)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#db782c" transform="rotate(180)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#db782c" transform="rotate(270)"/>
+      <circle r="6" fill="#20344b"/>
+    </g>
+    <rect x="229" y="329" width="98" height="43" rx="5" fill="#fff0d9" stroke="#db782c" stroke-width="2"/>
+    <path d="M 242,338 v 25" fill="none" stroke="#db782c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 254,338 v 25" fill="none" stroke="#db782c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 266,338 v 25" fill="none" stroke="#db782c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 278,338 v 25" fill="none" stroke="#db782c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 290,338 v 25" fill="none" stroke="#db782c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 302,338 v 25" fill="none" stroke="#db782c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 314,338 v 25" fill="none" stroke="#db782c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="708" y="340" width="55" height="40" rx="7" fill="#eef5f8" stroke="#71869a" stroke-width="2"/>
+    <text x="735.5" y="366" font-size="17" fill="#20344b" font-weight="600" text-anchor="middle">T/H</text>
+    <path d="M 196,350 H 221" fill="none" stroke="#db782c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#warm)"/>
+    <path d="M 340,350 H 577 Q 611,350 611,308" fill="none" stroke="#db782c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#warm)"/>
+    <text x="397" y="336" font-size="18" fill="#db782c" font-weight="600" text-anchor="start">Warm air</text>
+    <rect x="799" y="215" width="39" height="65" rx="0" fill="#f6f8fb" stroke="none" stroke-width="2"/>
+    <path d="M801,214 H841 M801,281 H841" fill="none" stroke="#74899e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M823,278 L853,223" fill="none" stroke="#168a96" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="825" y="286" width="28" height="22" rx="4" fill="#71869a" stroke="none" stroke-width="2"/>
+    <path d="M839,286 L823,278" fill="none" stroke="#20344b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(901 248) scale(1)">
+      <rect x="-27" y="-27" width="54" height="54" rx="8" fill="#f9fcfe" stroke="#71869a" stroke-width="2"/>
+      <circle r="22" fill="#e7eef4" stroke="#a5b5c4"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(0)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(90)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(180)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(270)"/>
+      <circle r="6" fill="#20344b"/>
+    </g>
+    <path d="M 749,248 H 797" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
+    <path d="M 860,248 H 869" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
+    <path d="M 936,248 H 991" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
+    <text x="941" y="281" font-size="16" fill="#168a96" font-weight="600" text-anchor="start">Damp air</text>
+    <path d="M839,218 V165 H872" fill="none" stroke="#52677d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="880" y="170" font-size="18" fill="#20344b" font-weight="400" text-anchor="start">Vent flap</text>
+    <path d="M839,310 V347 H860" fill="none" stroke="#52677d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="868" y="353" font-size="18" fill="#20344b" font-weight="400" text-anchor="start">Servo</text>
+    <text x="897" y="391" font-size="18" fill="#168a96" font-weight="600" text-anchor="middle">Managed</text>
+    <text x="897" y="415" font-size="18" fill="#168a96" font-weight="600" text-anchor="middle">exhaust fan</text>
+    <path d="M901,280 V368" fill="none" stroke="#52677d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M165,379 V431 H210" fill="none" stroke="#52677d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="216" y="437" font-size="18" fill="#20344b" font-weight="400" text-anchor="start">Heater fan</text>
+    <text x="279" y="410" font-size="18" fill="#20344b" font-weight="400" text-anchor="middle">Heater</text>
+    <path d="M32,457 H1008" fill="none" stroke="#d0dbe5" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="32" y="491" font-size="20" fill="#20344b" font-weight="600" text-anchor="start">Vent opens + managed fan runs → damp air leaves.</text>
+    <text x="32" y="521" font-size="18" fill="#52677d" font-weight="400" text-anchor="start">Use managed fan OFF with the drying vent override; the heater fan has its own job.</text>
+  </g>
+</svg>

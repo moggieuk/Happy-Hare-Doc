@@ -361,7 +361,7 @@ Drying:       ---------------------------------------------------->
               <--- interval (minutes) ---> <--- open time --->
 Vent:         closed                       OPEN               closed
 Servo:                                     open angle         close angle
-Managed fan:  previous mode                 ON                 restore mode
+Managed fan:  previous mode                ON                 restore mode
 Macro:                                     OPEN=1             OPEN=0
 ```
 
