@@ -1,8 +1,9 @@
-# Feature: Environment Manager
+# Feature: Heater & Environment Manager
 
 ## Concept
 
-The Environment Manager turns an enclosed MMU into a filament dryer. It pairs
+An environment sensor lets you monitor an unheated filament enclosure. Add
+a heater to use the enclosure as a filament dryer. Happy Hare pairs
 a humidity/temperature sensor with one or more heaters and runs a managed
 **drying cycle**: pick a target temperature and time (or let Happy Hare
 recommend both from the filament types already loaded), and it heats,
@@ -18,8 +19,8 @@ Two hardware layouts are supported:
   this page defaults to it.
 - **Per-gate heaters** - each gate has its own heater and sensor (for
   example, the modular EMU design, where every gate is its own small
-  enclosure). Sensor, heater and fan hardware are grouped together under
-  each gate's config menu. A basic power-management queue limits how many
+  enclosure). Each feature's hardware menu lists its gates, so you can configure
+  the sensor, heater, fans and vent for each fitted compartment. A basic power-management queue limits how many
   heaters run simultaneously so you don't trip a PSU.
 
 !!! warning
@@ -33,9 +34,19 @@ Examples below use the default unit name `unit0`. Substitute your configured
 [Klipper object name](Installation.md#naming-an-mmu-unit) in unit-specific
 sections, object references and pin prefixes.
 
-Both pieces are enabled under **MMU Features / Additions**. Shared layouts
-get separate sensor and heater hardware submenus; modular layouts collect
-the corresponding hardware under **Per-gate config → Gate N config**.
+Enable sensors under **MMU Features / Additions → Has environment sensors?**.
+The **Heated Chamber** group contains **Has enclosure heater(s)?**, heater
+fans and the optional vent servo. Shared layouts configure one enclosure;
+per-gate layouts list gates inside each feature's hardware menu.
+
+A drying cycle requires an environment sensor, even when using only a timer.
+Its temperature reading measures enclosure air; the heater's own sensor
+controls the heater. A humidity-capable environment sensor also enables
+humidity-based completion. Raw heater control with `MMU_HEATER TEMP=` does
+not require an environment sensor.
+
+For whole-system examples, start with
+[Fans & Airflow](Feature-Fan-Control.md#example-setups).
 
 ### Environment sensor
 
@@ -47,19 +58,27 @@ the corresponding hardware under **Per-gate config → Gate N config**.
 |---|---|
 | `Sensor name` | Klipper object name - defaults to `<unit>_Env` |
 | `i2c bus type` | Hardware i2c (recommended) or software i2c |
-| `Sensor type` | AHT1X / AHT2X / AHT3X (humidity + temperature) or BME280 (humidity + temperature + pressure) |
+| `Sensor type` | Match the installed chip: AHT, BME/BMP, HTU21D family, SHT3X or LM75; humidity availability depends on the chip |
 | `i2c bus name` | Which hardware i2c bus to use, if hardware i2c is selected |
-| `i2c address` | Defaults to `56` (`0x38`) for AHT sensors, `118` (`0x76`) for BME280 |
+| `i2c address` | Choose the address for the chip and its wiring; defaults include `56` (`0x38`) for AHT and `118` (`0x76`) for BME280 |
+| `Report time (secs)` | Sensor reading interval where supported; `0` uses the Klipper driver default |
 | SCL/SDA pins | Only shown for software i2c |
 
-Produces, inside the unit's `[mmu_unit ...]` section in `mmu_hardware.cfg`:
+Choose AHT10 for older firmware where the newer AHT names are unavailable;
+menuconfig's sensor help describes compatibility. BME280/BME680 can report
+humidity; BMP chips and LM75 cannot. HTU21D-family sensors also offer
+resolution and hold-master options. Keep their defaults unless your sensor
+requires otherwise.
+
+For example, the sensor association in the unit's `[mmu_unit ...]` section
+of `mmu_hardware.cfg` can use the full Klipper object name:
 
 ```ini
 environment_sensor : temperature_sensor unit0_Env
 ```
 
-A per-gate design repeats these prompts inside each **Gate N config** menu
-and produces a gate-aligned list. It can use one MCU for the whole unit or
+A per-gate design lists **Gate N sensor** entries in **Environment sensor
+h/w config** and produces a gate-aligned list. It can use one MCU for the whole unit or
 one MCU per gate; those choices are independent.
 
 ```ini
@@ -72,16 +91,19 @@ environment_sensors : temperature_sensor unit0_Env0, temperature_sensor unit0_En
   <img src="Feature-Environment-Manager/heater-config.png" alt="Shared heater hardware configuration, associating an existing Klipper enclosure heater with the MMU unit" width="80%">
 </p>
 
-Happy Hare associates an existing Klipper heater with the MMU; it does not
-create the heater object itself. For a shared enclosure, enter the existing
+The generic heater setup associates an existing Klipper heater with the
+MMU. Define its `[heater_generic]` section, heater pin, sensor and PID or
+watermark control first. Some board profiles supply their own heater
+configuration; follow the hardware-file hint shown by menuconfig for those.
+For a shared enclosure, enter the existing
 `[heater_generic]` object's name under **Heater h/w config**. In a per-gate
-layout, enable **Enclosure heater** and enter the object name inside each
-**Gate N config** menu.
+layout, open **Heater h/w config**, enable **Gate N heater**, and enter
+that gate's object name.
 
 | Setting | Purpose |
 |---|---|
 | `Enclosure heater name` | Existing Klipper heater object for a shared enclosure |
-| `Enclosure heater` | Per-gate switch that associates a heater with that gate |
+| `Gate N heater` | Per-gate switch that associates a heater with that gate |
 | `Heater name` | Existing Klipper heater object for that gate |
 
 Produces, alongside the sensor key in the same `[mmu_unit ...]` section:
@@ -97,14 +119,42 @@ filament_heaters       : heater_generic unit0_heater0, heater_generic unit0_heat
 max_concurrent_heaters : 1
 ```
 
-Optional **heater fans** are configured beside the heater. These are fixed
-Klipper `[heater_fan]` objects that follow their associated heater, not
-temperature-managed fans controlled by `MMU_FAN`. A shared layout offers
-**Configure heater fan(s)? → Heater fan h/w config**; a per-gate layout puts
-the same choice inside each gate menu. Set the output pin, maximum power,
-kick-start time, normal fan speed and shutdown speed there. The generated
-object is named `_unit0_heater_fan` for a shared enclosure or
-`_unit0_heater_fan0`, `_unit0_heater_fan1`, and so on for per-gate heaters.
+Optional heater fans follow their associated heater, including cooldown.
+Their hardware settings, controller fans for electronics cooling, and
+managed exhaust fans are covered in
+[Fans & Airflow](Feature-Fan-Control.md#hardware-setup).
+
+### Vent servo
+
+With the heater enabled, select **Has enclosure vent servo? → Vent servo
+h/w config**. A heater fan is not required. Set the servo pin and PWM range
+for the fitted servo; opening/closing angles and drive time are separate
+settings under **Heater and humidity control**.
+
+<p align="center">
+  <img src="Feature-Environment-Manager/vent-config.png" alt="Vent servo pin, minimum and maximum pulse widths, and hardware angle range" width="80%">
+</p>
+
+The default pulse range is `0.001`–`0.002` seconds with a hardware maximum
+angle of `180` degrees. Per-gate layouts expose these settings separately
+under **Gate N vent servo**, so different gates can use different servos.
+Disable gates without a vent or leave their pin blank.
+
+A shared vent generates an `[mmu_servo unit0_vent_servo]` object and this
+association in `[mmu_unit unit0]`:
+
+```ini
+vent_servo : unit0_vent_servo
+```
+
+Per-gate vents preserve empty positions in their association list:
+
+```ini
+vent_servos : unit0_vent_servo0, , unit0_vent_servo2
+```
+
+A managed exhaust fan or optional macro can also provide venting without a
+servo. The [venting recipe](#venting) explains how they work together.
 
 ## Parameter Setup
 
@@ -124,8 +174,6 @@ heater_max_temp             : 65     # Absolute ceiling; drying never targets ab
 heater_default_dry_temp     : 45     # Fallback drying temperature for an unrecognized or empty gate
 heater_default_dry_time     : 300    # Fallback drying time in minutes
 heater_default_dry_humidity : 25     # Default humidity % goal - drying ends early if reached
-heater_vent_macro           : _MMU_VENT  # Name of a macro to call periodically during drying (see Tuning below)
-heater_vent_interval        : 0      # Minutes between vent-macro calls, 0 = disabled
 heater_rotate_interval      : 5      # Minutes between spool-rotation bursts, requires eSpooler and explicit GATES
 
 drying_data : { 'pla': (45, 300), 'pla+': (55, 300), 'petg': (60, 300), 'tpu': (55, 300), 'abs': (70, 300),
@@ -133,18 +181,36 @@ drying_data : { 'pla': (45, 300), 'pla+': (55, 300), 'petg': (60, 300), 'tpu': (
                 'hips': (75, 600) }
 ```
 
+Venting settings also live in `mmu_parameters.cfg`:
+
+| Setting | Default | Purpose |
+|---|---|---|
+| `heater_vent_interval` | `0` min | Minutes between openings during drying; `0` disables venting |
+| `heater_vent_duration` | `10` s | How long the vent remains open |
+| `heater_vent_run_fan` | `1` | Temporarily force managed fans on while open, then restore their modes |
+| `heater_vent_open_angle` | `90`° | Servo angle when open |
+| `heater_vent_close_angle` | `0`° | Servo angle when closed |
+| `heater_vent_servo_duration` | `1.0` s | How long to drive the servo for each move; `0` keeps it powered |
+| `heater_vent_macro` | Empty with a vent servo, otherwise `_MMU_VENT` | Optional callback for additional vent hardware |
+
+The servo angle and drive-time prompts appear when a vent servo is enabled.
+With per-gate servos, these operating angles and timings are shared across
+the unit; each servo's hardware PWM range is configured separately.
+
 `drying_data` maps a material name (matched case-insensitively) to
 `(temperature_C, time_minutes)`. Starting a drying cycle without an explicit
-`TEMP`/`TIMER` looks up each selected gate's assigned material here and uses
-the lowest recommended temperature and longest recommended time across them,
-capped at `heater_max_temp`; a gate with no material assigned, or that's
-empty, falls back to `heater_default_dry_temp`/`heater_default_dry_time`.
+`TEMP`/`TIMER` looks up each selected gate's assigned material here. A shared
+heater uses the lowest recommended temperature and longest recommended time
+across those gates; per-gate heaters use each gate's own recipe. Temperatures
+are capped at `heater_max_temp`. A gate with no material assigned, or one
+that is empty, falls back to `heater_default_dry_temp` and
+`heater_default_dry_time`.
 Extend the table with your own materials freely - it's a plain dict, and
 `MMU_HEATER DRYING_DATA=1` dumps whatever is currently configured. A
 smaller, illustrative table showing just the shape of it:
 
 ```ini
-drying_data: "{'PLA': (45, 240), 'PETG': (55, 300), 'NYLON': (65, 480)}"
+drying_data: {'PLA': (45, 240), 'PETG': (55, 300), 'NYLON': (65, 480)}
 ```
 
 - Values are `(temperature_C, time_minutes)`.
@@ -158,6 +224,7 @@ MMU_HEATER                                     # Status report - heater state, o
 MMU_HEATER TEMP=50                             # Set/adjust heater temperature directly
 MMU_HEATER DRY=1                               # Start a drying cycle, temp/time recommended from drying_data
 MMU_HEATER DRY=1 TEMP=50 TIMER=240 HUMIDITY=12  # ...or override any of them
+MMU_HEATER DRY=1 VENT_INTERVAL=10              # Open the vent every 10 minutes during drying
 MMU_HEATER STOP=1                              # Stop the current drying cycle (or turn the heater off)
 MMU_HEATER DRYING_DATA=1                       # List the configured drying-data table
 ```
@@ -170,8 +237,10 @@ Full parameter reference: [`MMU_HEATER`](Reference-Commands.md#mmu_heater).
     off yourself with `MMU_HEATER TEMP=0` or `MMU_HEATER STOP=1`. Prefer
     `DRY=1` for anything you intend to walk away from.
 
-With per-gate heaters, everything above takes a `GATES=` list (defaulting to
-all non-empty gates if omitted):
+With per-gate heaters, use `GATES=` to select gates for drying, raw targets
+or partial cancellation. Drying without rotation and raw temperature
+control default to the selected unit's non-empty gates. `STOP=1` without
+`GATES=` stops the whole unit's cycle and turns off its heaters:
 
 ```text
 MMU_HEATER DRY=1 GATES=0,2,3       # Dry only these gates (subject to the concurrency cap)
@@ -194,7 +263,7 @@ from the queue and marked done, without ever having its heater turned on.
 If cancelling leaves no gates still running or queued, the overall drying
 cycle ends automatically.
 
-A plain `MMU_HEATER` with no drying cycle running just reports that:
+With no drying cycle running and the shared heater off, `MMU_HEATER` reports:
 
 ```{.text .console-command}
 MMU_HEATER
@@ -204,7 +273,8 @@ MMU_HEATER
 Not in drying cycle and heater is off
 ```
 
-A status report while drying looks like this (single-heater mode):
+An illustrative status report while drying in single-heater mode with a
+servo and managed exhaust fan looks like this:
 
 ```{.text .console-output}
 MMU is in filament drying cycle:
@@ -212,7 +282,7 @@ Drying filaments in gates: 1,2,6,7
 Cycle time: 4 hours (remaining: 3 hours 46 minutes)
 Target humidity: 25.0% (current: 63.6%)
 Drying temp: 55.0°C (current: 48.3°C)
-Venting operational (running macro _MMU_VENT every 15 minutes, next in 11 minutes)
+Venting operational (opening for 10s every 15 minutes, next in 11 minutes; vent servo, managed fan)
 Spool rotation enabled (running every 5 minutes, next in <1 minute)
 ```
 
@@ -232,66 +302,119 @@ Gate 8: (queued waiting for heater slot, target 65.0°C)
 
 ## Printer variables exposed
 
+`printer.mmu_machine.unit_N.vent_servos` lists the configured vent servo
+objects: one element for a shared vent, or a gate-aligned list for per-gate
+vents. It describes hardware, not whether the vent is currently open.
+
 `drying_state` - a per-gate list of `''` \| `queued` \| `active` \| `complete`
 \| `canceled`. See
 [Per-gate arrays merged across every unit](Reference-Printer-Variables.md#per-gate-arrays-merged-across-every-unit)
 in the printer variable reference.
 
+### UI
+
+The heater and environment sensor remain Klipper objects; their names are
+listed in the unit metadata in
+[Printer Variables](Reference-Printer-Variables.md#printermmu_machine).
+Use `MMU_HEATER` for drying progress and venting status. Fan visibility is
+configured separately under each fan type's hardware menu; see
+[Fans & Airflow](Feature-Fan-Control.md#mainsail-fluidd).
+
 ## Tuning
 
 ### Venting
 
-A vent macro runs periodically **only while a drying cycle is active**, to
-flush warm humid air from the enclosure and speed up drying. Many designs
-have a passive vent; some use a servo-actuated flap and an extraction fan -
-the macro is entirely up to you. Set `heater_vent_macro` and
-`heater_vent_interval` (minutes, `0` disables it), or override the interval
-for a single cycle with `MMU_HEATER DRY=1 VENT_INTERVAL=10`. The macro should
-open the vent and queue its own delayed close rather than blocking with
-`M400` - a ready-to-adapt skeleton using `delayed_gcode` for exactly that
-ships as `_MMU_VENT` in `config/macros/mmu_heater_vent.cfg`. In per-gate
-mode, the macro is called with `GATES=<currently active gates>`; in
-single-heater mode it's called with no arguments. The shipped skeleton looks
-like this:
+Heating drives moisture from the filament into the enclosure air. Periodic
+venting exchanges that humid air for fresh air. It operates only during a
+drying cycle, not while holding a raw heater target with `MMU_HEATER TEMP=`.
+An unheated desiccant box generally benefits from staying sealed.
 
-```ini
-[gcode_macro _MMU_VENT]
-description: Simple reference MMU enclosure venting control
+1. Configure the heater, environment sensor, and any vent servo or managed
+   exhaust fan. Check the servo's travel before attaching a linkage that
+   could bind at the configured angles.
+2. Set `heater_vent_open_angle` and `heater_vent_close_angle` for the flap.
+   Set `heater_vent_servo_duration` long enough to complete the move. Use `0`
+   only if the vent needs continuous holding force; the servo can buzz or
+   run warm when driven continuously.
+3. For an exhaust fan, select managed fan OFF mode (`fan_forced: 0`) and
+   keep `heater_vent_run_fan: 1`. This avoids continuously exhausting heat
+   when an AUTO threshold is reached.
+4. Set a nonzero `heater_vent_interval` and an appropriate
+   `heater_vent_duration`, or override the interval for one drying cycle.
+5. Run a short cycle with a temperature appropriate for the enclosure and
+   filament, and check opening, airflow, closing and fan-mode restoration:
 
-gcode:
-    {% set gates = (params.GATES | default('')).split(',') | map('trim') | list %}
+    ```text
+    MMU_HEATER DRY=1 TEMP=45 TIMER=10 VENT_INTERVAL=1
+    MMU_HEATER
+    MMU_HEATER STOP=1
+    ```
 
-    {% if gates == [''] %}
+The drying controller checks the interval every 30 seconds. At an opening,
+it moves the servo, forces the relevant managed fans on if enabled, and
+calls any configured vent macro. After the open duration it closes the
+servo, restores the previous fan modes, and calls the macro again.
+Heater fans continue following their heaters independently.
 
-        MMU_LOG MSG="Opening MMU vent..."
-        # Add logic to operate servo to open vent here, perhaps also turn on/up extraction fan
-
-    {% else %}
-
-        MMU_LOG MSG="Opening MMU vent to dry filaments in gates: {", ".join(gates)}..."
-        {% for gate in gates %}
-            # Open vent servo_{gate}
-        {% endfor %}
-
-    {% endif %}
-
-    # Close the vent after 10 seconds
-    UPDATE_DELAYED_GCODE ID=_MMU_VENT_CLOSE DURATION=10
-
-
-[delayed_gcode _MMU_VENT_CLOSE]
-gcode:
-    MMU_LOG MSG="Closing MMU vent..."
-    # Add logic to operate servo to close vent here, perhaps also turn off/down extraction fan
+```text
+Drying:       ---------------------------------------------------->
+              <--- interval (minutes) ---> <--- open time --->
+Vent:         closed                       OPEN               closed
+Servo:                                     open angle         close angle
+Managed fan:  previous mode                 ON                 restore mode
+Macro:                                     OPEN=1             OPEN=0
 ```
 
-The `delayed_gcode`/`UPDATE_DELAYED_GCODE` pairing is the point of the
-example: it lets the macro return immediately after opening the vent
-instead of blocking the toolhead with `M400` while it waits to close again.
+With per-gate heaters, venting targets the **actively heating** gates;
+queued gates wait. Per-gate vents and fans follow those targets. A shared
+vent or shared managed fan still serves the whole enclosure. Every
+configured vent servo closes at Klipper startup; an open vent also closes
+when drying ends or the MMU is disabled.
+
+There is no dedicated manual vent command. Use the short drying cycle above
+to test the complete sequence. A humidity goal may finish it before the
+first vent opening, so check the reported cycle state as well as the flap.
+
+#### Optional vent macro
+
+Happy Hare already moves configured vent servos and runs managed fans.
+Use `heater_vent_macro` only for extra hardware, such as another flap or a
+relay. It receives:
+
+| Parameter | Meaning |
+|---|---|
+| `UNIT` | Unit name |
+| `OPEN` | `1` to open, `0` to close |
+| `GATES` | Actively heated gates, supplied only with per-gate heaters |
+
+The supplied `_MMU_VENT` is a logging-only example. Copy it to your own
+configuration file, rename it, add the hardware actions to its open and
+close branches, and set `heater_vent_macro` to that name. This example shows
+the callback shape; its comments must be replaced with your hardware commands:
+
+```ini
+[gcode_macro MY_MMU_VENT]
+gcode:
+    {% set unit = params.UNIT %}
+    {% set opening = params.OPEN | int %}
+    {% set gates = params.GATES | default('') %}
+    MMU_LOG MSG="Vent callback: unit={unit}, open={opening}, gates={gates}"
+    {% if opening %}
+        # Operate additional hardware to open the vent
+    {% else %}
+        # Operate additional hardware to close the vent
+    {% endif %}
+```
+
+The controller schedules closing; the macro does not need a delayed-close
+timer. Callbacks can run during a print, so do not add delays or `M400`.
+Leave `heater_vent_macro` empty when configured servos and fans provide all
+the required venting.
 
 ### Spool rotation
 
-If an eSpooler is fitted, a drying cycle can periodically nudge each spool a
+With an eSpooler, or a design whose gear motor can rotate the spool such as
+ViViD, a drying cycle can periodically nudge each spool a
 short distance in the rewind direction - just enough to stop a respooled
 filament end from baking against one point of contact for hours. Start it
 with `MMU_HEATER DRY=1 ROTATE=1 GATES=1,3` - `GATES` must be given explicitly
@@ -303,11 +426,12 @@ can safely unload a gate and secure it mid-cycle. If a gate passed to
 `GATES=` isn't empty yet when the cycle starts, Happy Hare warns about it
 immediately rather than staying silent until the first rotation tick -
 drying still proceeds normally, since a loaded gate simply can't rotate
-until it's cleared. It uses exactly the same
+until it's cleared. For an eSpooler, it uses the same
 power and duration as an ordinary
 [rewind burst](Feature-Espooler.md#in-print-bursts-two-independent-trigger-sources)
 (`espooler_rewind_burst_power`/`espooler_rewind_burst_duration`) - there's no
-separate "rotate" setting to tune.
+separate "rotate" setting to tune. ViViD uses its gear motor for rotation
+only while the printer is not printing.
 
 ### Choosing a temperature/time by hand
 
@@ -323,14 +447,20 @@ sensor supports humidity at all.
   humidity (some report temperature only), or the humidity reading isn't
   recognized. Drying still runs on the timer; humidity-based early
   termination just won't trigger.
-- **Venting never runs** - `heater_vent_macro` is blank, or
-  `heater_vent_interval` is `0`. If it's configured and still not firing,
-  check the console and log for macro errors.
+- **Venting never runs** - confirm a drying cycle is active and
+  `heater_vent_interval` is greater than `0`. Configure a servo, managed fan
+  override or hardware macro; an empty macro is valid when the built-in
+  hardware supplies venting. Check the status report and console for errors.
+- **Vent options are missing** - enable **Has enclosure heater(s)?** first.
+- **The servo moves but the flap does not stay open** - check the linkage,
+  angles and drive duration; continuous drive may be needed for a flap that
+  cannot hold its position without power.
 - **Drying takes longer than expected in per-gate mode** - gates queue when
   `max_concurrent_heaters` is smaller than the number of gates you asked for;
-  total wall-clock time is the sum of each queued gate's own timer, not the
-  longest one.
-- **Rotation never happens** - eSpooler isn't fitted, `ROTATE=1` wasn't
+  gates run in batches up to that limit, so total wall-clock time can
+  exceed the longest individual timer.
+- **Rotation never happens** - no supported spool-rotation mechanism is
+  fitted, `ROTATE=1` wasn't
   specified, or the gate genuinely wasn't empty (filament end secured to the
   spool) at the moment a rotation was due.
 - **`No MMU heater configured` error** - `filament_heater`/`filament_heaters`
@@ -339,6 +469,9 @@ sensor supports humidity at all.
 
 ## See also
 
+- [Fans & Airflow](Feature-Fan-Control.md) - fan selection and example setups
+- [EMU](GettingStarted-EMU.md) - per-gate hardware menus
+- [Parameters](Reference-Parameters.md#heater-environment-management) - drying and vent defaults
 - [Command Reference: `MMU_HEATER`](Reference-Commands.md#mmu_heater)
 - [Feature: eSpooler](Feature-Espooler.md) - the mechanism spool rotation
   reuses

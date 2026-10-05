@@ -298,7 +298,7 @@ HUMIDITY        = % Terminate drying when humidity goal is reached
 GATES           = g1,g2 Gates to control ONLY IF MMU has per-gate heaters/dryers
 ROTATE          = [0|1] Rotate spool (requires eSpooler and explicit GATES)
 ROTATE_INTERVAL = #(mins) How often to rotate spools when drying (requires eSpooler)
-VENT_INTERVAL   = #(mins) How often to call 'vent' macro in drying cycle
+VENT_INTERVAL   = #(mins) How often to open the vent in drying cycle
 (no parameters for status report)
 ```
 
@@ -310,7 +310,7 @@ MMU_HEATER DRY=1 TEMP=50 TIMER=240 HUMIDITY=12 ...Initiate drying cycle at 50°C
 MMU_HEATER STOP=1                              ...Stop current drying cycle
 MMU_HEATER DRY=1 ROTATE=1 GATES=1,3            ...Start drying cycle on gates 1 & 3 periodically rotating them (requires espooler)
 MMU_HEATER DRYING_DATA=1                       ...List the current drying data database
-MMU_HEATER DRY=1 VENT_INTERVAL=10              ...Initiate drying cycle calling vent macro every 10 minutes
+MMU_HEATER DRY=1 VENT_INTERVAL=10              ...Initiate drying cycle opening the vent every 10 minutes
 With per-gate heaters:
 MMU_HEATER DRY=1 GATES=0,2,3                   ...Drying cycle on gates 0,2 & 3 (subject to max simultaneous heaters)
 MMU_HEATER TEMP=45 GATES=0,1                   ...Turn heaters on for gates 0 & 1
@@ -454,35 +454,33 @@ MMU_MOTORS_ON ...Re-energize all MMU motors and servos
 
 ```{.text .console-output}
 SHARED   = [0|1] Target the unit's shared reader
-GATE     = #(int) Target the reader for this gate (implies the unit)
-GATES    = g,g,g Target multiple gates' readers (don't mix with GATE/SHARED)
-UNIT     = #(int)/name Only needed to disambiguate multiple units with shared readers
-ENABLE   = [0|1] Top-level on/off for the reader (re-inits when enabled)
+GATE     = #(int) Target the reader for this gate
+GATES    = g,g,g Target several gates' readers
+UNIT     = #(int)/name Disambiguate when several units qualify
+ENABLE   = [0|1] Turn the reader on/off (re-inits when enabled)
 READ     = [0|1] Read the addressed reader once and report the UID
-DEEP     = [0|1] With READ=1, also parse and report the tag metadata (ignores nfc_deep_read setting)
-REGISTER = [0|1] Read tag (implies READ=1 DEEP=1) and resolve it in Spoolman (may auto-create). Shared reader: report-only, Per-gate: updates gate map
-APPEND   = [0|1] With REGISTER=1 on a gate that already has a spool assigned, bind the newly scanned tag onto that spool instead of resolving/auto-creating (e.g. a second tag on the same spool)
+DEEP     = [0|1] With READ=1, also parse and report tag metadata
+REGISTER = [0|1] Read a tag and resolve it in Spoolman
+APPEND   = [0|1] With REGISTER=1, bind the tag to the gate's spool
 INIT     = [0|1] (Re)initialize the addressed reader
 RELEASE  = [0|1] Release the current target on the addressed reader
-CLEAR_PENDING = [0|1] Discard a tag staged by the shared reader (and any spool id resolved
-           from it). Leaves a TD-1 measurement or a hand-set NEXT_SPOOLID in place, and only
-           ends the pending countdown if nothing is left to apply
+CLEAR_PENDING = [0|1] Discard a tag staged by the shared reader
 INIT_ALL = [0|1] (Re)initialize every reader on every unit
-DETAILS  = [0|1] Include actual cached tag UIDs in the status report
+DETAILS  = [0|1] Include cached tag UIDs in the status report
 (no parameters for status report of all readers)
 ```
 
 ```{.text .console-output}
 Examples:
-MMU_NFC                        ...Report status of all readers (which have a cached tag)
+MMU_NFC                        ...Report status of all readers
 MMU_NFC DETAILS=1              ...As above but show the actual cached UIDs
 MMU_NFC SHARED=1 ENABLE=0      ...Disable the shared reader
-MMU_NFC CLEAR_PENDING=1        ...Discard a staged tag without touching other pending data
+MMU_NFC CLEAR_PENDING=1        ...Discard a staged tag, keep other pending data
 MMU_NFC GATE=3 READ=1          ...Read the reader on gate 3 and report the result
-MMU_NFC SHARED=1 READ=1 DEEP=1 ...Read the shared reader and report the parsed tag metadata
-MMU_NFC SHARED=1 REGISTER=1    ...Read tag and resolve/register it in Spoolman (report only, no assignment)
-MMU_NFC GATE=2 REGISTER=1      ...Read tag on gate 2 and apply to the gate map (as if auto-scanned)
-MMU_NFC GATE=2 REGISTER=1 APPEND=1 ...Read a 2nd tag on gate 2 and bind it onto the spool already assigned there
+MMU_NFC SHARED=1 READ=1 DEEP=1 ...Read the shared reader and show parsed metadata
+MMU_NFC SHARED=1 REGISTER=1    ...Resolve the tag in Spoolman, report only
+MMU_NFC GATE=2 REGISTER=1      ...Read tag on gate 2 and apply to the gate map
+MMU_NFC GATE=2 REGISTER=1 APPEND=1 ...Bind a 2nd tag onto gate 2's existing spool
 MMU_NFC GATE=2 INIT=1          ...(Re)initialize the reader on gate 2
 MMU_NFC GATES=0,1,2,3 ENABLE=0 ...Disable selected per-gate readers
 MMU_NFC INIT_ALL=1             ...Re-initialize every reader on all units
@@ -851,23 +849,20 @@ MMU_SYNC_GEAR_MOTOR SYNC=0 ...Unsync the gear motor from the extruder
 **Parameters**
 
 ```{.text .console-output}
-SHARED   = [0|1] Target the unit's off-path scanner (the one you present filament to)
-GATE     = #(int) Target the scanner for this gate (implies the unit)
-GATES    = g,g,g Target multiple gates' scanners (don't mix with GATE/SHARED)
-UNIT     = #(int)/name Only needed to disambiguate multiple units with off-path scanners
-SERIAL   = # Target one physical scanner by USB serial (including one no gate uses)
-ENABLE   = [0|1] Top-level on/off for Happy Hare's use of the scanner
-AUTO     = [0|1] Apply new readings automatically when the owning gate is known
-           (overrides the unit's td1_auto_update; needs UNIT= if nothing else implies one)
-READ     = [0|1] Poll Moonraker for the addressed scanner now, instead of using the cache
-REGISTER  = [0|1] Apply the addressed scanner's measurement to GATE
-SET_COLOR = [0|1] Overwrite GATE/GATES filament_color with the measured color
-INIT     = [0|1] Reboot the addressed scanner through Moonraker and await recovery
+SHARED   = [0|1] Target the unit's off-path scanner
+GATE     = #(int) Target the scanner serving this gate
+GATES    = g,g,g Target several gates' scanners
+UNIT     = #(int)/name Disambiguate when several units qualify
+SERIAL   = # Target one scanner by USB serial
+ENABLE   = [0|1] Turn Happy Hare's use of the scanner on/off
+AUTO     = [0|1] Override the unit's td1_auto_update until restart
+READ     = [0|1] Poll Moonraker now instead of using the cache
+REGISTER = [0|1] Apply the scanner's measurement to GATE
+SET_COLOR = [0|1] Overwrite filament_color with the measured color
+INIT     = [0|1] Reboot the addressed scanner and await recovery
 INIT_ALL = [0|1] Reboot every scanner on every unit
-CLEAR_PENDING = [0|1] Discard a measurement staged by the off-path scanner. Leaves a
-           staged tag or a hand-set NEXT_SPOOLID in place, and only ends the pending
-           countdown if nothing is left to apply
-DETAILS  = [0|1] Include attribution and per-gate measurements
+CLEAR_PENDING = [0|1] Discard a staged measurement
+DETAILS  = [0|1] Add scan time and attribution to the report
 QUIET    = [0|1] Don't report non-essential status
 (no parameters for status report of all scanners)
 ```
@@ -875,28 +870,16 @@ QUIET    = [0|1] Don't report non-essential status
 ```{.text .console-output}
 Examples:
 MMU_TD1                        ...Report status of all scanners
-MMU_TD1 DETAILS=1              ...As above but show attribution and per-gate measurements
+MMU_TD1 DETAILS=1              ...As above plus scan time and attribution
 MMU_TD1 SHARED=1 ENABLE=0      ...Disable the off-path scanner
-MMU_TD1 CLEAR_PENDING=1        ...Discard a staged measurement, keeping other pending data
+MMU_TD1 CLEAR_PENDING=1        ...Discard a staged measurement, keep other pending data
 MMU_TD1 GATE=3 READ=1          ...Poll the scanner serving gate 3 and report the result
 MMU_TD1 GATE=2 REGISTER=1      ...Apply a measurement to gate 2 (as if auto-scanned)
 MMU_TD1 GATES=0,1 ENABLE=0     ...Disable selected per-gate scanners
 MMU_TD1 GATES=0,1 SET_COLOR=1  ...Use the measured color as those gates' filament color
+MMU_TD1 UNIT=0 AUTO=1          ...Auto-apply readings on unit 0's scanners
 MMU_TD1 GATE=2 INIT=1          ...Reboot the scanner on gate 2
 MMU_TD1 INIT_ALL=1             ...Reboot every scanner on all units
-
-This command never moves filament. To measure gates, use MMU_CHECK_GATE TD1=1,
-which runs filament down its normal path past the scanner (TD1_UPDATE=1 to
-re-read gates that already have a measurement).
-An off-path scanner ('td1_device') needs no gate: present filament to it and the
-reading is held for the next gate you preload, like a tag on a shared NFC reader.
-REGISTER attributes it to a gate you won't preload; the gate keeps it even if you
-assign a spool afterwards.
-A measured color becomes the gate's filament_color when nothing else has set
-one - Spoolman and a hand-set color both win. SET_COLOR=1 overrides that, though
-on a gate with a Spoolman spool the next refresh will put Spoolman's color back.
-It carries an alpha channel derived from the TD (RRGGBBaa), so a translucent
-filament reads as one: a low TD is opaque, a high one is clear.
 ```
 
 ### MMU_TOOL_OVERRIDES
@@ -1015,8 +998,8 @@ MMU_CALIBRATE_BOWDEN RESET=1     ...reset calibrated bowden for current gate. (a
 UNIT     = #(int)|_name_ Specify unit by name, number (optional if single unit)
 LENGTH   = #(mm) Commanded distance (default: 400)
 REPEATS  = #(count) Number of repetitions (default: 3, min: 1, max: 10)
-SPEED    = #(mm/s) Move speed
-ACCEL    = #(mm/s^2) Move accel
+SPEED    = #(mm/s) Move speed (default: gear_load_speed)
+ACCEL    = #(mm/s^2) Move accel (default: gear_load_accel)
 MINSPEED = #(mm/s) Minimum speed, speed of first repeat (default: SPEED)
 MAXSPEED = #(mm/s) Maximum speed, speed of last repeat (default: SPEED)
 SAVE     = [0|1] Save calibration (default: 1)

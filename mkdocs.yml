@@ -137,9 +137,9 @@ nav:
       - Eject Buttons: Feature-Eject-Buttons.md
       - Encoder: Feature-Encoder.md
       - EndlessSpool & Runout Detection: Feature-Endless-Spool-Runout.md
-      - Environment Manager: Feature-Environment-Manager.md
       - eSpooler: Feature-Espooler.md
-      - Fan Control: Feature-Fan-Control.md
+      - Fans & Airflow: Feature-Fan-Control.md
+      - Heater & Environment Manager: Feature-Environment-Manager.md
       - Filament Bypass: Feature-Filament-Bypass.md
       - FlowGuard: Feature-FlowGuard.md
       - G-code Preprocessing: Feature-Gcode-Preprocessing.md

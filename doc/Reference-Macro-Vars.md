@@ -325,7 +325,7 @@ capable alternative.
   deeper override mechanism `_MMU_SEQUENCE_VARS` sits in front of
 - [Feature: Tip Forming and Purging](Feature-Tip-Forming-Purging.md) -
   concept and tuning workflow for tip forming/cutting and purging
-- [Feature: Fan Control](Feature-Fan-Control.md) - generated hardware,
+- [Fans & Airflow](Feature-Fan-Control.md) - generated hardware,
   parameters and the `MMU_FAN` command
 - [Purge: Blobifier](Macro-Blobifier.md) / [Tip Shaping: MMU
   Cutting](Macro-Servo-Cutter.md) - Blobifier and the MMU-mounted servo

@@ -117,15 +117,17 @@ show up.
 Worth a glance even though there's nothing to add for a stock ViViD:
 
 <p align="center">
-  <img src="GettingStarted-ViViD/05-mmu-features.png" alt="MMU Features / Additions screen: LEDs, sync-feedback buffer, environment sensor, managed fan support, heater and NFC readers fixed on; eject buttons and encoder optional" width="80%">
+  <img src="GettingStarted-ViViD/05-mmu-features.png" alt="MMU Features / Additions screen: LEDs, sync-feedback buffer, environment sensor, controller fan, heater and NFC readers fixed on; eject buttons and encoder optional" width="80%">
 </p>
 
 **LEDs**, the **sync-feedback buffer** (supplied by the buffer board from the
-previous step), the **environment sensor**, **fan support**, the **heater**,
-and the **NFC readers** are all already switched on and marked `(FIXED)`,
+previous step), the **environment sensor**, **controller fan**, **heater**,
+and **NFC readers** are all already switched on and marked `(FIXED)`,
 because every stock ViViD ships with them. The profile supplies its heater
 fan and controller fan directly, so their hardware settings do not appear as
-editable managed-fan submenus. The old-style
+editable generic fan hardware menus. The dimmed file hint identifies the
+board-supplied configuration. See [Fans & Airflow](Feature-Fan-Control.md)
+for the distinction between these fans and managed fans. The old-style
 **filament buffer to catch loose filament** is fixed *off* instead - the
 filament movement also moves the spool on this design. **Eject buttons** and
 an **encoder** are the genuine options here and default off; enable whichever

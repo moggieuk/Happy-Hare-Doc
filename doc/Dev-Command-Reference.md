@@ -206,7 +206,6 @@ _MMU_STEP_UNLOAD_TOOLHEAD EXTRUDER_ONLY=1 ...Unload the extruder only (e.g. when
 
 ```{.text .console-output}
 HELP=1 Show this help
-SYNC_STATE=['compression'|'tension'|'both'|'neutral'] Set the sync state ('loop' is disabled - it busy-waits and wedges the reactor)
 SYNC_EVENT=[-1.0 ... 1.0] Generate sync feedback event
 SEND_PRINTING_EVENT=[0|1] Send mmu:printing or mmu:not_printing event
 ACTIVATE_FLOWGUARD=[0|1] Call the flowguard activation/deactivation hooks

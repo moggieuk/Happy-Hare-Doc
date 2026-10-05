@@ -212,6 +212,8 @@ Each `unit_N` dict:
 | `fans` | list[string] | Gate-aligned managed-fan object names; present only when per-gate fans are configured |
 | `environment_sensor`, `filament_heater` | string | Shared object names; present only when shared sensor/heater configuration is used |
 | `environment_sensors`, `filament_heaters` | list[string] | Per-gate object names; present only when per-gate sensor/heater configuration is used |
+| `vent_servo` | string | Shared vent-servo object name; present only when a shared vent servo is configured |
+| `vent_servos` | list[string] | Gate-aligned vent-servo object names (with blanks for gates without a vent servo); present only when per-gate vent servos are configured |
 | `nfc_reader` | string | Shared reader name; present only when configured |
 | `nfc_readers` | list[string] | Per-gate reader names; present only when configured |
 | `td1_device` | string | Off-path TD-1 USB serial; present only when configured |
