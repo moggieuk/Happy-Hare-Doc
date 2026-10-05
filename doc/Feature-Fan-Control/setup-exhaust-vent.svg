@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="550" viewBox="0 0 1040 550" role="img" aria-labelledby="title desc">
   <title id="title">03  Heated dryer with controlled exhaust</title>
-  <desc id="desc">A separate four-spool MMU dryer with heater and heater fan. A servo opens the right-side vent; a managed exhaust fan pushes damp air out.</desc>
+  <desc id="desc">A separate four-spool MMU dryer with heater and heater fan. A servo opens the right-side vent; a managed exhaust fan just inside the enclosure pushes damp air through the vent.</desc>
   <defs>
     <marker id="warm" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse">
       <path d="M0,0 L11,5 L0,10 Z" fill="#db782c"/>
@@ -113,7 +113,7 @@
     <path d="M823,278 L853,223" fill="none" stroke="#168a96" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
     <rect x="825" y="286" width="28" height="22" rx="4" fill="#71869a" stroke="none" stroke-width="2"/>
     <path d="M839,286 L823,278" fill="none" stroke="#20344b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <g transform="translate(901 248) scale(1)">
+    <g transform="translate(771 248) scale(1)">
       <rect x="-27" y="-27" width="54" height="54" rx="8" fill="#f9fcfe" stroke="#71869a" stroke-width="2"/>
       <circle r="22" fill="#e7eef4" stroke="#a5b5c4"/>
       <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(0)"/>
@@ -122,17 +122,16 @@
       <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(270)"/>
       <circle r="6" fill="#20344b"/>
     </g>
-    <path d="M 749,248 H 797" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
-    <path d="M 860,248 H 869" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
-    <path d="M 936,248 H 991" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
+    <path d="M 802,248 H 827" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
+    <path d="M 860,248 H 991" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
     <text x="941" y="281" font-size="16" fill="#168a96" font-weight="600" text-anchor="start">Damp air</text>
     <path d="M839,218 V165 H872" fill="none" stroke="#52677d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     <text x="880" y="170" font-size="18" fill="#20344b" font-weight="400" text-anchor="start">Vent flap</text>
     <path d="M839,310 V347 H860" fill="none" stroke="#52677d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     <text x="868" y="353" font-size="18" fill="#20344b" font-weight="400" text-anchor="start">Servo</text>
-    <text x="897" y="391" font-size="18" fill="#168a96" font-weight="600" text-anchor="middle">Managed</text>
-    <text x="897" y="415" font-size="18" fill="#168a96" font-weight="600" text-anchor="middle">exhaust fan</text>
-    <path d="M901,280 V368" fill="none" stroke="#52677d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="704" y="303" font-size="18" fill="#168a96" font-weight="600" text-anchor="middle">Managed</text>
+    <text x="704" y="327" font-size="18" fill="#168a96" font-weight="600" text-anchor="middle">exhaust fan</text>
+    <path d="M771,280 V298 H754" fill="none" stroke="#52677d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M165,379 V431 H210" fill="none" stroke="#52677d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     <text x="216" y="437" font-size="18" fill="#20344b" font-weight="400" text-anchor="start">Heater fan</text>
     <text x="279" y="410" font-size="18" fill="#20344b" font-weight="400" text-anchor="middle">Heater</text>
