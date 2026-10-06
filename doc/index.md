@@ -15,8 +15,8 @@ that adds a whole new capability, without changing anything about how Klipper
 works underneath.
 
 Now in it's 4th generation, it supports every MMU/AFC with rich integration to
-Klipper, Mainsail, Fluidd, Klipperscreen and other ecosystems. It is super
-flexible and now even easier to install and setup.
+Klipper, Moonraker, Mainsail, Fluidd, Klipperscreen and other ecosystems. It is
+super flexible and now even easier to install and setup.
 
 <p align="center">
   <img class="no-floating" src="index/universal_mmu_driver.png" alt="Happy Hare driving several different MMUs through Mainsail, Fluidd, KlipperScreen and the console" width="100%">
