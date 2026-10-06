@@ -313,6 +313,16 @@ in the printer variable reference.
 
 ### UI
 
+Mainsail/Fluidd shows an active drying cycle in the MMU display after
+`MMU_HEATER DRY=1` starts drying:
+
+<p align="center">
+  <img src="Feature-Environment-Manager/mainsail-environment-drying.png" alt="Mainsail MMU display during drying, showing filament spools, 60 percent humidity, 34 degrees Celsius environment temperature and a 45 degrees Celsius drying target" width="40%">
+</p>
+
+In this example, the environment sensor reports **60% humidity** and
+**34°C**, alongside the **45°C drying target**.
+
 The heater and environment sensor remain Klipper objects; their names are
 listed in the unit metadata in
 [Printer Variables](Reference-Printer-Variables.md#printermmu_machine).
