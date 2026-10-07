@@ -45,7 +45,9 @@ variable_user_post_unload_extension : 'SERVO_CUTTER_ACTION'
 Open menuconfig's **Tip Forming / Cutting --->** screen and enable **Have
 servo cutter at MMU?**, then enter the fully qualified **Cutting servo
 pin**. This enables the MMU cutter's configuration and generates its servo
-hardware section.
+hardware section. Set its pulse widths and **Cutting servo h/w max angle**
+to match the servo. The optional startup-angle setting moves it to a chosen
+position when Klipper starts; leave it disabled if no startup move is wanted.
 
 <p align="center">
   <img src="Macro-Servo-Cutter/tip-shaping.png" alt="menuconfig Tip Forming and Cutting screen with the MMU-mounted servo cutter enabled" width="85%">

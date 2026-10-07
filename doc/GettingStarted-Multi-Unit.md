@@ -166,8 +166,11 @@ unit's configuration. To change the Klipper object name of an installed unit:
 Use **r** to rename, rather than deleting the old entry and adding a new one.
 The rename action tells the installer to retain that unit's configuration,
 calibration and saved state. It updates generated objects and filenames, saved
-pin and shared-component references, and unit-specific saved-state keys. A rename
-alone keeps the selected gate and tool because no gates change number.
+pin references and unit-specific saved-state keys. Owned encoder and buffer
+names follow the rename only when they still match the old unit name; custom
+component names stay unchanged. Shared encoder and buffer object references
+are not rewritten: review them and update any that refer to a renamed object.
+A rename alone keeps the selected gate and tool because no gates change number.
 
 On a first installation there is no installed state to migrate, so names can be
 chosen freely without selecting Replace mode.
@@ -221,9 +224,10 @@ unit's generated hardware and parameter files and its unit-specific saved state,
 and adjusts the remaining gate data. Review the tool-to-gate map and per-gate
 settings after removal, especially tools that previously used the deleted unit.
 
-If another unit still shares the removed unit's encoder, buffer or NFC reader,
-the installer refuses removal. Reconfigure that dependency and save it in a
-separate run before removing the owner.
+If another unit still references the removed unit's encoder or buffer, the
+installer warns about the reference. Reconfigure it to use an object that will
+remain available. A shared NFC reader still blocks removal of its owner;
+reconfigure that dependency and save it in a separate run first.
 
 ### Backups and saved state
 
@@ -257,21 +261,27 @@ than one filament path:
     filament path, typically after a combiner near the toolhead.
 
 For example, to make `unit1` use the sync-feedback buffer configured for `unit0`,
-enable the buffer for `unit1`, open **Buffer config**, and select **Use another
-unit's buffer?**. This option appears when another unit can supply a buffer,
-or when a saved configuration already uses a shared one.
+enable the buffer for `unit1`, open **Buffer config**, and select **Use shared
+buffer?**. Sharing is also available in single-unit installations when the
+buffer is defined in your own configuration.
 
 <p align="center">
-  <img src="GettingStarted-Multi-Unit/04-unit1-shared-buffer.png" alt="Buffer configuration for unit1 with Use another unit's buffer enabled" width="80%">
+  <img src="GettingStarted-Multi-Unit/04-unit1-shared-buffer.png" alt="Buffer configuration for unit1 with Use shared buffer enabled" width="80%">
 </p>
 
-Open **Shared buffer** and choose the unit that owns it, in this example
-`unit0`. The list includes units with their own buffer and units not yet
-configured. Configure the owner first so the installer can show its actual
-sensor settings.
+Open **Shared buffer object name** and enter the buffer's object name, in this
+example `unit0`. This is the name in `[mmu_buffer unit0]`, which may differ from
+the owner's unit name. Configure the owner first so menuconfig can show its
+sensor capabilities and resting spring state. For a manually defined buffer,
+enter those settings yourself; its hardware pins remain in your own configuration.
+
+Encoder and buffer names must start with a lowercase letter and use lowercase
+letters, digits, underscores or hyphens. The editor suggests known object names,
+but you can reference a custom object defined elsewhere. The reference must
+resolve to a real object when Klipper starts.
 
 <p align="center">
-  <img src="GettingStarted-Multi-Unit/05-shared-buffer-name.png" alt="Shared buffer chooser for unit1 with unit0 selected" width="80%">
+  <img src="GettingStarted-Multi-Unit/05-shared-buffer-name.png" alt="Shared buffer object name editor for unit1 referencing unit0" width="80%">
 </p>
 
 See [Encoder](Feature-Encoder.md) and

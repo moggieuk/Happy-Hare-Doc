@@ -42,7 +42,8 @@ opens an **Encoder config** menu:
 | Setting | Purpose |
 |---|---|
 | `Encoder name` | Klipper object name for this encoder - defaults to the unit name |
-| `Shared with existing unit?` | On a multi-unit machine, point a second unit at an encoder that already sees its filament, instead of defining a new one |
+| `Use shared encoder?` | Reference an existing encoder instead of defining a new one; available for single-unit and multi-unit installations |
+| `Shared encoder object name` | Name of the existing `[mmu_encoder NAME]` object, which must measure this unit's filament |
 | `Type` | Selects a starting resolution: Binky 8/10/12-vane wheel, TCRT5000 (the sensor fitted to ERCF v1.1), or Other |
 | `Uncalibrated encoder resolution` | The starting mm-per-pulse value, filled in from `Type` above |
 | `Gate endstop to encoder distance` | How far the encoder sits past the gate endstop, if both are fitted (see [Parameter Setup](#parameter-setup)) |
@@ -59,8 +60,9 @@ The `Type` choice's starting resolutions:
 | Binky 8-vane | `1.469` |
 | Other | `1.0` |
 
-That produces one `[mmu_encoder <unit_name>]` section in `mmu_hardware.cfg`
-per encoder:
+With sharing disabled, this produces one `[mmu_encoder <encoder_name>]` section
+in `mmu_hardware.cfg`. The encoder name defaults to the unit name but can be
+changed independently:
 
 ```ini
 [mmu_encoder unit0]
@@ -75,8 +77,10 @@ no_movement_samples: 10             # Consecutive no-movement samples before the
 
 `encoder_pin` shouldn't need an inverted (`!`) modifier either way, but often
 needs a pull-up (`^`) to read cleanly. If a second unit shares this encoder
-(`Shared with existing unit?` above), it has no `[mmu_encoder]` section of
-its own - its `[mmu_unit]` simply names the first unit's encoder instead.
+(**Use shared encoder?** above), it has no `[mmu_encoder]` section of
+its own: its `[mmu_unit]` references the existing encoder by object name.
+The name can identify another unit's encoder or one defined in your own
+configuration. Sharing does not create the referenced object.
 
 ## Parameter Setup
 

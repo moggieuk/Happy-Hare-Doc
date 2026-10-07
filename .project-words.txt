@@ -91,6 +91,7 @@ maxrange
 meltzone
 Menlo
 menuconfig
+microsteps
 misattributing
 miswired
 MkDocs
