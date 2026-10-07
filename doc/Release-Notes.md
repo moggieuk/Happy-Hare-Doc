@@ -4,7 +4,7 @@
 
 Initial release.
 
-## v4.1.0 (unreleased)
+## v4.1.0
 
 Changes on `development` relative to `main`, reviewed on October 7, 2026.
 This summary covers development through `8888b2282e`, compared with main at
