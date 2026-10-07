@@ -59,7 +59,7 @@ For whole-system examples, start with
 | `Sensor name` | Klipper object name - defaults to `<unit>_Env` |
 | `i2c bus type` | Hardware i2c (recommended) or software i2c |
 | `Sensor type` | Match the installed chip: AHT, BME/BMP, HTU21D family, SHT3X or LM75; humidity availability depends on the chip |
-| `i2c bus name` | Which hardware i2c bus to use, if hardware i2c is selected |
+| `i2c bus name` | Select a board-routed hardware bus, or **Custom bus name** to enter one; a blank custom name uses the MCU default |
 | `i2c address` | Choose the address for the chip and its wiring; defaults include `56` (`0x38`) for AHT and `118` (`0x76`) for BME280 |
 | `Report time (secs)` | Sensor reading interval where supported; `0` uses the Klipper driver default |
 | SCL/SDA pins | Only shown for software i2c |
@@ -302,9 +302,10 @@ Gate 8: (queued waiting for heater slot, target 65.0°C)
 
 ## Printer variables exposed
 
-`printer.mmu_machine.unit_N.vent_servos` lists the configured vent servo
-objects: one element for a shared vent, or a gate-aligned list for per-gate
-vents. It describes hardware, not whether the vent is currently open.
+`printer.mmu_machine.unit_N.vent_servo` names a shared vent servo.
+`printer.mmu_machine.unit_N.vent_servos` is a gate-aligned list for per-gate
+vents, with blanks for gates without a servo. These describe configured hardware,
+not whether a vent is currently open.
 
 `drying_state` - a per-gate list of `''` \| `queued` \| `active` \| `complete`
 \| `canceled`. See

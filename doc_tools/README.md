@@ -179,8 +179,9 @@ First-install naming and the editable multi-unit list need the installer's
 ordinary captures leave it off, matching an installed unit outside Replace
 mode. The second-unit session supplies a generated Box Turtle owner through
 `shared_buffer_owner: unit0`; a temporary parent configuration makes the real
-shared-buffer chooser list that unit. This changes only the temporary
-capture environment and does not read an installed printer's config.
+shared-buffer editor recognize that owner and display its sensor capabilities.
+This changes only the temporary capture environment and does not read an installed
+printer's config.
 
 Use `mc.append_entry('unit1')` for the open unit editor; the driver handles the
 list and legacy string-array editors. Unsupported editor types fail explicitly.

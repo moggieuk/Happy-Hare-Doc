@@ -376,6 +376,9 @@ def _getting_started_multi_unit_second(mc, shot):
     _hardware_menu(mc, 'Buffer config')
     mc.select(symbol('MMU_SHARED_SYNC_FEEDBACK_BUFFER'))
     mc.toggle()
+    mc.edit(symbol('PARAM_SYNC_FEEDBACK_BUFFER_NAME'))
+    mc.write('unit0')
+    mc.step(b'\r', lambda menu: not menu.in_editor())
     # Re-enter after the toggle replaces the local hardware fields.
     mc.back()
     mc.back()
@@ -384,12 +387,9 @@ def _getting_started_multi_unit_second(mc, shot):
     mc.select(symbol('MMU_SHARED_SYNC_FEEDBACK_BUFFER'))
     shot('04-unit1-shared-buffer')  # sharing enabled for unit1
 
-    mc.select(symbol('CHOICE_SHARED_BUFFER'))
-    mc.resize(MIN_ROWS)
-    mc.enter()
-    mc.select(symbol('CHOICE_SHARED_BUFFER_UNIT0'))
-    shot('05-shared-buffer-name')  # choose the unit that owns the buffer
-    mc.back()
+    mc.edit(symbol('PARAM_SYNC_FEEDBACK_BUFFER_NAME'))
+    shot('05-shared-buffer-name')  # name the shared buffer object
+    mc.cancel()
 
 
 def _getting_started_emu(mc, shot):

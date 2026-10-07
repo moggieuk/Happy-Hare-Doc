@@ -69,7 +69,10 @@ for the full parking mechanism this sits inside.
 
 If extension genuinely isn't enough - most often because you need to change
 *how* something happens rather than add a step after it - point Happy Hare
-at a completely different macro by changing one of these in `mmu.cfg`:
+at a completely different macro. **Software Options → Macro hook overrides
+(ADVANCED)** exposes the pause, state, event, preload and sequence callbacks.
+Tip-forming and purge macro choices remain in their feature settings. These
+choices set the corresponding entries in `mmu.cfg`:
 
 ```ini
 form_tip_macro           : _MMU_FORM_TIP

@@ -89,8 +89,8 @@ the full picture.
 | `endless_spool_eject_gate` | `-1` | Which gate to eject filament remains to - `-1` = the current gate |
 | `endless_spool_groups` | *(empty)* | EndlessSpool grouping list - empty means no groups defined |
 | `spoolman_support` | `off` | `off`/`readonly`/`push`/`pull` - see [Feature: Spoolman / Filament Hub](Feature-Spoolman.md) for what each does |
-| `spoolman_pending_id_timeout` | `20` s | How long a pending spool ID assignment stays valid before being voided |
-| `spoolman_led_segment` | `gate_status` | Which LED segment(s) show the pending-spool-ID overlay: `gate_status`, `status`, or `both` |
+| `spoolman_pending_id_timeout` | `20` s | How long a pending gate assignment (spool ID, NFC tag or TD-1 scan) stays valid before being voided |
+| `spoolman_led_segment` | `gate_status` | Which LED segment(s) show the pending-assignment overlay: `gate_status`, `status`, or `both` |
 | `spoolman_nfc_auto_create` | `0` | Auto-create a Spoolman spool from an unrecognized NFC tag's metadata - see [Feature: NFC/RFID Reading](Feature-NFC.md) |
 | `t_macro_color` | `slicer` | Source for the `Tx` macro's color variable: `slicer`, `allgates`, `gatemap`, or `off` |
 
