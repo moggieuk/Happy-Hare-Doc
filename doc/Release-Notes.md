@@ -14,10 +14,10 @@ for the commit history.
 
 ### Upgrade notes
 
-- Run `./install.sh` after updating if your configuration still contains
-  `endless_spool_groups`. The unused option has been removed; configure initial
-  groups with `default_endless_spool_groups` instead. A code-only update can leave
-  the removed option in place and prevent Klipper from starting. ([#1298](https://github.com/moggieuk/Happy-Hare/pull/1298))
+- You will be instructed to run `./install.sh` (`./install.sh -i` recommended).
+  Note that `endless_spool_groups` parameter has been changed to
+  `default_endless_spool_groups` if you are used to defining a specific group
+  reset point. ([#1298](https://github.com/moggieuk/Happy-Hare/pull/1298))
 - Single-unit filament sensors now appear without the unit prefix in Klipper,
   Mainsail and Fluidd. Existing qualified sensor command names remain accepted,
   but custom macros that access the sensor's printer object directly must use
