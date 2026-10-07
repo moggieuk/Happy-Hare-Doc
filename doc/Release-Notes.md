@@ -153,7 +153,7 @@ for the commit history.
 - Correct EBB board selection and MMB multi-gear pin defaults. Record fan-header
   roles and spare fan pins, and avoid conflicting MMB, TZB and EBB pin defaults.
   ([#1238](https://github.com/moggieuk/Happy-Hare/pull/1238), [#1293](https://github.com/moggieuk/Happy-Hare/pull/1293), [#1347](https://github.com/moggieuk/Happy-Hare/pull/1347), [#1352](https://github.com/moggieuk/Happy-Hare/pull/1352), [#1362](https://github.com/moggieuk/Happy-Hare/pull/1362))
-- Allow mutliple pins `multi_pin` on all fan definitions. ([#1364](https://github.com/moggieuk/Happy-Hare/pull/1364))
+- Allow multiple pins `multi_pin` on all fan definitions. ([#1364](https://github.com/moggieuk/Happy-Hare/pull/1364))
 
 ### Changes also merged into main
 
