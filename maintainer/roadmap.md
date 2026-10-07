@@ -12,7 +12,7 @@ lives in `mkdocs.yml`. Check existing coverage before creating a new page.
 | QuattroBox walkthrough | Use the wiki Quick Start and current menuconfig profile. `GettingStarted-QuattroBox.md` does not exist. |
 | Configuration reference generators | The four planned `Configuring-mmu*.cfg.md` pages and their dedicated generators do not exist. Review overlap with `Reference-Parameters.md` and `Reference-Macro-Vars.md` before deciding whether to add generators or extend those pages. Historical source mappings are in the archive's Configuration table. |
 | Troubleshooting and FAQ | The planned `Troubleshooting-and-Common-Issues.md` and `FAQ.md` do not exist. Compare the corresponding wiki pages with current Operation and Feature troubleshooting sections before deciding on new pages. |
-| Community and support | The planned `Change-Log.md`, `Donations.md`, and `Getting-Help.md` do not exist. Review existing home-page and social links before porting wiki material. |
+| Community and support | `doc/Release-Notes.md` now covers v4.0.0 and the pending v4.1.0 changes. The planned `Donations.md` and `Getting-Help.md` do not exist; review existing home-page and social links before porting wiki material. |
 | External link migration | Assess redirects or an old-to-new URL map for links from the wiki, README files, Discord, KlipperScreen, and videos once destination URLs are stable. |
 
 ## Publication dependencies
