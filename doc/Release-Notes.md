@@ -7,9 +7,9 @@ Initial release.
 ## v4.1.0
 
 Changes on `development` relative to `main`, reviewed on October 7, 2026.
-This summary covers development through `8888b2282e`, compared with main at
+This summary covers development through `d220dbaac7`, compared with main at
 `c66216b7ac`, plus the two recent toolchange-estimation PRs already merged into
-both branches. See the [full development comparison](https://github.com/moggieuk/Happy-Hare/compare/c66216b7acfa34403a66f5e6677ccf1924f635f8...8888b2282e)
+both branches. See the [full development comparison](https://github.com/moggieuk/Happy-Hare/compare/c66216b7acfa34403a66f5e6677ccf1924f635f8...d220dbaac7)
 for the commit history.
 
 ### Upgrade notes
@@ -48,6 +48,8 @@ for the commit history.
   filament is loaded, without moving the selector. ([#1288](https://github.com/moggieuk/Happy-Hare/pull/1288))
 - Initialize Blobifier whenever it is installed, including when invoked through
   a custom hook rather than selected as the purge macro. ([#1278](https://github.com/moggieuk/Happy-Hare/pull/1278))
+- Respect `log_m117_messages` for Blobifier bucket-shaking and bucket-full
+  display messages. ([#1334](https://github.com/moggieuk/Happy-Hare/pull/1334))
 - Temporarily disable pressure advance during purging and restore the live
   value afterward, including on failure. Log when pressure advance was already
   zero to help diagnose slicer settings. ([#1353](https://github.com/moggieuk/Happy-Hare/pull/1353))
@@ -87,6 +89,10 @@ for the commit history.
   early; warn when a humidity goal cannot be used. ([#1305](https://github.com/moggieuk/Happy-Hare/pull/1305), [#1315](https://github.com/moggieuk/Happy-Hare/pull/1315))
 - Make heater-fan cooldown temperature configurable and allow several output
   pins for a shared heater fan. ([#1297](https://github.com/moggieuk/Happy-Hare/pull/1297), [#1304](https://github.com/moggieuk/Happy-Hare/pull/1304))
+- Allow comma-separated pin lists for shared managed and controller fans,
+  and for per-gate managed, controller and heater fans. Fans on the listed pins
+  run together through `multi_pin`; single-pin configurations keep their
+  existing behavior. ([#1364](https://github.com/moggieuk/Happy-Hare/pull/1364), [#1365](https://github.com/moggieuk/Happy-Hare/pull/1365))
 - Add enclosure vent servos controlled by the heater manager, with shared or
   per-gate hardware settings. Group vent setup under **Heated Chamber**, require
   a heater, and correctly report shared vent status and empty heater lists.
@@ -133,6 +139,9 @@ for the commit history.
 - Improve board-supplied hardware hints, menu ordering, comment readability and
   list spacing. Expand the **Everything** starter's per-gate options.
   ([#1294](https://github.com/moggieuk/Happy-Hare/pull/1294), [#1303](https://github.com/moggieuk/Happy-Hare/pull/1303), [#1318](https://github.com/moggieuk/Happy-Hare/pull/1318), [#1342](https://github.com/moggieuk/Happy-Hare/pull/1342), [#1344](https://github.com/moggieuk/Happy-Hare/pull/1344), [#1348](https://github.com/moggieuk/Happy-Hare/pull/1348), [#1359](https://github.com/moggieuk/Happy-Hare/pull/1359))
+- Tidy the encoder and sync-feedback buffer menus, placing the encoder
+  virtual-switch option after its gate-endstop distance setting.
+  ([#1365](https://github.com/moggieuk/Happy-Hare/pull/1365))
 - Clarify that toolhead cutter safety margins apply on both entry and exit.
   ([#1244](https://github.com/moggieuk/Happy-Hare/pull/1244))
 
@@ -153,7 +162,6 @@ for the commit history.
 - Correct EBB board selection and MMB multi-gear pin defaults. Record fan-header
   roles and spare fan pins, and avoid conflicting MMB, TZB and EBB pin defaults.
   ([#1238](https://github.com/moggieuk/Happy-Hare/pull/1238), [#1293](https://github.com/moggieuk/Happy-Hare/pull/1293), [#1347](https://github.com/moggieuk/Happy-Hare/pull/1347), [#1352](https://github.com/moggieuk/Happy-Hare/pull/1352), [#1362](https://github.com/moggieuk/Happy-Hare/pull/1362))
-- Allow multiple pins `multi_pin` on all fan definitions. ([#1364](https://github.com/moggieuk/Happy-Hare/pull/1364))
 
 ### Changes also merged into main
 
