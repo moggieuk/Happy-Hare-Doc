@@ -50,8 +50,11 @@ An explicitly supplied checkout is treated as user-owned: the Makefile reads it
 as-is and never fetches, switches revisions, or removes it. `make clean-source`
 only removes the default managed cache.
 
-See `doc_tools/README.md` for how the generators themselves work, and `TOC.md`
-for the planning/status doc behind the current rewrite.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for documentation conventions and page
+templates, [AGENTS.md](AGENTS.md) for repository instructions for agents, and
+[doc_tools/README.md](doc_tools/README.md) for generator procedures.
+[The maintainer roadmap](maintainer/roadmap.md) tracks outstanding work and links
+to the historical migration archive.
 
 ## Porting from the (v3) wiki
 

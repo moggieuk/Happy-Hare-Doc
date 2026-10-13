@@ -76,6 +76,10 @@ covers the sensor itself, synchronizing gear to extruder, and AutoTune.
 
 ## Hardware Setup
 
+Examples below use the default unit name `unit0`. Substitute your configured
+[Klipper object name](Installation.md#naming-an-mmu-unit) in unit-specific
+sections, object references and pin prefixes.
+
 Enable this under **MMU Features / Additions**, in a **Buffer config**
 submenu that only appears once **Has sync-feedback buffer?** is selected:
 
@@ -85,7 +89,9 @@ submenu that only appears once **Has sync-feedback buffer?** is selected:
 
 | Setting | Purpose |
 |---|---|
-| `Sync feedback buffer name` | Klipper object name - defaults to the unit name, or shared with another unit's buffer on a multi-unit machine |
+| `Use shared buffer?` | Reference an existing buffer instead of defining one; available for single-unit and multi-unit installations |
+| `Buffer name` | Klipper object name for an owned buffer; defaults to the unit name |
+| `Shared buffer object name` | Name of the existing `[mmu_buffer NAME]` object when sharing |
 | `Sync feedback buffer sensor range` | Travel between the compression and tension trip points (or between one switch and the buffer's end, for a single-switch design) |
 | `Sync feedback buffer max range` | Total end-to-end travel the buffer mechanism allows |
 | `Buffer resting spring state` | If the buffer is sprung and reliably rests in one position (tension, compression, or neutral) when unloaded, set it here to help filament-presence detection - `n/a` if it has no reliable rest position |
@@ -93,7 +99,14 @@ submenu that only appears once **Has sync-feedback buffer?** is selected:
 | Analog (proportional) pin and tuning values | Only for a type-P sensor - see [Tuning](#tuning) below for calibrating these |
 | `Register buffer sensors` | Whether the sensors also show up as filament switch sensors in Mainsail/Fluidd - purely a UI visibility toggle |
 
-That produces one `[mmu_buffer <unit_name>]` section in `mmu_hardware.cfg`:
+With sharing disabled, this produces one `[mmu_buffer <buffer_name>]` section
+in `mmu_hardware.cfg`. The name defaults to the unit name but can be changed
+independently. When sharing, no local buffer section or hardware pins are generated.
+A matching configured owner supplies the sensor capabilities and resting spring
+state. For a buffer defined in your own configuration, enter those capabilities
+and spring state yourself.
+
+An owned buffer using the default name looks like this:
 
 ```ini
 [mmu_buffer unit0]
@@ -347,7 +360,7 @@ After updating, don't forget to restart klipper!
 ```
 
 Copy the three reported values into `mmu_hardware.cfg`'s `[mmu_buffer
-<unit_name>]` section and restart. The default search range is
+<buffer_name>]` section and restart. The default search range is
 `buffer_maxrange`; for a buffer with a lot of travel, widen it with
 `MMU_CALIBRATE_PSENSOR MOVE=<mm>` if calibration doesn't find a clean
 plateau at either end.

@@ -39,6 +39,10 @@ animations.
 
 ## Hardware Setup
 
+Examples below use the default unit name `unit0`. Substitute your configured
+[Klipper object name](Installation.md#naming-an-mmu-unit) in unit-specific
+sections, object references and pin prefixes.
+
 Enable under **MMU Features / Additions**:
 
 <p align="center">

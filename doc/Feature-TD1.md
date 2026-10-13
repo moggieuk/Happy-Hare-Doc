@@ -71,6 +71,10 @@ an individual TD and measured-color window. The readings are illustrative.
 
 ## Hardware Setup
 
+Examples below use the default unit name `unit0`. Substitute your configured
+[Klipper object name](Installation.md#naming-an-mmu-unit) in unit-specific
+sections, object references and pin prefixes.
+
 ### Moonraker and USB
 
 Connect the scanner to a USB port on the **printer host**, then enable its

@@ -42,6 +42,10 @@ A read can be shallow or deep:
 
 ## Hardware Setup
 
+Examples below use the default unit name `unit0`. Substitute your configured
+[Klipper object name](Installation.md#naming-an-mmu-unit) in unit-specific
+sections, object references and pin prefixes.
+
 Enable this in menuconfig with **Has NFC reader(s) for RFID tag?** under
 **_RFID (BETA)**, which opens an **NFC reader h/w config** menu:
 
@@ -82,7 +86,7 @@ Enable this in menuconfig with **Has NFC reader(s) for RFID tag?** under
         | `I2C MCU name` | MCU that owns the I2C bus |
         | `I2C address` | Fixed at `0x24` |
         | `I2C bus type` | Hardware I2C, or software I2C on a dedicated GPIO pair |
-        | *(hardware)* `I2C bus name` | Optional hardware I2C bus; blank uses the MCU's default bus |
+        | *(hardware)* `I2C bus name` | Select a board-routed hardware bus, or **Custom bus name**; a blank custom name uses the MCU default |
         | *(software)* `SCL pin`, `SDA pin` | Required bit-banged bus pins; give each PN532 on the same MCU its own pair |
         | `I2C speed` | Defaults to 100kHz |
         | `Receiver gain` | `0` keeps the chip default (33dB); selectable values are 18, 23, 33, 38, 43, or 48dB |
@@ -117,7 +121,7 @@ Enable this in menuconfig with **Has NFC reader(s) for RFID tag?** under
         | `I2C MCU name` | MCU that owns the I2C bus |
         | `I2C address` | Defaults to `0x28`; selectable range is `0x28`-`0x2B` |
         | `I2C bus type` | Hardware I2C, or software I2C on any GPIO pair |
-        | *(hardware)* `I2C bus name` | Optional hardware I2C bus; blank uses the MCU's default bus |
+        | *(hardware)* `I2C bus name` | Select a board-routed hardware bus, or **Custom bus name**; a blank custom name uses the MCU default |
         | *(software)* `SCL pin`, `SDA pin` | Required bit-banged bus pins |
         | `I2C speed` | Defaults to 100kHz |
         | `VEN pin` | Optional reader-enable pin |

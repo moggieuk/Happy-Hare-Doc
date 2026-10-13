@@ -1,0 +1,209 @@
+<?xml version="1.0" ?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="550" viewBox="0 0 1040 550" role="img" aria-labelledby="title desc">
+  <title id="title">05  One compartment per filament</title>
+  <desc id="desc">Four independent MMU compartments labelled gate 0 through gate 3. Each contains one spool, a managed circulation fan, a temperature/humidity sensor and its own MCU board.</desc>
+  <defs>
+    <marker id="warm" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L11,5 L0,10 Z" fill="#db782c"/>
+    </marker>
+    <marker id="cool" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L11,5 L0,10 Z" fill="#168a96"/>
+    </marker>
+  </defs>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <rect x="0" y="0" width="1040" height="550" rx="16" fill="#f6f8fb" stroke="none" stroke-width="2"/>
+    <text x="32" y="39" font-size="25" fill="#20344b" font-weight="700" text-anchor="start">05  One compartment per filament</text>
+    <text x="32" y="68" font-size="17" fill="#52677d" font-weight="400" text-anchor="start">Standalone MMU / AFC · schematic cutaway · printer not shown</text>
+    <rect x="47" y="118" width="210" height="298" rx="12" fill="#d9e3ec" stroke="#9babbb" stroke-width="2"/>
+    <rect x="39" y="129" width="210" height="287" rx="12" fill="#fffdf8" stroke="#74899e" stroke-width="2"/>
+    <text x="144" y="157" font-size="17" fill="#52677d" font-weight="700" text-anchor="middle">GATE 0</text>
+    <g transform="translate(143 230) scale(0.83)">
+      <rect x="-43" y="53" width="86" height="10" rx="5" fill="#c6d2dd" stroke="none" stroke-width="2"/>
+      <ellipse cx="7" cy="0" rx="55" ry="60" fill="#d3dce6" stroke="#8799ac" stroke-width="2"/>
+      <circle r="56" fill="#f5f8fb" stroke="#71869a" stroke-width="3"/>
+      <circle r="45" fill="#e983a9"/>
+      <circle r="21" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="26" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="31" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="36" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="41" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="15" fill="#e7eef4" stroke="#71869a" stroke-width="2"/>
+      <circle r="6" fill="#52677d"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(0)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(120)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(240)"/>
+    </g>
+    <g transform="translate(97 328) scale(0.78)">
+      <rect x="-27" y="-27" width="54" height="54" rx="8" fill="#f9fcfe" stroke="#71869a" stroke-width="2"/>
+      <circle r="22" fill="#e7eef4" stroke="#a5b5c4"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(0)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(90)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(180)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(270)"/>
+      <circle r="6" fill="#20344b"/>
+    </g>
+    <rect x="165" y="308" width="55" height="40" rx="7" fill="#eef5f8" stroke="#71869a" stroke-width="2"/>
+    <text x="192.5" y="334" font-size="17" fill="#20344b" font-weight="600" text-anchor="middle">T/H</text>
+    <g transform="translate(102 371) scale(0.8)">
+      <rect x="0" y="0" width="106" height="48" rx="5" fill="#b9ded6" stroke="#377e75" stroke-width="2"/>
+      <rect x="38" y="9" width="31" height="30" rx="3" fill="#31566b" stroke="none" stroke-width="2"/>
+      <rect x="9" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="9" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="28" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="28" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="47" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="47" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="66" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="66" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="85" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="85" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <path d="M 10,14 H 27 V 25 H 37 M 70,31 H 87 V 15 H 99" fill="none" stroke="#5a9c8e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <path d="M 68,309 V286 Q 68,277 81,277" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
+    <path d="M 220,273 V290 Q 220,298 205,298" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
+    <rect x="294" y="118" width="210" height="298" rx="12" fill="#d9e3ec" stroke="#9babbb" stroke-width="2"/>
+    <rect x="286" y="129" width="210" height="287" rx="12" fill="#fffdf8" stroke="#74899e" stroke-width="2"/>
+    <text x="391" y="157" font-size="17" fill="#52677d" font-weight="700" text-anchor="middle">GATE 1</text>
+    <g transform="translate(390 230) scale(0.83)">
+      <rect x="-43" y="53" width="86" height="10" rx="5" fill="#c6d2dd" stroke="none" stroke-width="2"/>
+      <ellipse cx="7" cy="0" rx="55" ry="60" fill="#d3dce6" stroke="#8799ac" stroke-width="2"/>
+      <circle r="56" fill="#f5f8fb" stroke="#71869a" stroke-width="3"/>
+      <circle r="45" fill="#73adbe"/>
+      <circle r="21" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="26" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="31" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="36" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="41" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="15" fill="#e7eef4" stroke="#71869a" stroke-width="2"/>
+      <circle r="6" fill="#52677d"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(0)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(120)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(240)"/>
+    </g>
+    <g transform="translate(344 328) scale(0.78)">
+      <rect x="-27" y="-27" width="54" height="54" rx="8" fill="#f9fcfe" stroke="#71869a" stroke-width="2"/>
+      <circle r="22" fill="#e7eef4" stroke="#a5b5c4"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(0)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(90)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(180)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(270)"/>
+      <circle r="6" fill="#20344b"/>
+    </g>
+    <rect x="412" y="308" width="55" height="40" rx="7" fill="#eef5f8" stroke="#71869a" stroke-width="2"/>
+    <text x="439.5" y="334" font-size="17" fill="#20344b" font-weight="600" text-anchor="middle">T/H</text>
+    <g transform="translate(349 371) scale(0.8)">
+      <rect x="0" y="0" width="106" height="48" rx="5" fill="#b9ded6" stroke="#377e75" stroke-width="2"/>
+      <rect x="38" y="9" width="31" height="30" rx="3" fill="#31566b" stroke="none" stroke-width="2"/>
+      <rect x="9" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="9" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="28" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="28" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="47" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="47" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="66" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="66" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="85" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="85" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <path d="M 10,14 H 27 V 25 H 37 M 70,31 H 87 V 15 H 99" fill="none" stroke="#5a9c8e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <path d="M 315,309 V286 Q 315,277 328,277" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
+    <path d="M 467,273 V290 Q 467,298 452,298" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
+    <rect x="541" y="118" width="210" height="298" rx="12" fill="#d9e3ec" stroke="#9babbb" stroke-width="2"/>
+    <rect x="533" y="129" width="210" height="287" rx="12" fill="#fffdf8" stroke="#74899e" stroke-width="2"/>
+    <text x="638" y="157" font-size="17" fill="#52677d" font-weight="700" text-anchor="middle">GATE 2</text>
+    <g transform="translate(637 230) scale(0.83)">
+      <rect x="-43" y="53" width="86" height="10" rx="5" fill="#c6d2dd" stroke="none" stroke-width="2"/>
+      <ellipse cx="7" cy="0" rx="55" ry="60" fill="#d3dce6" stroke="#8799ac" stroke-width="2"/>
+      <circle r="56" fill="#f5f8fb" stroke="#71869a" stroke-width="3"/>
+      <circle r="45" fill="#e7bd65"/>
+      <circle r="21" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="26" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="31" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="36" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="41" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="15" fill="#e7eef4" stroke="#71869a" stroke-width="2"/>
+      <circle r="6" fill="#52677d"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(0)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(120)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(240)"/>
+    </g>
+    <g transform="translate(591 328) scale(0.78)">
+      <rect x="-27" y="-27" width="54" height="54" rx="8" fill="#f9fcfe" stroke="#71869a" stroke-width="2"/>
+      <circle r="22" fill="#e7eef4" stroke="#a5b5c4"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(0)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(90)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(180)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(270)"/>
+      <circle r="6" fill="#20344b"/>
+    </g>
+    <rect x="659" y="308" width="55" height="40" rx="7" fill="#eef5f8" stroke="#71869a" stroke-width="2"/>
+    <text x="686.5" y="334" font-size="17" fill="#20344b" font-weight="600" text-anchor="middle">T/H</text>
+    <g transform="translate(596 371) scale(0.8)">
+      <rect x="0" y="0" width="106" height="48" rx="5" fill="#b9ded6" stroke="#377e75" stroke-width="2"/>
+      <rect x="38" y="9" width="31" height="30" rx="3" fill="#31566b" stroke="none" stroke-width="2"/>
+      <rect x="9" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="9" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="28" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="28" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="47" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="47" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="66" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="66" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="85" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="85" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <path d="M 10,14 H 27 V 25 H 37 M 70,31 H 87 V 15 H 99" fill="none" stroke="#5a9c8e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <path d="M 562,309 V286 Q 562,277 575,277" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
+    <path d="M 714,273 V290 Q 714,298 699,298" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
+    <rect x="788" y="118" width="210" height="298" rx="12" fill="#d9e3ec" stroke="#9babbb" stroke-width="2"/>
+    <rect x="780" y="129" width="210" height="287" rx="12" fill="#fffdf8" stroke="#74899e" stroke-width="2"/>
+    <text x="885" y="157" font-size="17" fill="#52677d" font-weight="700" text-anchor="middle">GATE 3</text>
+    <g transform="translate(884 230) scale(0.83)">
+      <rect x="-43" y="53" width="86" height="10" rx="5" fill="#c6d2dd" stroke="none" stroke-width="2"/>
+      <ellipse cx="7" cy="0" rx="55" ry="60" fill="#d3dce6" stroke="#8799ac" stroke-width="2"/>
+      <circle r="56" fill="#f5f8fb" stroke="#71869a" stroke-width="3"/>
+      <circle r="45" fill="#909fca"/>
+      <circle r="21" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="26" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="31" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="36" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="41" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="15" fill="#e7eef4" stroke="#71869a" stroke-width="2"/>
+      <circle r="6" fill="#52677d"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(0)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(120)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(240)"/>
+    </g>
+    <g transform="translate(838 328) scale(0.78)">
+      <rect x="-27" y="-27" width="54" height="54" rx="8" fill="#f9fcfe" stroke="#71869a" stroke-width="2"/>
+      <circle r="22" fill="#e7eef4" stroke="#a5b5c4"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(0)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(90)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(180)"/>
+      <path d="M 0,-5 C -14,-24 14,-24 15,-10 Q 11,-3 0,-5" fill="#168a96" transform="rotate(270)"/>
+      <circle r="6" fill="#20344b"/>
+    </g>
+    <rect x="906" y="308" width="55" height="40" rx="7" fill="#eef5f8" stroke="#71869a" stroke-width="2"/>
+    <text x="933.5" y="334" font-size="17" fill="#20344b" font-weight="600" text-anchor="middle">T/H</text>
+    <g transform="translate(843 371) scale(0.8)">
+      <rect x="0" y="0" width="106" height="48" rx="5" fill="#b9ded6" stroke="#377e75" stroke-width="2"/>
+      <rect x="38" y="9" width="31" height="30" rx="3" fill="#31566b" stroke="none" stroke-width="2"/>
+      <rect x="9" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="9" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="28" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="28" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="47" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="47" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="66" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="66" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="85" y="-4" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <rect x="85" y="45" width="8" height="7" rx="0" fill="#769bab" stroke="none" stroke-width="2"/>
+      <path d="M 10,14 H 27 V 25 H 37 M 70,31 H 87 V 15 H 99" fill="none" stroke="#5a9c8e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <path d="M 809,309 V286 Q 809,277 822,277" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
+    <path d="M 961,273 V290 Q 961,298 946,298" fill="none" stroke="#168a96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cool)"/>
+    <path d="M32,457 H1008" fill="none" stroke="#d0dbe5" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="32" y="491" font-size="20" fill="#20344b" font-weight="600" text-anchor="start">Each gate: spool · managed fan · T/H sensor · MCU.</text>
+    <text x="32" y="521" font-size="18" fill="#52677d" font-weight="400" text-anchor="start">Air circulates within each compartment. Heaters and vents are optional additions.</text>
+  </g>
+</svg>

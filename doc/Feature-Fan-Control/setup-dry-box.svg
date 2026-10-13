@@ -1,0 +1,104 @@
+<?xml version="1.0" ?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="550" viewBox="0 0 1040 550" role="img" aria-labelledby="title desc">
+  <title id="title">01  Sealed dry storage</title>
+  <desc id="desc">Four filament spools in a sealed MMU enclosure with desiccant and a temperature/humidity sensor. No heater, fan or vent.</desc>
+  <defs>
+    <marker id="warm" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L11,5 L0,10 Z" fill="#db782c"/>
+    </marker>
+    <marker id="cool" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L11,5 L0,10 Z" fill="#168a96"/>
+    </marker>
+  </defs>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <rect x="0" y="0" width="1040" height="550" rx="16" fill="#f6f8fb" stroke="none" stroke-width="2"/>
+    <text x="32" y="39" font-size="25" fill="#20344b" font-weight="700" text-anchor="start">01  Sealed dry storage</text>
+    <text x="32" y="68" font-size="17" fill="#52677d" font-weight="400" text-anchor="start">Standalone MMU / AFC · schematic cutaway · printer not shown</text>
+    <ellipse cx="460" cy="427" rx="377" ry="13" fill="#e1e7ed"/>
+    <path d="M 78,118 L 99,99 H 836 V 389 L 815,411" fill="none" stroke="#9babbb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M78,118 L99,99 H836 L815,118 Z" fill="#e1e9f0"/>
+    <path d="M815,118 l21,-19 v290 l-21,22 Z" fill="#d8e3ec"/>
+    <rect x="78" y="118" width="737" height="293" rx="12" fill="#edf3f7" stroke="#74899e" stroke-width="2"/>
+    <rect x="92" y="133" width="709" height="263" rx="7" fill="#fffdf8" stroke="#bdcbd8" stroke-width="2"/>
+    <rect x="111" y="411" width="40" height="12" rx="4" fill="#71869a" stroke="none" stroke-width="2"/>
+    <rect x="742" y="411" width="40" height="12" rx="4" fill="#71869a" stroke="none" stroke-width="2"/>
+    <g transform="translate(185 213) scale(1)">
+      <rect x="-43" y="53" width="86" height="10" rx="5" fill="#c6d2dd" stroke="none" stroke-width="2"/>
+      <ellipse cx="7" cy="0" rx="55" ry="60" fill="#d3dce6" stroke="#8799ac" stroke-width="2"/>
+      <circle r="56" fill="#f5f8fb" stroke="#71869a" stroke-width="3"/>
+      <circle r="45" fill="#e983a9"/>
+      <circle r="21" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="26" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="31" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="36" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="41" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="15" fill="#e7eef4" stroke="#71869a" stroke-width="2"/>
+      <circle r="6" fill="#52677d"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(0)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(120)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(240)"/>
+    </g>
+    <g transform="translate(351 213) scale(1)">
+      <rect x="-43" y="53" width="86" height="10" rx="5" fill="#c6d2dd" stroke="none" stroke-width="2"/>
+      <ellipse cx="7" cy="0" rx="55" ry="60" fill="#d3dce6" stroke="#8799ac" stroke-width="2"/>
+      <circle r="56" fill="#f5f8fb" stroke="#71869a" stroke-width="3"/>
+      <circle r="45" fill="#73adbe"/>
+      <circle r="21" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="26" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="31" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="36" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="41" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="15" fill="#e7eef4" stroke="#71869a" stroke-width="2"/>
+      <circle r="6" fill="#52677d"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(0)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(120)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(240)"/>
+    </g>
+    <g transform="translate(517 213) scale(1)">
+      <rect x="-43" y="53" width="86" height="10" rx="5" fill="#c6d2dd" stroke="none" stroke-width="2"/>
+      <ellipse cx="7" cy="0" rx="55" ry="60" fill="#d3dce6" stroke="#8799ac" stroke-width="2"/>
+      <circle r="56" fill="#f5f8fb" stroke="#71869a" stroke-width="3"/>
+      <circle r="45" fill="#e7bd65"/>
+      <circle r="21" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="26" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="31" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="36" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="41" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="15" fill="#e7eef4" stroke="#71869a" stroke-width="2"/>
+      <circle r="6" fill="#52677d"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(0)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(120)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(240)"/>
+    </g>
+    <g transform="translate(683 213) scale(1)">
+      <rect x="-43" y="53" width="86" height="10" rx="5" fill="#c6d2dd" stroke="none" stroke-width="2"/>
+      <ellipse cx="7" cy="0" rx="55" ry="60" fill="#d3dce6" stroke="#8799ac" stroke-width="2"/>
+      <circle r="56" fill="#f5f8fb" stroke="#71869a" stroke-width="3"/>
+      <circle r="45" fill="#909fca"/>
+      <circle r="21" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="26" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="31" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="36" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="41" fill="none" stroke="#ffffff" opacity=".38" stroke-width="1.6"/>
+      <circle r="15" fill="#e7eef4" stroke="#71869a" stroke-width="2"/>
+      <circle r="6" fill="#52677d"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(0)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(120)"/>
+      <rect x="-4" y="-53" width="8" height="32" rx="4" fill="#e7eef4" transform="rotate(240)"/>
+    </g>
+    <rect x="143" y="327" width="109" height="49" rx="7" fill="#ece4ce" stroke="#b9ab87" stroke-width="2"/>
+    <circle cx="156" cy="339" r="3" fill="#baa879"/>
+    <circle cx="180" cy="344" r="3" fill="#baa879"/>
+    <circle cx="209" cy="336" r="3" fill="#baa879"/>
+    <circle cx="228" cy="353" r="3" fill="#baa879"/>
+    <circle cx="167" cy="362" r="3" fill="#baa879"/>
+    <circle cx="196" cy="359" r="3" fill="#baa879"/>
+    <text x="280" y="358" font-size="21" fill="#20344b" font-weight="400" text-anchor="start">Desiccant</text>
+    <rect x="625" y="333" width="55" height="40" rx="7" fill="#eef5f8" stroke="#71869a" stroke-width="2"/>
+    <text x="652.5" y="359" font-size="17" fill="#20344b" font-weight="600" text-anchor="middle">T/H</text>
+    <text x="697" y="358" font-size="20" fill="#20344b" font-weight="400" text-anchor="start">Sensor</text>
+    <path d="M32,457 H1008" fill="none" stroke="#d0dbe5" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="32" y="491" font-size="20" fill="#20344b" font-weight="600" text-anchor="start">Keep moisture out.</text>
+    <text x="32" y="521" font-size="18" fill="#52677d" font-weight="400" text-anchor="start">The sensor monitors humidity; desiccant keeps the sealed compartment dry.</text>
+  </g>
+</svg>

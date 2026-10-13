@@ -23,6 +23,12 @@ refresh it to the latest commit at the branch, tag or commit named in
 [`HAPPY_HARE_REF`](../HAPPY_HARE_REF) before every run. The cache is disposable;
 do not make source changes inside it.
 
+Override the source ref for a single run with
+`make shots HAPPY_HARE_REF=feat/unit-restructure` (or `development`). This does
+not switch the documentation branch: images are written into the current
+Happy-Hare-Doc checkout. If the source refresh fails, the command stops rather
+than generating images from the previous cached ref.
+
 For faster iteration against a checkout you manage, use
 `HAPPY_HARE_SRC=/path/to/Happy-Hare make shots`. An explicitly supplied checkout
 is read as-is and is never fetched, switched, or removed by these targets.
@@ -47,6 +53,19 @@ fix is in `extras/mmu/`, not in the generated page. See
 [Code Layout](../doc/Dev-Code-Layout.md#command-discovery-and-registration) for how commands
 get discovered at runtime by the same underlying mechanism.
 
+### Command reference scope
+
+The generator produces both `doc/Reference-Commands.md` and
+`doc/Dev-Command-Reference.md`. Registered commands are separated by category;
+step and internal commands belong in the developer reference.
+
+The additional scan of macro configuration files intentionally includes only
+`CATEGORY_MACROS` and `CATEGORY_CALLBACKS`. Other macro-only matches include
+commands already documented elsewhere, legacy aliases, variable containers, and
+internal helpers. Expanding this scan requires a case-by-case documentation
+decision, not automatic inclusion of every macro name. Keep that scope in sync
+with `MACRO_CATEGORIES_INCLUDED` in the generator.
+
 ## Building the site
 
 The site is built with [Zensical](https://zensical.org) reading `mkdocs.yml` at the repo
@@ -68,6 +87,30 @@ looks stale, drop the cache once rather than debugging the content:
 ./venv/bin/zensical build --clean
 ```
 
+### Build limitations and workarounds
+
+These observations came from earlier Zensical builds. Retest them when upgrading
+the generator; they are not claims about every future release.
+
+- Keep maintainer guidance outside `docs_dir`. Earlier builds did not honor
+  `exclude_docs`, so relying on it could publish internal notes.
+- If a build appears stale or reports missing pages that exist, try
+  `venv/bin/zensical build --clean --strict` before changing correct source files.
+  The incremental cache has produced inconsistent results.
+- Mermaid custom fences rendered inconsistently across clean builds. The site
+  instead initializes raw HTML diagrams through `hh-mermaid.js`; do not restore
+  Mermaid fences without testing that route across repeated clean builds.
+- SuperFences and `fenced_code` compete for the same Markdown processor and must
+  not be enabled together. Keep SuperFences as the sole backtick-fence processor,
+  using `css_class: codehilite`, plus the separate `codehilite` extension for
+  traditional indented blocks. This conflict explained earlier ordinary-fence
+  failures; it did not resolve the separate Mermaid custom-fence problem.
+
+Writing conventions, including table escaping, are maintained in
+[CONTRIBUTING.md](../CONTRIBUTING.md). The
+[migration archive](../maintainer/archive/documentation-migration.md) preserves
+the original experiments and rationale if further investigation is needed.
+
 ## Page conventions
 
 ### No `[TOC]` marker - the theme already provides one
@@ -84,12 +127,74 @@ new pages; it's been removed from the ones that had it (`doc/Reference-Printer-V
 ## Regenerating the images
 
 ```bash
-make shots                                       # everything, into doc/images
+make shots                                       # everything, into per-page image folders
 make shots ARGS='--list'                         # the sessions and what each covers
-make shots ARGS='--only installer-tour'          # just one session
-make shots ARGS='--only installer-tour -v'       # ...and print each screen as text
+make shots ARGS='--only getting-started-boxturtle'          # just one session
+make shots ARGS='--only getting-started-boxturtle -v'       # ...and print each screen as text
 make shots ARGS='--seed ~/printer_data/.mmu_config'   # against a real machine
+make shots ARGS='--output-root /tmp/hh-preview'       # preview all per-page folders elsewhere
 ```
+
+Captures are staged in a temporary directory. Only after every requested session
+succeeds are the images copied into their destination folders. A failed capture
+leaves the existing images untouched; `--only` applies this rule to the selected
+sessions. A file-replacement error rolls back replacements already made. Individual
+file replacements are atomic, but the whole set is not a transaction across a
+power loss or forced process termination.
+
+Normal errors report the failed session and expected target. Use `-v` for full
+screen dumps and tracebacks. A screenshot that still contains menu scroll arrows
+is rejected instead of publishing a truncated menu.
+
+### Keeping sessions resilient
+
+Use `symbol('PIN_GEAR_DIR')` with `mc.select()`, `mc.enter()`, or `mc.edit()`
+for settings and named choices. The driver reads their current prompts from the
+selected Happy Hare source. For unnamed menus, `menu_of('PIN_GEAR_DIR')` resolves
+the nearest enclosing menu from a setting inside it. Padding and display markup
+are ignored when matching. Plain text remains supported for menus without a
+convenient stable symbol.
+
+Happy Hare disables menuconfig's symbol-search shortcut, so this resolves labels
+from Kconfig and still drives the real UI. It does not bypass visibility rules or
+automatically follow a setting moved into another menu. Removed symbols, changed
+dependencies, and redesigned workflows still need deliberate session updates.
+
+The `installer-top` and `installation-unit-name` sessions capture the general
+installer menu and its **Name** submenu. The `getting-started-3ms-additions`,
+`getting-started-ercf-additions` and `getting-started-tradrack-additions` sessions
+also refresh their guides' first-run and configured top menus. Include those
+sessions when a shared top-level prompt changes.
+
+The grouped **MMU Features / Additions** screen is taller than the initial
+terminal. Screenshot sessions use `_additions(mc)` to fit it before walking
+to settings below the visible area. Refit after returning from a shorter
+submenu when navigating between its groups; this avoids stale terminal rows
+during scrolling. `_hardware_menu(mc, title)` then enters the selected
+submenu from the minimum terminal height so parent rows do not survive in
+short hardware captures.
+
+First-install naming and the editable multi-unit list need the installer's
+`F_UNITS_RESTRUCTURE=y` context. Their sessions set `units_restructure: True`;
+ordinary captures leave it off, matching an installed unit outside Replace
+mode. The second-unit session supplies a generated Box Turtle owner through
+`shared_buffer_owner: unit0`; a temporary parent configuration makes the real
+shared-buffer editor recognize that owner and display its sensor capabilities.
+This changes only the temporary capture environment and does not read an installed
+printer's config.
+
+Use `mc.append_entry('unit1')` for the open unit editor; the driver handles the
+list and legacy string-array editors. Unsupported editor types fail explicitly.
+
+Run the navigation and publication regression tests with:
+
+```bash
+HAPPY_HARE_SRC="$PWD/.happy-hare-src" venv/bin/python -m unittest doc_tools.test_shots
+```
+
+Then exercise the real sessions with `--output-root` before replacing published
+images. `--outdir` remains the fallback for sessions without a per-page folder;
+`--output-root` redirects the per-page folders too.
 
 ## Seeds — which machine the screenshots show
 
@@ -106,6 +211,15 @@ a reader could be shown.
   toolhead-cutter capability and its standalone cutting choice enabled. This
   gives the cutter screenshot session a clean startup state without relying on
   menuconfig to redraw a newly gated group in place.
+* **`boxturtle-environment`.** A Box Turtle with environment sensing, managed
+  fans, a heater, heater fans, a controller fan and a vent servo enabled. The
+  fan and environment Feature sessions use it to show all related settings,
+  including heater association and servo angles, without relying on an
+  in-session redraw of newly visible menus.
+* **`emu-environment`.** An EMU on EBB gen1 boards with optional heaters
+  and vent servos enabled. The separate `getting-started-emu-environment`
+  session captures per-gate hardware menus without changing the normal
+  first-install walkthrough's starter configuration.
 * **`ercf`.** Generated the same way, selecting `MMU_TYPE_ERCF_3_0` (the
   Kconfig choice's own default version) instead. Reach for this seed when a
   screen's story fits a moving-carriage/servo design better than Box

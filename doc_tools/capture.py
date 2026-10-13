@@ -60,6 +60,8 @@ import tempfile
 import termios
 import time
 from collections import Counter
+from dataclasses import dataclass
+from functools import cached_property
 
 # Two separate roots, deliberately not one REPO_ROOT: this file lives in the
 # Happy-Hare-Doc repo (DOC_ROOT - where screenshots get written) but parses
@@ -155,7 +157,7 @@ def hh_version():
 
 
 def doc_env(unit_name='unit0', multi_unit=False, entry_point=False, unit_index=0,
-            capabilities=None):
+            capabilities=None, units_restructure=False, parent_config=None):
     """
     The environment a documentation capture parses Kconfig under.
 
@@ -179,6 +181,8 @@ def doc_env(unit_name='unit0', multi_unit=False, entry_point=False, unit_index=0
         'UNIT_INDEX': str(unit_index),
         'F_MULTI_UNIT': 'y' if multi_unit else '',
         'F_MULTI_UNIT_ENTRY_POINT': 'y' if entry_point else '',
+        'F_UNITS_RESTRUCTURE': 'y' if units_restructure else 'n',
+        'KCONFIG_PARENT': parent_config or '',
         # Makefile:620-623 switches style for the multi-unit entry point, so a
         # capture of that screen gets the palette a user would really see.
         'MENUCONFIG_STYLE': 'aquatic' if entry_point else 'default',
@@ -207,6 +211,21 @@ BUILTIN_SEEDS = {
         'MMU_TYPE_BOX_TURTLE_1_0',
         'MMU_HAS_TOOLHEAD_CUTTER',
         'CHOICE_FORM_TIP_MACRO_CUT_TIP',
+    ),
+    'boxturtle-environment': (
+        'MMU_TYPE_BOX_TURTLE_1_0',
+        'MMU_HAS_ENVIRONMENT_SENSOR',
+        'MMU_HAS_FANS',
+        'MMU_HAS_HEATER',
+        'MMU_HAS_HEATER_FANS',
+        'MMU_HAS_CONTROLLER_FAN',
+        'MMU_HAS_VENT_SERVO',
+    ),
+    'emu-environment': (
+        'MMU_TYPE_EMU_1_0',
+        'BOARD_TYPE_EBB_GEN1',
+        'MMU_HAS_HEATER',
+        'MMU_HAS_VENT_SERVO',
     ),
     'ercf': ('MMU_TYPE_ERCF_3_0',),
 }
@@ -322,6 +341,55 @@ class ScreenError(RuntimeError):
     """A step did not land where the shot said it would."""
 
 
+def normalized(text):
+    """Ignore Kconfig display markup and padding, not meaningful wording."""
+    return ' '.join(re.sub(r'\[\[/?[A-Z]+\]\]', '', text).split())
+
+
+@dataclass(frozen=True)
+class SymbolTarget:
+    """A symbol's prompt, or its nearest enclosing menu/choice's prompt."""
+    name: str
+    parent_menu: bool = False
+
+
+def symbol(name):
+    return SymbolTarget(name)
+
+
+def menu_of(name):
+    return SymbolTarget(name, parent_menu=True)
+
+
+class PromptIndex:
+    def __init__(self, kconfig):
+        self.kconfig = kconfig
+
+    def prompts(self, target):
+        item = self.kconfig.syms.get(target.name)
+        if item is None:
+            item = self.kconfig.named_choices.get(target.name)
+        if item is None:
+            raise ScreenError('Kconfig symbol/choice %s no longer exists' % target.name)
+        prompts = set()
+        for node in item.nodes:
+            # Board defaults also define these symbols, without a UI prompt.
+            if not node.prompt:
+                continue
+            if target.parent_menu:
+                node = node.parent
+                while node and not node.is_menuconfig:
+                    node = node.parent
+                if node is None or node is self.kconfig.top_node:
+                    continue
+            if node.prompt:
+                prompts.add(normalized(node.prompt[0]))
+        if not prompts:
+            raise ScreenError('No prompted %s for %s' %
+                              ('parent menu' if target.parent_menu else 'setting', target.name))
+        return prompts
+
+
 class Menuconfig:
     """
     A live menuconfig in a pty, plus everything needed to ask what it is showing.
@@ -332,7 +400,7 @@ class Menuconfig:
     """
 
     def __init__(self, cols=DEFAULT_COLS, rows=40, seed=DEFAULT_SEED, style=None,
-                 min_rows=MIN_ROWS, **context):
+                 min_rows=MIN_ROWS, shared_buffer_owner=None, **context):
         """
         `seed` is a built-in name, a path to an existing .mmu_config, or None for
         Kconfig defaults. `min_rows` is the shortest a fitted screenshot may be.
@@ -365,6 +433,17 @@ class Menuconfig:
         if seed_path:
             shutil.copyfile(seed_path, self._config)
 
+        if shared_buffer_owner:
+            # Give the real shared-component chooser an existing owner, without
+            # depending on a printer's saved configuration or modifying it.
+            parent = os.path.join(self._tmpdir, '.mmu_config_parent')
+            with open(parent, 'w', encoding='utf-8') as config:
+                config.write('CONFIG_MMU_UNITS="%s,%s"\n' %
+                             (shared_buffer_owner, self.context['unit_name']))
+            generate_seed(BUILTIN_SEEDS['boxturtle'], parent + '_' + shared_buffer_owner,
+                          doc_env(unit_name=shared_buffer_owner, multi_unit=True))
+            self.context['parent_config'] = parent
+
         env = dict(os.environ)
         env.update(doc_env(**self.context))
         # NO LINES/COLUMNS HERE. ncurses honours $LINES/$COLUMNS over the terminal's
@@ -396,7 +475,11 @@ class Menuconfig:
     # -- context manager ------------------------------------------------------
 
     def __enter__(self):
-        return self.start()
+        try:
+            return self.start()
+        except BaseException:
+            self.close()
+            raise
 
     def __exit__(self, *exc):
         self.close()
@@ -563,6 +646,9 @@ class Menuconfig:
 
     def state(self):
         """One line naming where we are - used in errors and by --dump."""
+        if self.in_editor():
+            kind = next(kind for kind in self._EDITOR if self.has(kind))
+            return 'breadcrumb=%r editor=%r' % (self.breadcrumb, kind)
         return 'breadcrumb=%r selected=%r' % (self.breadcrumb, self.selected)
 
     # -- driving it -----------------------------------------------------------
@@ -605,9 +691,26 @@ class Menuconfig:
                               % (keys, expect, self.state(), self.text))
         return self
 
-    def _walk(self, text, direction, limit):
+    @cached_property
+    def prompt_index(self):
+        """Parse the selected source with this session's unit context, lazily."""
+        sys.path.insert(0, KCONFIGLIB)
+        import kconfiglib
+        env = doc_env(**self.context)
+        saved = {key: os.environ.get(key) for key in env}
+        os.environ.update(env)
+        try:
+            return PromptIndex(kconfiglib.Kconfig(os.path.join(INSTALLER, 'Kconfig'), warn=False))
+        finally:
+            for key, value in saved.items():
+                if value is None:
+                    os.environ.pop(key, None)
+                else:
+                    os.environ[key] = value
+
+    def _walk(self, matches, direction, limit):
         """
-        Step the highlight until it lands on `text` or stops moving.
+        Step the highlight until `matches` accepts it or it stops moving.
 
         "Stopped moving" is the whole screen being identical, not an assumed change of
         one displayed row. Comment headings remain visible but are not selectable, so
@@ -616,7 +719,7 @@ class Menuconfig:
         for _ in range(limit):
             before = self._snapshot()
             self.key(direction)
-            if text in self.selected:
+            if matches(self.selected):
                 return True
             if self._snapshot() == before:
                 return False                         # end of the menu; it does not wrap
@@ -624,16 +727,32 @@ class Menuconfig:
 
     def select(self, text, limit=200):
         """
-        Put the highlight on the first item containing `text`.
+        Select a symbol's current prompt, or an item containing a text label.
 
         Searches down, then back up, because menuconfig does not wrap and the item
         may be above where the highlight starts - or off-screen entirely in a menu
         longer than the window, which is why this cannot just look at what is
         currently displayed.
         """
-        if text in self.selected:
+        if isinstance(text, SymbolTarget):
+            prompts = self.prompt_index.prompts(text)
+            # Match the full source prompt using the same substring semantics as
+            # text navigation. Scrolling can leave stale trailing characters in
+            # pyte; requiring the entire rendered row to match rejects valid rows.
+            matches = lambda selected: any(p in normalized(selected) for p in prompts)
+            if text.parent_menu or text.name in self.prompt_index.kconfig.named_choices:
+                # Menu/choice titles are often prefixes of another menu (e.g.
+                # Toolhead versus Toolhead sensors/settings). Require the value
+                # or submenu delimiter after their complete title.
+                def matches(selected):
+                    selected = normalized(selected)
+                    return any(re.search(re.escape(p) + r'(?=$|\s+(?:\(|--->))', selected)
+                               for p in prompts)
+        else:
+            matches = lambda selected: normalized(text) in normalized(selected)
+        if matches(self.selected):
             return self
-        if self._walk(text, DOWN, limit) or self._walk(text, UP, limit):
+        if self._walk(matches, DOWN, limit) or self._walk(matches, UP, limit):
             return self
         raise ScreenError('could not put the highlight on %r (%s)\n%s'
                           % (text, self.state(), self.text))
@@ -720,7 +839,7 @@ class Menuconfig:
     # The input dialog titles itself '<prompt> (string)' - or (int)/(hex) - which is
     # both how the tool knows an editor opened and the only reliable way to tell an
     # editor from a submenu, since Enter opens whichever the item happens to be.
-    _EDITOR = ('(string)', '(int)', '(hex)', '(string array)')
+    _EDITOR = ('(string)', '(int)', '(hex)', '(float)', '(string array)', '(list)')
 
     def in_editor(self):
         return any(self.has(kind) for kind in self._EDITOR)
@@ -751,6 +870,28 @@ class Menuconfig:
     def cancel(self):
         """Close the editor WITHOUT applying it."""
         return self.step(ESC, lambda mc: not mc.in_editor())
+
+    def append_entry(self, value):
+        """Append to an open unit editor, leaving it open for a screenshot."""
+        if not re.fullmatch(r'[a-z][a-z0-9_-]*', value):
+            raise ScreenError('Invalid unit name: %r' % value)
+        if self.has('(list)'):
+            self.step(b'a', 'Name of new entry')
+            return self.step(value.encode() + ENTER,
+                             lambda mc: mc.has('(list)') and mc.has(value)
+                             and not mc.has('Name of new entry') and not mc.has('Error'))
+        if self.has('(string array)'):
+            # The legacy editor starts on its first line. Follow its cursor to
+            # the last row (including scrolling) before inserting a new line.
+            for _ in range(200):
+                before = (self.text, self.screen.cursor.x, self.screen.cursor.y)
+                self.key(DOWN, timeout=0.5)
+                if before == (self.text, self.screen.cursor.x, self.screen.cursor.y):
+                    break
+            else:
+                raise ScreenError('Could not find the end of the unit array')
+            return self.step(b'\x05' + ENTER + value.encode(), lambda mc: mc.has(value))
+        raise ScreenError('Unsupported unit editor (%s)' % self.state())
 
     def resize(self, rows):
         """
@@ -891,8 +1032,8 @@ class Menuconfig:
         # published image says "cut off here", and healing happens after it.
         arrows = self.scroll_arrows()
         if arrows and not self.in_editor():
-            print('    WARNING: %s is being captured with scroll arrows on row %d'
-                  % (os.path.basename(path), arrows[0][0]), file=sys.stderr)
+            raise ScreenError('%s would be captured with scroll arrows on row %d'
+                              % (os.path.basename(path), arrows[0][0]))
         os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
         render(self.screen, path, trim=trim, scale=scale)
         return path

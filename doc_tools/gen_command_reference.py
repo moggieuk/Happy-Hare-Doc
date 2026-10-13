@@ -141,7 +141,7 @@ DESCRIPTION_RE = re.compile(r'^description:\s*(.*)$')
 # TESTING, OTHER, STEPS, INTERNAL) also has real gcode_macro-only hits
 # (MMU_COLD_PULL, legacy-alias macro names, _MMU_*_VARS containers, MMU__*
 # internal helpers) that already have a deliberate home elsewhere or are
-# explicitly not documented per prior request - see TOC.md. Folding those in
+# explicitly not documented per prior request - see doc_tools/README.md, "Command reference scope". Folding those in
 # here too would need that same case-by-case call, not a mechanical scan.
 MACRO_CATEGORIES_INCLUDED = {"CATEGORY_MACROS", "CATEGORY_CALLBACKS"}
 

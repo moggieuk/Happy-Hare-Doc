@@ -200,7 +200,7 @@ average_toolchange_time: 0.0
 
 | Parameter | Type | Default | Unit | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| <nobr>`average_toolchange_time`</nobr> | float | `0.0` | Seconds | The estimated average duration of a completetoolchange cycle (from unload start to reload and resume). When set above `0.0`, the G-code preprocessor generates time hints for `klipper_estimator`. |
+| <nobr>`average_toolchange_time`</nobr> | float | `0.0` | Seconds | The estimated average duration of a complete toolchange cycle (from unload start to reload and resume). When set above `0.0`, the G-code preprocessor generates time hints for `klipper_estimator`. |
 
 !!! note "Finding Your Average Toolchange Duration"
     You can check your printer's historical average toolchange duration using the Happy Hare statistics engine. Run `MMU_STATS` in your console or check the Happy Hare panel in Mainsail/Fluidd to find your actual average swap cycle time.

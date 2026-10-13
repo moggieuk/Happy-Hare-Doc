@@ -38,10 +38,9 @@ them blank for the default bed-mounted brush.
     the newer mechanism accounts for toolhead movement more generally
     rather than being specific to this one add-on.
 
-!!! note
-    These three hooks - and `clean_macro`, which points at the nozzle
-    cleaning macro to run - aren't exposed in menuconfig at all. Set them
-    by hand-editing `mmu_macro_vars.cfg` directly.
+Set these three hooks and `clean_macro` under **Macro Variables → Blobifier →
+Hooks and Extensions**. Enter macro names or G-code without surrounding quotes.
+The default cleaning macro is `BLOBIFIER_CLEAN`; leave it blank to skip cleaning.
 
 ## Enabling Blobifier
 
@@ -63,20 +62,22 @@ The fields in this screen configure the hardware generated in `mmu.cfg`:
 | **Blobifier bucket switch pin** | Input for the bucket-presence switch. Enter the fully qualified MCU pin and retain the `^` pull-up prefix. Removing the bucket clears Blobifier's stored blob count. |
 | **Blobifier tray actuator** | Select **Servo** for the servo-driven tray or **Stepper (manual_stepper)** for the stepper-driven tray. This also sets the actuator type used by the Blobifier macros. |
 | **Blobifier servo pin** and pulse widths | Generated as `[mmu_servo blobifier]`. The default pulse widths are starting points; tune the minimum for fully out and the maximum for fully in without servo buzz. |
+| **Servo h/w max angle** and startup angle | Match the servo's angular range to its pulse widths. Optionally set a position to apply at Klipper startup. |
 | **Select standalone purging option** | Choose **Blobifier**. **Simple purge into bucket** runs the much simpler `_MMU_PURGE` macro and does not activate Blobifier. |
 | **Happy Hare controlled in-print purge** | Leave enabled to use Blobifier during prints, and turn off the slicer's wipe tower. |
 
 Selecting **Stepper (manual_stepper)** replaces the servo fields with the
-step, direction, enable, endstop and TMC UART pins plus motor current:
+step, direction, enable and endstop pins, TMC driver selection and connection
+settings, motor current, rotation distance, microsteps, gear ratio and motion limits:
 
 <p align="center">
   <img src="Macro-Blobifier/purging-stepper.png" alt="menuconfig Purging screen with Blobifier enabled and the stepper tray pin and current fields visible" width="80%">
 </p>
 
-The generated stepper configuration targets a TMC2209 over UART. For a
-TMC2240 or TMC5160 over SPI, use the commented alternative driver block in
-`mmu.cfg` and fill in its SPI pins. The stepper endstop commonly needs the
-`^!` pull-up and inversion modifiers shown in the prompt's help.
+**Stepper TMC chip/bus** defaults to **TMC2209 / UART**. Select the fitted
+driver here; menuconfig exposes the corresponding UART or SPI connection
+settings and generates its driver section. The stepper endstop commonly needs
+the `^!` pull-up and inversion modifiers shown in the prompt's help.
 
 The bucket switch above detects whether the collection bucket is fitted. It
 is separate from the bucket-capacity and shaker settings on the Macro

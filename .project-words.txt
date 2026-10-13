@@ -91,6 +91,7 @@ maxrange
 meltzone
 Menlo
 menuconfig
+microsteps
 misattributing
 miswired
 MkDocs
@@ -102,6 +103,7 @@ NeoPixel
 navigations
 nunc
 Octo
+OFFPATH
 orbem
 OwlFC
 PETG

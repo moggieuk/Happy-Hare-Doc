@@ -128,6 +128,26 @@ color to whatever gate 7 has loaded:
     Tool-to-Gate map, unlike a gate's own LED color which always reflects
     that physical gate regardless of mapping.
 
+## Fan and MCU sensor visibility
+
+Generated managed, heater and controller fans each have a **Hide in
+Mainsail / Fluidd** switch in their menuconfig hardware menu. It is enabled
+by default; turn it off to show that fan type. On a per-gate design, one
+switch applies to all gates of that type.
+
+Hidden names begin with `_`, for example `_unit0_fan`; visible names omit
+that prefix, for example `unit0_fan`. The fan's automatic behavior is
+unchanged. Regenerate the configuration and restart Klipper, and update
+custom macros that refer to a renamed object. See
+[Fans & Airflow](Feature-Fan-Control.md#mainsail-fluidd) for names and real
+menu screenshots. Board-supplied custom fans may be configured in the
+hardware file identified by menuconfig instead.
+
+**Create MCU CPU sensors?** has its own visibility option under
+**MMU Features / Additions**. MCU sensors default to hidden for shared-MCU
+layouts and visible for per-gate MCU layouts. Hiding them does not prevent
+managed fans from using their temperatures.
+
 ## See also
 
 - [KlipperScreen](KlipperScreen.md) - the equivalent touchscreen UI
