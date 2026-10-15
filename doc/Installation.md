@@ -244,9 +244,10 @@ how much of your existing `.cfg` files is then copied back on top.
 
 - Use it to upgrade Happy Hare and pick up new options without changing any value
   you have tuned.
-- `menuconfig` is of little use in this mode. The values it shows may be out of
+- `menuconfig` is of limited use in this mode. The values it shows may be out of
   date, and changing one has no effect when the option is already in your `.cfg`
-  files.
+  files. However menuconfig will still controll adding or removing sections and thus
+  is useful if you have added a new feature to your MMU.
 
 **2) Replace: `menuconfig` is your single source of truth**
 
