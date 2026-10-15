@@ -203,6 +203,10 @@ directory first regardless. If you installed with custom paths (`-k`, `-c`,
 or `-m`), pass the same flags again here, or the upgrade will look in the
 default locations and likely miss your actual install.
 
+If an upgrade goes wrong, see
+[Recovering Configuration from a Backup](GettingStarted-Installer-Configurator.md#recovering-configuration-from-a-backup)
+to restore one of those backups.
+
 ## Choosing an upgrade mode
 
 When you run `./install.sh -i` over an existing configuration, the installer asks
@@ -228,7 +232,7 @@ how much of your existing `.cfg` files is then copied back on top.
 | Changes made in `menuconfig` this run | Applied only to options not already in your `.cfg` files | Applied | Applied to simple values and macro variables |
 | New options and sections from a newer release | Added | Added | Added |
 | Options and sections you added yourself | Dropped, and listed in the install output | Dropped | Dropped, and listed in the install output |
-| Configuration below the `# EXCLUDE FROM CONFIG BUILDER` line in `mmu.cfg` and `mmu_hardware.cfg` | Kept unchanged | Reset to the template | Kept unchanged |
+| Configuration below the `# EXCLUDE FROM CONFIG BUILDER` line in `mmu.cfg` and `mmu_hardware.cfg` | Kept unchanged | Regenerated, so your additions are kept only in the backup | Kept unchanged |
 | Optional `mmu_parameters` settings that the template doesn't list, such as `default_gate_material` or `error_macro` | Kept | Kept | Kept |
 | Edited `gcode:` bodies of Happy Hare macros | Lost | Lost | Lost |
 | Renaming, removing or reordering units | Not allowed | Required | Not allowed |
@@ -255,6 +259,11 @@ how much of your existing `.cfg` files is then copied back on top.
   [Multiple MMU Units](GettingStarted-Multi-Unit.md#unit-renaming).
 - Everything edited by hand is replaced, so first copy every tuned value into
   `menuconfig`. The previous files remain in the backup directory.
+- This includes the configuration below the `# EXCLUDE FROM CONFIG BUILDER`
+  line. Replace regenerates it, because some MMU types put hardware that
+  `menuconfig` manages there, and it must follow unit renames and hardware
+  changes. Copy anything you added there back from the backup afterwards, or
+  keep it in a file of your own (see [Recommendations](#recommendations)).
 
 **3) Merge: mostly `menuconfig`, with some hand-edited hardware settings**
 
@@ -275,11 +284,13 @@ how much of your existing `.cfg` files is then copied back on top.
   value you have set.
 - To move from hand-editing to `menuconfig`, copy your tuned values into
   `menuconfig`, then run **Replace** once. Use Replace or Merge from then on.
-- Whichever mode you use, keep your own macros and extra sections in a separate
-  file included from `printer.cfg`, or below the `# EXCLUDE FROM CONFIG BUILDER`
-  line, so that an upgrade doesn't drop them.
+- Keep your own macros and extra sections in a separate file included from
+  `printer.cfg`. No upgrade mode changes it. Configuration below the
+  `# EXCLUDE FROM CONFIG BUILDER` line survives Refresh and Merge, but not
+  Replace.
 - After an upgrade, compare the new files with the timestamped backup, and read
-  any "have been dropped" warnings in the install output.
+  any "have been dropped" warnings in the install output. To restore a backup,
+  see [Recovering Configuration from a Backup](GettingStarted-Installer-Configurator.md#recovering-configuration-from-a-backup).
 
 ## Troubleshooting
 
