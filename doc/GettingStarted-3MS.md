@@ -229,17 +229,19 @@ This is the normal way to revisit any setting on this page — there's no need t
 ever hand-edit the generated `.cfg` files directly.
 
 !!! note
-    The one thing worth knowing:
-    if you've hand-edited a `.cfg` file since your last visit to `menuconfig`,
-    `-i` will ask how to reconcile that — **Refresh** (keep your manual edits, and
-    just add new options), **Replace** (regenerate everything from menuconfig, discarding
-    direct edits) or **Merge** (attempts to merge manual edits into menuconfig)
+    The one thing worth knowing: each time you rerun `-i` over an existing
+    configuration, it asks how to reconcile `menuconfig` with any edits made
+    directly to your `.cfg` files. **Merge/Refresh** (option 1, the default) keeps
+    your manual edits, offers to import them into `menuconfig` first, and applies
+    only the settings you change there. **Replace** (option 2) regenerates
+    everything from `menuconfig`, discarding direct edits.
 
-    If you only ever configure through `menuconfig`, as this page assumes, option 2
-    (**Refresh**) is the recommended choice because it rebuilds your Happy Hare
-    klipper config files ensuring a clean config and any future update made to the
-    Happy Hare software.
-
+    If you only ever configure through `menuconfig`, as this page assumes,
+    **Replace** is the recommended choice because it rebuilds your Happy Hare
+    Klipper configuration files, ensuring a clean configuration that includes
+    future Happy Hare software updates. See
+    [Choosing an upgrade mode](Installation.md#choosing-an-upgrade-mode) for
+    the differences.
 
 ## Validating Hardware Setup
 
