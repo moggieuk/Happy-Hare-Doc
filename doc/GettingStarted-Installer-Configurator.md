@@ -46,7 +46,7 @@ Navigation is intuitive and the same as any other `menuconfig` based interface.
 | **↵** or **space** | select a menu or option |
 | **esc** | go back to the previous menu |
 | **R**   | reset a setting to its default value (if available) |
-| **Q**   | quit and selectively save changes and update printer configuration  |
+| **Q**   | quit: **Y** saves and continues the install, **N** discards your changes and stops the install, **C** returns to `menuconfig` |
 
 The top-down flow guides you through the process in a logical, step by step manner.
 Depending on the MMU and selections you make, additional sub-menus and settings
@@ -98,10 +98,12 @@ Choose upgrade mode (1-2)?
 1. **Merge/Refresh** (**Option 1 — Default upgrade path**)<br>
 Merge/Refresh keeps the values in your existing Happy Hare `.cfg` files. Before
 `menuconfig` opens, it lists the values from your `.cfg` files that `menuconfig` can
-show and asks once whether to import them, so `menuconfig` shows what you are actually
-running. Only the settings you change in `menuconfig` during that run are applied to your
-`.cfg` files; every other option keeps its value, and new options required by the current
-Happy Hare release are added.
+show and, if there are any, asks once whether to import them, so `menuconfig` shows what
+you are actually running. Only the settings you change in `menuconfig` during that run are
+applied to your `.cfg` files; every other option keeps its value, and new options required
+by the current Happy Hare release are added. The exceptions are macro `gcode:` bodies, a
+few structural options `menuconfig` always sets, and options the templates no longer
+contain; see the [comparison](Installation.md#comparison).
 
 2. **Replace** (**Option 2 — Recommended**)<br>
 This is the recommended mode **_when all configuration changes are managed through menuconfig_**.
@@ -124,21 +126,25 @@ controls, migration of saved state, and checks after changing the unit list.
     * `menuconfig` will never overwrite your existing configuration outright - it's copied
       to a timestamped backup directory before changes are applied (e.g.
       `mmu.old-20260807-102329`).
-    * `menuconfig` will always automatically check and update Happy Hare to the latest 
-      release from GitHub. To prevent this, launch `./install.sh` with the `-z` flag to skip
-      the update check.
+    * `./install.sh`, with or without `-i`, always checks GitHub first and updates Happy
+      Hare to the latest version of the branch you are on. To prevent this, launch
+      `./install.sh` with the `-z` flag to skip the update check.
     * Following a klipper/kalico upgrade or hard reset, you may need to run `./install.sh -f` 
       to restore all klipper/moonraker symbolic links to make sure everything is where it
       needs to be.
-    * If you need to restore your `menuconfig` setup after re-imaging and restoring your 
-      configuration from a backup, ssh to your Pi and copy the backup `.mmu_config` 
-      file to your Happy-Hare directory before running `./install.sh -i`: <br>
-      `cp ~/printer_data/config/mmu/.mmu_config ~/Happy-Hare/.mmu_config` 
+    * If you need to restore your `menuconfig` setup after re-imaging and restoring your
+      configuration from a backup, run `./install.sh -i --last`. It copies `.mmu_config`,
+      and on a multi-unit setup each `.mmu_config_<name>` file, from
+      `~/printer_data/config/mmu/` back into your Happy-Hare directory. With a
+      non-standard config directory, copy them yourself first, e.g.
+      `cp ~/printer_data/config/mmu/.mmu_config* ~/Happy-Hare/`. See
+      [Recovering Configuration from a Backup](#recovering-configuration-from-a-backup).
     * Merge/Refresh can import most simple values from your `.cfg` files into
       `menuconfig`, but not every hand edit. Before using *Replace* to reset your
-      configuration baseline, run Merge/Refresh and accept the import, then copy any
-      value it couldn't import into `menuconfig` by hand (`./install.sh -i -v` lists
-      them). It's for this reason it's recommended to manage all configuration changes
+      configuration baseline, run Merge/Refresh and accept the import, then re-apply
+      each value it couldn't import: in `menuconfig` where it has a setting, otherwise
+      by editing the `.cfg` file again after Replace (`./install.sh -i -v` lists them,
+      with the reason for each). It's for this reason it's recommended to manage all configuration changes
       through `menuconfig` where possible.
 
 ## Recovering Configuration from a Backup

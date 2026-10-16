@@ -66,7 +66,8 @@ converting to change existing settings.
     Test mode uses a disposable configuration under `/tmp/mmu_test` and disables
     service restarts, leaving the printer's real configuration untouched. It is an
     ideal way to explore the shared and per-unit screens before repeating the
-    process for real without `-t`. See [Running `./install.sh` without touching
+    process for real without `-t`. It starts from an empty configuration, so it
+    doesn't show the conversion of your existing unit. See [Running `./install.sh` without touching
     your printer](Dev-Kconfig-Structure.md#running-installsh-without-touching-your-printer)
     for details and the location of the generated test files.
 
@@ -95,7 +96,7 @@ Select **MMU units** to open the list editor. Press **a** to append a unit, ente
 
 Press **Enter** to finish editing the list, then press **Q** and save the shared
 configuration. The installer reviews the unit-list changes before opening the
-unit-specific passes. A rename, removal or reorder also requires confirmation.
+unit-specific passes. A rename, removal, insert or reorder also requires confirmation.
 
 The list editor uses these controls:
 
@@ -112,7 +113,8 @@ The list editor uses these controls:
 
 **Shift-Up / Shift-Down** also move entries when the terminal passes those keys
 through. Use uppercase **K / J** if the terminal intercepts them. For an installed
-setup, **Merge/Refresh** mode only allows appending units; choose
+setup, **Merge/Refresh** mode only allows appending units (units added in the
+same session can still be renamed, moved or removed); choose
 **Replace (option 2)** for the other changes.
 
 ### Symbolic names and display names
@@ -234,8 +236,10 @@ settings after removal, especially tools that previously used the deleted unit.
 
 If another unit still references the removed unit's encoder or buffer, the
 installer warns about the reference. Reconfigure it to use an object that will
-remain available. A shared NFC reader still blocks removal of its owner;
-reconfigure that dependency and save it in a separate run first.
+remain available. Any other setting that still refers to the removed unit, such
+as a shared NFC reader or a pin on its MCU, blocks the removal with a "still uses
+… from removed unit" error; reconfigure that dependency and save it in a separate
+run first.
 
 ### Backups and saved state
 
@@ -284,9 +288,9 @@ sensor capabilities and resting spring state. For a manually defined buffer,
 enter those settings yourself; its hardware pins remain in your own configuration.
 
 Encoder and buffer names must start with a lowercase letter and use lowercase
-letters, digits, underscores or hyphens. The editor suggests known object names,
-but you can reference a custom object defined elsewhere. The reference must
-resolve to a real object when Klipper starts.
+letters, digits, underscores or hyphens. `menuconfig` lists the known object
+names below the prompt, but you can reference a custom object defined elsewhere.
+The reference must resolve to a real object when Klipper starts.
 
 <p align="center">
   <img src="GettingStarted-Multi-Unit/05-shared-buffer-name.png" alt="Shared buffer object name editor for unit1 referencing unit0" width="80%">
