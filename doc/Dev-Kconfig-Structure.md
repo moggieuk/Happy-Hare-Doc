@@ -102,9 +102,22 @@ from-scratch parser.
   freshly-rendered output against whatever's actually on disk using
   `installer/parser.py` - a layout-preserving `.cfg` parser (tokenizer → AST
   → writer) built specifically so a user's hand-edits survive a
-  regeneration. This is the **Refresh / Replace / Merge** choice `./install.sh -i`
-  asks about when it detects a conflict - see the note on it in
-  [Getting Started with Box Turtle](GettingStarted-BoxTurtle.md#saving-and-coming-back-later).
+  regeneration. This is the **Merge/Refresh / Replace** choice `./install.sh -i`
+  asks about whenever it runs over an existing `.mmu_config` (`F_CFG_UPGRADE_MODE`
+  `refresh` or `replace`); see
+  [Choosing an upgrade mode](Installation.md#choosing-an-upgrade-mode). Replace
+  keeps only the rendered output. Refresh copies the existing value of every
+  option back on top, except options whose rendered value changed between a
+  baseline and the final `.mmu_config`. In an interactive Refresh,
+  `install.sh`'s `prepare_refresh` runs `installer/cfg_import.py` before
+  `menuconfig` opens: it offers to import `.cfg` values that `menuconfig` can
+  show, then saves each Kconfig file to `$(OUT)/menuconfig_base/` as that baseline,
+  and `build.py`'s `menuconfig_changes` renders both to find what changed.
+  Without a baseline (plain `./install.sh`, or converting to multi-unit), no
+  option counts as changed, so every existing value is kept.
+  `report_replaced_edits` warns where a menuconfig change replaced a hand edit,
+  and `installer/cfg_diff.py` prints the closing summary of changes against the
+  backup.
 - Runs any applicable `installer/upgrades.py` step - a per-version-pair
   `upgrade_<from>_to_<to>(self, cfg)` method that migrates old option names/
   values forward. Every function currently in that file is commented out

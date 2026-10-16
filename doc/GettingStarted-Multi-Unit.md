@@ -47,6 +47,14 @@ configuration forward, including when that name is something other than `unit0`.
 To rename it during conversion, choose **Replace (option 2)** and use the list
 editor's rename action as described under [Unit renaming](#unit-renaming).
 
+The conversion run doesn't offer to
+[import your `.cfg` values](Installation.md#importing-cfg-values-into-menuconfig)
+into `menuconfig`. With **Merge/Refresh (option 1)** it keeps every value already
+in your `.cfg` files, even for settings you change in `menuconfig` during the
+conversion. If you have edited `.cfg` files by hand, run `./install.sh -i` and
+accept the import before converting, then run `./install.sh -i` again after
+converting to change existing settings.
+
 !!! tip "Try the multi-unit installer safely first"
     Add the `-t` flag to rehearse the complete multi-unit installer workflow in
     test mode:
@@ -104,7 +112,7 @@ The list editor uses these controls:
 
 **Shift-Up / Shift-Down** also move entries when the terminal passes those keys
 through. Use uppercase **K / J** if the terminal intercepts them. For an installed
-setup, **Refresh** and **Merge** modes only allow appending units; choose
+setup, **Merge/Refresh** mode only allows appending units; choose
 **Replace (option 2)** for the other changes.
 
 ### Symbolic names and display names
@@ -207,8 +215,8 @@ again after installation and check the gate and tool maps before printing.
 ## Unit adding/removing
 
 To add a unit to an existing multi-unit setup, run `./install.sh -i` and press
-**a** in **Shared Config → MMU units**. Appending works in **Refresh**, **Merge**
-or **Replace** mode. Existing units retain their settings and gate numbers, and
+**a** in **Shared Config → MMU units**. Appending works in **Merge/Refresh** or
+**Replace** mode. Existing units retain their settings and gate numbers, and
 the new unit gets its own configuration pass. Configure and validate its hardware
 before printing. Use `./install.sh -i -n` when first converting from single-unit
 mode, as shown above.
