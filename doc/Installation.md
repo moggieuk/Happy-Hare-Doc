@@ -306,7 +306,12 @@ A value can be imported when its option takes its whole value from a single
 appears in `menuconfig` or follows one toggle or list that does. The value must
 be one `menuconfig` accepts, within its range, and importing it must change no
 other option. A value that already matches `menuconfig`'s default isn't imported,
-so it keeps following that default in later releases.
+so `.mmu_config` keeps treating it as a default rather than a value you set.
+
+To take a release's new default instead of the old value your `.cfg` file
+holds, accept the import, then press **R** on that setting in `menuconfig` to
+reset it. The reset counts as a change and is applied. Declining the import
+keeps the old value.
 
 Anything else stays in your `.cfg` file. Run `./install.sh -i -v` to also list
 those values with the reason each can't be imported, and to see the

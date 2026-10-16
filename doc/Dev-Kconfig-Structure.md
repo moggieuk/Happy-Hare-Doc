@@ -111,7 +111,7 @@ from-scratch parser.
   baseline and the final `.mmu_config`. In an interactive Refresh,
   `install.sh`'s `prepare_refresh` runs `installer/cfg_import.py` before
   `menuconfig` opens: it offers to import `.cfg` values that `menuconfig` can
-  show, then saves each Kconfig file to `out/menuconfig_base/` as that baseline,
+  show, then saves each Kconfig file to `$(OUT)/menuconfig_base/` as that baseline,
   and `build.py`'s `menuconfig_changes` renders both to find what changed.
   Without a baseline (plain `./install.sh`, or converting to multi-unit), no
   option counts as changed, so every existing value is kept.
