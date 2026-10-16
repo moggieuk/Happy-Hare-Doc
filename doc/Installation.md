@@ -235,19 +235,26 @@ much of your existing `.cfg` files is then copied back on top.
 | Configuration below the `# EXCLUDE FROM CONFIG BUILDER` line in `mmu.cfg` and `mmu_hardware.cfg` | Kept unchanged | Regenerated, so your additions are kept only in the backup |
 | Optional `mmu_parameters` settings that the template doesn't list, such as `default_gate_material` or `error_macro` | Kept | Kept |
 | Edited `gcode:` bodies of Happy Hare macros | Lost | Lost |
-| Renaming, removing or reordering units | Not allowed | Required |
-| Backup of the existing configuration | Yes | Yes |
+| Renaming, removing or reordering units | Not allowed | Possible |
+| [Backup](GettingStarted-Installer-Configurator.md#recovering-configuration-from-a-backup) of the existing configuration | Yes | Yes |
 | [Summary of changes](#summary-of-changes) at the end of the install | Yes | Yes |
 
 ### When to use each mode
 
-**1) Merge/Refresh: you edit `.cfg` files, `menuconfig`, or both**
+**1) Merge/Refresh: you edit `.cfg` files directly, or want to bring `menuconfig` up to date with them**
 
 - Use it to upgrade Happy Hare and pick up new options without losing any value
   you have tuned in a `.cfg` file.
 - Use it to change a few settings in `menuconfig` while keeping your hand edits.
   Only the settings you change in `menuconfig` are applied; every other option
   keeps its `.cfg` value.
+- Not every edit can be imported back into `menuconfig`: for example, a value
+  `menuconfig` builds from several settings, or one that would also change
+  another option. Those values stay in your `.cfg` file and keep working, but
+  `menuconfig` goes on showing its own value. Run `./install.sh -i -v` to list
+  them, with the reason each can't be imported, then set them in `menuconfig`
+  yourself if you want it to match. See
+  [Importing `.cfg` values into menuconfig](#importing-cfg-values-into-menuconfig).
 - If you are unsure, choose Merge/Refresh. It doesn't change any value you
   haven't changed in `menuconfig` during the run.
 
