@@ -326,26 +326,49 @@ makes the rest of the install output much longer.
 
 ### Summary of changes
 
-Every install over an existing configuration, in either mode or with plain
-`./install.sh`, ends by summarizing what changed in the Happy Hare `.cfg` files
-in `mmu/base/`:
+Every install over an existing configuration ends by summarizing what it changed
+in your Happy Hare `.cfg` files. That includes `./install.sh -i` in either mode
+and a plain `./install.sh`. A first install has nothing to compare with, so it
+prints no summary. The summary appears once the new files are installed, before
+Klipper and Moonraker restart and the "Happy Hare is ready" banner. For example,
+after changing one setting in `menuconfig`:
 
 ```{.text .console-output}
-Summary of changes to your Happy Hare .cfg files (previous files are in 'mmu.old-20260807-102329'):
+----------------------------------------------------------------------------------------------------------
+
+Summary of changes to your Happy Hare .cfg files (previous files are in 'mmu.old-20261016-145447'):
 
 > mmu_parameters_unit0.cfg:
 Changed:
 [mmu_unit_parameters unit0]
-gear_unload_speed: 80 -> 77 (your .cfg edit, replaced by a menuconfig change)
-Added: 2 new option(s)
+gear_unload_accel: 100 -> 101
+
+----------------------------------------------------------------------------------------------------------
 ```
 
-It lists changed values as `old -> new`, removed options and sections, and a
-count of added options. Values are compared rather than text, so comment and
-layout changes don't appear, and neither do `gcode:` bodies or configuration
-below the `# EXCLUDE FROM CONFIG BUILDER` line. With `-v`, it lists every added
-option and follows the summary with a word diff of each file. If no value
-changed, it prints "No changes to the values in your Happy Hare .cfg files".
+The installer compares each file in `mmu/base/` with the same file in the backup
+directory named in the heading, which holds your previous files. It lists only
+the files that changed. Under each file name, it shows up to three groups,
+each listed by section:
+
+- **`Changed:`** options whose value is different, as `old -> new`. A line ending
+  `(your .cfg edit, replaced by a menuconfig change)` was a value you had edited
+  by hand, and a setting you changed in `menuconfig` replaced it. Replace doesn't
+  mark lines this way, but every hand edit it overwrote appears here.
+- **`Removed:`** options that are no longer in the file, with the value they had.
+  A removed section appears as its `[section]` line alone. Options and sections
+  you added yourself, which the templates don't render, appear here.
+- **`Added:`** a count of new options and sections, such as
+  `Added: 3 new option(s) and 1 new section(s)`. These come from a newer release
+  or a feature you enabled.
+
+Only values are compared, so changes to comments, layout or template wording
+don't appear. Neither do `gcode:` bodies or anything below the
+`# EXCLUDE FROM CONFIG BUILDER` line. If no value changed, the block shows
+"No changes to the values in your Happy Hare .cfg files" instead.
+
+With `-v`, `Added:` lists every new option with its value, and a word diff of
+each file against the backup follows the block.
 
 ### Recommendations
 

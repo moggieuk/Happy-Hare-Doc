@@ -110,7 +110,8 @@ Happy Hare `.cfg` files, resetting and regenerating a new configuration based so
 selections made in `menuconfig`.  
 <br>
 
-Both modes end with a summary of what changed in your `.cfg` files. See
+Both modes end with a [summary of changes](Installation.md#summary-of-changes)
+to your `.cfg` files, listing each value changed as `old -> new`. See
 [Choosing an upgrade mode](Installation.md#choosing-an-upgrade-mode) for a detailed
 comparison, the import prompt, and what can be imported.
 
