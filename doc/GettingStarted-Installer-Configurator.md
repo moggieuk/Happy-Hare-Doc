@@ -70,37 +70,53 @@ object names in the shared **MMU units** list. See
 ## Managing Configuration Changes
 When the `menuconfig` installer is launched after your initial setup and configuration,
 you will be prompted to choose how it should apply and reconcile configuration changes with
-locally applied settings. <br>
+locally applied settings. The installer supports two modes, _**Merge/Refresh**_ and
+_**Replace**_:
 
-The installer supports three distinct modes for applying configuration changes:
-_**R**efresh_, _**R**eplace_, and _**M**erge_: <br><br>
+```{.text .console-output}
+You are running an interactive install with existing menuconfig ('.mmu_config').
 
-<div width="100%">
-<p align="center">
-  <img src="GettingStarted-Installer-Configurator/GettingStarted-Menuconfig-Update-Options.png" alt="Menuconfig configuration update options" align=center width="60%">
-</p>
-</div>
+Read carefully, you have two options:
 
-1. **Refresh** (**Option 1 — Default upgrade path**)<br>
-The Refresh mode preserves all parameter values that have been manually edited in your existing
-Happy Hare `.cfg` files. It will only add new or missing configuration sections and options 
-required by the current Happy Hare release. However `menuconfig` values may appear outdated 
-because this mode does not update or overwrite existing settings.
+1) Merge/Refresh (select 1) (Default upgrade path)
+   This KEEPS every change you made directly to your .cfg files. Before menuconfig opens,
+   the simple settings your .cfg files hold are copied into menuconfig (you'll see the list
+   and confirm), so menuconfig shows what you are actually running. Only the settings you
+   then change in menuconfig are applied to your .cfg files, and new options are added.
+
+2) Replace (select 2) (Recommended)
+   This will OVERWRITE changes made directly to your .cfg files and create new default
+   configuration based on choices made in menuconfig (which initializes to your previous config).
+   This is RECOMMENDED if you make ALL your configuration changes via menuconfig. It is also
+   useful if you get into trouble and want to reset your starting position or change MMU.
+
+(Note that in all cases a BACKUP of your existing .cfg files will be made for reference)
+
+Choose upgrade mode (1-2)?
+```
+
+1. **Merge/Refresh** (**Option 1 — Default upgrade path**)<br>
+Merge/Refresh keeps the values in your existing Happy Hare `.cfg` files. Before
+`menuconfig` opens, it lists the values from your `.cfg` files that `menuconfig` can
+show and asks once whether to import them, so `menuconfig` shows what you are actually
+running. Only the settings you change in `menuconfig` during that run are applied to your
+`.cfg` files; every other option keeps its value, and new options required by the current
+Happy Hare release are added.
 
 2. **Replace** (**Option 2 — Recommended**)<br>
 This is the recommended mode **_when all configuration changes are managed through menuconfig_**.
 <br> The **Replace** mode **OVERWRITES** any local changes you have made directly to your 
 Happy Hare `.cfg` files, resetting and regenerating a new configuration based solely on the 
 selections made in `menuconfig`.  
+<br>
 
-3. **Merge** (**Option 3 — Advanced**)<br>
-Applies simple parameter updates from `menuconfig` while preserving other manual edits made to
-your Happy Hare `.cfg` files. Useful when most settings are managed through `menuconfig` but
-want hardware‑specific settings or tuning to remain untouched.
-<br><br>
+Both modes end with a [summary of changes](Installation.md#summary-of-changes)
+to your `.cfg` files, listing each value changed as `old -> new`. See
+[Choosing an upgrade mode](Installation.md#choosing-an-upgrade-mode) for a detailed
+comparison, the import prompt, and what can be imported.
 
 Renaming, removing or reordering installed units requires **Replace (option 2)**.
-Appending a unit also works in **Refresh** and **Merge** modes. See
+Appending a unit also works in **Merge/Refresh**. See
 [Multiple MMU Units](GettingStarted-Multi-Unit.md#unit-renaming) for the editor
 controls, migration of saved state, and checks after changing the unit list.
 
@@ -118,11 +134,12 @@ controls, migration of saved state, and checks after changing the unit list.
       configuration from a backup, ssh to your Pi and copy the backup `.mmu_config` 
       file to your Happy-Hare directory before running `./install.sh -i`: <br>
       `cp ~/printer_data/config/mmu/.mmu_config ~/Happy-Hare/.mmu_config` 
-    * `menuconfig` does not have the ability to sync and import changes made directly to 
-      your Happy Hare `.cfg` files. If you have made changes and want them reflected in 
-      `menuconfig`, you will need to manually transpose them before using `menuconfig`
-      *Replace* to reset your configuration baseline.  It's for this reason it's 
-      recommended to manage all configuration changes through `menuconfig` where possible.
+    * Merge/Refresh can import most simple values from your `.cfg` files into
+      `menuconfig`, but not every hand edit. Before using *Replace* to reset your
+      configuration baseline, run Merge/Refresh and accept the import, then copy any
+      value it couldn't import into `menuconfig` by hand (`./install.sh -i -v` lists
+      them). It's for this reason it's recommended to manage all configuration changes
+      through `menuconfig` where possible.
 
 ## Recovering Configuration from a Backup
 

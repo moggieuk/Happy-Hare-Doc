@@ -212,42 +212,51 @@ to restore one of those backups.
 When you run `./install.sh -i` over an existing configuration, the installer asks
 how to reconcile your `menuconfig` choices with edits made directly to your Happy
 Hare `.cfg` files. [Managing Configuration Changes](GettingStarted-Installer-Configurator.md#managing-configuration-changes)
-introduces the three modes; this section compares them in detail.
+shows the prompt; this section compares the two modes in detail.
 
-Every mode starts the same way: the configuration is regenerated from your
-`menuconfig` choices, which are stored in `.mmu_config`. The modes differ only in
-how much of your existing `.cfg` files is then copied back on top.
+Both modes start the same way: the configuration is regenerated from your
+`menuconfig` choices, which are stored in `.mmu_config`. The modes differ in how
+much of your existing `.cfg` files is then copied back on top.
 
 !!! note
-    `./install.sh` without `-i` doesn't ask. It always uses **Refresh**.
+    `./install.sh` without `-i` doesn't ask and doesn't open `menuconfig`. It keeps
+    every value in your `.cfg` files and adds any new options, with no import step.
 
 ### Comparison
 
-| | **1) Refresh** (default) | **2) Replace** (recommended) | **3) Merge** (advanced) |
-| --- | --- | --- | --- |
-| **Which wins** | Your `.cfg` files | `menuconfig` | `menuconfig` for simple values, your `.cfg` files for the rest |
-| Simple values edited in a `.cfg` file, such as currents, speeds and distances that `menuconfig` also sets | Kept | Overwritten | Overwritten |
-| Macro variables that `menuconfig` sets (`_MMU_*_VARS`, `_BLOBIFIER_VARS`), edited in a `.cfg` file | Kept | Overwritten | Overwritten |
-| Pins and other hand-edited settings | Kept | Overwritten | Kept |
-| Changes made in `menuconfig` this run | Applied only to options not already in your `.cfg` files | Applied | Applied to simple values and macro variables |
-| New options and sections from a newer release | Added | Added | Added |
-| Options and sections you added yourself | Dropped, and listed in the install output | Dropped | Dropped, and listed in the install output |
-| Configuration below the `# EXCLUDE FROM CONFIG BUILDER` line in `mmu.cfg` and `mmu_hardware.cfg` | Kept unchanged | Regenerated, so your additions are kept only in the backup | Kept unchanged |
-| Optional `mmu_parameters` settings that the template doesn't list, such as `default_gate_material` or `error_macro` | Kept | Kept | Kept |
-| Edited `gcode:` bodies of Happy Hare macros | Lost | Lost | Lost |
-| Renaming, removing or reordering units | Not allowed | Required | Not allowed |
-| Backup of the existing configuration | Yes | Yes | Yes |
+| | **1) Merge/Refresh** (default) | **2) Replace** (recommended) |
+| --- | --- | --- |
+| **Which wins** | Your `.cfg` files, except for settings you change in `menuconfig` this run | `menuconfig` |
+| Values edited in a `.cfg` file, such as currents, speeds, distances, pins and macro variables (`_MMU_*_VARS`, `_BLOBIFIER_VARS`) | Kept. Values `menuconfig` can show are offered for import before it opens | Overwritten |
+| Settings changed in `menuconfig` this run | Applied. A hand edit they replace is reported as a warning | Applied |
+| Settings not changed in `menuconfig` this run | Keep their `.cfg` values | Rebuilt from `menuconfig` |
+| New options and sections from a newer release | Added | Added |
+| Options and sections you added yourself | Dropped, and listed in the install output | Dropped |
+| Configuration below the `# EXCLUDE FROM CONFIG BUILDER` line in `mmu.cfg` and `mmu_hardware.cfg` | Kept unchanged | Regenerated, so your additions are kept only in the backup |
+| Optional `mmu_parameters` settings that the template doesn't list, such as `default_gate_material` or `error_macro` | Kept | Kept |
+| Edited `gcode:` bodies of Happy Hare macros | Lost | Lost |
+| Renaming, removing or reordering units | Not allowed | Possible |
+| [Backup](GettingStarted-Installer-Configurator.md#recovering-configuration-from-a-backup) of the existing configuration | Yes | Yes |
+| [Summary of changes](#summary-of-changes) at the end of the install | Yes | Yes |
 
 ### When to use each mode
 
-**1) Refresh: you maintain your configuration by editing `.cfg` files**
+**1) Merge/Refresh: you edit `.cfg` files directly, or want to bring `menuconfig` up to date with them**
 
-- Use it to upgrade Happy Hare and pick up new options without changing any value
-  you have tuned.
-- `menuconfig` is of limited use in this mode. The values it shows may be out of
-  date, and changing one has no effect when the option is already in your `.cfg`
-  files. However menuconfig will still controll adding or removing sections and thus
-  is useful if you have added a new feature to your MMU.
+- Use it to upgrade Happy Hare and pick up new options without losing any value
+  you have tuned in a `.cfg` file.
+- Use it to change a few settings in `menuconfig` while keeping your hand edits.
+  Only the settings you change in `menuconfig` are applied; every other option
+  keeps its `.cfg` value.
+- Not every edit can be imported back into `menuconfig`: for example, a value
+  `menuconfig` builds from several settings, or one that would also change
+  another option. Those values stay in your `.cfg` file and keep working, but
+  `menuconfig` goes on showing its own value. Run `./install.sh -i -v` to list
+  them, with the reason each can't be imported, then set them in `menuconfig`
+  yourself if you want it to match. See
+  [Importing `.cfg` values into menuconfig](#importing-cfg-values-into-menuconfig).
+- If you are unsure, choose Merge/Refresh. It doesn't change any value you
+  haven't changed in `menuconfig` during the run.
 
 **2) Replace: `menuconfig` is your single source of truth**
 
@@ -258,40 +267,129 @@ how much of your existing `.cfg` files is then copied back on top.
   drifted.
 - It is required to rename, remove or reorder units. See
   [Multiple MMU Units](GettingStarted-Multi-Unit.md#unit-renaming).
-- Everything edited by hand is replaced, so first copy every tuned value into
-  `menuconfig`. The previous files remain in the backup directory.
+- Everything edited by hand is replaced. Run Merge/Refresh first and accept the
+  import, so that `menuconfig` holds your tuned values, then copy any value it
+  couldn't import into `menuconfig` by hand. The previous files remain in the
+  backup directory.
 - This includes the configuration below the `# EXCLUDE FROM CONFIG BUILDER`
   line. Replace regenerates it, because some MMU types put hardware that
   `menuconfig` manages there, and it must follow unit renames and hardware
   changes. Copy anything you added there back from the backup afterwards, or
   keep it in a file of your own (see [Recommendations](#recommendations)).
 
-**3) Merge: mostly `menuconfig`, with some hand-edited hardware settings**
+### Importing `.cfg` values into menuconfig
 
-- Use it when you manage simple values in `menuconfig` but don't want to lose
-  hand-edited pins or other hardware settings, or the configuration below the
-  exclusion line.
+When you choose Merge/Refresh, the installer compares your installed `.cfg` files
+with what `menuconfig` would generate before `menuconfig` opens. If the files hold
+values that `menuconfig` can show, it lists them by file and section, then asks
+once whether to import them:
 
-!!! warning "Merge applies every value `menuconfig` holds"
-    Merge doesn't apply only the values you changed this run: every simple value
-    and macro variable stored in `.mmu_config` replaces the one in your `.cfg`
-    files. A value you tuned only in a `.cfg` file goes back to the older value
-    `menuconfig` still holds. `menuconfig` can't import changes made to `.cfg`
-    files, so copy those values into `menuconfig` before choosing Merge.
+```{.text .console-output}
+These .cfg values will be imported into menuconfig:
+
+> mmu_macro_vars.cfg:
+[gcode_macro _MMU_SOFTWARE_VARS]
+variable_home_mmu: True
+
+> mmu_parameters_unit0.cfg:
+[mmu_unit_parameters unit0]
+gear_load_speed: 123
+gear_unload_speed: 88
+
+Import these .cfg values into menuconfig (y/n)?
+```
+
+The list includes your hand edits, and also old default values that your `.cfg`
+files still hold after a release changed the default. If nothing needs
+importing, the installer doesn't ask. `-y` answers yes.
+
+- **Yes**: `menuconfig` opens showing the values you are actually running.
+- **No**: `menuconfig` opens showing its previous values, and your `.cfg` files
+  keep theirs. A setting you then change in `menuconfig` is still applied,
+  replacing the value in your `.cfg` file.
+
+A value can be imported when its option takes its whole value from a single
+`menuconfig` setting, including pins and per-gate values, and when that setting
+appears in `menuconfig` or follows one toggle or list that does. The value must
+be one `menuconfig` accepts, within its range, and importing it must change no
+other option. A value that already matches `menuconfig`'s default isn't imported,
+so `.mmu_config` keeps treating it as a default rather than a value you set.
+
+To take a release's new default instead of the old value your `.cfg` file
+holds, accept the import, then press **R** on that setting in `menuconfig` to
+reset it. The reset counts as a change and is applied. Declining the import
+keeps the old value.
+
+Anything else stays in your `.cfg` file. Run `./install.sh -i -v` to also list
+those values with the reason each can't be imported, and to see the
+`menuconfig` value each import replaces. `-v` is a developer option that also
+makes the rest of the install output much longer.
+
+!!! warning "Important"
+    The import doesn't run when converting to multi-unit mode with `-n`. In that
+    run, Merge/Refresh keeps every value already in your `.cfg` files, even for
+    settings you change in `menuconfig`. Run `./install.sh -i` again afterwards
+    to import your values and make further changes.
+
+### Summary of changes
+
+Every install over an existing configuration ends by summarizing what it changed
+in your Happy Hare `.cfg` files. That includes `./install.sh -i` in either mode
+and a plain `./install.sh`. A first install has nothing to compare with, so it
+prints no summary. The summary appears once the new files are installed, before
+Klipper and Moonraker restart and the "Happy Hare is ready" banner. For example,
+after changing one setting in `menuconfig`:
+
+```{.text .console-output}
+----------------------------------------------------------------------------------------------------------
+
+Summary of changes to your Happy Hare .cfg files (previous files are in 'mmu.old-20261016-145447'):
+
+> mmu_parameters_unit0.cfg:
+Changed:
+[mmu_unit_parameters unit0]
+gear_unload_accel: 100 -> 101
+
+----------------------------------------------------------------------------------------------------------
+```
+
+The installer compares each file in `mmu/base/` with the same file in the backup
+directory named in the heading, which holds your previous files. It lists only
+the files that changed. Under each file name, it shows up to three groups,
+each listed by section:
+
+- **`Changed:`** options whose value is different, as `old -> new`. A line ending
+  `(your .cfg edit, replaced by a menuconfig change)` was a value you had edited
+  by hand, and a setting you changed in `menuconfig` replaced it. Replace doesn't
+  mark lines this way, but every hand edit it overwrote appears here.
+- **`Removed:`** options that are no longer in the file, with the value they had.
+  A removed section appears as its `[section]` line alone. Options and sections
+  you added yourself, which the templates don't render, appear here.
+- **`Added:`** a count of new options and sections, such as
+  `Added: 3 new option(s) and 1 new section(s)`. These come from a newer release
+  or a feature you enabled.
+
+Only values are compared, so changes to comments, layout or template wording
+don't appear. Neither do `gcode:` bodies or anything below the
+`# EXCLUDE FROM CONFIG BUILDER` line. If no value changed, the block shows
+"No changes to the values in your Happy Hare .cfg files" instead.
+
+With `-v`, `Added:` lists every new option with its value, and a word diff of
+each file against the backup follows the block.
 
 ### Recommendations
 
-- If you are unsure, choose **Refresh**. It's the only mode that never changes a
-  value you have set.
-- To move from hand-editing to `menuconfig`, copy your tuned values into
-  `menuconfig`, then run **Replace** once. Use Replace or Merge from then on.
+- If you are unsure, choose **Merge/Refresh** and accept the import.
+- To move from hand-editing to `menuconfig`, run Merge/Refresh with `-v` and
+  accept the import. Copy any value listed as not importable into `menuconfig`,
+  then run **Replace** once. Use either mode from then on.
 - Keep your own macros and extra sections in a separate file included from
   `printer.cfg`. No upgrade mode changes it. Configuration below the
-  `# EXCLUDE FROM CONFIG BUILDER` line survives Refresh and Merge, but not
-  Replace.
-- After an upgrade, compare the new files with the timestamped backup, and read
-  any "have been dropped" warnings in the install output. To restore a backup,
-  see [Recovering Configuration from a Backup](GettingStarted-Installer-Configurator.md#recovering-configuration-from-a-backup).
+  `# EXCLUDE FROM CONFIG BUILDER` line survives Merge/Refresh, but not Replace.
+- After an upgrade, read the summary of changes and any "have been dropped"
+  warnings in the install output, and compare the new files with the
+  timestamped backup if anything looks wrong. To restore a backup, see
+  [Recovering Configuration from a Backup](GettingStarted-Installer-Configurator.md#recovering-configuration-from-a-backup).
 
 ## Troubleshooting
 
