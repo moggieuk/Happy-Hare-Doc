@@ -90,9 +90,9 @@ procedure and the effect of Replace mode on manual configuration edits.
     ```
     ```{.text .console-output}
     Usage: ./install.sh [-i] [-u] [-d] [-y] [-l] [-p] [-z] [-s] [-t] [-r]
-                       [-b <branch>]
-                       [-k <klipper_home_dir>] [-c <klipper_config_dir>] [-m <moonraker_home_dir>]
-                       [-a <kiauh_alternate_klipper>] [config_file]
+                        [-b <branch>]
+                        [-k <klipper_home_dir>] [-c <klipper_config_dir>] [-m <moonraker_home_dir>]
+                        [-a <kiauh_alternate_klipper>] [config_file]
 
     (no flags for safe re-install / upgrade)
     [config_file] is optional, if not specified the default config filename (.mmu_config) will be used.
@@ -114,7 +114,7 @@ procedure and the effect of Replace mode on manual configuration edits.
       -a <name> to specify alternative klipper-service-name when installed with Kiauh
       -r allow running install.sh from a root login (not through sudo)
       -e, --emu Enables multi MCU support (e.g. for EMU design)
-      -o override compatibility checks (e.g. Kalico detection)
+      -o override compatibility checks (e.g. unknown MIPS layout)
       -t  activate test mode - write config to /tmp/mmu_test instead of your real install
       (-q verbose make for debugging)
       (-v verbose builder for debugging)
@@ -161,6 +161,9 @@ procedure and the effect of Replace mode on manual configuration edits.
     ```bash 
     ./install.sh -i -e
     ```
+
+    Once your configuration has per-gate MCU support enabled, later runs turn it
+    on automatically, so `-e` isn't needed again.
 ## Client Macros
 
 `menuconfig`'s final section asks:
@@ -199,9 +202,9 @@ cd ~/Happy-Hare
 
 This is always safe to run speculatively - if there's nothing to do it does
 nothing, and every run backs up your existing config to a fresh timestamped
-directory first regardless. If you installed with custom paths (`-k`, `-c`,
-or `-m`), pass the same flags again here, or the upgrade will look in the
-default locations and likely miss your actual install.
+directory first regardless. Custom paths given with `-k`, `-c` or `-m` are
+saved in `.mmu_config`, so later runs use them without the flags. To change
+them, use the **Paths & Services** menu in `menuconfig`.
 
 If an upgrade goes wrong, see
 [Recovering Configuration from a Backup](GettingStarted-Installer-Configurator.md#recovering-configuration-from-a-backup)
@@ -220,7 +223,9 @@ much of your existing `.cfg` files is then copied back on top.
 
 !!! note
     `./install.sh` without `-i` doesn't ask and doesn't open `menuconfig`. It keeps
-    every value in your `.cfg` files and adds any new options, with no import step.
+    every value in your `.cfg` files, apart from the few structural options
+    `menuconfig` always sets (see the comparison below), and adds any new options,
+    with no import step.
 
 ### Comparison
 
@@ -235,6 +240,7 @@ much of your existing `.cfg` files is then copied back on top.
 | Configuration below the `# EXCLUDE FROM CONFIG BUILDER` line in `mmu.cfg` and `mmu_hardware.cfg` | Kept unchanged | Regenerated, so your additions are kept only in the backup |
 | Optional `mmu_parameters` settings that the template doesn't list, such as `default_gate_material` or `error_macro` | Kept | Kept |
 | Edited `gcode:` bodies of Happy Hare macros | Lost | Lost |
+| The unit list and encoder/buffer references (`[mmu_machine] units`, `[mmu_unit] encoder` and `buffer`) | Always set by `menuconfig`. A hand edit is listed before `menuconfig` opens | Always set by `menuconfig` |
 | Renaming, removing or reordering units | Not allowed | Possible |
 | [Backup](GettingStarted-Installer-Configurator.md#recovering-configuration-from-a-backup) of the existing configuration | Yes | Yes |
 | [Summary of changes](#summary-of-changes) at the end of the install | Yes | Yes |
@@ -247,7 +253,8 @@ much of your existing `.cfg` files is then copied back on top.
   you have tuned in a `.cfg` file.
 - Use it to change a few settings in `menuconfig` while keeping your hand edits.
   Only the settings you change in `menuconfig` are applied; every other option
-  keeps its `.cfg` value.
+  keeps its `.cfg` value, apart from the exceptions in the
+  [comparison](#comparison).
 - Not every edit can be imported back into `menuconfig`: for example, a value
   `menuconfig` builds from several settings, or one that would also change
   another option. Those values stay in your `.cfg` file and keep working, but
@@ -307,6 +314,12 @@ importing, the installer doesn't ask. `-y` answers yes.
 - **No**: `menuconfig` opens showing its previous values, and your `.cfg` files
   keep theirs. A setting you then change in `menuconfig` is still applied,
   replacing the value in your `.cfg` file.
+
+A few structural options always come from `menuconfig` in every mode, because
+they name sections `menuconfig` generates: `units` in `[mmu_machine]`, and
+`encoder` and `buffer` in `[mmu_unit]`. If you edited one by hand, it is listed
+before `menuconfig` opens, under "These .cfg values are always set by menuconfig,
+so your edits will be replaced", and `menuconfig`'s value is installed.
 
 A value can be imported when its option takes its whole value from a single
 `menuconfig` setting, including pins and per-gate values, and when that setting
@@ -400,10 +413,10 @@ each file against the backup follows the block.
 - **Multiple Klipper instances on one machine** (e.g. via Kiauh) - use `-a
   <service_name>` together with `-k`/`-c` pointed at that instance's
   directories.
-- **Running on something other than a standard Klipper environment** (a
-  Kalico-based fork, for example) - the installer checks for this and may
-  refuse to continue; `-o` overrides the compatibility check if you're sure
-  it's fine to proceed.
+- **"`Unknown MIPS layout`" on an embedded printer** - the installer knows the
+  directory layout of Creality K1, Guppy K1 and FlyOS-Fast systems. On any
+  other MIPS system, pass `-k`, `-c` and `-m` with your actual directories, or
+  add `-o` to continue without platform-specific path defaults.
 
 ## See also
 

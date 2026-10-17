@@ -218,7 +218,6 @@ left to its upstream README alone.
 | Variable | Default | Description |
 |---|---|---|
 | `blobifier_type` | `servo` | Tray actuator type: `servo` or `stepper` (`manual_stepper`) - set via menuconfig, not hand-edited |
-| `firmware` | `klipper` | `klipper` or `kalico` - Kalico uses integer `STOP_ON_ENDSTOP` values where mainline Klipper uses strings; only matters for a stepper tray |
 | `toolhead_x` | *(calibrate)* | Distance from the nozzle to the left edge of the toolhead - **must calibrate** |
 | `toolhead_y` | *(calibrate)* | Distance from the nozzle to the front edge of the toolhead - **must calibrate** |
 | `travel_spd_xy` | `10000` mm/min | XY travel speed |
