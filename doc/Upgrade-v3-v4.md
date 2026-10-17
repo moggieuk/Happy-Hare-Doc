@@ -38,12 +38,14 @@ To see options please run:
   cd ~/Happy-Hare && ./install.sh
 If you know now you just want to stay on v3, run:
   cd ~/Happy-Hare && ./install.sh -b v3
+More details: https://moggieuk.github.io/Happy-Hare-Doc/Upgrade-v3-v4/
 ```
 
 This is expected, and Klipper has not lost anything - your old `.cfg` files
 are untouched on disk. Running `./install.sh` as instructed is the next
 step, and it will ask you to choose one of the two paths below before it
-does anything else.
+does anything else. It asks even if you run `./install.sh -b v3`, so choose
+option 1 there.
 
 ## Your two options
 
@@ -52,23 +54,24 @@ does anything else.
 Choose this if you're not ready to reconfigure, or you just want things to
 keep working exactly as they did.
 
-`install.sh` switches your checkout to the `v3` branch and repoints
-Moonraker's update manager at it (`primary_branch: v3` instead of `main`),
-so future updates keep tracking v3 fixes instead of pulling v4 again. Nothing
-about your configuration changes.
+Choose option 1, the "Blue 'ignorance' pill". `install.sh` switches your
+checkout to the `v3` branch and repoints Moonraker's update manager at it
+(`primary_branch: v3` instead of `main`), so future updates keep tracking v3
+fixes instead of pulling v4 again. The v3 installer then runs a normal v3
+upgrade with your existing settings, so your v3 configuration is kept.
 
 You can move to v4 later at any time by running `./install.sh -b main` again
-from that checkout and choosing "Upgrade to v4" instead.
+from that checkout and choosing option 2 (upgrade to v4) instead.
 
 !!! note
-    The v4 branch will not be actively developed. It is likely the only updates
+    The v3 branch will not be actively developed. It is likely the only updates
     will be for breaking Klipper changes or other severe bugs.
 
 ### Return to v3 after completing a v4 setup
 
 If you already completed the upgrade and want to return to the preserved v3
 configuration, uninstall v4, copy the saved `mmu.V3` directory back into the
-active `mmu` location, then switch branches:
+active `mmu` location, then switch branches and choose option 1 when asked:
 
 ```bash
 cd ~/Happy-Hare
@@ -76,6 +79,31 @@ cd ~/Happy-Hare
 cp -a ~/printer_data/config/mmu.V3 ~/printer_data/config/mmu
 ./install.sh -b v3
 ```
+
+The uninstall removes the Happy Hare includes from `printer.cfg` and the Happy
+Hare sections from `moonraker.conf`. The v3 upgrade run keeps your restored v3
+settings but doesn't put the includes back, so finish by hand:
+
+1. Add your v3 includes back to the top of `printer.cfg`. Always include the
+   base files, then add whichever optional and add-on files you used with v3:
+
+    ```text
+    [include mmu/base/*.cfg]
+    [include mmu/optional/client_macros.cfg]
+    [include mmu/optional/mmu_menu.cfg]
+    [include mmu/addons/blobifier.cfg]
+    [include mmu/addons/mmu_erec_cutter.cfg]
+    [include mmu/addons/mmu_eject_buttons.cfg]
+    ```
+
+2. In `moonraker.conf`, change `primary_branch: main` to `primary_branch: v3`
+   under `[update_manager happy-hare]`. The v3 run adds this section back
+   tracking `main`, so without the change the next update pulls v4 again.
+3. Restart Moonraker and Klipper.
+
+Don't use `./install.sh -i` on v3 to add the includes instead. It walks through
+the v3 questionnaire from scratch and rebuilds the v3 `.cfg` files from their
+templates, replacing the settings you just restored.
 
 The uninstall makes a timestamped backup of the active v4 configuration before
 removing it and leaves `mmu.V3` untouched. Using `cp -a` retains that original
@@ -93,9 +121,9 @@ updates.
 !!! warning
     **Your v3 settings are not carried over automatically.** There is no
     supported v3 → v4 config migration - the installer treats this as a
-    fresh setup. `install.sh` backs up your existing `.cfg` files (a
-    timestamped copy, as it always does before writing) and then walks you
-    through `menuconfig` from scratch, exactly as described in
+    fresh setup. `install.sh` walks you through `menuconfig` from scratch,
+    then sets your whole v3 `mmu` directory aside and installs v4, exactly as
+    described in
     [Installation](Installation.md) and the Getting Started guide for your
     MMU. Keep the backup open in another window to copy across anything you
     tuned by hand (custom macros, calibration numbers you want to reuse as a
@@ -104,8 +132,11 @@ updates.
 The menuconfig-based setup is really pretty intuitive once you have used it
 and you will find it will only take 10 minutes or so to make updates for your
 particular setup. It is recommended to open the saved `.cfg` files from
-the v3 install in another window for quick reference. You will typically find
-the backup in `~printer_data/config/mmu.V3`
+the v3 install in another window for quick reference. While `menuconfig` is
+open they are still in `~/printer_data/config/mmu`. Once you save, `install.sh`
+renames that directory to `mmu.V3` (or `mmu.V3-<timestamp>` if an `mmu.V3`
+already exists), removes the old Happy Hare includes from `printer.cfg` and
+`moonraker.conf`, and installs the new v4 files.
 
 ## See also
 

@@ -208,9 +208,34 @@ cp -a ~/printer_data/config/mmu.V3 ~/printer_data/config/mmu
 
 The uninstall step backs up the active v4 configuration, removes its installed
 modules and configuration, and leaves `mmu.V3` untouched. Copying rather than
-moving keeps the original v3 backup available. The final command switches the
-checkout and Moonraker update manager to the `v3` branch, then runs the v3
-installer against the restored `mmu` directory.
+moving keeps the original v3 backup available. The final command asks which
+version to use; choose option 1 to switch the checkout to the `v3` branch and
+run the v3 installer against the restored `mmu` directory.
+
+The uninstall also removes the Happy Hare includes from `printer.cfg` and the
+Happy Hare sections from `moonraker.conf`. The v3 run keeps your restored v3
+settings but doesn't put the includes back, so finish by hand:
+
+1. Add your v3 includes back to the top of `printer.cfg`. Always include the
+   base files, then add whichever optional and add-on files you used with v3:
+
+    ```text
+    [include mmu/base/*.cfg]
+    [include mmu/optional/client_macros.cfg]
+    [include mmu/optional/mmu_menu.cfg]
+    [include mmu/addons/blobifier.cfg]
+    [include mmu/addons/mmu_erec_cutter.cfg]
+    [include mmu/addons/mmu_eject_buttons.cfg]
+    ```
+
+2. In `moonraker.conf`, change `primary_branch: main` to `primary_branch: v3`
+   under `[update_manager happy-hare]`. The v3 run adds this section back
+   tracking `main`, so without the change the next update pulls v4 again.
+3. Restart Moonraker and Klipper.
+
+Don't use `./install.sh -i` on v3 to add the includes instead. It walks through
+the v3 questionnaire from scratch and rebuilds the v3 `.cfg` files from their
+templates, replacing the settings you just restored.
 
 !!! warning
     Use the Klipper configuration path supplied with `-c` if your printer does
