@@ -79,10 +79,11 @@ You are running an interactive install with existing menuconfig ('.mmu_config').
 Read carefully, you have two options:
 
 1) Merge/Refresh (select 1) (Default upgrade path)
-   This KEEPS every change you made directly to your .cfg files. Before menuconfig opens,
-   the simple settings your .cfg files hold are copied into menuconfig (you'll see the list
-   and confirm), so menuconfig shows what you are actually running. Only the settings you
-   then change in menuconfig are applied to your .cfg files, and new options are added.
+   This KEEPS the values you edited directly in your .cfg files (but not edited macro gcode).
+   Before menuconfig opens, the simple settings your .cfg files hold are copied into menuconfig
+   (you'll see the list and confirm), so menuconfig shows what you are actually running. Only
+   the settings you then change in menuconfig are applied to your .cfg files, and new options
+   are added.
 
 2) Replace (select 2) (Recommended)
    This will OVERWRITE changes made directly to your .cfg files and create new default
