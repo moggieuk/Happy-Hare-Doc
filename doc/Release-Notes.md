@@ -194,3 +194,56 @@ baseline used for the comparison above.
   [#1271](https://github.com/moggieuk/Happy-Hare/pull/1271), [#1333](https://github.com/moggieuk/Happy-Hare/pull/1333), [#1340](https://github.com/moggieuk/Happy-Hare/pull/1340))
 
 ---
+
+## v4.1.1
+
+Changes since v4.1.0. See the [full comparison](https://github.com/moggieuk/Happy-Hare/compare/v4.1.0...12236421)
+for the commit history.
+
+### Upgrade notes
+
+- Interactive install option 1 is now **Merge/Refresh**; the separate Merge
+  option is removed. ([#1375](https://github.com/moggieuk/Happy-Hare/pull/1375))
+- The Blobifier `skew_correction` variable is removed; skew is now handled
+  automatically. If you used it for extra clearance, add that to `y_offset`,
+  `brush_y_offset` or `shaker_pos_x`. ([#1395](https://github.com/moggieuk/Happy-Hare/pull/1395))
+- During a print, `RESUME` after a failed toolchange now waits until the tool
+  is loaded, and an enabled sensor reading empty after a load pauses the
+  print. ([#1396](https://github.com/moggieuk/Happy-Hare/pull/1396))
+- `extruder_unload_speed` and the two-level sync-feedback multipliers now take
+  effect. ([#1370](https://github.com/moggieuk/Happy-Hare/pull/1370), [#1376](https://github.com/moggieuk/Happy-Hare/pull/1376))
+
+### Toolchanges, sensors and skew correction
+
+- Keep toolhead moves within axis limits under Klipper `[skew_correction]`,
+  and add `MMU_CHECK_POSITIONS` to report out-of-range park and cut positions.
+  Fix the z-hop ramp center and offset restores. ([#1395](https://github.com/moggieuk/Happy-Hare/pull/1395))
+- Restore the in-print loaded check. ([#1396](https://github.com/moggieuk/Happy-Hare/pull/1396))
+- Skip tip forming when no tip-forming macro is configured. ([#1391](https://github.com/moggieuk/Happy-Hare/pull/1391))
+
+### NFC readers
+
+- Abort an unfinished PN532 scan when no tag is found, preventing I2C bus
+  hangs. ([#1374](https://github.com/moggieuk/Happy-Hare/pull/1374))
+- Create a new Spoolman filament when a tag's color matches no existing one.
+  ([#1368](https://github.com/moggieuk/Happy-Hare/pull/1368))
+
+### Installer and menuconfig
+
+- Merge/Refresh imports hand-edited `.cfg` values into menuconfig, applies
+  only the changes made there and summarizes what changed. ([#1375](https://github.com/moggieuk/Happy-Hare/pull/1375),
+  [#1379](https://github.com/moggieuk/Happy-Hare/pull/1379), [#1380](https://github.com/moggieuk/Happy-Hare/pull/1380), [#1384](https://github.com/moggieuk/Happy-Hare/pull/1384))
+- Keep the v4 upgrade on v4 when started with `-b v3`. ([#1388](https://github.com/moggieuk/Happy-Hare/pull/1388))
+- Reorganize the tip forming, purge and kinematics menus, and add links to
+  their macro variables. Offer the toolhead unload safety margin per unit.
+  ([#1391](https://github.com/moggieuk/Happy-Hare/pull/1391), [#1392](https://github.com/moggieuk/Happy-Hare/pull/1392), [#1394](https://github.com/moggieuk/Happy-Hare/pull/1394))
+- Point help links at this documentation site instead of the wiki.
+  ([#1393](https://github.com/moggieuk/Happy-Hare/pull/1393))
+
+### Developer tools and maintenance
+
+- Improve `make test` progress reporting, memory use and benchmarks.
+  ([#1381](https://github.com/moggieuk/Happy-Hare/pull/1381), [#1382](https://github.com/moggieuk/Happy-Hare/pull/1382), [#1383](https://github.com/moggieuk/Happy-Hare/pull/1383), [#1385](https://github.com/moggieuk/Happy-Hare/pull/1385), [#1386](https://github.com/moggieuk/Happy-Hare/pull/1386), [#1387](https://github.com/moggieuk/Happy-Hare/pull/1387))
+- Synchronize main into development. ([#1377](https://github.com/moggieuk/Happy-Hare/pull/1377), [#1378](https://github.com/moggieuk/Happy-Hare/pull/1378))
+
+---
