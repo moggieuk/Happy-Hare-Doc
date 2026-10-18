@@ -180,6 +180,18 @@ it does not invent settings or values. Include these composite sessions when
 refreshing shared toolhead screens; a single full-screen capture loses the
 comparison.
 
+The fade is used by these two generated images:
+
+| Image under `doc/` | Used by |
+|---|---|
+| `GettingStarted-ERCF/10-all-toolhead-dimensions-combined.png` | ERCF guide |
+| `GettingStarted-Shared/toolhead-dimensions-combined.png` | EMU and Tradrack guides |
+
+Both sessions are included in a full `make shots` run. When refreshing selected
+toolhead images, include the corresponding composite session as well. Regression
+tests check the fade's increasing opacity, triangular boundary, preservation of
+captured pixels, and rejection of an inset that would obscure the base screen.
+
 The grouped **MMU Features / Additions** screen is taller than the initial
 terminal. Screenshot sessions use `_additions(mc)` to fit it before walking
 to settings below the visible area. Refit after returning from a shorter

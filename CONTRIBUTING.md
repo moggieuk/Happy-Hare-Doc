@@ -129,6 +129,11 @@ output directory matching its page. Enable any capability that gates the menu
 being captured. When shared menus change, check all affected Getting Started
 guides and feature or macro pages.
 
+Preserve intentional screenshot composites when refreshing their source screens,
+including the transparent-to-amber triangular fade that identifies an alternative
+view. Regenerate these through their dedicated composite sessions; do not replace
+them with a plain screenshot. The tooling guide lists the affected images.
+
 Generation commands, source selection, capture limitations, and reproducibility
 details live in [doc_tools/README.md](doc_tools/README.md). Builds render the
 committed screenshots and references; they do not regenerate them.
