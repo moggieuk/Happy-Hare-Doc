@@ -170,8 +170,10 @@ The `getting-started-shared-toolhead` session captures the plain A4T dimensions.
 The `getting-started-ercf-toolhead-composite` and
 `getting-started-shared-toolhead-composite` sessions preserve the layered
 before/after illustrations used by ERCF, EMU and Tradrack. They capture both
-sensor states at 140 columns, then place the enabled sensor/dimension section
+sensor states at 115 columns, then place the enabled sensor/dimension section
 in a bordered inset over the blank right side of the disabled-sensor screen.
+A triangular connector fades from transparent at its point to amber at the
+inset, preserving the original alternative-view effect.
 `composite.py` finds section boundaries from the actual terminal text and
 rejects a layout that would hide base text or help. It copies rendered cells;
 it does not invent settings or values. Include these composite sessions when

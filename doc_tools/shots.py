@@ -1016,14 +1016,14 @@ SESSIONS = [
         'scenes': _ercf_toolhead_composite,
         'outdir': 'GettingStarted-ERCF',
         'seed': 'ercf',
-        'cols': 140,
+        'cols': 115,
     },
     {
         'name': 'getting-started-shared-toolhead-composite',
         'caption': 'A4T toolhead dimensions with an enabled-sensor inset',
         'scenes': _shared_toolhead_composite,
         'outdir': 'GettingStarted-Shared',
-        'cols': 140,
+        'cols': 115,
     },
     {
         'name': 'getting-started-shared-toolhead',

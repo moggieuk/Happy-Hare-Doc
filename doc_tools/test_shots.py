@@ -104,6 +104,17 @@ class NavigationTests(unittest.TestCase):
 
 
 class CompositeTests(unittest.TestCase):
+    def test_connector_fades_and_stays_inside_triangle(self):
+        from PIL import Image
+        from .composite import faded_connector
+        base = Image.new('RGB', (120, 100), 'white')
+        faded_connector(base, (20, 50), (100, 10), (100, 90))
+        self.assertEqual(base.getpixel((20, 50)), (255, 255, 255))
+        self.assertEqual(base.getpixel((30, 15)), (255, 255, 255))
+        self.assertGreater(base.getpixel((35, 50))[2], base.getpixel((70, 50))[2])
+        self.assertGreater(base.getpixel((70, 50))[2], base.getpixel((100, 50))[2])
+        self.assertGreater(base.getpixel((100, 50))[2], 70)
+
     def screen(self, enabled=False, columns=140):
         import pyte
         screen = pyte.Screen(columns, 30)

@@ -1,7 +1,7 @@
 """Reproducible toolhead illustrations built entirely from real terminal cells."""
 from io import BytesIO
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageChops, ImageDraw
 
 from .capture import ScreenError
 from .render import CELL_ASPECT, PAD, _fonts, render
@@ -19,6 +19,20 @@ def sensor_section(screen):
     width = max(len(line.rstrip()) for line in lines[top:bottom]
                 if 'TOOLHEAD SENSORS' not in line and 'TOOLHEAD DIMENSIONS' not in line)
     return top, bottom, width
+
+
+def faded_connector(base, tip, upper, lower):
+    """Fade a triangular alternative-view connector into the original screen."""
+    mask = Image.new('L', base.size, 0)
+    ImageDraw.Draw(mask).polygon([tip, upper, lower], fill=255)
+    gradient = Image.new('L', base.size, 0)
+    draw = ImageDraw.Draw(gradient)
+    start, end = tip[0], upper[0]
+    for x in range(start, end + 1):
+        alpha = round(145 * (x - start) / max(1, end - start))
+        draw.line((x, upper[1], x, lower[1]), fill=alpha)
+    tint = Image.new('RGB', base.size, '#d08b46')
+    base.paste(tint, (0, 0), ImageChops.multiply(mask, gradient))
 
 
 def render_toolhead_composite(before, after, path, scale=2):
@@ -45,12 +59,11 @@ def render_toolhead_composite(before, after, path, scale=2):
                      if line.strip() == 'Help'), before.lines - 8)
     if x < pad + (old_width + 2) * cell_w or y + inset.height >= pad + help_row * cell_h:
         raise ScreenError('Toolhead inset would obscure base text or help; increase capture size')
-    draw = ImageDraw.Draw(base)
     start = pad + int((old_width + 1) * cell_w)
-    draw.polygon([(start, y + cell_h), (x, y),
-                  (x, y + inset.height), (start, pad + old_bottom * cell_h)],
-                 fill='#e6c6a5')
+    faded_connector(base, (start, pad + (old_top + old_bottom) * cell_h // 2),
+                    (x, y), (x, y + inset.height))
     base.paste(inset, (x, y))
+    draw = ImageDraw.Draw(base)
     draw.rectangle((x - scale, y - scale, x + inset.width, y + inset.height),
                    outline='#bcbcbc', width=scale)
     base.save(path)
