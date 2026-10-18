@@ -234,7 +234,7 @@ From the top menu, select **Toolhead**. This step is optional — if you skip it
 instead of generic estimates. Here we’ve chosen **`A4T WWBMG for A4T Dragon Ace`** to illustrate.
 
 <p align="center">
-  <img src="GettingStarted-ERCF/10-toolhead-selected.png" alt="Toolhead list, Stealthburner Clockwork2 Rapido HF selected" width="70%">
+  <img src="GettingStarted-ERCF/10-toolhead-selected.png" alt="Toolhead list, A4T WWBMG for A4T Dragon Ace selected" width="70%">
 </p>
 <br>
 
@@ -250,14 +250,10 @@ to add your parameters to future installer updates.
 The other two distances Happy Hare can use (**`Toolhead sensor to nozzle`** & **`Extruder sensor to entry`**) 
 only appear when you have enabled the sensors and remain hidden when disabled.
 
-<p align="center">
-  <img src="GettingStarted-ERCF/10-toolhead-dimensions.png" alt="Toolhead dimensions before enabling optional sensors" width="70%">
-</p>
-
-With both optional sensors enabled, the additional distances appear:
+The inset shows the additional distances that appear when both optional sensors are enabled.
 
 <p align="center">
-  <img src="GettingStarted-ERCF/10-all-toolhead-dimensions-combined.png" alt="Toolhead dimensions, pre-filled from the selected combo" width="70%">
+  <img src="GettingStarted-ERCF/10-all-toolhead-dimensions-combined.png" alt="Toolhead dimensions with sensors disabled, with an inset showing both sensors enabled" width="70%">
 </p>
 <br>
 

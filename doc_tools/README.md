@@ -166,8 +166,17 @@ installer menu and its **Name** submenu. The `getting-started-3ms-additions`,
 capture the complete walkthroughs, including board and MCU choices, pin editors,
 toolheads, and profile-specific settings. Their historical `-additions` names
 remain valid for `--only`. Include all profile sessions when shared menus change.
-The `getting-started-shared-toolhead` session captures A4T dimensions before and
-after enabling its optional sensors for the EMU and Tradrack guides.
+The `getting-started-shared-toolhead` session captures the plain A4T dimensions.
+The `getting-started-ercf-toolhead-composite` and
+`getting-started-shared-toolhead-composite` sessions preserve the layered
+before/after illustrations used by ERCF, EMU and Tradrack. They capture both
+sensor states at 140 columns, then place the enabled sensor/dimension section
+in a bordered inset over the blank right side of the disabled-sensor screen.
+`composite.py` finds section boundaries from the actual terminal text and
+rejects a layout that would hide base text or help. It copies rendered cells;
+it does not invent settings or values. Include these composite sessions when
+refreshing shared toolhead screens; a single full-screen capture loses the
+comparison.
 
 The grouped **MMU Features / Additions** screen is taller than the initial
 terminal. Screenshot sessions use `_additions(mc)` to fit it before walking

@@ -186,14 +186,10 @@ to add your parameters to future installer updates.
 The other two distances Happy Hare can use (**`Toolhead sensor to nozzle`** & **`Extruder sensor to entry`**) 
 only appear when you have enabled the sensors and remain hidden when disabled.
 
-<p align="center">
-  <img src="GettingStarted-Shared/toolhead-dimensions.png" alt="Toolhead dimensions before enabling optional sensors" width="70%">
-</p>
-
-With both optional sensors enabled, the additional distances appear:
+The inset shows the additional distances that appear when both optional sensors are enabled.
 
 <p align="center">
-  <img src="GettingStarted-Shared/toolhead-dimensions-combined.png" alt="Toolhead dimensions, pre-filled from the selected combo" width="70%">
+  <img src="GettingStarted-Shared/toolhead-dimensions-combined.png" alt="Toolhead dimensions with sensors disabled, with an inset showing both sensors enabled" width="70%">
 </p>
 <br>
 

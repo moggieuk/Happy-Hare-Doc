@@ -234,14 +234,10 @@ gets you real, community-measured values instead of guesses, for free.
 
 Back out and enter **Toolhead sensors/settings** to see the effect:
 
-<p align="center">
-  <img src="GettingStarted-Shared/toolhead-dimensions.png" alt="Toolhead dimensions before enabling optional sensors" width="70%">
-</p>
-
-With both optional sensors enabled, the additional distances appear:
+The inset shows the additional distances that appear when both optional sensors are enabled.
 
 <p align="center"> <img src="GettingStarted-Shared/toolhead-dimensions-combined.png"
-  alt="Toolhead dimensions, pre-filled from the selected combo" width="70%">
+  alt="Toolhead dimensions with sensors disabled, with an inset showing both sensors enabled" width="70%">
 </p>
 
 **Extruder entrance to nozzle** and **Residual filament**, under **Toolhead

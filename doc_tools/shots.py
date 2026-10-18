@@ -38,6 +38,7 @@
 from __future__ import annotations
 
 import argparse
+from copy import deepcopy
 import os
 import sys
 import traceback
@@ -420,7 +421,7 @@ def _getting_started_ercf_additions(mc, shot):
     mc.back()
     mc.back()
     mc.autofit()
-    _toolhead_screens(mc, shot, 'TOOLHEAD_TYPE_STEALTHBURNER_CLOCKWORK2_RAPIDO_HF',
+    _toolhead_screens(mc, shot, 'TOOLHEAD_TYPE_A4T_WWBMG_FOR_A4T_DRAGON_ACE',
                       '10-toolhead-selected', '10-toolhead-dimensions')
     mc.select(symbol('MMU_HAS_SENSOR_TOOLHEAD'))
     mc.toggle()
@@ -430,7 +431,6 @@ def _getting_started_ercf_additions(mc, shot):
     mc.autofit()
     mc.enter('Toolhead sensors/settings')
     shot('10-all-toolhead-dimensions')
-    shot('10-all-toolhead-dimensions-combined')
 
 
 def _getting_started_tradrack_additions(mc, shot):
@@ -445,7 +445,7 @@ def _getting_started_tradrack_additions(mc, shot):
 
 
 def _shared_toolhead_dimensions(mc, shot):
-    """Show the A4T dimensions before and after enabling toolhead sensors."""
+    """Show the A4T dimensions before enabling toolhead sensors."""
     mc.enter(symbol('CHOICE_TOOLHEAD_TYPE'))
     mc.select(symbol('TOOLHEAD_TYPE_A4T_WWBMG_FOR_A4T_DRAGON_ACE'))
     mc.toggle()
@@ -453,6 +453,18 @@ def _shared_toolhead_dimensions(mc, shot):
     mc.autofit()
     mc.enter('Toolhead sensors/settings')
     shot('toolhead-dimensions')
+
+
+def _toolhead_composite(mc, shot, toolhead, name):
+    """Overlay the enabled sensor section on the real disabled-sensor screen."""
+    mc.enter(symbol('CHOICE_TOOLHEAD_TYPE'))
+    mc.select(symbol(toolhead))
+    mc.toggle()
+    mc.back()
+    mc.autofit()
+    mc.enter('Toolhead sensors/settings')
+    mc.autofit()
+    before = deepcopy(mc.screen)
     mc.select(symbol('MMU_HAS_SENSOR_TOOLHEAD'))
     mc.toggle()
     mc.select(symbol('MMU_HAS_SENSOR_EXTRUDER'))
@@ -460,7 +472,19 @@ def _shared_toolhead_dimensions(mc, shot):
     mc.back()
     mc.autofit()
     mc.enter('Toolhead sensors/settings')
-    shot('toolhead-dimensions-combined')
+    mc.select(symbol('MMU_HAS_SENSOR_EXTRUDER'))
+    shot(name, before=before)
+
+
+def _ercf_toolhead_composite(mc, shot):
+    _toolhead_composite(mc, shot,
+                        'TOOLHEAD_TYPE_A4T_WWBMG_FOR_A4T_DRAGON_ACE',
+                        '10-all-toolhead-dimensions-combined')
+
+
+def _shared_toolhead_composite(mc, shot):
+    _toolhead_composite(mc, shot, 'TOOLHEAD_TYPE_A4T_WWBMG_FOR_A4T_DRAGON_ACE',
+                        'toolhead-dimensions-combined')
 
 
 def _installer_top(mc, shot):
@@ -987,8 +1011,23 @@ def _macro_purge(mc, shot):
 
 SESSIONS = [
     {
+        'name': 'getting-started-ercf-toolhead-composite',
+        'caption': 'ERCF toolhead dimensions with an enabled-sensor inset',
+        'scenes': _ercf_toolhead_composite,
+        'outdir': 'GettingStarted-ERCF',
+        'seed': 'ercf',
+        'cols': 140,
+    },
+    {
+        'name': 'getting-started-shared-toolhead-composite',
+        'caption': 'A4T toolhead dimensions with an enabled-sensor inset',
+        'scenes': _shared_toolhead_composite,
+        'outdir': 'GettingStarted-Shared',
+        'cols': 140,
+    },
+    {
         'name': 'getting-started-shared-toolhead',
-        'caption': 'A4T toolhead dimensions with and without optional sensors',
+        'caption': 'A4T toolhead dimensions before enabling optional sensors',
         'scenes': _shared_toolhead_dimensions,
         'outdir': 'GettingStarted-Shared',
     },
@@ -1280,13 +1319,16 @@ def run_session(session,
                     min_rows=min_rows or session.get('min_rows', MIN_ROWS),
                     **context) as mc:
 
-        def shot(name):
+        def shot(name, before=None):
             path = os.path.join(outdir, name + '.png')
             capture_path = os.path.join(staging, session['name'], name + '.png') if staging else path
             mc.shot(capture_path,
                     trim=session.get('trim', True),
                     scale=scale,
                     fit=session.get('fit', True))
+            if before is not None:
+                from .composite import render_toolhead_composite
+                render_toolhead_composite(before, mc.screen, capture_path, scale)
             if verbose:
                 mc.dump()
             print('    %-24s %2dx%-3d %s' %

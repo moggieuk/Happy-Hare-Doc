@@ -103,6 +103,63 @@ class NavigationTests(unittest.TestCase):
             self.assertTrue(completed(mc))
 
 
+class CompositeTests(unittest.TestCase):
+    def screen(self, enabled=False, columns=140):
+        import pyte
+        screen = pyte.Screen(columns, 30)
+        stream = pyte.Stream(screen)
+        lines = {
+            0: '(Top) Toolhead sensors/settings',
+            4: 'TOOLHEAD SENSORS',
+            5: '[*] Has toolhead sensor?' if enabled else '[ ] Has toolhead sensor?',
+            8: 'TOOLHEAD DIMENSIONS',
+            9: '> Extruder entrance to nozzle (88)',
+            12: '> Unload safety margin (40)',
+            21: 'Help',
+        }
+        if enabled:
+            lines[10] = '> Toolhead sensor to nozzle (76.5)'
+        for row, text in lines.items():
+            stream.feed(f'\x1b[{row + 1};1H{text}')
+        return screen
+
+    def test_composite_preserves_base_and_contains_exact_enabled_pixels(self):
+        from PIL import Image, ImageChops
+        from .composite import render_toolhead_composite, sensor_section
+        from .render import render, PAD, CELL_ASPECT, _fonts
+        before, after = self.screen(), self.screen(True)
+        with tempfile.TemporaryDirectory() as root:
+            p = Path(root)
+            render(before, p / 'before.png')
+            render(after, p / 'after.png')
+            render_toolhead_composite(before, after, p / 'combined.png')
+            base = Image.open(p / 'before.png')
+            enabled = Image.open(p / 'after.png')
+            combined = Image.open(p / 'combined.png')
+            self.assertEqual(base.size, combined.size)
+            self.assertIsNone(ImageChops.difference(base.crop((0, 0, 500, base.height)),
+                                                   combined.crop((0, 0, 500, base.height))).getbbox())
+            top, bottom, width = sensor_section(after)
+            pad, height = PAD * 2, int(26 * CELL_ASPECT)
+            right = pad + int((width + 1) * _fonts(26)[0].getlength('M'))
+            expected = enabled.crop((pad, pad + top * height, right, pad + bottom * height))
+            x, y = combined.width - pad - expected.width, pad + top * height
+            # Ignore the intentional border around the inset.
+            actual = combined.crop((x + 2, y + 2, x + expected.width - 2, y + expected.height - 2))
+            expected = expected.crop((2, 2, expected.width - 2, expected.height - 2))
+            self.assertIsNone(ImageChops.difference(actual, expected).getbbox())
+
+    def test_incomplete_or_overlapping_composite_is_rejected(self):
+        from .composite import render_toolhead_composite, sensor_section
+        with self.assertRaisesRegex(ScreenError, 'complete toolhead'):
+            sensor_section(SimpleNamespace(display=['TOOLHEAD SENSORS']))
+        with tempfile.TemporaryDirectory() as root:
+            output = Path(root) / 'bad.png'
+            with self.assertRaisesRegex(ScreenError, 'obscure'):
+                render_toolhead_composite(self.screen(columns=60), self.screen(True, columns=60), output)
+            self.assertFalse(output.exists())
+
+
 class PublicationTests(unittest.TestCase):
     def test_duplicate_destinations_are_rejected_before_writing(self):
         with tempfile.TemporaryDirectory() as root:
