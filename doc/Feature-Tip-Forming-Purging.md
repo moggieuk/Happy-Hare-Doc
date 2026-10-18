@@ -36,7 +36,7 @@ Two independent menus, both unconditional (every MMU type gets them):
 | Setting | Purpose |
 |---|---|
 | `Have servo cutter at MMU?` | The additive EREC-style cutter - see [Servo Cutter](#servo-cutter-mmu-mounted) |
-| `Select standalone tip shaping option` | `_MMU_FORM_TIP` / cut (needs a toolhead cutter fitted) / slicer-controlled / custom macro |
+| `Happy Hare tip forming/cutting method` | `_MMU_FORM_TIP` / cut (needs a toolhead cutter fitted) / slicer-controlled / custom macro |
 | `Happy Hare controlled in-print tip forming/cutting` | Forces standalone tip forming even during a print (on by default) - turn off only if the slicer is genuinely handling it |
 | `Extruder tip forming current` | 100-150%, extra torque for the rapid tip-forming moves; 100 disables the boost |
 
@@ -47,8 +47,8 @@ Two independent menus, both unconditional (every MMU type gets them):
 | Setting | Purpose |
 |---|---|
 | `Have Blobifier?` | See [Purge: Blobifier](Macro-Blobifier.md) |
-| `Select standalone purging option` | `_MMU_PURGE` / Blobifier / slicer wipe tower / custom macro |
-| `Happy Hare controlled in-print purging` | Forces standalone purging even during a print - turn the slicer's wipe tower off if you enable this |
+| `Happy Hare purging method` | `_MMU_PURGE` / Blobifier / slicer wipe tower / custom macro |
+| `Happy Hare controlled in-print purge` | Forces standalone purging even during a print - turn the slicer's wipe tower off if you enable this |
 | `Extruder purge current` | Same idea as tip-forming current, for purge moves |
 
 These produce, in `mmu.cfg`'s general parameters (not the file literally

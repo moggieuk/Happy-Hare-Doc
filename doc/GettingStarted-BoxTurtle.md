@@ -185,7 +185,7 @@ for range measurement, tuning and proportional-sensor setup.
 ### Pins: gear direction
 
 This is the one setting on this page that's genuinely impossible to get right by
-guessing. Back out to the top, enter **Pins / TMC**, then **Gear pins**:
+guessing. Back out to the top, enter **Pins / TMC**, then **Gear stepper pins**:
 
 <p align="center">
   <img src="GettingStarted-BoxTurtle/08-gear-pins.png" alt="Gear pins list - one row per gate" width="70%">
@@ -258,7 +258,7 @@ and if your exact combo isn't listed, "Other/Unknown" plus manual calibration
 ### Explore the rest
 
 That's enough to get a stock Box Turtle basically talking to Klipper, but it's
-only a fraction of the menu. **Software Options**, **Tip Forming / Cutting**,
+only a fraction of the menu. **Global software options**, **Tip Forming / Cutting**,
 **Purging**, **Endstops and Bowden movement** and the rest are all worth a look —
 scroll all the way from the top to **Paths & Services** at the bottom at least
 once. Nothing you look at will break anything: moving the highlight

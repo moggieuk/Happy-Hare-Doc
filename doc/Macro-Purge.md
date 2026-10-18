@@ -11,18 +11,18 @@ deliberately minimal.
 ## Where it's applied
 
 `_MMU_PURGE`, defined in `mmu_purge.cfg`. Active once `purge_macro:
-_MMU_PURGE` in `mmu.cfg` (menuconfig's **Purging → Select standalone
-purging option**) - if purging in-print rather than only standalone, also
+_MMU_PURGE` in `mmu.cfg` (menuconfig's **Purging → Happy Hare purging
+method**) - if purging in-print rather than only standalone, also
 turn off the slicer's own wipe tower and enable **Happy Hare controlled
-in-print purging**. See [Feature: Tip Forming and
+in-print purge**. See [Feature: Tip Forming and
 Purging](Feature-Tip-Forming-Purging.md#purge-volumes) for how the purge
 length itself is calculated.
 
 ## Selecting the reference purge
 
 Open menuconfig's **Purging --->** screen. Leave **Have Blobifier?**
-disabled unless that hardware is fitted, then open **Select standalone
-purging option** and choose **Simple purge into bucket**. This writes
+disabled unless that hardware is fitted, then open **Happy Hare purging
+method** and choose **Simple purge into bucket**. This writes
 `purge_macro: _MMU_PURGE` to `mmu.cfg`.
 
 <p align="center">

@@ -67,7 +67,8 @@ from .capture import (DEFAULT_COLS, DEFAULT_SEED, DOC, IMAGES, MIN_ROWS,
 
 
 def _additions(mc):
-    """Fit the grouped additions menu before navigating off-screen settings."""
+    """Fit the parent and grouped additions menu before navigating settings."""
+    mc.autofit()
     mc.enter('MMU Features / Additions')
     mc.autofit()
 
@@ -222,13 +223,13 @@ def _getting_started_vivid(mc, shot):
     shot('06-toolhead-selected')  # same generic choice, not ViViD-specific
     mc.back()  # -> (Top)
 
-    mc.enter('Software Options')
+    mc.enter(menu_of('PARAM_ENDLESS_SPOOL_ENABLED'))
     mc.select(symbol('PARAM_SPOOLMAN_NFC_AUTO_CREATE'))
     mc.toggle()
     # worth having, since ViViD ships NFC readers already
     shot('07-spoolman-nfc-autocreate')
     # No mc.enter('Spoolman') step - "Spoolman" is a `comment` section divider on this
-    # same Software Options screen, not a submenu; the item above is selectable in place.
+    # same Global software options screen, not a submenu; the item above is selectable in place.
 
 
 def _getting_started_mmx(mc, shot):
@@ -280,59 +281,186 @@ def _getting_started_mmx(mc, shot):
     shot('07-endstops')
 
 
+def _gear_direction(mc, shot, pins, editor, inverted):
+    mc.enter('Pins / TMC')
+    mc.enter(menu_of('PIN_GEAR_DIR'))
+    shot(pins)
+    mc.select(symbol('PIN_GEAR_DIR'))
+    pin = mc.selected.split('(', 1)[1].split(')', 1)[0]
+    mc.edit()
+    if editor:
+        shot(editor)
+    # Use the selected board's real default, changing only its polarity.
+    mc.write(pin[1:] if pin.startswith('!') else '!' + pin)
+    shot(inverted)
+    mc.cancel()
+    mc.back()
+    mc.back()
+    mc.autofit()
+
+
+def _toolhead_screens(mc, shot, toolhead, selected, dimensions):
+    mc.enter(symbol('CHOICE_TOOLHEAD_TYPE'))
+    mc.select(symbol(toolhead))
+    mc.toggle()
+    mc.autofit()
+    mc.select(symbol(toolhead))
+    shot(selected)
+    mc.back()
+    mc.autofit()
+    mc.enter('Toolhead sensors/settings')
+    shot(dimensions)
+
+
+def _canbus_screens(mc, shot):
+    mc.autofit()
+    mc.enter('MCU connection')
+    shot('08-mcu-connection')
+    mc.enter(symbol('CHOICE_MMU_CONNECTION_TYPE'))
+    mc.select(symbol('CHOICE_MMU_CONNECTION_TYPE_CANBUS'))
+    mc.toggle()
+    shot('08-mcu-connection-canbus')
+    mc.enter(symbol('CHOICE_MMU_CANBUS_CONNECTION'))
+    shot('08-mcu-connection-canbus-uuids')
+    mc.back()
+    mc.back()
+    mc.autofit()
+
+
 def _getting_started_3ms_additions(mc, shot):
-    """
-    Refresh the top menus and MMU Features / Additions screen embedded in
-    doc/GettingStarted-3MS.md, selecting 3MS from a bare configuration.
-    """
+    """Complete first-install walkthrough for the 3MS guide."""
     mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
     shot('01-first-run')
     mc.enter(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
     mc.select(symbol('MMU_TYPE_3MS_1_0'))
     mc.toggle()
+    shot('02-mmu-type-3ms')
     mc.back()
     mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
     shot('03-root-warnings')
+    mc.enter(symbol('BOARD_TYPE'))
+    shot('04-board-type')
+    mc.back()
+    mc.enter('MCU connection')
+    shot('05-mcu-connection')
+    mc.back()
     _additions(mc)
     shot('06-mmu-features')
+    mc.back()
+    mc.autofit()
+    _gear_direction(mc, shot, '07-gear-pins', '08-gear-dir-editor',
+                    '09-gear-dir-inverted')
+    _toolhead_screens(mc, shot, 'TOOLHEAD_TYPE_ANTHEAD_WWBMG_RAPIDO_2_HF',
+                      '10-toolhead-selected', '11-toolhead-dimensions')
+    mc.back()
+    mc.autofit()
+    mc.enter(menu_of('PARAM_ENDLESS_SPOOL_ENABLED'))
+    mc.enter(symbol('CHOICE_SPOOLMAN_SUPPORT'))
+    mc.select(symbol('CHOICE_SPOOLMAN_SUPPORT_PUSH'))
+    mc.toggle()
+    shot('12-spoolman-push')
+
+
+def _selector_profile(mc, shot, profile, image):
+    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    shot('01-first-run')
+    mc.enter(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    mc.select(symbol(profile))
+    mc.toggle()
+    shot(image)
+    if profile == 'MMU_FAMILY_ERCF':
+        mc.enter('Version')
+        shot('02-ercf-version')
+        mc.back()
+    mc.edit(symbol('PARAM_NUM_GATES'))
+    if profile == 'MMU_FAMILY_ERCF':
+        mc.write('6')
+    shot('03-lanes')
+    if profile == 'MMU_FAMILY_ERCF':
+        mc.step(b'\r', lambda screen: not screen.in_editor())
+    else:
+        mc.cancel()
+    mc.enter(symbol('CHOICE_SERVO_TYPE'))
+    if profile == 'MMU_FAMILY_ERCF':
+        mc.select(symbol('SERVO_TYPE_SAVOX_SH0255MG'))
+        before = mc.breadcrumb
+        mc.toggle()
+        if mc.breadcrumb != before:
+            mc.enter(symbol('CHOICE_SERVO_TYPE'))
+    shot('04-selector-servo-type')
+    mc.back()
+    mc.enter('Project Options')
+    shot('05-project-options')
+    mc.back()
+    mc.back()
+    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
+    shot('06-root-warnings')
+    mc.enter(symbol('BOARD_TYPE'))
+    shot('07-board-type')
+    mc.back()
+    _canbus_screens(mc, shot)
+    _gear_direction(mc, shot, '09-gear-pins', None, '09-gear-dir-inverted')
+    mc.enter('Endstops and Bowden movement')
+    shot('11-Endstops')
+    mc.back()
+    mc.autofit()
 
 
 def _getting_started_ercf_additions(mc, shot):
-    """
-    Refresh the top menus and MMU Features / Additions screen embedded in
-    doc/GettingStarted-ERCF.md. Choose ERCF interactively so family-level fixed
-    capabilities are applied just as they are in the guide.
-    """
-    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
-    shot('01-first-run')
-    mc.enter(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
-    mc.select(symbol('MMU_FAMILY_ERCF'))
-    mc.toggle()
-    mc.back()
-    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
-    shot('06-root-warnings')
+    """Complete ERCF walkthrough, including encoder and toolhead settings."""
+    _selector_profile(mc, shot, 'MMU_FAMILY_ERCF', '02-mmu-type-ercf')
     _additions(mc)
-    mc.autofit()
     mc.select('Encoder config')
     shot('12-mmu-features')
+    _hardware_menu(mc, 'Encoder config')
+    shot('12-mmu-encoder')
+    mc.enter(symbol('CHOICE_ENCODER_TYPE'))
+    shot('12-mmu-encoder-settings')
+    mc.back()
+    mc.back()
+    mc.back()
+    mc.autofit()
+    _toolhead_screens(mc, shot, 'TOOLHEAD_TYPE_STEALTHBURNER_CLOCKWORK2_RAPIDO_HF',
+                      '10-toolhead-selected', '10-toolhead-dimensions')
+    mc.select(symbol('MMU_HAS_SENSOR_TOOLHEAD'))
+    mc.toggle()
+    mc.select(symbol('MMU_HAS_SENSOR_EXTRUDER'))
+    mc.toggle()
+    mc.back()
+    mc.autofit()
+    mc.enter('Toolhead sensors/settings')
+    shot('10-all-toolhead-dimensions')
+    shot('10-all-toolhead-dimensions-combined')
 
 
 def _getting_started_tradrack_additions(mc, shot):
-    """
-    Refresh the top menus and MMU Features / Additions screen embedded in
-    doc/GettingStarted-Tradrack.md. Start bare so the scene can select Tradrack;
-    there is no dedicated Tradrack seed.
-    """
-    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
-    shot('01-first-run')
-    mc.enter(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
-    mc.select(symbol('MMU_TYPE_TRADRACK_1_0'))
-    mc.toggle()
-    mc.back()
-    mc.select(menu_of('MMU_TYPE_BOX_TURTLE_1_0'))
-    shot('06-root-warnings')
+    """Complete Tradrack walkthrough with its shared gate sensor."""
+    _selector_profile(mc, shot, 'MMU_TYPE_TRADRACK_1_0', '02-mmu-type-tradrack')
     _additions(mc)
     shot('12-mmu-features')
+    mc.back()
+    mc.autofit()
+    _toolhead_screens(mc, shot, 'TOOLHEAD_TYPE_A4T_WWBMG_FOR_A4T_DRAGON_ACE',
+                      '10-toolhead-selected', '10-toolhead-dimensions')
+
+
+def _shared_toolhead_dimensions(mc, shot):
+    """Show the A4T dimensions before and after enabling toolhead sensors."""
+    mc.enter(symbol('CHOICE_TOOLHEAD_TYPE'))
+    mc.select(symbol('TOOLHEAD_TYPE_A4T_WWBMG_FOR_A4T_DRAGON_ACE'))
+    mc.toggle()
+    mc.back()
+    mc.autofit()
+    mc.enter('Toolhead sensors/settings')
+    shot('toolhead-dimensions')
+    mc.select(symbol('MMU_HAS_SENSOR_TOOLHEAD'))
+    mc.toggle()
+    mc.select(symbol('MMU_HAS_SENSOR_EXTRUDER'))
+    mc.toggle()
+    mc.back()
+    mc.autofit()
+    mc.enter('Toolhead sensors/settings')
+    shot('toolhead-dimensions-combined')
 
 
 def _installer_top(mc, shot):
@@ -440,12 +568,17 @@ def _getting_started_emu(mc, shot):
     mc.back()
     mc.back()
 
-    mc.enter('Speeds')
+    mc.enter('MMU Kinematics and Speeds')
+    mc.enter(menu_of('PARAM_GEAR_LOAD_SPEED'))
     shot('10-speeds')
+    mc.back()
     mc.back()
 
     # Resolve the named choice without matching 'Toolhead sensors/settings'.
     mc.enter(symbol('CHOICE_TOOLHEAD_TYPE'))
+    mc.autofit()
+    mc.select(symbol('TOOLHEAD_TYPE_A4T_WWBMG_FOR_A4T_DRAGON_ACE'))
+    mc.toggle()
     mc.autofit()
     mc.select(symbol('TOOLHEAD_TYPE_A4T_WWBMG_FOR_A4T_DRAGON_ACE'))
     shot('11-toolhead')
@@ -680,7 +813,7 @@ def _feature_endless_spool_runout(mc, shot):
     Options. Generic, not MMU-type-specific, so the boxturtle seed (default) needs
     no setup - this section is always present.
     """
-    mc.enter('Software Options')
+    mc.enter(menu_of('PARAM_ENDLESS_SPOOL_ENABLED'))
     mc.select(symbol('PARAM_ENDLESS_SPOOL_ENABLED'))
     # both EndlessSpool checkboxes, off by default
     shot('endless-spool-options')
@@ -751,8 +884,8 @@ def _macro_tip_forming(mc, shot):
 def _macro_toolhead_tip_cutting(mc, shot):
     """
     For doc/Macro-Toolhead-Tip-Cutting.md - the _MMU_CUT_TIP macro-vars screen.
-    Gated on MMU_HAS_TOOLHEAD_CUTTER, which lives under Toolhead sensors/settings
-    ("Has toolhead cutter?") - not under Tip Forming / Cutting itself. The
+    Gated on MMU_HAS_TOOLHEAD_CUTTER, available under Toolhead sensors/settings
+    and Tip Forming / Cutting. The
     generated seed starts with that capability and the cutting choice selected,
     avoiding menuconfig's incomplete redraw after dynamically adding the fields.
     """
@@ -853,6 +986,12 @@ def _macro_purge(mc, shot):
 
 
 SESSIONS = [
+    {
+        'name': 'getting-started-shared-toolhead',
+        'caption': 'A4T toolhead dimensions with and without optional sensors',
+        'scenes': _shared_toolhead_dimensions,
+        'outdir': 'GettingStarted-Shared',
+    },
     {
         'name': 'getting-started-boxturtle',
         'caption':
@@ -972,7 +1111,7 @@ SESSIONS = [
     {
         'name': 'getting-started-3ms-additions',
         'caption':
-        'doc/GettingStarted-3MS.md - MMU Features / Additions screen',
+        'doc/GettingStarted-3MS.md - complete first menuconfig pass',
         'scenes': _getting_started_3ms_additions,
         'outdir': 'GettingStarted-3MS',
         'seed': 'none',
@@ -980,7 +1119,7 @@ SESSIONS = [
     {
         'name': 'getting-started-ercf-additions',
         'caption':
-        'doc/GettingStarted-ERCF.md - MMU Features / Additions screen',
+        'doc/GettingStarted-ERCF.md - complete first menuconfig pass',
         'scenes': _getting_started_ercf_additions,
         'outdir': 'GettingStarted-ERCF',
         'seed': 'none',
@@ -988,7 +1127,7 @@ SESSIONS = [
     {
         'name': 'getting-started-tradrack-additions',
         'caption':
-        'doc/GettingStarted-Tradrack.md - MMU Features / Additions screen',
+        'doc/GettingStarted-Tradrack.md - complete first menuconfig pass',
         'scenes': _getting_started_tradrack_additions,
         'outdir': 'GettingStarted-Tradrack',
         'seed': 'none',

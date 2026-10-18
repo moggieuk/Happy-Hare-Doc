@@ -31,8 +31,8 @@ nothing to configure or restore by hand.
 
 ## Selecting filament-movement forming
 
-Open menuconfig's **Tip Forming / Cutting --->** screen, then open **Select
-standalone tip shaping option** and choose **Tip shaping using filament
+Open menuconfig's **Tip Forming / Cutting --->** screen, then open **Happy Hare
+tip forming/cutting method** and choose **Tip forming using filament
 movement**. This writes `form_tip_macro: _MMU_FORM_TIP` to `mmu.cfg`.
 
 <p align="center">

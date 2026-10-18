@@ -23,7 +23,7 @@ By default the console shows up to informational messages, and `mmu.log`
 up to debug - a reasonable balance day to day, worth turning up temporarily
 while tuning. `mmu.log` lives alongside Klipper's other log files and
 rotates the same way, keeping the last 5. To disable it entirely, choose
-**Off** for **Log file (mmu.log) level** under **Software Options** in
+**Off** for **Log file (mmu.log) level** under **Global software options** in
 `menuconfig`, which sets `log_file_level: -1` in `mmu.cfg`'s shared
 parameters (anything that reaches the console still ends up in `klipper.log`
 regardless).

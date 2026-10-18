@@ -92,7 +92,7 @@ You’ll also find the **`Savox SH‑0255MG`**, a community‑favorite and widel
 ultra‑reliable option thanks to its consistent torque and proven, long‑term durability.
 
 If your build uses a different servo, select **`Not listed`**. Servo settings such as min/max
-pulse widths, etc. are managed using `(Top) → Other Settings → Selector servo` options later in the
+pulse widths, etc. are managed using `(Top) → MMU Kinematics and Speeds → Selector servo` options later in the
 `menuconfig` workflow.
 
 In this example, we have selected the **`Savox SH-0255MG`** servo.
@@ -162,7 +162,7 @@ If no UUIDs are discovered, choose **`Other / manually entered`** and enter the 
 </p>
 
 ### Pins: gear and selector direction
-++esc++ and back out to the top menu and open **`Pins / TMC`**, then **`Gear pins`**. GPIO Pin defaults are set based
+++esc++ and back out to the top menu and open **`Pins / TMC`**, then **`Gear stepper pins`**. GPIO Pin defaults are set based
 on your MCU controller board and ERCF MMU version selection. Review all pin settings for **`Gear`** and **`Selector`**
 steppers to make sure they are correct for your build. Gear direction especially is the one setting that is impossible
 to set correctly by default or guessing and depends on how the stepper cable is _actually wired_. You will validate
@@ -249,6 +249,12 @@ to add your parameters to future installer updates.
 
 The other two distances Happy Hare can use (**`Toolhead sensor to nozzle`** & **`Extruder sensor to entry`**) 
 only appear when you have enabled the sensors and remain hidden when disabled.
+
+<p align="center">
+  <img src="GettingStarted-ERCF/10-toolhead-dimensions.png" alt="Toolhead dimensions before enabling optional sensors" width="70%">
+</p>
+
+With both optional sensors enabled, the additional distances appear:
 
 <p align="center">
   <img src="GettingStarted-ERCF/10-all-toolhead-dimensions-combined.png" alt="Toolhead dimensions, pre-filled from the selected combo" width="70%">

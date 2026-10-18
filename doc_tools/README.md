@@ -163,8 +163,11 @@ dependencies, and redesigned workflows still need deliberate session updates.
 The `installer-top` and `installation-unit-name` sessions capture the general
 installer menu and its **Name** submenu. The `getting-started-3ms-additions`,
 `getting-started-ercf-additions` and `getting-started-tradrack-additions` sessions
-also refresh their guides' first-run and configured top menus. Include those
-sessions when a shared top-level prompt changes.
+capture the complete walkthroughs, including board and MCU choices, pin editors,
+toolheads, and profile-specific settings. Their historical `-additions` names
+remain valid for `--only`. Include all profile sessions when shared menus change.
+The `getting-started-shared-toolhead` session captures A4T dimensions before and
+after enabling its optional sensors for the EMU and Tradrack guides.
 
 The grouped **MMU Features / Additions** screen is taller than the initial
 terminal. Screenshot sessions use `_additions(mc)` to fit it before walking
