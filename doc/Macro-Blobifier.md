@@ -46,7 +46,7 @@ The default cleaning macro is `BLOBIFIER_CLEAN`; leave it blank to skip cleaning
 
 Open menuconfig's **Purging --->** screen and enable **Have Blobifier?**.
 This expands the screen with the bucket-presence input and the tray actuator
-settings. Then open **Select standalone purging option** and choose
+settings. Then open **Happy Hare purging method** and choose
 **Blobifier**. Check this choice explicitly when adding Blobifier to an
 existing configuration: menuconfig can retain the previous **Simple purge
 into bucket** selection.
@@ -63,7 +63,7 @@ The fields in this screen configure the hardware generated in `mmu.cfg`:
 | **Blobifier tray actuator** | Select **Servo** for the servo-driven tray or **Stepper (manual_stepper)** for the stepper-driven tray. This also sets the actuator type used by the Blobifier macros. |
 | **Blobifier servo pin** and pulse widths | Generated as `[mmu_servo blobifier]`. The default pulse widths are starting points; tune the minimum for fully out and the maximum for fully in without servo buzz. |
 | **Servo h/w max angle** and startup angle | Match the servo's angular range to its pulse widths. Optionally set a position to apply at Klipper startup. |
-| **Select standalone purging option** | Choose **Blobifier**. **Simple purge into bucket** runs the much simpler `_MMU_PURGE` macro and does not activate Blobifier. |
+| **Happy Hare purging method** | Choose **Blobifier**. **Simple purge into bucket** runs the much simpler `_MMU_PURGE` macro and does not activate Blobifier. |
 | **Happy Hare controlled in-print purge** | Leave enabled to use Blobifier during prints, and turn off the slicer's wipe tower. |
 
 Selecting **Stepper (manual_stepper)** replaces the servo fields with the

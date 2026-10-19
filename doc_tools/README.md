@@ -163,8 +163,34 @@ dependencies, and redesigned workflows still need deliberate session updates.
 The `installer-top` and `installation-unit-name` sessions capture the general
 installer menu and its **Name** submenu. The `getting-started-3ms-additions`,
 `getting-started-ercf-additions` and `getting-started-tradrack-additions` sessions
-also refresh their guides' first-run and configured top menus. Include those
-sessions when a shared top-level prompt changes.
+capture the complete walkthroughs, including board and MCU choices, pin editors,
+toolheads, and profile-specific settings. Their historical `-additions` names
+remain valid for `--only`. Include all profile sessions when shared menus change.
+The `getting-started-shared-toolhead` session captures the plain A4T dimensions.
+The `getting-started-ercf-toolhead-composite` and
+`getting-started-shared-toolhead-composite` sessions preserve the layered
+before/after illustrations used by ERCF, EMU and Tradrack. They capture both
+sensor states at 115 columns, then place the enabled sensor/dimension section
+in a bordered inset over the blank right side of the disabled-sensor screen.
+A triangular connector fades from transparent at its point to amber at the
+inset, preserving the original alternative-view effect.
+`composite.py` finds section boundaries from the actual terminal text and
+rejects a layout that would hide base text or help. It copies rendered cells;
+it does not invent settings or values. Include these composite sessions when
+refreshing shared toolhead screens; a single full-screen capture loses the
+comparison.
+
+The fade is used by these two generated images:
+
+| Image under `doc/` | Used by |
+|---|---|
+| `GettingStarted-ERCF/10-all-toolhead-dimensions-combined.png` | ERCF guide |
+| `GettingStarted-Shared/toolhead-dimensions-combined.png` | EMU and Tradrack guides |
+
+Both sessions are included in a full `make shots` run. When refreshing selected
+toolhead images, include the corresponding composite session as well. Regression
+tests check the fade's increasing opacity, triangular boundary, preservation of
+captured pixels, and rejection of an inset that would obscure the base screen.
 
 The grouped **MMU Features / Additions** screen is taller than the initial
 terminal. Screenshot sessions use `_additions(mc)` to fit it before walking

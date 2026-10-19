@@ -104,7 +104,7 @@ just look and move on.
 
 ### Pins: gear direction
 
-Back out to the top, enter **Pins / TMC**, then **Gear pins**:
+Back out to the top, enter **Pins / TMC**, then **Gear stepper pins**:
 
 <p align="center">
   <img src="GettingStarted-3MS/07-gear-pins.png" class="no-floating" alt="Gear pins list - one row per gate" width="70%">
@@ -179,7 +179,7 @@ and if your exact combo isn't listed, "Other/Unknown" plus manual calibration
 
 ### An example software option: Spoolman
 
-From the top menu, enter **Software Options**, then **Select spoolman
+From the top menu, enter **Global software options**, then **Select spoolman
 spool manager support**:
 
 <p align="center">
@@ -187,7 +187,7 @@ spool manager support**:
 </p>
 
 This is one small example of the many software-side options living under
-**Software Options** — most of them, like this one, default to off and are
+**Global software options** — most of them, like this one, default to off and are
 entirely optional. If you run a [Spoolman](https://github.com/Donkie/Spoolman)
 instance and want Happy Hare to control filament details (material, color,
 temperatures) for each gate and save them in Spoolman, select **Push**
@@ -203,7 +203,7 @@ back to `Off`.
 ### Explore the rest
 
 That's enough to get a stock 3MS basically talking to Klipper, but it's
-only a fraction of the menu. **Software Options**, **Tip Forming / Cutting**,
+only a fraction of the menu. **Global software options**, **Tip Forming / Cutting**,
 **Purging**, **Endstops and Bowden movement** and the rest are all worth a look —
 scroll all the way from the top to **Paths & Services** at the bottom at least
 once. Nothing you look at will break anything: moving the highlight

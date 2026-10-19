@@ -156,13 +156,13 @@ to add your parameters to future installer updates.
 
 ## An example software option: Spoolman NFC auto-create
 
-From the top menu, enter **Software Options**. Since a stock ViViD already
+From the top menu, enter **Global software options**. Since a stock ViViD already
 has an NFC reader on every gate, one option in the **Spoolman** section here
 is worth calling out specifically rather than skimming past: **Auto-create a
 Spoolman spool from an unknown NFC/RFID tag?**
 
 <p align="center">
-  <img src="GettingStarted-ViViD/07-spoolman-nfc-autocreate.png" alt="Software Options screen, Spoolman section, Auto-create a Spoolman spool from an unknown NFC/RFID tag toggled on" width="80%">
+  <img src="GettingStarted-ViViD/07-spoolman-nfc-autocreate.png" alt="Global software options screen, Spoolman section, Auto-create a Spoolman spool from an unknown NFC/RFID tag toggled on" width="80%">
 </p>
 
 **Select spoolman spool manager support** defaults to `Off` regardless of MMU
@@ -274,7 +274,7 @@ MMU_TEST_MOVE MOVE=50
 ```
 
 The filament should move away from the spool and toward the buffer. If it
-moves backward, invert the **Gear dir pin** under **Pins / TMC → Gear pins**
+moves backward, invert the **Gear dir pin** under **Pins / TMC → Gear stepper pins**
 in `menuconfig` by adding or removing `!`, restart Klipper, and test again.
 
 **Sync-feedback buffer.** With the buffer unloaded, query its state, then move

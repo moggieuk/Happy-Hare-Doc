@@ -17,8 +17,12 @@ lives in `mkdocs.yml`. Check existing coverage before creating a new page.
 
 ## Publication dependencies
 
-- Fans & Airflow, Heater & Environment Manager, and the refreshed menuconfig
-  screenshots target Happy Hare `development` at `8888b228` (2026-10-07).
+- All Happy Hare menuconfig screenshots target `development` at `12236421`
+  (2026-10-18), including the reorganized MMU Kinematics and Speeds menu.
+  Regenerate with `make shots HAPPY_HARE_REF=12236421568777b9adafef69fb19d60cd6ec6eff`.
+
+- Fans & Airflow and Heater & Environment Manager prose was verified against
+  Happy Hare `development` at `8888b228` (2026-10-07).
   These cover built-in vent control, controller fans, fan UI visibility,
   object-name encoder/buffer sharing, I2C bus selection, servo settings and
   the expanded Software Options menu. Confirm release availability

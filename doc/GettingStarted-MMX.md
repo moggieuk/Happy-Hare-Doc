@@ -169,7 +169,7 @@ Under **Toolhead sensors/settings**, enable only sensors physically fitted at
 the toolhead or extruder and enter their actual pins. These are printer choices,
 not fixed properties of the MMX.
 
-Review **Software Options** and keep the supplied client macros enabled for a
+Review **Global software options** and keep the supplied client macros enabled for a
 first installation. When the configuration has no unresolved errors, press
 **Q** or leave the top menu and confirm that you want to save and install.
 

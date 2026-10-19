@@ -167,7 +167,7 @@ complete drying and vent setup.
 ### Pins: gear direction
 
 This is the one setting on this page that's genuinely impossible to get right by
-guessing. Back out to the top, enter **Pins / TMC**, then **Gear pins**:
+guessing. Back out to the top, enter **Pins / TMC**, then **Gear stepper pins**:
 
 <p align="center"> <img src="GettingStarted-EMU/07-gear-pins.png" alt="Gear pins
   list - one row per gate" width="70%"> </p>
@@ -198,7 +198,7 @@ resets to whatever Happy Hare would have picked on its own.
 
 ### Speeds configuration
 
-Back out to the top and enter **Speeds** to review the
+Back out to the top and enter **MMU Kinematics and Speeds → Speeds** to review the
 motion parameters. The EMU defaults are conservative by design:
 
 <p align="center"> <img src="GettingStarted-EMU/10-speeds.png" alt="Speeds
@@ -234,8 +234,10 @@ gets you real, community-measured values instead of guesses, for free.
 
 Back out and enter **Toolhead sensors/settings** to see the effect:
 
+The inset shows the additional distances that appear when both optional sensors are enabled.
+
 <p align="center"> <img src="GettingStarted-Shared/toolhead-dimensions-combined.png"
-  alt="Toolhead dimensions, pre-filled from the selected combo" width="70%">
+  alt="Toolhead dimensions with sensors disabled, with an inset showing both sensors enabled" width="70%">
 </p>
 
 **Extruder entrance to nozzle** and **Residual filament**, under **Toolhead

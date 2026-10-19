@@ -23,7 +23,7 @@ separate capability from the choice of tip-forming method itself.
 
 First enable **Has toolhead cutter?** under menuconfig's **Toolhead
 sensors/settings --->** screen. Then open **Tip Forming / Cutting --->**,
-open **Select standalone tip shaping option**, and choose **Tip cutting
+open **Happy Hare tip forming/cutting method**, and choose **Tip cutting
 using toolhead cutter**. This writes `form_tip_macro: _MMU_CUT_TIP` to
 `mmu.cfg`.
 

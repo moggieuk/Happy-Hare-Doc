@@ -53,9 +53,9 @@ position when Klipper starts; leave it disabled if no startup move is wanted.
   <img src="Macro-Servo-Cutter/tip-shaping.png" alt="menuconfig Tip Forming and Cutting screen with the MMU-mounted servo cutter enabled" width="85%">
 </p>
 
-This switch does not change **Select standalone tip shaping option**. The
+This switch does not change **Happy Hare tip forming/cutting method**. The
 MMU cutter runs after unload, so keep whichever method prepares the tip
-before unloading - normally **Tip shaping using filament movement**, or
+before unloading - normally **Tip forming using filament movement**, or
 **Tip cutting using toolhead cutter** when that separate capability is
 fitted. The screenshot shows filament-movement forming selected.
 
