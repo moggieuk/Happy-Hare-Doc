@@ -40,11 +40,20 @@ what that one doesn't cover:
   Customization](Macro-Customization.md) for the extension mechanism they
   use, and `user_park_move_macro`, which *replaces* the default straight-line
   park move rather than extending it (called with `X=`/`Y=`/`F=`, and again
-  with `RESTORE=1` when un-parking).
+  with `RESTORE=1` when un-parking). Use `_SAFE_G1 X= Y= F=` instead of `G1`
+  for its moves so they stay within the axis limits, like Happy Hare's own
+  park moves.
 - **`auto_home`** (on by default) - home XYZ automatically if needed before
   a parking move, rather than erroring.
 - **`timelapse`** (off by default) - take a timelapse frame after every
   load, if your setup has one configured.
+
+!!! warning "Skew correction"
+    Park positions near the edge of the machine can end up beyond the axis
+    limits at higher Z when Klipper `[skew_correction]` is loaded. Happy Hare
+    pulls its park moves just inside the limit and warns once per print. Keep
+    park coordinates a little inside the boundary, and check them with
+    `MMU_CHECK_POSITION`. See [Skew & Build Envelope](Skew-Build-Envelope.md).
 
 ## See also
 
@@ -57,5 +66,7 @@ what that one doesn't cover:
   every `user_*_extension` hook here uses
 - [Macro Variables: Sequence/parking](Reference-Macro-Vars.md#sequenceparking-_mmu_sequence_vars) -
   every `_MMU_SEQUENCE_VARS` setting in full
+- [Skew & Build Envelope](Skew-Build-Envelope.md) - keeping park positions in
+  range with skew correction
 
 ---

@@ -1194,6 +1194,31 @@ Reminder - run with this sequence of options:
     MMU_CALIBRATE_TOOLHEAD CLEAN=1 SAVE=0 ...Measure but don't persist the result to config
 ```
 
+### MMU_CHECK_POSITION
+
+*Check an X,Y position is within the axis limits at all heights with skew correction and gcode offset*
+
+**Parameters**
+
+```{.text .console-output}
+X     = #(mm) Gcode X position
+Y     = #(mm) Gcode Y position
+SKEW  = _name_ Saved skew profile to check with (default: current skew)
+ERROR = [0|1] Raise an error if the position is out of range
+```
+
+```{.text .console-output}
+Skew correction moves the toolhead further as Z increases so the position is checked
+from Z=0 to the axis maximum, reporting the height at which it goes out of range. The
+current X,Y gcode offset is applied and an axis not given is checked at both ends of
+its range. Nothing moves. ERROR=1 can be used in PRINT_START, after SKEW_PROFILE LOAD,
+to stop a print that would fail
+Examples:
+MMU_CHECK_POSITION X=19 Y=355              ...Check with the current skew
+MMU_CHECK_POSITION X=19 Y=355 SKEW=my_skew ...Check with saved skew profile 'my_skew'
+MMU_CHECK_POSITION Y=355 ERROR=1           ...Raise an error if out of range
+```
+
 ### MMU_SOAKTEST_LOAD_SEQUENCE
 
 *Soak test tool load/unload sequence*

@@ -245,6 +245,30 @@ NFC_READ=1 Simulate an NFC tag read. Params: UID={hex} DEEP=[0|1] GATE={n}(per-g
 NFC_FIELD=1 Classify a tag UID against the gate map (no reader, no motion). Params: GATE={n} UID={hex}
 ```
 
+### _SAFE_G1
+
+*Absolute G1 move kept within axis limits after gcode offset and skew correction*
+
+**Parameters**
+
+```{.text .console-output}
+X = #(mm) Absolute X
+Y = #(mm) Absolute Y
+Z = #(mm) Absolute Z
+F = #(mm/min) Speed
+MAX_Z = #(mm) Also keep X,Y in range for following Z moves up to this height
+```
+
+```{.text .console-output}
+Coordinates are always absolute, as with G90, and only X, Y, Z are supported. If the
+move would end out of range once Klipper applies gcode offset and skew_correction
+it is adjusted to just inside the limit and a warning is logged. Use in place of G1
+in a 'user_park_move_macro'
+Examples:
+_SAFE_G1 X=10 Y=300 F=12000 ...Move to (10, 300), adjusted if necessary
+_SAFE_G1 Y=350 MAX_Z=40     ...Move to Y=350, adjusted so later Z moves up to 40 stay in range
+```
+
 ### __MMU_ENCODER_INSERT
 
 *Internal encoder filament insert detection handler*

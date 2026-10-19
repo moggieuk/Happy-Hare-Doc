@@ -86,7 +86,7 @@ bigger picture; this table is the full list that page deferred.
 | `park_lift_speed` | `15` mm/s | Speed for Z-only travel |
 | `retract_speed` | `30` mm/s | Speed of the retract move |
 | `unretract_speed` | `30` mm/s | Speed of the unretract move |
-| `user_park_move_macro` | *(empty)* | Macro called instead of a plain `G1 X Y` move to park - receives `X=`/`Y=`/`F=`, and `RESTORE=1` plus the restore coordinates when un-parking |
+| `user_park_move_macro` | *(empty)* | Macro called instead of a plain `G1 X Y` move to park - receives `X=`/`Y=`/`F=`, and `RESTORE=1` plus the restore coordinates when un-parking. Use `_SAFE_G1` in place of `G1` to keep its moves within the axis limits |
 | `auto_home` | `True` | Automatically home XYZ if needed before parking |
 | `timelapse` | `False` | Take a timelapse frame after a load |
 | `user_mmu_error_extension` | *(empty)* | Run after default logic when an MMU error occurs |
@@ -222,7 +222,6 @@ left to its upstream README alone.
 | `toolhead_y` | *(calibrate)* | Distance from the nozzle to the front edge of the toolhead - **must calibrate** |
 | `travel_spd_xy` | `10000` mm/min | XY travel speed |
 | `travel_spd_z` | `1000` mm/min | Z travel speed |
-| `skew_correction` | `0.1` | Small XY nudge if skew correction causes an out-of-range error during Blobifier's own moves - adjust in 0.1-0.5mm steps only |
 | `y_offset` | `0` | Offset subtracted from max Y during purging - calibrate by checking the toolhead is centred over the tray at max Y |
 | `force_safe_descend_height_until` | `1.0` | Forces a "safe descend" (rather than skipping a downward move that might hit a print) below this height - useful at print start when no height estimate exists yet |
 

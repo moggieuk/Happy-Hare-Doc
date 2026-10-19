@@ -73,6 +73,20 @@ A few settings are worth knowing about specifically:
   point, not the couple of millimeters that might look sufficient at first
   glance.
 
+!!! warning "Skew correction"
+    The pin park point (`pin_loc_xy` plus `pin_park_dist` along the cutting
+    axis) and the compressed point (`pin_loc_compressed_xy`) are used exactly
+    as configured: Happy Hare doesn't pull them inside the axis limits,
+    because that would shorten the cut. The default compressed point is very
+    close to the X minimum. With Klipper `[skew_correction]` loaded, a pin
+    point that works at the first layer can be out of range higher up, which
+    stops the toolchange with `Move out of range`. Check both points with
+    `MMU_CHECK_POSITION ... SKEW=<profile>`, and consider adding
+    `MMU_CHECK_POSITION ... ERROR=1` to your start-print macro after the skew
+    profile is loaded. The approach and back-off moves around the pin are
+    kept in range automatically. See [Skew & Build
+    Envelope](Skew-Build-Envelope.md).
+
 ## See also
 
 - [Feature: Tip Forming and Purging](Feature-Tip-Forming-Purging.md#toolhead-cutter-_mmu_cut_tip) -
@@ -83,6 +97,8 @@ A few settings are worth knowing about specifically:
   every `_MMU_CUT_TIP_VARS` setting in full
 - [Tip Shaping: Forming](Macro-Tip-Forming.md) - the default alternative this
   macro replaces
+- [Skew & Build Envelope](Skew-Build-Envelope.md) - why the pin positions need
+  margin with skew correction, and how to check them with `MMU_CHECK_POSITION`
 - [Tip Shaping: MMU Cutting](Macro-Servo-Cutter.md) - a different, MMU-mounted
   cutter that trims *after* unload instead, additive rather than a
   replacement for either of the above

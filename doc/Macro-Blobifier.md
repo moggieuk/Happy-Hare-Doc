@@ -101,6 +101,19 @@ tune-to-taste: `toolhead_x`/`toolhead_y` (nozzle-to-toolhead-edge offsets)
 and `tray_top` (the tray's real Z height) - the shipped defaults are a
 specific build's measurements, not a sensible starting point for yours.
 
+!!! warning "Skew correction"
+    Blobifier's purge row and brush sit at the back edge of the machine
+    (Y max less `y_offset` / `brush_y_offset`), and the shaker at the X
+    minimum side (`shaker_pos_x`). With Klipper `[skew_correction]` loaded,
+    these positions can end up beyond the axis limits as Z increases. Happy
+    Hare pulls those moves just inside the limit automatically and warns once
+    per print, but the nozzle then isn't exactly where you calibrated it. Use
+    `MMU_CHECK_POSITION` with your skew profile to see how far inside the edge
+    the positions need to be, and adjust `y_offset`, `brush_y_offset` or
+    `shaker_pos_x` to match. The former `skew_correction` variable has been
+    removed. If you used it for extra clearance, add that amount to these
+    offsets instead. See [Skew & Build Envelope](Skew-Build-Envelope.md).
+
 ## See also
 
 - [Feature: Tip Forming and Purging](Feature-Tip-Forming-Purging.md) - the
@@ -112,5 +125,7 @@ specific build's measurements, not a sensible starting point for yours.
   worked example combining Blobifier with a fully custom park/purge, no
   wipe tower
 - [Purge: Simple](Macro-Purge.md) - the simpler built-in alternative
+- [Skew & Build Envelope](Skew-Build-Envelope.md) - keeping edge positions in
+  range with skew correction, and checking them with `MMU_CHECK_POSITION`
 
 ---
