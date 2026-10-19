@@ -45,7 +45,7 @@ context:
 
 Each operation's actual parking move is a 5-value tuple: X, Y, z-hop, a
 horizontal ramp distance for the z-hop move (helps break stringing; it heads
-toward, but never past, the bed centre), and a retraction length. Negative X/Y
+toward, but never past, the bed center), and a retraction length. Negative X/Y
 is fine if your printer can handle it:
 
 ```ini

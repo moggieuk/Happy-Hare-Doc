@@ -23,7 +23,7 @@ grows with height:
 - **XY skew** shifts X in proportion to Y, so it affects positions at the back
   of the bed even at Z=0.
 
-The shift is small per millimetre but adds up over a tall print:
+The shift is small per millimeter but adds up over a tall print:
 
 | Skew angle | Shift at Z=50 | Shift at Z=150 | Shift at Z=300 |
 |---|---|---|---|

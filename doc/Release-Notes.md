@@ -197,7 +197,7 @@ baseline used for the comparison above.
 
 ## v4.1.1
 
-Changes since v4.1.0. See the [full comparison](https://github.com/moggieuk/Happy-Hare/compare/v4.1.0...12236421)
+Changes since v4.1.0. See the [full comparison](https://github.com/moggieuk/Happy-Hare/compare/v4.1.0...ad2d6cd3)
 for the commit history.
 
 ### Upgrade notes
@@ -225,6 +225,8 @@ for the commit history.
   for use in a start-print macro. See [Skew & Build
   Envelope](Skew-Build-Envelope.md). ([#1400](https://github.com/moggieuk/Happy-Hare/pull/1400))
 - Restore the in-print loaded check. ([#1396](https://github.com/moggieuk/Happy-Hare/pull/1396))
+- Log FlowGuard's activation message when buffer monitoring is active and
+  encoder monitoring is off. ([#1398](https://github.com/moggieuk/Happy-Hare/pull/1398))
 - Skip tip forming when no tip-forming macro is configured. ([#1391](https://github.com/moggieuk/Happy-Hare/pull/1391))
 
 ### NFC readers
