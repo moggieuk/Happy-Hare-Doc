@@ -126,6 +126,7 @@ nav:
   - Slicer & Toolchange:
       - Slicer Setup: Slicer-Setup.md
       - Toolchange Movement: Toolchange-Movement.md
+      - Skew & Build Envelope: Skew-Build-Envelope.md
   - Operation:
       - Understanding MMU State: Understanding-Operation.md
       - Operation: Operation.md

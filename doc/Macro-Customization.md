@@ -63,7 +63,10 @@ move rather than extending it, so you can route around an obstacle instead
 of moving through it. It's called with `X=`/`Y=`/`F=`, and again with
 `RESTORE=1` plus the restore coordinates when un-parking. See [Macro
 Variables: Sequence/parking](Reference-Macro-Vars.md#sequenceparking-_mmu_sequence_vars)
-for the full parking mechanism this sits inside.
+for the full parking mechanism this sits inside. Use `_SAFE_G1 X= Y= F=`
+in place of `G1` in this macro so its moves stay within the axis limits under
+skew correction or a gcode offset. See [Skew & Build
+Envelope](Skew-Build-Envelope.md).
 
 ## Method 2: Replacement
 

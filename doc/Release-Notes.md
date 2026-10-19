@@ -197,7 +197,7 @@ baseline used for the comparison above.
 
 ## v4.1.1
 
-Changes since v4.1.0. See the [full comparison](https://github.com/moggieuk/Happy-Hare/compare/v4.1.0...12236421)
+Changes since v4.1.0. See the [full comparison](https://github.com/moggieuk/Happy-Hare/compare/v4.1.0...ad2d6cd3)
 for the commit history.
 
 ### Upgrade notes
@@ -206,7 +206,8 @@ for the commit history.
   option is removed. ([#1375](https://github.com/moggieuk/Happy-Hare/pull/1375))
 - The Blobifier `skew_correction` variable is removed; skew is now handled
   automatically. If you used it for extra clearance, add that to `y_offset`,
-  `brush_y_offset` or `shaker_pos_x`. ([#1395](https://github.com/moggieuk/Happy-Hare/pull/1395))
+  `brush_y_offset` or `shaker_pos_x`. See [Skew & Build
+  Envelope](Skew-Build-Envelope.md). ([#1395](https://github.com/moggieuk/Happy-Hare/pull/1395))
 - During a print, `RESUME` after a failed toolchange now waits until the tool
   is loaded, and an enabled sensor reading empty after a load pauses the
   print. ([#1396](https://github.com/moggieuk/Happy-Hare/pull/1396))
@@ -215,10 +216,17 @@ for the commit history.
 
 ### Toolchanges, sensors and skew correction
 
-- Keep toolhead moves within axis limits under Klipper `[skew_correction]`,
-  and add `MMU_CHECK_POSITIONS` to report out-of-range park and cut positions.
-  Fix the z-hop ramp center and offset restores. ([#1395](https://github.com/moggieuk/Happy-Hare/pull/1395))
+- Keep parking, Blobifier and cutter positioning moves within axis limits
+  under Klipper `[skew_correction]` and gcode offsets, with a warning the first
+  time a move is adjusted in a print. Fix the z-hop ramp center and offset
+  restores. ([#1395](https://github.com/moggieuk/Happy-Hare/pull/1395), [#1397](https://github.com/moggieuk/Happy-Hare/pull/1397))
+- Add `MMU_CHECK_POSITION` to check whether a coordinate stays within the axis
+  limits at every height for a given skew profile, optionally raising an error
+  for use in a start-print macro. See [Skew & Build
+  Envelope](Skew-Build-Envelope.md). ([#1400](https://github.com/moggieuk/Happy-Hare/pull/1400))
 - Restore the in-print loaded check. ([#1396](https://github.com/moggieuk/Happy-Hare/pull/1396))
+- Log FlowGuard's activation message when buffer monitoring is active and
+  encoder monitoring is off. ([#1398](https://github.com/moggieuk/Happy-Hare/pull/1398))
 - Skip tip forming when no tip-forming macro is configured. ([#1391](https://github.com/moggieuk/Happy-Hare/pull/1391))
 
 ### NFC readers
