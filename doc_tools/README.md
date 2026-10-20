@@ -405,6 +405,16 @@ hand when the dialog or Mainsail's drawing of it changes.
    MMU_CHANGE_TOOL TOOL=1
    ```
 
+   For the print-start variant (`doc/Operation/pause-dialog-print-start.png`, also used on the
+   Slicer Setup page), set what the start macro sets before the same failing load. The lines
+   are the ones `MMU_START_SETUP` builds:
+
+   ```text
+   SET_GCODE_VARIABLE MACRO=_MMU_ERROR_DIALOG VARIABLE=show_abort VALUE=True
+   SET_GCODE_VARIABLE MACRO=_MMU_ERROR_DIALOG VARIABLE=custom_msg VALUE="['Print requires tools: T0 (Gate0), T1 (Gate1), Initial Tool: T1', 'Manually ensure that T1 is loaded and all other tools available before resuming print']"
+   MMU_CHANGE_TOOL STANDALONE=1 RESTORE=0 TOOL=1
+   ```
+
 2. Run Mainsail's dev server against it, from a Mainsail checkout:
 
    ```bash
