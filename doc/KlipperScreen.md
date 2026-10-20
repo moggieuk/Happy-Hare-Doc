@@ -61,7 +61,7 @@ check against the actually-running Happy Hare version, not a static message.
 ## Main Panel
 
 <p align="center">
-  <img src="KlipperScreen/ks_main_panel_flowguard_tangle.png" alt="KlipperScreen MMU main panel" width="80%">
+  <img src="KlipperScreen/ks_main_panel_flowguard_tangle.png" alt="KlipperScreen MMU main panel" width="70%">
 </p>
 
 Accessed via the carrot icon on the left navbar (or from buttons on the
@@ -78,7 +78,7 @@ Tapping a gate opens a quick-action popup for it, rather than a separate
 row of buttons for each action:
 
 <p align="center">
-  <img src="KlipperScreen/ks_main_panel_popup.png" alt="KlipperScreen gate popup menu: Select, Check Gates, Preload, Load, Unload, Eject" width="80%">
+  <img src="KlipperScreen/ks_main_panel_popup.png" alt="KlipperScreen gate popup menu: Select, Check Gates, Preload, Load, Unload, Eject" width="70%">
 </p>
 
 **Select** switches to that gate/tool; **Check Gates**, **Preload**,
@@ -96,7 +96,7 @@ Spoolman/tag details for the selected gate's spool - vendor, filament name,
 material/temperature, and spool ID - are a third:
 
 <p align="center">
-  <img src="KlipperScreen/ks_main_panel_spool_fragment.png" alt="KlipperScreen main panel showing Spool Details" width="80%">
+  <img src="KlipperScreen/ks_main_panel_spool_fragment.png" alt="KlipperScreen main panel showing Spool Details" width="70%">
 </p>
 
 !!! note
@@ -120,7 +120,7 @@ An alternative way to pick a tool, showing which gate it maps to and that
 gate's filament type/color at a glance:
 
 <p align="center">
-  <img src="KlipperScreen/mmu_picker.png" alt="KlipperScreen tool picker panel" width="80%">
+  <img src="KlipperScreen/mmu_picker.png" alt="KlipperScreen tool picker panel" width="70%">
 </p>
 
 ### Bypass
@@ -130,7 +130,7 @@ If a filament bypass is fitted (see
 `Byp` button at the end of the gate row:
 
 <p align="center">
-  <img src="KlipperScreen/ks_main_panel_bypass.png" alt="KlipperScreen bypass selected on the main panel" width="80%">
+  <img src="KlipperScreen/ks_main_panel_bypass.png" alt="KlipperScreen bypass selected on the main panel" width="70%">
 </p>
 
 With bypass selected, the same gate popup offers `Load`/`Unload` for the
@@ -146,7 +146,7 @@ gear-per-gate design with no selector servo at all) simply grey out rather
 than being a different panel per design:
 
 <p align="center">
-  <img src="KlipperScreen/ks_manage_panel.png" alt="KlipperScreen MMU Manage panel" width="80%">
+  <img src="KlipperScreen/ks_manage_panel.png" alt="KlipperScreen MMU Manage panel" width="70%">
 </p>
 
 Most functions are self-explanatory; `Load Ext`/`Unload Ext` act on the
@@ -160,7 +160,7 @@ error or manual intervention can occasionally leave that tracked state out of
 sync with reality.
 
 <p align="center">
-  <img src="KlipperScreen/mmu_recover.png" alt="KlipperScreen recover state panel" width="80%">
+  <img src="KlipperScreen/mmu_recover.png" alt="KlipperScreen recover state panel" width="70%">
 </p>
 
 It shows what Happy Hare currently believes, lets you correct it manually, or
@@ -178,7 +178,7 @@ state recovery actually does and when it's needed.
 ## Filament Editor
 
 <p align="center">
-  <img src="KlipperScreen/mmu_filament_editor1.png" alt="KlipperScreen filament editor list" width="80%">
+  <img src="KlipperScreen/mmu_filament_editor1.png" alt="KlipperScreen filament editor list" width="70%">
 </p>
 
 Lists filaments by gate, alongside the tool each currently maps to (usually,
@@ -186,7 +186,7 @@ but not always, the same number - a gate can back more than one tool).
 `Edit...` opens per-gate detail:
 
 <p align="center">
-  <img src="KlipperScreen/mmu_filament_editor2.png" alt="KlipperScreen filament editor detail" width="80%">
+  <img src="KlipperScreen/mmu_filament_editor2.png" alt="KlipperScreen filament editor detail" width="70%">
 </p>
 
 Color is set by name or an RGB picker; material accepts capital letters,
@@ -197,7 +197,7 @@ correct.
 ## TTG (Tool-to-Gate) Map and EndlessSpool Editor
 
 <p align="center">
-  <img src="KlipperScreen/ks_ttg_map_panel.png" alt="KlipperScreen TTG map and EndlessSpool editor" width="80%">
+  <img src="KlipperScreen/ks_ttg_map_panel.png" alt="KlipperScreen TTG map and EndlessSpool editor" width="70%">
 </p>
 
 The centre diagram plots the entire Tool-to-Gate map at once - a line from
@@ -223,7 +223,7 @@ Editor above (though a spool ID can still be edited from either that panel
 or with [`MMU_GATE_MAP`](Reference-Commands.md#mmu_gate_map)):
 
 <p align="center">
-  <img src="KlipperScreen/mmu_spoolman.png" alt="KlipperScreen Spoolman filaments panel" width="80%">
+  <img src="KlipperScreen/mmu_spoolman.png" alt="KlipperScreen Spoolman filaments panel" width="70%">
 </p>
 
 See [Feature: Spoolman / Filament Hub](Feature-Spoolman.md) for the underlying
@@ -235,7 +235,7 @@ A handful of settings in KlipperScreen's own configuration menu adjust MMU
 behavior on the display side:
 
 <p align="center">
-  <img src="KlipperScreen/mmu_options.png" alt="KlipperScreen MMU options menu" width="80%">
+  <img src="KlipperScreen/mmu_options.png" alt="KlipperScreen MMU options menu" width="70%">
 </p>
 
 ## See also

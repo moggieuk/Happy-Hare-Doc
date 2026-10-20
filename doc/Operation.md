@@ -275,7 +275,7 @@ interface doesn't support dialogs. From top to bottom it shows:
    [Troubleshooting](#troubleshooting-the-dialog)).
 
 <p align="center">
-  <img src="Operation/pause-dialog.png" alt="Happy Hare Pause Notice dialog in Mainsail after a failed load" width="50%">
+  <img src="Operation/pause-dialog.png" alt="Happy Hare Pause Notice dialog in Mainsail after a failed load" width="400">
 </p>
 
 Along the bottom are the buttons. `UNLOCK` is usually the first step, as it gets the nozzle hot again while you work:
@@ -295,7 +295,7 @@ reasonable choice. The tool lines come after the reason and before any action
 line. Here the gate check at print start found a required gate empty:
 
 <p align="center">
-  <img src="Operation/pause-dialog-print-start.png" alt="Happy Hare Pause Notice dialog in Mainsail when the print-start gate check finds an empty gate, with the required tools listed and an Abort button" width="50%">
+  <img src="Operation/pause-dialog-print-start.png" alt="Happy Hare Pause Notice dialog in Mainsail when the print-start gate check finds an empty gate, with the required tools listed and an Abort button" width="400">
 </p>
 
 If `RESUME` is refused because the MMU still finds a problem - the filament
