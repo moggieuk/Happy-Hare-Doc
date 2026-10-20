@@ -115,7 +115,6 @@ nav:
       - Tradrack: GettingStarted-Tradrack.md
       - MMX: GettingStarted-MMX.md
       - Multiple MMU Units: GettingStarted-Multi-Unit.md
-  - Release Notes: Release-Notes.md
   - Calibration:
       - Overview: Calibration.md
       - Selector: Calibration-Selector.md
@@ -185,3 +184,4 @@ nav:
       - Documentation Style Guide: Dev-Documentation-Style-Guide.md
       - Documentation Tooling: Dev-Doc-Tooling.md
       - Contributing: Dev-Contributing.md
+  - Release Notes: Release-Notes.md
