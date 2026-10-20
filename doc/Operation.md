@@ -259,16 +259,17 @@ and KlipperScreen pop up a dialog titled **Happy Hare Pause Notice**. The same
 information is always written to the console, so nothing is lost if your
 interface doesn't support dialogs. From top to bottom it shows:
 
-1. **The reason**, one dialog line per line of the error message. If the dialog
-   is shown again because the print is still paused (see below), it is
-   preceded by the headline `Print is still paused`.
-2. **Any extra lines** the start-of-print macros add - for example, the tools
+1. **What was being attempted**, when known, such as `Occurred when changing
+   tool: T0 > T1`. If the dialog is shown again because the print is still
+   paused (see below), it is preceded by the headline `Print is still paused`.
+2. **The reason**, as one paragraph.
+3. **Any extra lines** the start-of-print macros add - for example, the tools
    the print needs and which gate each one maps to.
-3. **The action line** - what to do next. Where the error knows what is
-   likely to fix it, this is that specific advice, such as which gate to check;
-   otherwise it is the generic reminder to press `RESUME` once the problem is
-   fixed (`UNLOCK` restores the nozzle temperature first). It is last because
-   it's the line you most need to see (see
+4. **The action line**, starting `To fix:` - what to do next. Where the error
+   knows what is likely to fix it, this is that specific advice, such as which
+   gate to check; otherwise it is the generic reminder to press `RESUME` once
+   the problem is fixed (`UNLOCK` restores the nozzle temperature first). It is
+   last because it's the line you most need to see (see
    [Troubleshooting](#troubleshooting-the-dialog)).
 
 <p align="center">

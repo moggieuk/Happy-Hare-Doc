@@ -142,12 +142,13 @@ Happy Hare calls the macro whenever the MMU pauses, with two parameters:
 | `MSG` | The headline - `Print paused`, or `Print is still paused` when a `RESUME` was refused. The shipped macro shows it only in the second case (see `still_paused` below) |
 | `REASON` | The reason for the pause as a single flat line of text, for UIs that can only show one |
 
-It also sets three variables on the macro just before the call, and clears them
+It also sets four variables on the macro just before the call, and clears them
 straight afterwards. Treat these as read-only:
 
 | Variable | Meaning |
 |---|---|
-| `reason_lines` | The reason as a list, one entry per dialog line. Already cleaned of characters (`"`, `;`, `\`) that would break the line when Klipper re-parses it. |
+| `context_line` | What was being attempted, such as `Occurred when changing tool: T0 > T1`, or empty |
+| `reason_lines` | The reason as a list of paragraphs, usually one. Already cleaned of characters (`"`, `;`, `\`) that would break the line when Klipper re-parses it. |
 | `action` | What to do next, when the error knows (the same text as [`pause_hint`](Reference-Printer-Variables.md#printermmu)), otherwise empty |
 | `still_paused` | `True` when the dialog is being shown again because the print is still paused, such as after a refused `RESUME`; `False` for a fresh pause |
 
@@ -167,7 +168,8 @@ print begins. If you set them from your own start macro, clear them the
 same way or they will appear on later pauses.
 
 The dialog is laid out as the `MSG` headline (only when `still_paused`),
-`reason_lines`, `custom_msg`, then `action`, followed by the `UNLOCK`, `RESUME` and (if enabled) `ABORT` buttons.
+`context_line`, `reason_lines`, `custom_msg`, then `action` (shown as
+`To fix: ...`), followed by the `UNLOCK`, `RESUME` and (if enabled) `ABORT` buttons.
 Keep the most important line last: stock KlipperScreen shows only the last
 text line.
 
