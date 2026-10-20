@@ -405,15 +405,20 @@ hand when the dialog or Mainsail's drawing of it changes.
    MMU_CHANGE_TOOL TOOL=1
    ```
 
-   For the print-start variant (`doc/Operation/pause-dialog-print-start.png`, also used on the
-   Slicer Setup page), set what the start macro sets before the same failing load. The lines
-   are the ones `MMU_START_SETUP` builds:
+   That is `doc/Operation/pause-dialog.png`. The two print-start images vary the error. At
+   print start the start macro first sets the extra lines and the abort button, so do the same
+   (after `/print start`) before causing the failure. The `custom_msg` text is what
+   `MMU_START_SETUP` builds, here for a print using T0 and T3 with T0 first:
 
    ```text
    SET_GCODE_VARIABLE MACRO=_MMU_ERROR_DIALOG VARIABLE=show_abort VALUE=True
-   SET_GCODE_VARIABLE MACRO=_MMU_ERROR_DIALOG VARIABLE=custom_msg VALUE="['This print requires tools: T0 (Gate0), T1 (Gate1), Initial Tool: T1. Manually ensure that T1 is loaded and all other tools are available before resuming print']"
-   MMU_CHANGE_TOOL STANDALONE=1 RESTORE=0 TOOL=1
+   SET_GCODE_VARIABLE MACRO=_MMU_ERROR_DIALOG VARIABLE=custom_msg VALUE="['This print requires tools: T0 (Gate0), T3 (Gate3), Initial Tool: T0. Manually ensure that T0 is loaded and all other tools are available before resuming print']"
    ```
+
+   - `doc/Operation/pause-dialog-print-start.png`: `/remove 3` then `MMU_CHECK_GATE GATE=3`
+     (the gate check the start macro runs).
+   - `doc/Slicer-Setup/error_dialog_during_start.png`: with tools T0, T1 and T3 in the
+     message, `MMU_PAUSE MSG="Bypass selected for multi-color print"`.
 
 2. Run Mainsail's dev server against it, from a Mainsail checkout:
 

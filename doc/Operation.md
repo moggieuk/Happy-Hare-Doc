@@ -291,10 +291,11 @@ your interface, so they can differ slightly from the picture.
 
 During print start the dialog also lists the tools the print needs, and adds an
 `ABORT` button, since the print hasn't really begun and abandoning it is a
-reasonable choice. The tool lines come before the action line, which stays last:
+reasonable choice. The tool lines come after the reason and before any action
+line. Here the gate check at print start found a required gate empty:
 
 <p align="center">
-  <img src="Operation/pause-dialog-print-start.png" alt="Happy Hare Pause Notice dialog in Mainsail during print start, with the required tools listed and an Abort button" width="50%">
+  <img src="Operation/pause-dialog-print-start.png" alt="Happy Hare Pause Notice dialog in Mainsail when the print-start gate check finds an empty gate, with the required tools listed and an Abort button" width="50%">
 </p>
 
 If `RESUME` is refused because the MMU still finds a problem - the filament
