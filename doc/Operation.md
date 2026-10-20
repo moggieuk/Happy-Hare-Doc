@@ -255,15 +255,16 @@ graph TD
 ### The Pause Dialog
 
 When the MMU pauses and `show_error_dialog: 1` (the default), Mainsail, Fluidd
-and KlipperScreen pop up a dialog titled **Happy Hare Error Notice**. The same
+and KlipperScreen pop up a dialog titled **Happy Hare Pause Notice**. The same
 information is always written to the console, so nothing is lost if your
 interface doesn't support dialogs. From top to bottom it shows:
 
-1. **A headline**, normally `Print paused`.
-2. **The reason**, one dialog line per line of the error message.
-3. **Any extra lines** the start-of-print macros add - for example, the tools
+1. **The reason**, one dialog line per line of the error message. If the dialog
+   is shown again because the print is still paused (see below), it is
+   preceded by the headline `Print is still paused`.
+2. **Any extra lines** the start-of-print macros add - for example, the tools
    the print needs and which gate each one maps to.
-4. **The action line** - what to do next. Where the error knows what is
+3. **The action line** - what to do next. Where the error knows what is
    likely to fix it, this is that specific advice, such as which gate to check;
    otherwise it is the generic reminder to press `RESUME` once the problem is
    fixed (`UNLOCK` restores the nozzle temperature first). It is last because
@@ -271,7 +272,7 @@ interface doesn't support dialogs. From top to bottom it shows:
    [Troubleshooting](#troubleshooting-the-dialog)).
 
 <p align="center">
-  <img src="Operation/pause-dialog.png" alt="Happy Hare Error Notice dialog in Mainsail after a failed load" width="50%">
+  <img src="Operation/pause-dialog.png" alt="Happy Hare Pause Notice dialog in Mainsail after a failed load" width="50%">
 </p>
 
 Along the bottom are the buttons. `UNLOCK` is usually the first step, as it gets the nozzle hot again while you work:
@@ -290,12 +291,12 @@ During print start the dialog also lists the tools the print needs, and adds an
 reasonable choice. The tool lines come before the action line, which stays last:
 
 <p align="center">
-  <img src="Operation/pause-dialog-print-start.png" alt="Happy Hare Error Notice dialog in Mainsail during print start, with the required tools listed and an Abort button" width="50%">
+  <img src="Operation/pause-dialog-print-start.png" alt="Happy Hare Pause Notice dialog in Mainsail during print start, with the required tools listed and an Abort button" width="50%">
 </p>
 
 If `RESUME` is refused because the MMU still finds a problem - the filament
 is still not where it should be, say - the dialog is shown again with the
-headline `Print is still paused` and the new reason. Fix that and press
+headline `Print is still paused` above the new reason. Fix that and press
 `RESUME` again.
 
 The action line is also the `pause_hint` field of

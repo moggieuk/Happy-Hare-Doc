@@ -139,23 +139,25 @@ Happy Hare calls the macro whenever the MMU pauses, with two parameters:
 
 | Parameter | Meaning |
 |---|---|
-| `MSG` | The headline - `Print paused`, or `Print is still paused` when a `RESUME` was refused |
+| `MSG` | The headline - `Print paused`, or `Print is still paused` when a `RESUME` was refused. The shipped macro shows it only in the second case (see `still_paused` below) |
 | `REASON` | The reason for the pause as a single flat line of text, for UIs that can only show one |
 
-It also sets two variables on the macro just before the call, and clears them
+It also sets three variables on the macro just before the call, and clears them
 straight afterwards. Treat these as read-only:
 
 | Variable | Meaning |
 |---|---|
 | `reason_lines` | The reason as a list, one entry per dialog line. Already cleaned of characters (`"`, `;`, `\`) that would break the line when Klipper re-parses it. |
 | `action` | What to do next, when the error knows (the same text as [`pause_hint`](Reference-Printer-Variables.md#printermmu)), otherwise empty |
+| `still_paused` | `True` when the dialog is being shown again because the print is still paused, such as after a refused `RESUME`; `False` for a fresh pause |
 
 ### Adding lines and the abort button
 
-Two variables are yours to set, normally with `SET_GCODE_VARIABLE`:
+Three variables are yours to set, normally with `SET_GCODE_VARIABLE`:
 
 | Variable | Default | Meaning |
 |---|---|---|
+| `title` | *(empty)* | The dialog title. Empty gives `Happy Hare Pause Notice` |
 | `custom_msg` | *(empty)* | A list of extra lines shown after the reason. When set and there is no `action`, these replace the generic "After fixing, press RESUME..." line. |
 | `show_abort` | `False` | Add an `ABORT` button that runs `CANCEL_PRINT` |
 
@@ -164,8 +166,8 @@ tools the print needs and offer to abort, and clears them again once the
 print begins. If you set them from your own start macro, clear them the
 same way or they will appear on later pauses.
 
-The dialog is laid out as headline, `reason_lines`, `custom_msg`, then
-`action`, followed by the `UNLOCK`, `RESUME` and (if enabled) `ABORT` buttons.
+The dialog is laid out as the `MSG` headline (only when `still_paused`),
+`reason_lines`, `custom_msg`, then `action`, followed by the `UNLOCK`, `RESUME` and (if enabled) `ABORT` buttons.
 Keep the most important line last: stock KlipperScreen shows only the last
 text line.
 
