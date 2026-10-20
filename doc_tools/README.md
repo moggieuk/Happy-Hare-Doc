@@ -411,7 +411,7 @@ hand when the dialog or Mainsail's drawing of it changes.
 
    ```text
    SET_GCODE_VARIABLE MACRO=_MMU_ERROR_DIALOG VARIABLE=show_abort VALUE=True
-   SET_GCODE_VARIABLE MACRO=_MMU_ERROR_DIALOG VARIABLE=custom_msg VALUE="['Print requires tools: T0 (Gate0), T1 (Gate1), Initial Tool: T1', 'Manually ensure that T1 is loaded and all other tools available before resuming print']"
+   SET_GCODE_VARIABLE MACRO=_MMU_ERROR_DIALOG VARIABLE=custom_msg VALUE="['This print requires tools: T0 (Gate0), T1 (Gate1), Initial Tool: T1. Manually ensure that T1 is loaded and all other tools are available before resuming print']"
    MMU_CHANGE_TOOL STANDALONE=1 RESTORE=0 TOOL=1
    ```
 

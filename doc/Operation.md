@@ -265,10 +265,12 @@ interface doesn't support dialogs. From top to bottom it shows:
 2. **The reason**, as one paragraph.
 3. **Any extra lines** the start-of-print macros add - for example, the tools
    the print needs and which gate each one maps to.
-4. **The action line**, starting `To fix:` - what to do next. Where the error
+4. **The action line**, starting `Fix:` - what to do next. Where the error
    knows what is likely to fix it, this is that specific advice, such as which
-   gate to check; otherwise it is the generic reminder to press `RESUME` once
-   the problem is fixed (`UNLOCK` restores the nozzle temperature first). It is
+   gate to check, and it starts with `UNLOCK to restore heating, then` because
+   unlocking is the first step after a pause. Otherwise it is the generic
+   reminder to press `RESUME` once the problem is fixed (`UNLOCK` restores the
+   nozzle temperature first). It is
    last because it's the line you most need to see (see
    [Troubleshooting](#troubleshooting-the-dialog)).
 
