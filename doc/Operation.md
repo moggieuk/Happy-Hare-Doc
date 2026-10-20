@@ -241,6 +241,87 @@ graph TD
     for testing your parking/recovery setup without waiting for a real
     error.
 
+!!! note "Klipper errors during a print"
+    An error from Klipper itself part way through an MMU operation in a
+    print - for example a move or temperature request Klipper rejects during
+    a toolchange, load, unload, runout or clog/tangle handling - pauses the
+    print like any other MMU error instead of ending it. The reason starts
+    with `Klipper error:` and the action line says to fix the cause, then
+    reload the tool (`MMU_RECOVER` first if needed) and `RESUME`. A failed
+    toolchange caused by a Klipper error is not retried automatically, even
+    with `retry_tool_change_on_error` enabled. Outside a print, or once
+    Klipper has shut down, the command fails as normal.
+
+### The Pause Dialog
+
+When the MMU pauses and `show_error_dialog: 1` (the default), Mainsail, Fluidd
+and KlipperScreen pop up a dialog titled **Happy Hare Pause Notice**. The same
+information is always written to the console, so nothing is lost if your
+interface doesn't support dialogs. From top to bottom it shows:
+
+1. **What was being attempted**, when known, such as `Occurred when changing
+   tool: T0 > T1`. If the dialog is shown again because the print is still
+   paused (see below), it is preceded by the headline `Print is still paused`.
+2. **The reason**, as one paragraph.
+3. **Any extra lines** the start-of-print macros add - for example, the tools
+   the print needs and which gate each one maps to.
+4. **The action line**, starting `Fix:` - what to do next. Where the error
+   knows what is likely to fix it, this is that specific advice, such as which
+   gate to check, and it starts with `UNLOCK to restore heating, then` because
+   unlocking is the first step after a pause. Otherwise it is the generic
+   reminder to press `RESUME` once the problem is fixed (`UNLOCK` restores the
+   nozzle temperature first). It is
+   last because it's the line you most need to see (see
+   [Troubleshooting](#troubleshooting-the-dialog)).
+
+<p align="center">
+  <img src="Operation/pause-dialog.png" alt="Happy Hare Pause Notice dialog in Mainsail after a failed load" width="50%">
+</p>
+
+Along the bottom are the buttons. `UNLOCK` is usually the first step, as it gets the nozzle hot again while you work:
+
+| Button | Does |
+|---|---|
+| `UNLOCK` | Runs [`MMU_UNLOCK`](Reference-Commands.md#mmu_unlock): re-heats the nozzle and restores normal MMU interaction, so you can work on the problem. |
+| `RESUME` | Runs `RESUME` to continue the print. |
+| `ABORT` | Runs `CANCEL_PRINT`. Only offered during print start, before the print has really begun. |
+
+The buttons are colored by purpose, and the order and colors are chosen by
+your interface, so they can differ slightly from the picture.
+
+During print start the dialog also lists the tools the print needs, and adds an
+`ABORT` button, since the print hasn't really begun and abandoning it is a
+reasonable choice. The tool lines come after the reason and before any action
+line. Here the gate check at print start found a required gate empty:
+
+<p align="center">
+  <img src="Operation/pause-dialog-print-start.png" alt="Happy Hare Pause Notice dialog in Mainsail when the print-start gate check finds an empty gate, with the required tools listed and an Abort button" width="50%">
+</p>
+
+If `RESUME` is refused because the MMU still finds a problem - the filament
+is still not where it should be, say - the dialog is shown again with the
+headline `Print is still paused` above the new reason. Fix that and press
+`RESUME` again.
+
+The action line is also the `pause_hint` field of
+[`printer.mmu`](Reference-Printer-Variables.md#printermmu) and is
+repeated in the console. To change what the dialog shows, see
+[Customizing the Error Dialog](Macro-Customization.md#customizing-the-error-dialog).
+
+#### Troubleshooting the Dialog
+
+- **Only one line of text shows** (stock KlipperScreen): KlipperScreen displays
+  just the last text line of a dialog. That is why Happy Hare puts the action
+  line last, so the most useful line is the one you see. The full reason is in
+  the console, and the **Last Error** button recalls it (see
+  [KlipperScreen](KlipperScreen.md)).
+- **The buttons are just colored text** (Mainsail): Mainsail draws a dialog's
+  footer buttons as text buttons rather than filled ones, as in the picture
+  above. They work the same.
+- **No dialog at all**: check `show_error_dialog` is `1` in `mmu.cfg` and
+  that your interface supports Klipper `action:prompt` dialogs. Fluidd,
+  Mainsail and KlipperScreen do.
+
 ## State Recovery
 
 Happy Hare tracks filament position as a state machine (see

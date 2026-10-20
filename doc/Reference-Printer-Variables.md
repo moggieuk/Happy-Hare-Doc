@@ -63,6 +63,7 @@ unless noted.
 | `action` | string | `Idle` \| `Loading` \| `Unloading` \| `Loading Ext` \| `Exiting Ext` \| `Forming Tip` \| `Cutting Tip` \| `Heating` \| `Checking` \| `Homing` \| `Selecting` \| `Cutting Filament` \| `Purging` \| `Preload` \| `Unknown` |
 | `sync_drive` | bool | Gear stepper currently synced to the extruder |
 | `reason_for_pause` | string | Why the MMU is paused; `''` when not paused |
+| `pause_hint` | string | What to do next, when the error knows (the dialog's action line, e.g. which gate to check); `''` when not paused or when the error offers no specific advice |
 | `spoolman_support` | string | `off` \| `readonly` \| `push` \| `pull` |
 | `bowden_progress` | int | 0-100% while a bowden move is in progress, `-1` otherwise |
 | `print_start_detection` | bool | Whether Happy Hare auto-detects print start (for slicers/wrappers like Klippain that don't call the MMU print-start hook) |
