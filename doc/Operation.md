@@ -270,6 +270,10 @@ interface doesn't support dialogs. From top to bottom it shows:
    it's the line you most need to see (see
    [Troubleshooting](#troubleshooting-the-dialog)).
 
+<p align="center">
+  <img src="Operation/pause-dialog.png" alt="Happy Hare Error Notice dialog in Mainsail after a failed load" width="50%">
+</p>
+
 Along the bottom are the buttons. `UNLOCK` is usually the first step, as it gets the nozzle hot again while you work:
 
 | Button | Does |
@@ -277,6 +281,9 @@ Along the bottom are the buttons. `UNLOCK` is usually the first step, as it gets
 | `UNLOCK` | Runs [`MMU_UNLOCK`](Reference-Commands.md#mmu_unlock): re-heats the nozzle and restores normal MMU interaction, so you can work on the problem. |
 | `RESUME` | Runs `RESUME` to continue the print. |
 | `ABORT` | Runs `CANCEL_PRINT`. Only offered during print start, before the print has really begun. |
+
+The buttons are colored by purpose, and the order and colors are chosen by
+your interface, so they can differ slightly from the picture.
 
 If `RESUME` is refused because the MMU still finds a problem - the filament
 is still not where it should be, say - the dialog is shown again with the
@@ -295,9 +302,9 @@ repeated in the console. To change what the dialog shows, see
   line last, so the most useful line is the one you see. The full reason is in
   the console, and the **Last Error** button recalls it (see
   [KlipperScreen](KlipperScreen.md)).
-- **The buttons look like plain text buttons** (Mainsail): Mainsail draws a
-  dialog's footer buttons as text buttons rather than the colored
-  primary/secondary/error styles other interfaces use. They work the same.
+- **The buttons are just colored text** (Mainsail): Mainsail draws a dialog's
+  footer buttons as text buttons rather than filled ones, as in the picture
+  above. They work the same.
 - **No dialog at all**: check `show_error_dialog` is `1` in `mmu.cfg` and
   that your interface supports Klipper `action:prompt` dialogs. Fluidd,
   Mainsail and KlipperScreen do.

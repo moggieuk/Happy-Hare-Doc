@@ -75,7 +75,7 @@ actually does and when it's needed.
 
 !!! note
     When the MMU pauses, Mainsail and Fluidd show a dialog with `UNLOCK`,
-    `RESUME` and sometimes `ABORT` buttons. Mainsail draws these as plain text
+    `RESUME` and sometimes `ABORT` buttons. Mainsail draws these as colored text
     buttons. See [The Pause Dialog](Operation.md#the-pause-dialog).
 
 ## Extruder/Filament Color
