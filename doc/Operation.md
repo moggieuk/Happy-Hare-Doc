@@ -241,6 +241,17 @@ graph TD
     for testing your parking/recovery setup without waiting for a real
     error.
 
+!!! note "Klipper errors during a print"
+    An error from Klipper itself part way through an MMU operation in a
+    print - for example a move or temperature request Klipper rejects during
+    a toolchange, load, unload, runout or clog/tangle handling - pauses the
+    print like any other MMU error instead of ending it. The reason starts
+    with `Klipper error:` and the action line says to fix the cause, then
+    reload the tool (`MMU_RECOVER` first if needed) and `RESUME`. A failed
+    toolchange caused by a Klipper error is not retried automatically, even
+    with `retry_tool_change_on_error` enabled. Outside a print, or once
+    Klipper has shut down, the command fails as normal.
+
 ### The Pause Dialog
 
 When the MMU pauses and `show_error_dialog: 1` (the default), Mainsail, Fluidd
@@ -259,7 +270,7 @@ interface doesn't support dialogs. From top to bottom it shows:
    it's the line you most need to see (see
    [Troubleshooting](#troubleshooting-the-dialog)).
 
-Along the bottom are the buttons:
+Along the bottom are the buttons. `UNLOCK` is usually the first step, as it gets the nozzle hot again while you work:
 
 | Button | Does |
 |---|---|
