@@ -73,6 +73,11 @@ your particular MMU.
 See [Operation](Operation.md#state-recovery) for what state recovery
 actually does and when it's needed.
 
+!!! note
+    When the MMU pauses, Mainsail and Fluidd show a dialog with `UNLOCK`,
+    `RESUME` and sometimes `ABORT` buttons. Mainsail draws these as plain text
+    buttons. See [The Pause Dialog](Operation.md#the-pause-dialog).
+
 ## Extruder/Filament Color
 
 Mainsail and Fluidd both support showing extra per-extruder attributes,

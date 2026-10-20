@@ -241,6 +241,56 @@ graph TD
     for testing your parking/recovery setup without waiting for a real
     error.
 
+### The Pause Dialog
+
+When the MMU pauses and `show_error_dialog: 1` (the default), Mainsail, Fluidd
+and KlipperScreen pop up a dialog titled **Happy Hare Error Notice**. The same
+information is always written to the console, so nothing is lost if your
+interface doesn't support dialogs. From top to bottom it shows:
+
+1. **A headline**, normally `Print paused`.
+2. **The reason**, one dialog line per line of the error message.
+3. **Any extra lines** the start-of-print macros add - for example, the tools
+   the print needs and which gate each one maps to.
+4. **The action line** - what to do next. Where the error knows what is
+   likely to fix it, this is that specific advice, such as which gate to check;
+   otherwise it is the generic reminder to press `RESUME` once the problem is
+   fixed (`UNLOCK` restores the nozzle temperature first). It is last because
+   it's the line you most need to see (see
+   [Troubleshooting](#troubleshooting-the-dialog)).
+
+Along the bottom are the buttons:
+
+| Button | Does |
+|---|---|
+| `UNLOCK` | Runs [`MMU_UNLOCK`](Reference-Commands.md#mmu_unlock): re-heats the nozzle and restores normal MMU interaction, so you can work on the problem. |
+| `RESUME` | Runs `RESUME` to continue the print. |
+| `ABORT` | Runs `CANCEL_PRINT`. Only offered during print start, before the print has really begun. |
+
+If `RESUME` is refused because the MMU still finds a problem - the filament
+is still not where it should be, say - the dialog is shown again with the
+headline `Print is still paused` and the new reason. Fix that and press
+`RESUME` again.
+
+The action line is also the `pause_hint` field of
+[`printer.mmu`](Reference-Printer-Variables.md#printermmu) and is
+repeated in the console. To change what the dialog shows, see
+[Customizing the Error Dialog](Macro-Customization.md#customizing-the-error-dialog).
+
+#### Troubleshooting the Dialog
+
+- **Only one line of text shows** (stock KlipperScreen): KlipperScreen displays
+  just the last text line of a dialog. That is why Happy Hare puts the action
+  line last, so the most useful line is the one you see. The full reason is in
+  the console, and the **Last Error** button recalls it (see
+  [KlipperScreen](KlipperScreen.md)).
+- **The buttons look like plain text buttons** (Mainsail): Mainsail draws a
+  dialog's footer buttons as text buttons rather than the colored
+  primary/secondary/error styles other interfaces use. They work the same.
+- **No dialog at all**: check `show_error_dialog` is `1` in `mmu.cfg` and
+  that your interface supports Klipper `action:prompt` dialogs. Fluidd,
+  Mainsail and KlipperScreen do.
+
 ## State Recovery
 
 Happy Hare tracks filament position as a state machine (see

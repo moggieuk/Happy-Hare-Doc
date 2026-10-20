@@ -319,6 +319,8 @@ capable alternative.
 - [Parameters](Reference-Parameters.md) - the `mmu.cfg`/`mmu_parameters.cfg` config
   settings these macros work alongside
 - [Command Reference](Reference-Commands.md) - every `MMU_*` command
+- [Customizing the Error Dialog](Macro-Customization.md#customizing-the-error-dialog) -
+  the `_MMU_ERROR_DIALOG` variables, which live in `mmu_misc.cfg` rather than here
 - [Custom Load/Unload Sequences](Custom-Load-Unload-Sequences.md) - the
   deeper override mechanism `_MMU_SEQUENCE_VARS` sits in front of
 - [Feature: Tip Forming and Purging](Feature-Tip-Forming-Purging.md) -

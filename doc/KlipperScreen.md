@@ -109,6 +109,11 @@ material/temperature, and spool ID - are a third:
       <img src="KlipperScreen/last_error.png" alt="Last Error recall button" width="40%">
     </p>
 
+!!! tip
+    Stock KlipperScreen shows only the **last** text line of a pause dialog, so
+    Happy Hare puts the instruction for what to do next last. The full reason is
+    in the console. See [The Pause Dialog](Operation.md#the-pause-dialog).
+
 ### Tool Picker Panel
 
 An alternative way to pick a tool, showing which gate it maps to and that
