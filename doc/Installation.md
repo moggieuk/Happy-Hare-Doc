@@ -90,7 +90,7 @@ procedure and the effect of Replace mode on manual configuration edits.
     ```
     ```{.text .console-output}
     Usage: ./install.sh [-i] [-u] [-d] [-y] [-l] [-p] [-z] [-s] [-t] [-r]
-                        [-b <branch>]
+                        [-b <branch>] [-g <gates>]
                         [-k <klipper_home_dir>] [-c <klipper_config_dir>] [-m <moonraker_home_dir>]
                         [-a <kiauh_alternate_klipper>] [config_file]
 
@@ -114,6 +114,7 @@ procedure and the effect of Replace mode on manual configuration edits.
       -a <name> to specify alternative klipper-service-name when installed with Kiauh
       -r allow running install.sh from a root login (not through sudo)
       -e, --emu Enables multi MCU support (e.g. for EMU design)
+      -g <gates> most gates one MMU unit can configure (default 12, sticky; more is slower)
       -o override compatibility checks (e.g. unknown MIPS layout)
       -t  activate test mode - write config to /tmp/mmu_test instead of your real install
       (-q verbose make for debugging)
@@ -164,6 +165,25 @@ procedure and the effect of Replace mode on manual configuration edits.
 
     Once your configuration has per-gate MCU support enabled, later runs turn it
     on automatically, so `-e` isn't needed again.
+
+=== "More than 12 gates"
+
+    Menuconfig offers per-gate options (sensor pins, gear steppers, LEDs, ...)
+    for up to 12 gates per MMU unit. For a unit with more lanes, such as a large
+    Tradrack or ERCF, raise the limit with `-g <gates>` e.g.
+
+    ```bash
+    ./install.sh -i -g 16
+    ```
+
+    The limit is saved in your configuration, so later runs keep it and `-g`
+    isn't needed again. Run with a different `-g` to change it. Lowering it
+    drops the per-gate settings above the new limit. A higher limit makes
+    menuconfig a little slower to start, so only raise it as far as you need.
+
+    If a unit has more gates than the limit, menuconfig warns:
+    `More gates than the 12 menuconfig can configure: ./install.sh -g <gates>`
+
 ## Client Macros
 
 `menuconfig`'s final section asks:
