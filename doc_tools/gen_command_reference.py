@@ -126,6 +126,22 @@ def extract_help_strings(class_node, source, constants):
     }
 
 
+def module_literals(tree):
+    """Module-scope NAME = <literal> assignments in a command file, such as a limit that
+    the file's HELP_* strings quote (e.g. MAX_ADJUSTMENT in mmu_safe_g1.py)."""
+    literals = {}
+    for node in tree.body:
+        if isinstance(node, ast.Assign):
+            try:
+                value = ast.literal_eval(node.value)
+            except (ValueError, SyntaxError):
+                continue
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    literals[target.id] = value
+    return literals
+
+
 def load_constants():
     """mmu_constants.py has no imports of its own, so it's safe to exec directly -
     this is where UI_DEGREE and friends, referenced from HELP_* strings, come from."""
@@ -238,10 +254,11 @@ def collect_commands():
         if "self.register(" not in source:
             continue  # cheap pre-filter - most files under extras/mmu/ define no commands
         tree = ast.parse(source, filename=str(path))
+        file_constants = {**constants, **module_literals(tree)}
         for node in tree.body:
             if not isinstance(node, ast.ClassDef):
                 continue
-            help_strings = extract_help_strings(node, source, constants)
+            help_strings = extract_help_strings(node, source, file_constants)
             if help_strings is None:
                 continue  # a mixin or helper class with no CMD of its own
             if not help_strings["cmd"]:

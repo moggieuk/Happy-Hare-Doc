@@ -262,7 +262,8 @@ MAX_Z = #(mm) Also keep X,Y in range for following Z moves up to this height
 ```{.text .console-output}
 Coordinates are always absolute, as with G90, and only X, Y, Z are supported. If the
 move would end out of range once Klipper applies gcode offset and skew_correction
-it is adjusted to just inside the limit and a warning is logged. Use in place of G1
+it is adjusted to just inside the limit and a warning is logged. Corrections greater
+than 5mm on any axis (including the boundary margin) error before moving. Use in place of G1
 in a 'user_park_move_macro'
 Examples:
 _SAFE_G1 X=10 Y=300 F=12000 ...Move to (10, 300), adjusted if necessary
