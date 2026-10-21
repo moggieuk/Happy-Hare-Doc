@@ -128,68 +128,46 @@ see [Custom Load/Unload Sequences](Custom-Load-Unload-Sequences.md).
 
 ## Customizing the Error Dialog
 
-The dialog shown when the MMU pauses (see [What Happens When the MMU
-Pauses](Operation.md#the-pause-dialog)) is built by the `_MMU_ERROR_DIALOG`
-macro, which sends Klipper `action:prompt` messages to Mainsail, Fluidd and
-KlipperScreen. You can add your own lines to it or replace it entirely.
+Happy Hare shows the dialog itself when the MMU pauses (see [What Happens When
+the MMU Pauses](Operation.md#the-pause-dialog)), sending Klipper
+`action:prompt` messages to Mainsail, Fluidd and KlipperScreen. Its title,
+layout and the `RESUME` and `UNLOCK` buttons are fixed. To turn it off
+entirely and rely on the console, set `show_error_dialog: 0` in `mmu.cfg`.
 
-### Calling convention
-
-Happy Hare calls the macro whenever the MMU pauses, with two parameters:
+Use [`MMU_ERROR_DIALOG`](Reference-Commands.md#mmu_error_dialog) to add your
+own lines and an `ABORT` button. It doesn't show anything itself: it sets up
+the dialog in advance, ready for whatever pauses the MMU next, which is
+usually an error deep inside a load or toolchange rather than something your
+macro raises.
 
 | Parameter | Meaning |
 |---|---|
-| `MSG` | The headline - `Print paused`, or `Print is still paused` when a `RESUME` was refused. The shipped macro shows it only in the second case (see `still_paused` below) |
-| `REASON` | The reason for the pause as a single flat line of text, for UIs that can only show one |
+| `MSG="line one\nline two"` | Extra lines shown after the reason. Separate lines with `\n`. When the error has no specific advice, these replace the generic "After fixing, press RESUME..." line. |
+| `ABORT=1` \| `ABORT=0` | Add or remove an `ABORT` button, which runs `CANCEL_PRINT` |
+| `RESET=1` | Clear the extra lines and the `ABORT` button. When combined with `MSG` or `ABORT`, it is applied first. |
 
-It also sets five variables on the macro just before the call, and clears them
-straight afterwards. Treat these as read-only:
+With no parameters, `MMU_ERROR_DIALOG` reports the current settings.
 
-| Variable | Meaning |
-|---|---|
-| `unlock_first` | `True` when the MMU is locked after the pause, so `UNLOCK` is the first step; the shipped macro then starts the action line with `UNLOCK to restore heating, then` |
-| `context_line` | What was being attempted, such as `Occurred when changing tool: T0 > T1`, or empty |
-| `reason_lines` | The reason as a list of paragraphs, usually one. Already cleaned of characters (`"`, `;`, `\`) that would break the line when Klipper re-parses it. |
-| `action` | What to do next, when the error knows (the same text as [`pause_hint`](Reference-Printer-Variables.md#printermmu)), otherwise empty |
-| `still_paused` | `True` when the dialog is being shown again because the print is still paused, such as after a refused `RESUME`; `False` for a fresh pause |
+The settings stay in place until `RESET=1`, and are also cleared at the start
+and end of every print. Happy Hare's own print start uses them: once it has
+set up the slicer tool map, `MMU_START_SETUP` lists the tools the print needs
+and adds `ABORT`; `MMU_START_LOAD_INITIAL_TOOL` resets them once the initial
+tool is loaded. A pause in between shows the extra lines and the `ABORT`
+button, and a later pause shows neither. If you call `MMU_ERROR_DIALOG` from
+your own start macro, reset it the same way, or the lines and button stay for
+the rest of the print:
 
-### Adding lines and the abort button
-
-Three variables are yours to set, normally with `SET_GCODE_VARIABLE`:
-
-| Variable | Default | Meaning |
-|---|---|---|
-| `title` | *(empty)* | The dialog title. Empty gives `Happy Hare Pause Notice` |
-| `custom_msg` | *(empty)* | A list of extra lines shown after the reason. When set and there is no `action`, these replace the generic "After fixing, press RESUME..." line. |
-| `show_abort` | `False` | Add an `ABORT` button that runs `CANCEL_PRINT` |
-
-Happy Hare itself uses both during print start, so the dialog can list the
-tools the print needs and offer to abort, and clears them again once the
-print begins. If you set them from your own start macro, clear them the
-same way or they will appear on later pauses.
-
-The dialog is laid out as the `MSG` headline (only when `still_paused`),
-`context_line`, `reason_lines`, `custom_msg`, then `action` (shown as
-`Fix: ...`), followed by the `UNLOCK`, `RESUME` and (if enabled) `ABORT` buttons.
-Keep the most important line last: stock KlipperScreen shows only the last
-text line.
-
-### Replacing the macro
-
-To replace the dialog completely, copy `_MMU_ERROR_DIALOG` from
-`mmu_misc.cfg` to a new name, edit it, and point Happy Hare at it. This
-parameter isn't offered in menuconfig - add it to `mmu.cfg` by hand:
-
-```ini
-error_dialog_macro : MY_ERROR_DIALOG
+```text
+MMU_ERROR_DIALOG ABORT=1 MSG="Check the purge bucket is empty"
+...                       ; the part of your start macro the lines apply to
+MMU_ERROR_DIALOG RESET=1
 ```
 
-!!! warning "Important"
-    A custom `error_dialog_macro` must read the `action` variable to show
-    hints. `REASON` carries only the reason for the pause, so a macro that
-    uses `MSG` and `REASON` alone will quietly leave out the advice on what
-    to do next. Read `reason_lines` too if you want the reason shown one line
-    at a time rather than as one long line.
+From top to bottom the dialog shows the headline `Print is still paused` (only
+when it is shown again, such as after a refused `RESUME`), what was being
+attempted, the reason, your extra lines, then the action line (`Fix: ...`).
+Keep your most important line last only when you expect no action line:
+stock KlipperScreen shows just the last text line.
 
 ## Tip forming and tip cutting
 

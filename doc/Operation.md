@@ -321,6 +321,9 @@ repeated in the console. To change what the dialog shows, see
 - **No dialog at all**: check `show_error_dialog` is `1` in `mmu.cfg` and
   that your interface supports Klipper `action:prompt` dialogs. Fluidd,
   Mainsail and KlipperScreen do.
+- **You closed the dialog with its X**: the MMU is still paused. Use `UNLOCK`
+  and `RESUME` from the console or the MMU panel, or wait: if the MMU finds
+  another problem while paused, it shows the dialog again.
 
 ## State Recovery
 
