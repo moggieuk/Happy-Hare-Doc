@@ -31,14 +31,19 @@ calibration is incomplete (see [Commands that refuse to run](#commands-that-refu
 Most errors from a toolchange, load or unload are wrapped, so the line you
 look up is usually in the middle:
 
-```{.text .console-output}
-!! MMU issue detected. Print paused
+<div class="console-output codehilite"><pre><code><span class="console-error">!! MMU issue detected. Print paused
 Reason: Load sequence failed because:
-Couldn't pick up filament at gate 2 (gate endstop 'mmu_shared_exit' didn't trigger)
-Gate marked as empty. Use 'MMU_GATE_MAP GATE=2 AVAILABLE=1' to reset.
-Occurred when changing tool: T1 > T2
-Load filament in gate 2 or remap the tool, then reload the tool (MMU_RECOVER first if needed) and RESUME
-```
+Couldn't pick up filament at gate 1 (encoder didn't report enough movement)
+Gate marked as empty. Use 'MMU_GATE_MAP GATE=1 AVAILABLE=1' to reset.
+Occurred when changing tool: &gt; T1</span>
+Load filament in gate 1 or remap the tool, then reload the tool (MMU_RECOVER first if needed) and RESUME
+</code></pre></div>
+
+The same error in the Mainsail pause dialog:
+
+<p align="center">
+  <img src="Operation/pause-dialog.png" alt="Happy Hare Pause Notice dialog in Mainsail after a failed pickup at gate 1" width="360">
+</p>
 
 - **`Load sequence failed because:`** or **`Unload sequence failed because:`**
   says which half of a toolchange failed. Look up the line after it.
@@ -109,7 +114,7 @@ means it can happen on every MMU.
 | Gate sensor | The sensor used to home at the gate: `mmu_shared_exit`, a per-gate `mmu_exit`, or the extruder sensor on an MMU with no bowden |
 | Entry sensor | A per-gate `mmu_entry` sensor where filament enters the MMU |
 | Extruder sensor | The extruder entry sensor (`extruder`) before the extruder gears |
-| Toolhead sensor | A sensor after the extruder gears |
+| Toolhead sensor | A sensor after the extruder entry, inside the toolhead |
 | Buffer | A sync-feedback buffer (see [Sync-Feedback Buffer](Feature-Sync-Feedback-Buffer.md)) |
 | FlowGuard | [FlowGuard](Feature-FlowGuard.md) clog and tangle detection |
 | Linear selector | A selector driven along a rail to each gate, such as ERCF or Tradrack |
