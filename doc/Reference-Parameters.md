@@ -160,7 +160,6 @@ when each fires.
 | Parameter | Default | Description |
 |---|---|---|
 | `pause_macro` | `PAUSE` | Macro called to pause the print on an MMU error |
-| `error_dialog_macro` | `_MMU_ERROR_DIALOG` | Macro that shows the pause dialog when `show_error_dialog: 1`. Not offered in menuconfig - add it to `mmu.cfg` by hand; see [Customizing the Error Dialog](Macro-Customization.md#customizing-the-error-dialog) |
 | `action_changed_macro` | `_MMU_ACTION_CHANGED` | Called when `printer.mmu.action` changes |
 | `print_state_changed_macro` | `_MMU_PRINT_STATE_CHANGED` | Called when `printer.mmu.print_state` changes |
 | `mmu_event_macro` | `_MMU_EVENT` | Called on assorted MMU events |

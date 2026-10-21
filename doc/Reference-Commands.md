@@ -1458,6 +1458,26 @@ MMU_TEST_TRACKING DIRECTION=-1 STEP=1 ...Test tracking in the retract direction 
 
 *Called when ending print to finalize MMU*
 
+### MMU_ERROR_DIALOG
+
+*Customize the pop-up dialog shown when the MMU pauses (cleared at print start/end)*
+
+**Parameters**
+
+```{.text .console-output}
+MSG   = _text_ Lines (separated by \n) shown after the reason, replacing the default resume hint
+ABORT = [0|1] Add an ABORT (CANCEL_PRINT) button
+RESET = [0|1] Clear MSG and ABORT (applied before them)
+(no parameters to report current settings)
+```
+
+```{.text .console-output}
+Examples:
+MMU_ERROR_DIALOG ABORT=1                           ...Add an ABORT button for this print
+MMU_ERROR_DIALOG MSG="Ensure T0 is loaded\nThen RESUME" ...Replace the hint text with two lines
+MMU_ERROR_DIALOG RESET=1                           ...Return to defaults
+```
+
 ### MMU_PRINT_END
 
 *Forces clean up of state after after print end*

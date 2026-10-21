@@ -170,6 +170,7 @@ nav:
   - Reference:
       - Command Reference: Reference-Commands.md
       - Config Parameters: Reference-Parameters.md
+      - Errors: Reference-Errors.md
       - Macro Variables: Reference-Macro-Vars.md
       - Printer Variables: Reference-Printer-Variables.md
       - MCU Reference: Reference-Mcu.md
