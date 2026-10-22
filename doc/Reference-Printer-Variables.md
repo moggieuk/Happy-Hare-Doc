@@ -51,6 +51,7 @@ unless noted.
 | `last_tool` / `next_tool` | int | Tool indices either side of an in-progress toolchange |
 | `slicer_purge` | float | Slicer-supplied purge volume for the in-progress toolchange |
 | `toolchange_purge_volume` | float | Suggested purge volume (mm³) for the current toolchange |
+| `purge_change_min_volume` | float | Configured minimum purge volume (mm³); `toolchange_purge_volume` is never below this |
 | `toolchange_material_purge_volume` | float | Part of `toolchange_purge_volume` added for a material change (mm³), `0` if the material family is unchanged |
 | `last_toolchange` | string | Short description, similar to the `M117` display |
 | `operation` | string | `''` \| `load` \| `unload` \| `toolchange` \| `runout` \| `pause` \| `cancel` \| `complete` |

@@ -79,6 +79,7 @@ the full picture.
 | `force_purge_standalone` | `1` | `1` = always use standalone purging; `0` = the slicer's wipe tower in-print, standalone otherwise |
 | `purge_macro` | `_MMU_PURGE` | Macro called to purge - `_MMU_PURGE`, `BLOBIFIER`, or a custom macro. Blank disables standalone purging entirely |
 | `extruder_purge_current` | `100`% | Extruder current (100-150%) during purging - `100` disables the boost |
+| `purge_change_min_volume` | `0` | Smallest purge volume (mm³) suggested after any load, e.g. an EndlessSpool switch to an identical spool - see [Minimum purge volume](Feature-Tip-Forming-Purging.md#minimum-purge-volume). `0` disables |
 | `purge_material_change_volume` | `0` | Extra purge volume (mm³) added when a toolchange changes material family, e.g. ABS to PLA - see [Extra purge on a material change](Feature-Tip-Forming-Purging.md#extra-purge-on-a-material-change). `0` disables |
 
 ### Filament management

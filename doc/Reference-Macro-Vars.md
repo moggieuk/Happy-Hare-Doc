@@ -253,7 +253,7 @@ left to its upstream README alone.
 
 | Variable | Default | Description |
 |---|---|---|
-| `purge_length_minimum` | `30` mm | Absolute minimum purged, even with no color change - primes the nozzle; roughly 2x your melt-zone length |
+| `purge_length_minimum` | `30` mm | Absolute minimum purged, even with no color change - primes the nozzle; roughly 2x your melt-zone length. If Happy Hare's `purge_change_min_volume` gives a longer purge, that is used instead |
 | `purge_length_maximum` | `150` mm | Maximum filament per single blob - Blobifier splits into multiple blobs above this |
 | `purge_length` | `150` mm | Fallback purge length, if neither the tool map's purge volumes nor an explicit `PURGE_LENGTH` are set |
 | `purge_length_modifier` | `1.0` | Multiplies the slicer-emitted purge value - prefer adjusting the slicer's own purge multiplier instead |

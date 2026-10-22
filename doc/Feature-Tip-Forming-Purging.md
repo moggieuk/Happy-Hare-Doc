@@ -274,6 +274,7 @@ The suggested purge for each toolchange is then built from:
 toolchange_purge_volume = color volume (purge matrix)
                         + purge_material_change_volume (only if the material changes)
                         + residual filament left in the extruder
+                        (raised to purge_change_min_volume if smaller - see below)
 ```
 
 !!! note
@@ -340,6 +341,40 @@ the extra when the tool stays the same but its gate now holds a different
 material. An explicit Blobifier `PURGE_LENGTH=` is used as given. A custom
 purge macro should read `toolchange_purge_volume`, or add
 `toolchange_material_purge_volume` if it works from the matrix itself.
+
+### Minimum purge volume
+
+Some loads need almost no purge by the numbers but still need a primed
+nozzle: a change between two filaments of the same color and material, or an
+[EndlessSpool](Feature-Endless-Spool-Runout.md) switch to an identical spool
+after a runout. The purge matrix gives `0` for these.
+
+`purge_change_min_volume` (in `mmu_parameters.cfg`, or **Minimum purge
+volume** in the menuconfig **Purging** menu) is the smallest volume, in mm³,
+Happy Hare suggests after any load. If the color volume, material extra and
+residual add up to less, `toolchange_purge_volume` is raised to it. It
+defaults to `0` (off):
+
+```ini
+purge_change_min_volume: 100
+```
+
+| Toolchange | Color volume | Material extra | Suggested purge |
+|---|---|---|---|
+| black PLA → black PLA (or EndlessSpool to an identical spool) | `0` | `0` | `100` (the minimum) |
+| black ABS → black PLA | `0` | `150` | `150` + residual |
+| red PLA → blue PLA | `230` | `0` | `230` + residual |
+
+With `purge_material_change_volume: 150`, the minimum only changes the first
+row. When the minimum is used, the `mmu.log` breakdown ends with
+`- raised to minimum purge: 100.0mm³`.
+
+`_MMU_PURGE` and custom macros reading `toolchange_purge_volume` get the
+minimum automatically. [Blobifier](Macro-Blobifier.md) also has its own
+`purge_length_minimum` (in mm) and uses whichever of the two minimums is
+larger. Both apply even when the tool doesn't change and when `PURGE_LENGTH=`
+is given. The current value is available to macros as
+`printer.mmu.purge_change_min_volume`.
 
 ### Purging without a wipe tower
 
