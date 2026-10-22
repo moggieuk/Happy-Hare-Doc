@@ -246,8 +246,95 @@ T8   314  224   98  212  352  352   -   541   -
 
 `printer.mmu.toolchange_purge_volume` is the number your own purge logic
 should actually read during a toolchange - it's the sum of the matrix value
-above, [toolhead residual filament](#toolhead-calibration-and-toolhead_ooze_reduction), and any
+above, any [extra purge for a material change](#extra-purge-on-a-material-change),
+[toolhead residual filament](#toolhead-calibration-and-toolhead_ooze_reduction), and any
 filament left behind by a cut tip, not just the matrix on its own.
+
+### Extra purge on a material change
+
+Every purge volume matrix, whether from the slicer or from
+`MMU_CALC_PURGE_VOLUMES`, is based on **color**. A change between two
+filaments of the same color, say black ABS to black PLA, gets almost no
+purge, yet the ABS left in the melt zone can stop the next layers sticking.
+Changing to a different material needs extra filament to flush the old one
+out, whatever the colors.
+
+`purge_material_change_volume` (in `mmu_parameters.cfg`, or **Extra purge on
+material change** in the menuconfig **Purging** menu) is an extra volume, in
+mm³, that Happy Hare adds to the suggested purge whenever a toolchange
+changes material. It defaults to `0` (off):
+
+```ini
+purge_material_change_volume: 150
+```
+
+The suggested purge for each toolchange is then built from:
+
+```text
+toolchange_purge_volume = color volume (purge matrix)
+                        + purge_material_change_volume (only if the material changes)
+                        + residual filament left in the extruder
+```
+
+!!! note
+    `MMU_CALC_PURGE_VOLUMES MULTIPLIER=` and `MIN=` can't do this job.
+    `MULTIPLIER` scales the color volume, and a same-color change has a color
+    volume of almost zero, so scaling it still gives almost nothing. `MIN`
+    raises every change, including small color changes between the same
+    material.
+
+#### How "different material" is decided
+
+Happy Hare compares the material of the filament it last loaded into the
+extruder (remembered across restarts, alongside the color of any cut
+fragment) with the material of the gate it is about to load. Materials are
+free-form names from your gate map, Spoolman or NFC tags, so each is reduced
+to a **material family**: the leading name, ignoring case, up to the first
+space, `-`, `+`, `_` or `/`.
+
+| Material name | Family |
+|---|---|
+| `PLA`, `PLA Silk`, `PLA-CF`, `PLA+`, `pla basic` | `PLA` |
+| `PETG`, `PETG-CF` | `PETG` |
+| `ABS`, `ABS-GF` | `ABS` |
+| empty or `unknown` | none |
+
+The extra purge is added only when both families are known and different.
+If either material is unset, nothing is added. Name your materials
+consistently (`MMU_GATE_MAP GATE=n MATERIAL=PLA`, Spoolman or NFC tags) for
+this to work.
+
+#### Worked examples
+
+With `purge_material_change_volume: 150`:
+
+| Toolchange | Color volume | Material extra | Why |
+|---|---|---|---|
+| black PLA → white PLA | from the matrix | `0` | Same family |
+| black ABS → black PLA | almost `0` | `150` | Different families |
+| red PETG → blue PLA | from the matrix | `150` | Different families, added to the color volume |
+| red PLA → blue PLA Silk | from the matrix | `0` | `PLA Silk` is in the `PLA` family |
+| unknown → PLA | from the matrix | `0` | One material isn't known |
+
+The debug breakdown in `mmu.log` shows each part. For black ABS to black PLA,
+with 12mm of residual filament:
+
+```{.text .console-output}
+Suggested purge volume of 178.9mm³ calculated from:
+- toolhead_residual_filament: 5.0mm
+- filament_remaining (previous cut fragment): 7.0mm
+- slicer purge volume for toolchange T0 > T1: 0.0mm³
+- material change: 150.0mm³
+```
+
+Both built-in purge macros include the extra: `_MMU_PURGE` purges
+`toolchange_purge_volume`, and [Blobifier](Macro-Blobifier.md) adds
+`printer.mmu.toolchange_material_purge_volume` to the volume it reads from
+the matrix (not scaled by its `purge_length_modifier`). Blobifier also purges
+the extra when the tool stays the same but its gate now holds a different
+material. An explicit Blobifier `PURGE_LENGTH=` is used as given. A custom
+purge macro should read `toolchange_purge_volume`, or add
+`toolchange_material_purge_volume` if it works from the matrix itself.
 
 ### Purging without a wipe tower
 
@@ -351,10 +438,10 @@ Full parameter reference:
 
 ## Printer variables exposed
 
-`printer.mmu.toolchange_purge_volume`, `.slicer_purge`,
-`.slicer_tool_map.purge_volumes`, `.extruder_filament_remaining`, and
-`.filament_remaining`/`.filament_remaining_color` (residual/cut-fragment
-tracking) - see [Printer Variables: extruder / filament
+`printer.mmu.toolchange_purge_volume`, `.toolchange_material_purge_volume`,
+`.slicer_purge`, `.slicer_tool_map.purge_volumes`, `.extruder_filament_remaining`,
+and `.filament_remaining`/`.filament_remaining_color`/`.filament_remaining_material`
+(residual/cut-fragment tracking) - see [Printer Variables: extruder / filament
 remaining](Reference-Printer-Variables.md#extruder-filament-remaining).
 `printer.mmu.action` also includes `Forming Tip`/`Cutting Tip`/`Cutting
 Filament`/`Purging` states while each of these runs.
