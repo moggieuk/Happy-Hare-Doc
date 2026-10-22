@@ -289,8 +289,9 @@ toolchange_purge_volume = color volume (purge matrix)
 Happy Hare compares the material it last loaded **and purged** into the
 extruder (remembered across restarts) with the material of the gate it is
 about to load. The material is only recorded once a load and its purge
-finish, so if a purge fails and the toolchange is retried, the retry still
-purges the extra. Materials are
+finish, including any purge run from the post-load macro
+(`user_post_load_extension`), so if a purge fails and the toolchange is
+retried, the retry still purges the extra. Materials are
 free-form names from your gate map, Spoolman or NFC tags, so each is reduced
 to a **material family**: the leading name, ignoring case, up to the first
 space, `-`, `+`, `_` or `/`.
