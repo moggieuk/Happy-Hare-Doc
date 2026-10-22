@@ -285,9 +285,11 @@ toolchange_purge_volume = color volume (purge matrix)
 
 #### How "different material" is decided
 
-Happy Hare compares the material of the filament it last loaded into the
-extruder (remembered across restarts, alongside the color of any cut
-fragment) with the material of the gate it is about to load. Materials are
+Happy Hare compares the material it last loaded **and purged** into the
+extruder (remembered across restarts) with the material of the gate it is
+about to load. The material is only recorded once a load and its purge
+finish, so if a purge fails and the toolchange is retried, the retry still
+purges the extra. Materials are
 free-form names from your gate map, Spoolman or NFC tags, so each is reduced
 to a **material family**: the leading name, ignoring case, up to the first
 space, `-`, `+`, `_` or `/`.
@@ -299,10 +301,12 @@ space, `-`, `+`, `_` or `/`.
 | `ABS`, `ABS-GF` | `ABS` |
 | empty or `unknown` | none |
 
-The extra purge is added only when both families are known and different.
-If either material is unset, nothing is added. Name your materials
-consistently (`MMU_GATE_MAP GATE=n MATERIAL=PLA`, Spoolman or NFC tags) for
-this to work.
+The extra purge is added when the families are different. A change between
+a known and an unknown material also counts, because Happy Hare can't tell
+whether the old material has been flushed out. A change between two unknown
+materials doesn't, so leaving every material unset never adds the extra.
+Name your materials consistently (`MMU_GATE_MAP GATE=n MATERIAL=PLA`,
+Spoolman or NFC tags) for this to work.
 
 #### Worked examples
 
@@ -314,7 +318,8 @@ With `purge_material_change_volume: 150`:
 | black ABS → black PLA | almost `0` | `150` | Different families |
 | red PETG → blue PLA | from the matrix | `150` | Different families, added to the color volume |
 | red PLA → blue PLA Silk | from the matrix | `0` | `PLA Silk` is in the `PLA` family |
-| unknown → PLA | from the matrix | `0` | One material isn't known |
+| unknown → PLA (or PLA → unknown) | from the matrix | `150` | Only one material is known |
+| unknown → unknown | from the matrix | `0` | Neither material is known |
 
 The debug breakdown in `mmu.log` shows each part. For black ABS to black PLA,
 with 12mm of residual filament:

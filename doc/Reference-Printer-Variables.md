@@ -118,7 +118,7 @@ slicer_tool_map
 | `extruder_filament_remaining` | float | Residual + cut filament left in the extruder, including any configured `toolhead_residual_filament` |
 | `filament_remaining` | float | Same, without the configured residual constant |
 | `filament_remaining_color` | string | Color of that residual filament, for UI display |
-| `filament_remaining_material` | string | Material of the filament last loaded into the extruder, used to detect a material change |
+| `filament_remaining_material` | string | Material last loaded and purged into the extruder, used to detect a material change |
 
 ### Sync feedback, FlowGuard and tangle prevention
 
