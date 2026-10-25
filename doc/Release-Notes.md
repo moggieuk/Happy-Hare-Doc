@@ -197,8 +197,6 @@ baseline used for the comparison above.
 
 ## v4.2.0
 
-Upcoming release from `development`, reviewed October 25, 2026 through
-`fcd94d745edeef9dd896710475ad8c71878334b0`. There was no v4.1.1 release.
 This covers changes since the v4.1.0 tag, including fixes subsequently merged
 into `main`. See the [full release comparison](https://github.com/moggieuk/Happy-Hare/compare/v4.1.0...fcd94d745edeef9dd896710475ad8c71878334b0)
 and the [development-only comparison](https://github.com/moggieuk/Happy-Hare/compare/70aa90fb9aa18787de445235bd26a0665168c441...fcd94d745edeef9dd896710475ad8c71878334b0).
