@@ -2,7 +2,20 @@
 
 ## v4.0.0
 
-Initial release.
+Initial release of v4.
+
+Happy Hare builds on years of development and community feedback, with roots
+in 2022's [ERCF-Software-V3](https://github.com/moggieuk/ERCF-Software-V3)
+project for the early DIY MMU, ERCF. That repository housed Happy Hare v1,
+an implementation for ERCF. In June 2023, Happy Hare v2 began broadening
+support to other MMU designs,
+and since [v3](https://github.com/moggieuk/Happy-Hare/tree/v3.0.1) it has been
+a universal MMU driver for Klipper. Version 4 continues that evolution,
+carrying forward the filament handling, calibration and recovery experience
+gained across multiple generations of hardware and software.
+
+For documentation prior to v4, see the
+[Happy Hare wiki](https://github.com/moggieuk/Happy-Hare/wiki).
 
 ## v4.1.0
 
