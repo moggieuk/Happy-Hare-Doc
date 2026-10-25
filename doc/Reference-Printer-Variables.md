@@ -132,8 +132,9 @@ slicer_tool_map
 
 ### Sync feedback, FlowGuard and tangle prevention
 
-Present when the active unit has a sync-feedback buffer and/or an encoder;
-`{}` on a unit with neither.
+These keys are present from the first status query, with `None` for values
+that are not available. Sync-feedback values require a buffer and an initialized
+controller on the active unit; an encoder alone can supply `flowguard` status.
 
 | Variable | Type | Meaning |
 |---|---|---|
@@ -142,8 +143,17 @@ Present when the active unit has a sync-feedback buffer and/or an encoder;
 | `sync_feedback_bias_raw` | float | Raw sensor bias, rounded to 2dp |
 | `sync_feedback_bias_modelled` | float | Modelled/smoothed bias, rounded to 2dp |
 | `sync_feedback_flow_rate` | float | Flow rate as seen by the buffer |
+| `sync_feedback_rd_correction` | float or `None` | Percentage change in tuned gear `rotation_distance` from the calibrated value used when the gate was synced, rounded to 2 decimal places; `None` when sync-feedback status is unavailable |
 | `flowguard` | dict | `trigger`, `reason`, `level`, `max_clog`, `max_tangle`, `active`, `enabled`, and `encoder_mode` when an encoder is fitted |
 | `tangle_prevention` | dict | `enabled`, `active`, `boosted`, `threshold`, `release` |
+
+`sync_feedback_rd_correction` is calculated as
+`100 * (tuned_rotation_distance - starting_rotation_distance) / starting_rotation_distance`.
+For example, tuning from 21.7156 to 22.5000 gives `3.61` (+3.61%). It stays at
+`0.0` until autotune has a confident result and resets to `0.0` on a gate change.
+It uses the tuned value, so temporary two-level speed boosts do not appear as
+calibration corrections. A reported correction does not by itself mean the value
+has been saved; saving requires `autotune_rotation_distance` to be enabled.
 
 ### Sensors
 
