@@ -14,6 +14,9 @@ a universal MMU driver for Klipper. Version 4 continues that evolution,
 carrying forward the filament handling, calibration and recovery experience
 gained across multiple generations of hardware and software.
 
+For documentation prior to v4, see the
+[Happy Hare wiki](https://github.com/moggieuk/Happy-Hare/wiki).
+
 ## v4.1.0
 
 Changes on `development` relative to `main`, reviewed on October 7, 2026.
