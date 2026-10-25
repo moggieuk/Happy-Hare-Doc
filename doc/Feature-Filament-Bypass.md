@@ -111,6 +111,11 @@ attributes any gate can:
 MMU_GATE_MAP BYPASS=1 MATERIAL=PETG COLOR=orange
 ```
 
+Bypass metadata is saved across restarts and appears immediately in
+`printer.mmu.active_filament` while bypass is selected. Gate-map edits, NFC or
+Spoolman data at loading, and TD-1 measurements can populate it. A bypass unload,
+`MMU_RESET`, or selecting a real gate clears it.
+
 ## Printer variables exposed
 
 `printer.mmu.tool`/`.gate` both read `-2` while bypass is selected. See

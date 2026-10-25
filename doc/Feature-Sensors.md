@@ -60,6 +60,28 @@ config: it's persisted automatically the same way everything else on
 [Feature: State Persistence](Feature-State-Persistence.md) is, not something
 you hand-edit into a `.cfg` file.
 
+### Event timing
+
+`sensor_min_debounce_delay` in the shared `[mmu_parameters]` section of `mmu.cfg`
+sets the minimum time between a switch edge and the confirming read for runout,
+insert and remove events. The default is `0` seconds; values up to `1` second
+are accepted. Increase it only if bouncing switches cause genuine events to be
+ignored. Sensor state continues updating during the wait; buffer feedback and
+post-move checks are unchanged. A long delay can stall queued print commands.
+
+```text
+MMU_TEST_CONFIG SENSOR_MIN_DEBOUNCE_DELAY=0.1
+```
+
+This changes the value until restart; save a tested value in `mmu.cfg`.
+`event_delay` is a separate, nonnegative cooldown setting in `[mmu_sensors]`,
+`[mmu_buffer]` and `[mmu_toolhead]`, with defaults of 0.5, 0 and 0.5 seconds
+respectively. Fractional values are supported.
+
+On older Klipper without switch debounce support, filament switches use the
+legacy button interface. This does not add support for the Blobifier bucket
+button's `debounce_delay` option; update Klipper if it rejects that option.
+
 ## Commands
 
 Full parameter reference: [`MMU_SENSORS`](Reference-Commands.md#mmu_sensors).

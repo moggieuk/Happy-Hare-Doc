@@ -304,6 +304,14 @@ much of your existing `.cfg` files is then copied back on top.
   changes. Copy anything you added there back from the backup afterwards, or
   keep it in a file of your own (see [Recommendations](#recommendations)).
 
+Refresh also preserves custom options in matching temperature-sensor and TMC
+driver sections. Changing sensor type or driver type rebuilds the affected
+section, discarding incompatible settings; bus changes drop obsolete transport
+options. Replace mode continues to rebuild generated configuration.
+
+For a printer that supplies its own `[save_variables]` section, see
+[State Persistence](Feature-State-Persistence.md#using-your-own-variables-file).
+
 ### Importing `.cfg` values into menuconfig
 
 When you choose Merge/Refresh, the installer compares your installed `.cfg` files

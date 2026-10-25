@@ -73,19 +73,19 @@ A few settings are worth knowing about specifically:
   point, not the couple of millimeters that might look sufficient at first
   glance.
 
-!!! warning "Skew correction"
-    The pin park point (`pin_loc_xy` plus `pin_park_dist` along the cutting
-    axis) and the compressed point (`pin_loc_compressed_xy`) are used exactly
-    as configured: Happy Hare doesn't pull them inside the axis limits,
-    because that would shorten the cut. The default compressed point is very
-    close to the X minimum. With Klipper `[skew_correction]` loaded, a pin
-    point that works at the first layer can be out of range higher up, which
-    stops the toolchange with `Move out of range`. Check both points with
-    `MMU_CHECK_POSITION ... SKEW=<profile>`, and consider adding
-    `MMU_CHECK_POSITION ... ERROR=1` to your start-print macro after the skew
-    profile is loaded. The approach and back-off moves around the pin are
-    kept in range automatically. See [Skew & Build
-    Envelope](Skew-Build-Envelope.md).
+!!! warning "Skew correction and cutter travel"
+    The pin approach, cut strokes and return use `_SAFE_G1` to keep movement
+    within axis limits. Corrections above 5 mm on any axis are rejected before
+    movement. Smaller adjustments can still shorten the cut: this cap does not
+    establish your cutter's mechanical tolerance. Verify that `pin_loc_xy`,
+    `pin_loc_compressed_xy` and `pin_park_dist` leave enough travel at every
+    print height. Check both endpoints with `MMU_CHECK_POSITION ... SKEW=<profile>`
+    and consider `ERROR=1` checks in your start-print macro. See
+    [Skew & Build Envelope](Skew-Build-Envelope.md).
+
+Use [unload validation](Feature-Tip-Forming-Purging.md#unload-validation) to
+warn about unexpectedly long sensor-clearing moves after a cut. Start with
+`toolhead_unload_test: 1` and confirm the dimensions before using pause mode.
 
 ## See also
 

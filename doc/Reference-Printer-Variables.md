@@ -46,7 +46,8 @@ unless noted.
 | `unit` | int | Currently selected unit, `-1` if none |
 | `tool` | int | Currently selected tool, `-1` unknown, `-2` bypass |
 | `gate` | int | Currently selected gate (or the gate about to be selected, mid-toolchange), `-1` unknown |
-| `active_filament` | dict | `filament_name`, `material`, `vendor`, `color`, `spool_id`, `temperature`, `td` for the current gate; `{}` if none selected. `td` is `None` when unmeasured |
+| `extruder_name` | string | Extruder configured for the selected MMU unit, which can differ from the active toolhead extruder |
+| `active_filament` | dict | `filament_name`, `material`, `vendor`, `color`, `spool_id`, `temperature`, `td` for the selected gate, reflecting current gate-map edits immediately; saved bypass attributes when bypass is selected, or `{}` if no metadata is available. `td` is `None` when unmeasured |
 | `num_toolchanges` | int | Toolchanges performed so far this print |
 | `last_tool` / `next_tool` | int | Tool indices either side of an in-progress toolchange |
 | `slicer_purge` | float | Slicer-supplied purge volume for the in-progress toolchange |
@@ -70,6 +71,12 @@ unless noted.
 | `bowden_progress` | int | 0-100% while a bowden move is in progress, `-1` otherwise |
 | `print_start_detection` | bool | Whether Happy Hare auto-detects print start (for slicers/wrappers like Klippain that don't call the MMU print-start hook) |
 
+`active_filament` describes metadata, not whether filament is loaded. For bypass,
+check `gate == -2` and `filament_pos`: `0` is unloaded and `10` is fully loaded.
+A loaded bypass with unknown metadata can still have `active_filament == {}`.
+Bypass metadata survives restart and is cleared by bypass unload, `MMU_RESET`,
+or selecting a real gate.
+
 ### Gate and tool maps
 
 All per-gate lists here are indexed by the same global gate number used
@@ -90,6 +97,7 @@ everywhere else (contiguous across units, see `printer.mmu_machine` below).
 | `gate_temperature` | list[int] | Print temperature per gate |
 | `gate_spool_id` | list[int] | Spoolman spool ID per gate |
 | `gate_speed_override` | list[int] | Per-gate speed override (%) |
+| `gate_remaining_weight` / `gate_initial_weight` | list[float] | Remaining / original net filament weight in grams per gate; `-1` means unknown |
 | `gate_spool_rfid` | list | Per-gate RFID/NFC tag UID, if read |
 | `gate_color_rgb` | list[tuple] | `(r, g, b)` floats `0.0`-`1.0` per gate |
 | `slicer_tool_map` | dict | See below |
@@ -119,6 +127,7 @@ slicer_tool_map
 | `extruder_filament_remaining` | float | Residual + cut filament left in the extruder, including any configured `toolhead_residual_filament` |
 | `filament_remaining` | float | Same, without the configured residual constant |
 | `filament_remaining_color` | string | Color of that residual filament, for UI display |
+| `filament_remaining_temp` | int | Saved nozzle temperature (°C) for residual filament in the selected unit's extruder; `0` means unknown. Used for eligible Happy Hare-controlled purges |
 | `filament_remaining_material` | string | Material last loaded and purged into the extruder, used to detect a material change |
 
 ### Sync feedback, FlowGuard and tangle prevention

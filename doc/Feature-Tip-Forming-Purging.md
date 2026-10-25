@@ -174,6 +174,41 @@ Unload, load of the next filament, purge, and resume follow as normal.
     `mmu_macro_vars.cfg`'s cutter section, one at a time, same approach as
     tip-forming tuning above.
 
+### Unload validation
+
+The shared `toolhead_unload_test` setting in `mmu.cfg` controls extra unload
+validation: `0` preserves existing behavior, `1` warns, and `2` treats failure
+as an error (pausing during a print). Begin with `1` and verify your toolhead
+dimensions before enabling `2`. Homing travel limits do not change.
+
+With a toolhead or extruder-entry sensor, Happy Hare compares the distance
+needed to clear it with the expected distance from the tip park position.
+After a reported cut, an overrun greater than half the remaining fragment
+suggests a missed cut. This check is skipped for fragments under 2 mm, or when
+an extruder-entry buffer can absorb that difference. After tip forming or a
+slicer tip, the allowance is `toolhead_unload_safety_margin`, plus buffer travel
+for extruder-entry homing. Incorrect sensor-to-nozzle dimensions can therefore
+cause false warnings. Expected and actual distances are recorded in the debug
+log.
+
+Without a sensor, the existing encoder check is used where applicable. The
+proportional-buffer-only validation currently always passes; enabling this
+option does not provide missed-cut detection on that path.
+
+### Residual filament temperature
+
+For the initial print load or a standalone load with Happy Hare-controlled
+purging, Happy Hare remembers the residual filament temperature per extruder.
+If needed, it unloads and purges at that higher temperature, then restores the
+incoming filament temperature; during a print it waits for cooldown. For
+example, a PLA load at 220°C after PC at 270°C purges the residual PC at 270°C
+before returning to 220°C. Unknown residual temperatures retain the normal
+behavior.
+
+Mid-print toolchanges remain under slicer temperature control. Slicer-controlled,
+skipped or missing purges do not trigger residual heating. Standalone unloads
+and tip tests also keep their normal temperature behavior.
+
 ### Purge volumes
 
 Slicers offer purge volumes three ways - a simple per-tool unload/load
