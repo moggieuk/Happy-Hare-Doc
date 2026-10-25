@@ -246,7 +246,7 @@ MMU_FLOWGUARD ENABLE=0 UNIT=ALL ...Disable FlowGuard detection on all units
 
 ```{.text .console-output}
 QUIET        = 1 To minimize console reporting
-DETAILS      = 1 Include measured TD/color and the complete Spoolman RFID UID set for each gate
+DETAILS      = 1 Include measured TD/color, the complete Spoolman RFID UID set and spool weight for each gate
 RESET        = 1 To reset specified GATE/GATES filament attributes to configured defaults
 GATES        = g,g,g comma separated list of gates; required with RESET unless GATE is used
 GATE         = g Specify a single gate; required with RESET unless GATES is used
@@ -261,6 +261,8 @@ TEMP         = # Default temperature of filament
 TD           = Positive transmission distance, or blank to clear (also clears measured color)
                With BYPASS=1 sets the measured TD of the bypass filament
 SPEED        = % Speed override (use <100 for soft TPU types)
+WEIGHT       = # Remaining filament weight on the spool in grams (-1 = unknown)
+INITIAL_WEIGHT = # Filament weight on the spool when full in grams (-1 = unknown)
 RFID         = # Single hexadecimal RFID tag UID read at the gate (blank to clear)
 AVAILABLE    = [-1|0|1|2] Filament availability: Unknown | Empty | Available | Available from filament buffer
 (no parameters for status report)
@@ -296,8 +298,8 @@ TIMER           = #(mins) Force drying time
 TEMP            = #(degrees) Force temperature
 HUMIDITY        = % Terminate drying when humidity goal is reached
 GATES           = g1,g2 Gates to control ONLY IF MMU has per-gate heaters/dryers
-ROTATE          = [0|1] Rotate spool (requires eSpooler and explicit GATES)
-ROTATE_INTERVAL = #(mins) How often to rotate spools when drying (requires eSpooler)
+ROTATE          = [0|1] Rotate empty spools (requires eSpooler or gear that turns the spool, and GATES if per-gate heaters)
+ROTATE_INTERVAL = #(mins) How often to rotate spools when drying
 VENT_INTERVAL   = #(mins) How often to open the vent in drying cycle
 (no parameters for status report)
 ```
@@ -308,7 +310,7 @@ MMU_HEATER TEMP=50                             ...Set heater temperature or adju
 MMU_HEATER DRY=1                               ...Dry with intelligent temperature/time recommended from 'drying_data'
 MMU_HEATER DRY=1 TEMP=50 TIMER=240 HUMIDITY=12 ...Initiate drying cycle at 50°C for 240 minutes with 12% humidity goal
 MMU_HEATER STOP=1                              ...Stop current drying cycle
-MMU_HEATER DRY=1 ROTATE=1 GATES=1,3            ...Start drying cycle on gates 1 & 3 periodically rotating them (requires espooler)
+MMU_HEATER DRY=1 ROTATE=1 GATES=1,3            ...Start drying cycle on gates 1 & 3 periodically rotating them
 MMU_HEATER DRYING_DATA=1                       ...List the current drying data database
 MMU_HEATER DRY=1 VENT_INTERVAL=10              ...Initiate drying cycle opening the vent every 10 minutes
 With per-gate heaters:

@@ -18,9 +18,11 @@ yet (`{referenced_tools}`, for example, has been a pending PrusaSlicer
 feature request for years).
 
 This only runs for plain `.gcode` uploads from a recognized slicer
-(PrusaSlicer, SuperSlicer, OrcaSlicer, or BambuStudio, detected from the
-file's own generator comment) - binary G-code and `.ufp` uploads, and files
-from anything else, pass through untouched. Re-uploading a file that's
+(PrusaSlicer, SuperSlicer, OrcaSlicer, BambuStudio, or Orca-based Creality Print,
+detected from the file's generator comment). Moonraker extracts `.ufp` uploads
+before this pass; the extracted G-code must still identify a supported slicer,
+so native Cura G-code does not gain Happy Hare token support. Binary G-code and
+G-code from unrecognized slicers pass through untouched. Re-uploading a file that's
 already been processed is a no-op rather than a second substitution pass -
 if you change your start g-code and want it re-applied, re-export from the
 slicer rather than just re-uploading the same file.
@@ -227,7 +229,7 @@ average_toolchange_time: 0.0
 - **A placeholder shows up literally as `!something!` in a running print**
   - either `enable_file_preprocessor` is `False`, the slicer isn't one of
     the four the preprocessor recognizes, or the file is a binary
-    `.bgcode`/`.ufp` upload (neither is scanned at all).
+    binary `.bgcode` upload, or extracted `.ufp` G-code from an unsupported slicer.
 - **Changed your start g-code but the placeholders didn't update** -
   preprocessing only runs once per file; a file that's already been
   processed is skipped on re-upload. Re-export from the slicer rather than

@@ -174,6 +174,41 @@ Unload, load of the next filament, purge, and resume follow as normal.
     `mmu_macro_vars.cfg`'s cutter section, one at a time, same approach as
     tip-forming tuning above.
 
+### Unload validation
+
+The shared `toolhead_unload_test` setting in `mmu.cfg` controls extra unload
+validation: `0` preserves existing behavior, `1` warns, and `2` treats failure
+as an error (pausing during a print). Begin with `1` and verify your toolhead
+dimensions before enabling `2`. Homing travel limits do not change.
+
+With a toolhead or extruder-entry sensor, Happy Hare compares the distance
+needed to clear it with the expected distance from the tip park position.
+After a reported cut, an overrun greater than half the remaining fragment
+suggests a missed cut. This check is skipped for fragments under 2 mm, or when
+an extruder-entry buffer can absorb that difference. After tip forming or a
+slicer tip, the allowance is `toolhead_unload_safety_margin`, plus buffer travel
+for extruder-entry homing. Incorrect sensor-to-nozzle dimensions can therefore
+cause false warnings. Expected and actual distances are recorded in the debug
+log.
+
+Without a sensor, the existing encoder check is used where applicable. The
+proportional-buffer-only validation currently always passes; enabling this
+option does not provide missed-cut detection on that path.
+
+### Residual filament temperature
+
+For the initial print load or a standalone load with Happy Hare-controlled
+purging, Happy Hare remembers the residual filament temperature per extruder.
+If needed, it unloads and purges at that higher temperature, then restores the
+incoming filament temperature; during a print it waits for cooldown. For
+example, a PLA load at 220°C after PC at 270°C purges the residual PC at 270°C
+before returning to 220°C. Unknown residual temperatures retain the normal
+behavior.
+
+Mid-print toolchanges remain under slicer temperature control. Slicer-controlled,
+skipped or missing purges do not trigger residual heating. Standalone unloads
+and tip tests also keep their normal temperature behavior.
+
 ### Purge volumes
 
 Slicers offer purge volumes three ways - a simple per-tool unload/load
@@ -246,8 +281,136 @@ T8   314  224   98  212  352  352   -   541   -
 
 `printer.mmu.toolchange_purge_volume` is the number your own purge logic
 should actually read during a toolchange - it's the sum of the matrix value
-above, [toolhead residual filament](#toolhead-calibration-and-toolhead_ooze_reduction), and any
+above, any [extra purge for a material change](#extra-purge-on-a-material-change),
+[toolhead residual filament](#toolhead-calibration-and-toolhead_ooze_reduction), and any
 filament left behind by a cut tip, not just the matrix on its own.
+
+### Extra purge on a material change
+
+Every purge volume matrix, whether from the slicer or from
+`MMU_CALC_PURGE_VOLUMES`, is based on **color**. A change between two
+filaments of the same color, say black ABS to black PLA, gets almost no
+purge, yet the ABS left in the melt zone can stop the next layers sticking.
+Changing to a different material needs extra filament to flush the old one
+out, whatever the colors.
+
+`purge_material_change_volume` (in `mmu_parameters.cfg`, or **Extra purge on
+material change** in the menuconfig **Purging** menu) is an extra volume, in
+mm³, that Happy Hare adds to the suggested purge whenever a toolchange
+changes material. It defaults to `0` (off):
+
+```ini
+purge_material_change_volume: 150
+```
+
+The suggested purge for each toolchange is then built from:
+
+```text
+toolchange_purge_volume = color volume (purge matrix)
+                        + purge_material_change_volume (only if the material changes)
+                        + residual filament left in the extruder
+                        (raised to purge_change_min_volume if smaller - see below)
+```
+
+!!! note
+    `MMU_CALC_PURGE_VOLUMES MULTIPLIER=` and `MIN=` can't do this job.
+    `MULTIPLIER` scales the color volume, and a same-color change has a color
+    volume of almost zero, so scaling it still gives almost nothing. `MIN`
+    raises every change, including small color changes between the same
+    material.
+
+#### How "different material" is decided
+
+Happy Hare compares the material it last loaded **and purged** into the
+extruder (remembered across restarts) with the material of the gate it is
+about to load. The material is only recorded once a load and its purge
+finish, including any purge run from the post-load macro
+(`user_post_load_extension`), so if a purge fails and the toolchange is
+retried, the retry still purges the extra. Materials are
+free-form names from your gate map, Spoolman or NFC tags, so each is reduced
+to a **material family**: the leading name, ignoring case, up to the first
+space, `-`, `+`, `_` or `/`.
+
+| Material name | Family |
+|---|---|
+| `PLA`, `PLA Silk`, `PLA-CF`, `PLA+`, `pla basic` | `PLA` |
+| `PETG`, `PETG-CF` | `PETG` |
+| `ABS`, `ABS-GF` | `ABS` |
+| empty or `unknown` | none |
+
+The extra purge is added when the families are different. A change between
+a known and an unknown material also counts, because Happy Hare can't tell
+whether the old material has been flushed out. A change between two unknown
+materials doesn't, so leaving every material unset never adds the extra.
+Name your materials consistently (`MMU_GATE_MAP GATE=n MATERIAL=PLA`,
+Spoolman or NFC tags) for this to work.
+
+#### Worked examples
+
+With `purge_material_change_volume: 150`:
+
+| Toolchange | Color volume | Material extra | Why |
+|---|---|---|---|
+| black PLA → white PLA | from the matrix | `0` | Same family |
+| black ABS → black PLA | almost `0` | `150` | Different families |
+| red PETG → blue PLA | from the matrix | `150` | Different families, added to the color volume |
+| red PLA → blue PLA Silk | from the matrix | `0` | `PLA Silk` is in the `PLA` family |
+| unknown → PLA (or PLA → unknown) | from the matrix | `150` | Only one material is known |
+| unknown → unknown | from the matrix | `0` | Neither material is known |
+
+The debug breakdown in `mmu.log` shows each part. For black ABS to black PLA,
+with 12mm of residual filament:
+
+```{.text .console-output}
+Suggested purge volume of 178.9mm³ calculated from:
+- toolhead_residual_filament: 5.0mm
+- filament_remaining (previous cut fragment): 7.0mm
+- slicer purge volume for toolchange T0 > T1: 0.0mm³
+- material change: 150.0mm³
+```
+
+Both built-in purge macros include the extra: `_MMU_PURGE` purges
+`toolchange_purge_volume`, and [Blobifier](Macro-Blobifier.md) adds
+`printer.mmu.toolchange_material_purge_volume` to the volume it reads from
+the matrix (not scaled by its `purge_length_modifier`). Blobifier also purges
+the extra when the tool stays the same but its gate now holds a different
+material. An explicit Blobifier `PURGE_LENGTH=` is used as given. A custom
+purge macro should read `toolchange_purge_volume`, or add
+`toolchange_material_purge_volume` if it works from the matrix itself.
+
+### Minimum purge volume
+
+Some loads need almost no purge by the numbers but still need a primed
+nozzle: a change between two filaments of the same color and material, or an
+[EndlessSpool](Feature-Endless-Spool-Runout.md) switch to an identical spool
+after a runout. The purge matrix gives `0` for these.
+
+`purge_change_min_volume` (in `mmu_parameters.cfg`, or **Minimum purge
+volume** in the menuconfig **Purging** menu) is the smallest volume, in mm³,
+Happy Hare suggests after any load. If the color volume, material extra and
+residual add up to less, `toolchange_purge_volume` is raised to it. It
+defaults to `0` (off):
+
+```ini
+purge_change_min_volume: 100
+```
+
+| Toolchange | Color volume | Material extra | Suggested purge |
+|---|---|---|---|
+| black PLA → black PLA (or EndlessSpool to an identical spool) | `0` | `0` | `100` (the minimum) |
+| black ABS → black PLA | `0` | `150` | `150` + residual |
+| red PLA → blue PLA | `230` | `0` | `230` + residual |
+
+With `purge_material_change_volume: 150`, the minimum only changes the first
+row. When the minimum is used, the `mmu.log` breakdown ends with
+`- raised to minimum purge: 100.0mm³`.
+
+`_MMU_PURGE` and custom macros reading `toolchange_purge_volume` get the
+minimum automatically. [Blobifier](Macro-Blobifier.md) also has its own
+`purge_length_minimum` (in mm) and uses whichever of the two minimums is
+larger. Both apply even when the tool doesn't change and when `PURGE_LENGTH=`
+is given. The current value is available to macros as
+`printer.mmu.purge_change_min_volume`.
 
 ### Purging without a wipe tower
 
@@ -351,10 +514,10 @@ Full parameter reference:
 
 ## Printer variables exposed
 
-`printer.mmu.toolchange_purge_volume`, `.slicer_purge`,
-`.slicer_tool_map.purge_volumes`, `.extruder_filament_remaining`, and
-`.filament_remaining`/`.filament_remaining_color` (residual/cut-fragment
-tracking) - see [Printer Variables: extruder / filament
+`printer.mmu.toolchange_purge_volume`, `.toolchange_material_purge_volume`,
+`.slicer_purge`, `.slicer_tool_map.purge_volumes`, `.extruder_filament_remaining`,
+and `.filament_remaining`/`.filament_remaining_color`/`.filament_remaining_material`
+(residual/cut-fragment tracking) - see [Printer Variables: extruder / filament
 remaining](Reference-Printer-Variables.md#extruder-filament-remaining).
 `printer.mmu.action` also includes `Forming Tip`/`Cutting Tip`/`Cutting
 Filament`/`Purging` states while each of these runs.

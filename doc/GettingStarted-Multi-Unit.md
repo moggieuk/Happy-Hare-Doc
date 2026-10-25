@@ -205,13 +205,16 @@ six-gate `unit1` before four-gate `unit0` gives `unit1` gates 0–5 and `unit0` 
 6–9. `UNIT=0` now refers to `unit1`; `UNIT=unit0` still refers to the same physical
 unit. Local gate numbers within each unit do not change.
 
-Calibration and saved gate data move with the units. The installer remaps the
-saved tool-to-gate map, endless-spool groups and sensor-enabled state as well.
+Calibration and saved gate data move with the units at the next Klipper startup.
+The installer records the intended changes; startup remaps the saved
+tool-to-gate map, EndlessSpool groups and sensor-enabled state as well.
 Review macros with numeric `UNIT=`, `GATE=` or `TOOL=` arguments and any configured
 per-gate lists; arbitrary user configuration is not automatically reordered.
 
-When existing gates are renumbered or removed, the selected gate and tool reset
-to **unknown (-1)**. Unload filament before restructuring, then select or home
+If the selected gate is removed or renumbered, or its tool disappears, the
+selected gate and tool reset to **unknown (-1)**. Unaffected selection survives
+changes such as shrinking the final unit. Bypass selection is cleared if any
+previous unit is removed or gate 0 changes identity or global index. Unload filament before restructuring, then select or home
 again after installation and check the gate and tool maps before printing.
 
 ## Unit adding/removing
@@ -230,8 +233,8 @@ checks as [Unit reordering](#unit-reordering).
 To remove a unit, choose **Replace (option 2)**, select it in **MMU units**, and
 press **d**. At least one unit must remain. Finish the editor, save, confirm the
 removal, and complete the remaining passes. The installer removes the deleted
-unit's generated hardware and parameter files and its unit-specific saved state,
-and adjusts the remaining gate data. Review the tool-to-gate map and per-gate
+unit's generated hardware and parameter files. At startup, Happy Hare removes
+that unit's saved state and adjusts the remaining gate data. Review the tool-to-gate map and per-gate
 settings after removal, especially tools that previously used the deleted unit.
 
 If another unit still references the removed unit's encoder or buffer, the
@@ -248,12 +251,24 @@ such as `.mmu_config_unit0` contain each unit's choices. The installer copies th
 into `~/printer_data/config/mmu/` and backs up the previous `mmu` directory to a
 timestamped location before installing.
 
-Check the saved-state path printed in the change summary. Migration uses the
-installed `[save_variables] filename` in `mmu_macro_vars.cfg`, falling back to the
-menuconfig **save_variables path**. An override elsewhere, such as `printer.cfg`,
-is not followed automatically. A saved-state file outside the `mmu` directory
-gets its own `.old-<timestamp>` backup; restoring an MMU backup with `--prev` does
-not restore that external file.
+Saved-state migration runs at Klipper startup against the actual
+`[save_variables]` object. The installer records unit changes in generated
+configuration; it does not rewrite or separately back up the variables file.
+Back up that file yourself, especially when it lives outside the `mmu` directory.
+Restore matching configuration and saved state together: a saved migration
+checkpoint missing from the restored configuration history stops startup.
+
+If you supply your own `[save_variables]` section, see
+[Using your own variables file](Feature-State-Persistence.md#using-your-own-variables-file).
+The configured path also lets the installer recognize completed migrations and
+trim old history, but startup migration uses the variables Klipper actually loaded.
+
+Gate-count changes preserve each surviving local gate's spool assignment and
+metadata, including when an earlier unit grows and renumbers later units. New
+gates use configured defaults and get their own EndlessSpool groups; removed
+gates are dropped. Check configured per-gate lists after resizing. Unrecorded
+renames remain ambiguous: restore the old names and perform the intended rename
+through the installer if startup rejects them.
 
 ## Sharing components
 

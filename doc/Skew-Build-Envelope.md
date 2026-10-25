@@ -47,7 +47,9 @@ is at risk.
 Happy Hare's own macros make their edge-of-machine moves with `_SAFE_G1`, an
 absolute `G1` that applies the gcode offset and skew exactly as Klipper does.
 If the target would end outside the axis limits, `_SAFE_G1` moves it to just
-inside the limit (0.01mm) instead of letting the move fail. Moves that are
+inside the limit (0.01mm). If the required correction exceeds 5 mm on any
+axis, it rejects the move before movement. This cap includes the boundary inset
+and any correction needed for `MAX_Z`. Moves that are
 already in range are sent unchanged, so nothing changes on printers without
 skew correction or an XY offset.
 
@@ -61,7 +63,8 @@ These moves go through `_SAFE_G1`:
 - **[Blobifier](Macro-Blobifier.md):** the purge row, tray, brush and shaker
   moves at the edge of the machine, including the Z rises while purging.
 - **[Toolhead cutting](Macro-Toolhead-Tip-Cutting.md):** the approach to the
-  pin, the safety margin moves and the back-off after cutting.
+  pin, both cutting strokes, the return to the pin park position, the safety
+  margin moves and the back-off after cutting.
 
 The first time a move is adjusted in a print, Happy Hare logs a warning that
 names the move:
@@ -72,8 +75,9 @@ Check your Happy Hare macros for positions or movement that exceed your build vo
 ```
 
 Later adjustments in the same print are written to `mmu.log` as one short line,
-such as `_SAFE_G1 adjusted X100 Y356 -> Y355.06`. An adjusted move is
-safe, but the toolhead didn't go exactly where it was told. If you see the
+such as `_SAFE_G1 adjusted X100 Y356 -> Y355.06`. An adjusted move stays within the axis limits, but does not guarantee clearance
+from attachments or a complete cut. The toolhead did not go exactly where it
+was told. If you see the
 warning, check the configured positions with `MMU_CHECK_POSITION` and move them
 inside the boundary.
 
@@ -85,12 +89,13 @@ particular, a `user_park_move_macro` (see [Macro: Sequence](Macro-Sequence.md))
 replaces Happy Hare's own park move, so it should use `_SAFE_G1` for its moves to
 get the same protection.
 
-## Positions that are not adjusted
+## Cutter clearance and travel
 
-The toolhead cutter's final move to the pin park position, and the cut stroke
-into the pin, are deliberately **not** adjusted. Pulling them in would shorten
-the cut. If either point is out of range at the current height, Klipper stops
-the move with `Move out of range`, part way through the toolchange.
+The cutter's pin approach and cut strokes use the same bounded adjustment.
+Pulling an endpoint inward can shorten the cut. The 5 mm cap is a defensive
+movement limit, not a statement of your cutter's mechanical tolerance: verify
+that the pin still compresses far enough to sever filament at every print height.
+The cutting motor current is restored even if a movement fails.
 
 Skew correction also changes where the toolhead physically ends up for the same
 coordinates as Z changes. The depth of the cut stroke can therefore vary
@@ -147,7 +152,7 @@ or lower works at any height.
 |---|---|
 | [Toolchange Movement](Toolchange-Movement.md) | The X,Y of each `park_*` position you use, and any `pre_unload_position`, `post_form_tip_position` and `pre_load_position` |
 | [Blobifier](Macro-Blobifier.md) | `Y` = Y max - `y_offset` (purge row), `Y` = Y max - `brush_y_offset` (brush), and `X` = `shaker_pos_x` if the shaker is enabled |
-| [Toolhead cutting](Macro-Toolhead-Tip-Cutting.md) | The pin park point: `pin_loc_xy` with `pin_park_dist` added on the `cutting_axis`. Also the compressed point `pin_loc_compressed_xy`. These two are not adjusted automatically, so they matter most |
+| [Toolhead cutting](Macro-Toolhead-Tip-Cutting.md) | The pin park point: `pin_loc_xy` with `pin_park_dist` added on the `cutting_axis`. Also the compressed point `pin_loc_compressed_xy`. Adjustments can shorten the cut, so verify mechanical travel as well |
 
 ### Checking at print start
 
@@ -171,15 +176,17 @@ so the check runs before the first toolchange.
 
 ## Troubleshooting
 
-**`Move out of range` during a toolchange with a toolhead cutter.** The pin park
-point or compressed point is beyond the limit at the current height. Check both
+**A cutter move is rejected or needs excessive adjustment.** The pin park
+point or compressed point may be beyond the limit at the current height.
+`_SAFE_G1` refuses corrections over 5 mm; it cannot fix an incorrectly
+configured cutter position. Check both
 with `MMU_CHECK_POSITION ... SKEW=<profile>` and move `pin_loc_xy` /
 `pin_loc_compressed_xy` inside the boundary, or add the `ERROR=1` check above to
 catch it at print start.
 
 **The adjustment warning appears in every print.** One of the positions Happy
 Hare uses is beyond the limit at some height. Blobifier positions at the edge of
-the machine are a common cause. The move is safe, but `MMU_CHECK_POSITION`
+the machine are a common cause. The move stays inside the axis limits, but `MMU_CHECK_POSITION`
 will tell you how far inside the boundary to move the position (for Blobifier,
 increase `y_offset` or `brush_y_offset`) so it's no longer adjusted.
 
@@ -195,7 +202,7 @@ start-print macro loads.
 - [Purge: Blobifier](Macro-Blobifier.md) - the purge positions at the edge of the
   machine
 - [Tip Shaping: Toolhead Cutting](Macro-Toolhead-Tip-Cutting.md) - the pin
-  positions that are not adjusted
+  pin positions and mechanical travel
 - [Command Reference: `MMU_CHECK_POSITION`](Reference-Commands.md#mmu_check_position)
 - [Klipper skew correction](https://www.klipper3d.org/Skew_Correction.html) -
   measuring skew and saving profiles

@@ -171,6 +171,7 @@ _MMU_STEP_UNLOAD_GATE FULL=1 ...Unload with full homing distance (use when start
 ```{.text .console-output}
 EXTRUDER_ONLY   = [0|1] Extruder only unload (e.g. when in bypass)
 PARK_POS        = mm    The starting position of the filament in extruder (after tip forming / retraction)
+CUT_FRAGMENT    = mm    Length cut off by tip cutting, used to detect a missed cut (default: current unload's)
 ```
 
 ```{.text .console-output}

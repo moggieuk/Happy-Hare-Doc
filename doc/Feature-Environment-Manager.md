@@ -174,7 +174,7 @@ heater_max_temp             : 65     # Absolute ceiling; drying never targets ab
 heater_default_dry_temp     : 45     # Fallback drying temperature for an unrecognized or empty gate
 heater_default_dry_time     : 300    # Fallback drying time in minutes
 heater_default_dry_humidity : 25     # Default humidity % goal - drying ends early if reached
-heater_rotate_interval      : 5      # Minutes between spool-rotation bursts, requires eSpooler and explicit GATES
+heater_rotate_interval      : 5      # Minutes between spool-rotation bursts, requires eSpooler or spool-driving gear
 
 drying_data : { 'pla': (45, 300), 'pla+': (55, 300), 'petg': (60, 300), 'tpu': (55, 300), 'abs': (70, 300),
                 'abs+': (75, 300), 'asa': (65, 300), 'nylon': (75, 600), 'pc': (75, 600), 'pva': (75, 600),
@@ -205,6 +205,14 @@ across those gates; per-gate heaters use each gate's own recipe. Temperatures
 are capped at `heater_max_temp`. A gate with no material assigned, or one
 that is empty, falls back to `heater_default_dry_temp` and
 `heater_default_dry_time`.
+
+During a shared-heater drying cycle, the temperature is also capped by the
+lowest material recipe temperature of **every gate holding filament**, including
+gates outside `GATES`. Unknown materials use `heater_default_dry_temp`. This
+cap applies to an explicit `TEMP` and to live temperature changes. Loading a
+more temperature-sensitive filament lowers the cap for the rest of the cycle.
+Per-gate heaters and raw heater control outside a drying cycle are unchanged.
+
 Extend the table with your own materials freely - it's a plain dict, and
 `MMU_HEATER DRYING_DATA=1` dumps whatever is currently configured. A
 smaller, illustrative table showing just the shape of it:
@@ -428,8 +436,9 @@ With an eSpooler, or a design whose gear motor can rotate the spool such as
 ViViD, a drying cycle can periodically nudge each spool a
 short distance in the rewind direction - just enough to stop a respooled
 filament end from baking against one point of contact for hours. Start it
-with `MMU_HEATER DRY=1 ROTATE=1 GATES=1,3` - `GATES` must be given explicitly
-whenever `ROTATE=1` is used. Rotation only actually happens for gates that
+with `MMU_HEATER DRY=1 ROTATE=1 GATES=1,3`. Per-gate heaters require explicit
+`GATES` for rotation; a shared heater can rotate all empty gates without it.
+Rotation only actually happens for gates that
 are genuinely **empty** at the moment the timer fires (filament removed from
 the MMU inlet and secured to the spool) - Happy Hare re-checks this every
 `heater_rotate_interval` minutes rather than only once at the start, so you
@@ -443,6 +452,15 @@ power and duration as an ordinary
 (`espooler_rewind_burst_power`/`espooler_rewind_burst_duration`) - there's no
 separate "rotate" setting to tune. ViViD uses its gear motor for rotation
 only while the printer is not printing.
+
+Gear-driven rotation during printing is off by default. The experimental
+`heater_rotate_in_print: 1` permits short background moves on machines with an
+independent gear per gate and a Klipper version that supports those moves. It
+never rotates the selected or extruder-synchronized gear, and pauses rotation
+while the print is paused. It is unavailable on shared-gear designs such as
+ViViD, Kalico and older Klipper; a warning explains why rotation is skipped,
+while drying continues. Even supported background moves can briefly interrupt
+printing, so test this option on your hardware before relying on it.
 
 ### Choosing a temperature/time by hand
 

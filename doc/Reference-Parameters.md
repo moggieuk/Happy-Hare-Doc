@@ -69,6 +69,11 @@ hard the extruder pushes while doing it.
 | `extruder_form_tip_current` | `100`% | Extruder current (100-150%) during tip forming - `100` disables the boost |
 | `slicer_tip_park_pos` | `0` mm | Where the slicer leaves filament in the extruder after its own tip forming - only relevant if the slicer forms tips |
 
+`toolhead_unload_test` is a shared `[mmu_parameters]` setting in `mmu.cfg`: `0`
+(default) preserves existing checks, `1` warns on unload validation failures,
+and `2` pauses on failure during a print. See
+[Unload validation](Feature-Tip-Forming-Purging.md#unload-validation).
+
 ### Purging
 
 See [Feature: Tip Forming and Purging](Feature-Tip-Forming-Purging.md) for
@@ -79,6 +84,8 @@ the full picture.
 | `force_purge_standalone` | `1` | `1` = always use standalone purging; `0` = the slicer's wipe tower in-print, standalone otherwise |
 | `purge_macro` | `_MMU_PURGE` | Macro called to purge - `_MMU_PURGE`, `BLOBIFIER`, or a custom macro. Blank disables standalone purging entirely |
 | `extruder_purge_current` | `100`% | Extruder current (100-150%) during purging - `100` disables the boost |
+| `purge_change_min_volume` | `0` | Smallest purge volume (mm³) suggested after any load, e.g. an EndlessSpool switch to an identical spool - see [Minimum purge volume](Feature-Tip-Forming-Purging.md#minimum-purge-volume). `0` disables |
+| `purge_material_change_volume` | `0` | Extra purge volume (mm³) added when a toolchange changes material family, e.g. ABS to PLA - see [Extra purge on a material change](Feature-Tip-Forming-Purging.md#extra-purge-on-a-material-change). `0` disables |
 
 ### Filament management
 
@@ -146,6 +153,7 @@ layouts, tuning workflow and runtime controls.
 
 | Parameter | Default | Description |
 |---|---|---|
+| `sensor_min_debounce_delay` | `0` s | Minimum delay before rechecking a runout/insert/remove event; range 0–1 s, shared by all units. See [Sensors](Feature-Sensors.md#event-timing) |
 | `update_trsync` | `0` | Increase Klipper's `TRSYNC_TIMEOUT` - can help with a "Timer too close" error during MMU homing moves, especially over CANbus |
 | `canbus_comms_retries` | `3` | Automatic retries for a CANbus comms timeout during a homing move |
 | `update_bit_max_time` | `1` | Increase neopixel.py's `BIT_MAX_TIME` automatically - works around finicky older-neopixel timing errors |
@@ -181,7 +189,7 @@ your gate count. All commented out (and therefore inactive) by default.
 
 | Parameter | Restored by |
 |---|---|
-| `default_gate_status`, `default_gate_vendor`, `default_gate_filament_name`, `default_gate_material`, `default_gate_color`, `default_gate_temperature`, `default_gate_spool_id`, `default_gate_speed_override` | `MMU_GATE_MAP RESET=1` |
+| `default_gate_status`, `default_gate_vendor`, `default_gate_filament_name`, `default_gate_material`, `default_gate_color`, `default_gate_temperature`, `default_gate_spool_id`, `default_gate_speed_override`, `default_gate_td`, `default_gate_td1_color`, `default_gate_spool_rfid`, `default_gate_remaining_weight`, `default_gate_initial_weight` | `MMU_GATE_MAP RESET=1` |
 | `default_endless_spool_groups` | `MMU_ENDLESS_SPOOL_GROUPS RESET=1` |
 | `default_ttg_map` | `MMU_TTG_MAP RESET=1` |
 
@@ -347,7 +355,12 @@ tune the toolhead-loading *behavior* itself, per unit.
 | `toolhead_post_load_tighten` | `60`% | After a load, tighten filament by this % of the clog-detection length, to remove bowden slack (ignored if synced to the extruder) |
 | `toolhead_post_load_tension_adjust` | `1` | Use a fitted sync-feedback buffer to create neutral tension after loading, if synced |
 | `toolhead_entry_tension_test` | `1` | Verify the filament passed the extruder entry via a neutral-tension check (needs a compression-capable sync-feedback sensor; ignored with a toolhead sensor) |
-| `toolhead_move_error_tolerance` | `60`% *(encoder-equipped only)* | Allowed mismatch between commanded and encoder-observed toolhead movement |
+| `toolhead_move_error_tolerance` | `80`% *(encoder-equipped only)* | Allowed mismatch between commanded and encoder-observed toolhead movement |
+
+The encoder must normally observe at least 20% of the final move at the default
+80% tolerance. Merge/Refresh preserves an existing value. A passed
+compression-buffer grip test skips the load shortfall check, but the
+no-movement check still applies to moves longer than `encoder_move_step_size`.
 
 ### Synchronized gear/extruder movement
 
@@ -393,6 +406,7 @@ including the PWM power curve formula these settings feed.
 | `espooler_min_stepper_speed` | `0` | Gear stepper speed below which the espooler goes inactive - useful for non-PWM control |
 | `espooler_speed_exponent` | `0.5` | Non-linear power-vs-speed exponent |
 | `espooler_assist_reduced_speed` | `50`% | % of rewind speed applied to assist-while-loading |
+| `espooler_full_spool_power` | `100`% | Full-spool fraction of normal gear-move power, 10–100%; `100` disables weight scaling. See [eSpooler](Feature-Espooler.md#spool-weight-compensation) |
 | `espooler_printing_power` | `0` | Fixed % PWM power while printing if `>0`; `0` allows burst-style assist moves instead |
 | `espooler_operations` | `rewind, assist, print` | Which operational modes are active - remove any to disable them even if the hardware supports them |
 | `espooler_assist_extruder_move_length` | `100` mm | Extruder distance between assist bursts |
@@ -421,6 +435,7 @@ full drying-cycle picture.
 | `heater_vent_open_angle` | `90`° | Vent servo open position |
 | `heater_vent_close_angle` | `0`° | Vent servo closed position |
 | `heater_vent_servo_duration` | `1.0` s | Servo drive time per move; `0` keeps it powered |
+| `heater_rotate_in_print` | `0` | Experimental gear-driven rotation of empty idle gates during printing; requires independent gears and supported Klipper. See [Spool rotation](Feature-Environment-Manager.md#spool-rotation) |
 | `heater_rotate_interval` | `5` min *(eSpooler or spool-driving gear motor)* | Interval between spool-rotation bursts during drying |
 
 ### NFC reader

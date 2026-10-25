@@ -102,14 +102,13 @@ _MMU_STEP_UNLOAD_GATE                           # ...then park in the gate
 _MMU_STEP_UNLOAD_GATE FULL=1                    # slower full-homing unload instead, since exact position is unknown
 ```
 
-!!! note
-    The shipped `_MMU_UNLOAD_SEQUENCE` passes `FULL=1` to
-    `_MMU_STEP_UNLOAD_BOWDEN` in the fast-unload branch above.
-    `_MMU_STEP_UNLOAD_BOWDEN` doesn't have a `FULL` parameter (only
-    `LENGTH`) - see the step reference below - so that argument is
-    currently just ignored. Harmless as shipped (the step already runs at
-    its default calibrated length either way), but worth knowing if you're
-    reading this macro closely enough to copy it.
+`_MMU_STEP_UNLOAD_BOWDEN` uses the selected gate's calibrated length when
+`LENGTH` is omitted; `FULL=1` belongs only to the gate recovery step. The unload
+steps carry extruder overshoot and the gate-homing buffer forward internally,
+so the shipped G-code sequence parks at the same position as the built-in path.
+Custom macros receive a positive `PARK_POS` after standalone tip forming, and
+can pass `CUT_FRAGMENT` to `_MMU_STEP_UNLOAD_TOOLHEAD` for
+[unload validation](Feature-Tip-Forming-Purging.md#unload-validation).
 
 `EXTRUDER_ONLY=1` (used for bypass operation) short-circuits both sequences
 to touch only the toolhead step, skipping the gate/bowden steps entirely.

@@ -333,6 +333,20 @@ are typing. `/header GROUPS` switches groups live, `/header all` turns every gro
 `--header` flag too — both go through the same parser. On a pipe or with `--inline-header`
 it falls back to reprinting above each prompt.
 
+### Connecting Mainsail or Fluidd
+
+At an interactive terminal, the console serves a Moonraker-compatible API on
+`127.0.0.1`, normally port `7125`, so a real UI can display simulated MMU state
+and pause dialogs. Run `/web` to see the actual port and connection guidance;
+if the default port is occupied the console tries another. `--serve <port>`
+selects a port explicitly, and `--no-serve` disables the API. Scripted and test
+sessions do not enable it by default. This serves the simulator, not a real
+printer.
+
+The live terminal LED display refreshes eight times per second. LED effects
+keep their own configured frame rates; display refresh does not change the
+simulated effect timing.
+
 ### Reading the LED rows
 
 ```{.text .console-output}
