@@ -15,6 +15,10 @@ lives in `mkdocs.yml`. Check existing coverage before creating a new page.
 | Community and support | `doc/Release-Notes.md` now covers v4.0.0 and the pending v4.1.0 changes. The planned `Donations.md` and `Getting-Help.md` do not exist; review existing home-page and social links before porting wiki material. |
 | External link migration | Assess redirects or an old-to-new URL map for links from the wiki, README files, Discord, KlipperScreen, and videos once destination URLs are stable. |
 
+The [v4.2.0 release review](release-review-v4.2.0.md) records the disposition of
+every merged PR since v4.1.0 through `fcd94d74`, including existing page updates
+and menuconfig-only exclusions.
+
 ## Publication dependencies
 
 - All Happy Hare menuconfig screenshots target `development` at `12236421`

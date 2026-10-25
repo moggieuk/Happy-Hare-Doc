@@ -18,8 +18,9 @@ extruder-entry sensor especially) disagree with the saved filament
 position, it automatically reconciles state to match what the sensors
 actually report, rather than trusting a stale save blindly.
 
-Everything persisted lives in one dedicated variables file, separate from
-any other Klipper `[save_variables]` use on your printer - changes are
+Everything persisted lives in the file used by Klipper's `[save_variables]`
+object, normally `mmu_vars.cfg`. Klipper uses one variables file, which can also
+hold your own saved variables. Changes are
 batched and written out shortly after they happen, rather than on every
 single update. On startup, Happy Hare checks the file for a sanity-check
 marker before trusting it, and refuses to start with a clear error if that
@@ -29,6 +30,30 @@ check fails, rather than silently running with an empty or corrupted state.
     The file can be edited by hand if you really need to, but treat it
     carefully - a corrupted or malformed entry can stop Happy Hare from
     starting at all.
+
+### Changing units and gate counts
+
+Saved spool assignments, filament attributes, tool mappings, EndlessSpool groups
+and sensor disables follow surviving units and their local gates when units
+are renamed or reordered, or gate counts change. New gates receive defaults;
+removed gates lose their data. Selection is retained only if its gate identity
+and global index survive and the tool is still valid. Unload before changes
+that renumber gates.
+
+Record renames through the installer rather than editing unit names by hand.
+The installer records the intended change in configuration; Happy Hare migrates
+the actual loaded saved state at startup. Ambiguous unrecorded renames or a
+saved migration checkpoint absent from the configuration history stop startup
+instead of guessing spool assignments. Restore matching configuration and
+saved state together. See [Multiple MMU Units](GettingStarted-Multi-Unit.md#backups-and-saved-state).
+
+### Using your own variables file
+
+If your printer already defines `[save_variables]`, enable **Use your own
+[save_variables]?** in **Paths & Services**, and set **save_variables path** to
+the same `filename` as your section. Happy Hare then omits its generated
+section. Keep the path and your section consistent; duplicate sections otherwise
+merge and the last `filename` wins.
 
 ## Startup status
 
@@ -126,6 +151,11 @@ never carry a remap between sessions.
   Hare noticing a mismatch between the saved filament position and what a
   fitted sensor (extruder entry, most commonly) actually reports, and
   correcting itself rather than trusting a stale save - not a fault.
+- **Klipper rejects an old statistics entry containing `np.float64(...)`** -
+  back up the variables file, then replace those wrappers with plain numeric
+  values or remove the affected statistics entry. New saves use plain numbers,
+  but Klipper rejects an already-corrupted file before Happy Hare can repair it.
+
 - **A gate seems permanently unreachable** - remember tools can be remapped
   many-to-one (deliberately, e.g. for a monochrome print); check the TTG map
   isn't why a gate looks unused.

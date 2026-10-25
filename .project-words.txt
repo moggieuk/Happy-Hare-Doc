@@ -37,6 +37,7 @@ configurator
 constructers
 Creality
 crossload
+Cura
 DECSTBM
 DejaVu
 Dockerfiles

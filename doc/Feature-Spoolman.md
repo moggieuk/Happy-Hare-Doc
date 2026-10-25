@@ -269,6 +269,17 @@ is the more reliable choice if anything else has run in between.
 `pull` mode Spoolman already owns gate assignment, so use `RFID=` directly
 or re-scan the tag once the spool exists instead.
 
+### Spool weights
+
+Spoolman also supplies remaining and initial net filament weights in grams,
+using the filament weight when an initial spool weight is unavailable. They
+appear in `MMU_GATE_MAP DETAILS=1` and the printer variables
+`gate_remaining_weight` and `gate_initial_weight`; `-1` means unknown. See
+[eSpooler weight compensation](Feature-Espooler.md#spool-weight-compensation)
+for automatic power scaling and manual weight entry. Newly added Spoolman
+spools are fetched before gate-map updates, so assignment can use them
+immediately.
+
 ## Printer variables exposed
 
 | Variable | Type | Meaning |

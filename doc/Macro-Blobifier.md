@@ -114,6 +114,20 @@ specific build's measurements, not a sensible starting point for yours.
     removed. If you used it for extra clearance, add that amount to these
     offsets instead. See [Skew & Build Envelope](Skew-Build-Envelope.md).
 
+### Parking, temperature and synchronization
+
+`BLOBIFIER_PARK` requires XYZ homing. It requires completed quad gantry leveling
+only when `[quad_gantry_level]` is configured. When the tray is marked unsafe,
+`force_safe_descend_height_until` still permits descent to `tray_top` while the
+recorded print height is below that threshold. At or above it, the unsafe-tray
+guard prevents descent; `0` disables this override for nonnegative print heights.
+Check physical clearance before relying on the low-height override.
+
+If Blobifier raises the nozzle temperature for a purge, it restores the previous
+target afterward unless another macro changed that target during purging. This
+restoration does not itself wait for cooldown. Buffer tension adjustment runs after the tray cuts off each
+blob, and preserves the gear synchronization needed for the next blob.
+
 ## See also
 
 - [Feature: Tip Forming and Purging](Feature-Tip-Forming-Purging.md) - the
