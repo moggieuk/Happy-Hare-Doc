@@ -211,8 +211,8 @@ baseline used for the comparison above.
 ## v4.2.0
 
 This covers changes since the v4.1.0 tag, including fixes subsequently merged
-into `main`. See the [full release comparison](https://github.com/moggieuk/Happy-Hare/compare/v4.1.0...fcd94d745edeef9dd896710475ad8c71878334b0)
-and the [development-only comparison](https://github.com/moggieuk/Happy-Hare/compare/70aa90fb9aa18787de445235bd26a0665168c441...fcd94d745edeef9dd896710475ad8c71878334b0).
+into `main`. See the [full release comparison](https://github.com/moggieuk/Happy-Hare/compare/v4.1.0...b277163a18cf09ee5c794823aed369fecd1327f8)
+and the [development-only comparison](https://github.com/moggieuk/Happy-Hare/compare/70aa90fb9aa18787de445235bd26a0665168c441...b277163a18cf09ee5c794823aed369fecd1327f8).
 
 ### Upgrade notes
 
@@ -240,6 +240,7 @@ and the [development-only comparison](https://github.com/moggieuk/Happy-Hare/com
 - Allow Blobifier parking on homed printers without QGL. Apply its configured low-print-height descent override when the tray is unsafe. Restore nozzle temperature after raising it for a purge, and adjust buffer tension after blob cutoff while retaining gear synchronization. ([#1427](https://github.com/moggieuk/Happy-Hare/pull/1427), [#1428](https://github.com/moggieuk/Happy-Hare/pull/1428), [#1433](https://github.com/moggieuk/Happy-Hare/pull/1433), [#1447](https://github.com/moggieuk/Happy-Hare/pull/1447))
 - Add [extra purge on a material change](Feature-Tip-Forming-Purging.md#extra-purge-on-a-material-change), with family matching and configurable material-specific volumes. ([#1442](https://github.com/moggieuk/Happy-Hare/pull/1442))
 - For initial loads and standalone loads with Happy Hare-controlled purging, heat for remembered residual filament before returning to the incoming filament temperature. Mid-print changes remain slicer-controlled. Heating and `MMU_COLD_PULL` now target the MMU-configured extruder rather than whichever extruder is active; `printer.mmu.extruder_name` exposes that choice. ([#1434](https://github.com/moggieuk/Happy-Hare/pull/1434), [#1448](https://github.com/moggieuk/Happy-Hare/pull/1448))
+- After a custom `user_park_move_macro`, finish the return to the last or next X/Y position at `park_travel_speed` before lowering Z. This prevents a slow diagonal return at lift speed when the custom macro leaves the toolhead parked. See [Return to Print Movement](Toolchange-Movement.md#return-to-print-movement). ([#1461](https://github.com/moggieuk/Happy-Hare/pull/1461))
 
 ### Sync feedback and autotune
 

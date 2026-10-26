@@ -190,6 +190,14 @@ is just one example.
 How the toolhead returns to the print after a toolchange is controlled by
 `variable_restore_xy_pos` in `mmu_macro_vars.cfg`:
 
+When `user_park_move_macro` is configured, Happy Hare calls it with
+`RESTORE=1` and the destination `X`, `Y` and feed rate `F`. For both `last`
+and `next`, Happy Hare then completes any remaining X/Y travel at
+`variable_park_travel_speed` at the lifted height before lowering Z. If the
+macro already reached the destination, this adds no travel. A custom route
+around an obstacle should reach the supplied destination itself; any
+remaining travel is a straight move.
+
 ### `last` (default)
 
 Returns to the **last** X/Y position the toolhead was at when the

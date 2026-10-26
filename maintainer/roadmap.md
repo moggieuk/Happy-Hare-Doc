@@ -16,7 +16,7 @@ lives in `mkdocs.yml`. Check existing coverage before creating a new page.
 | External link migration | Assess redirects or an old-to-new URL map for links from the wiki, README files, Discord, KlipperScreen, and videos once destination URLs are stable. |
 
 The [v4.2.0 release review](release-review-v4.2.0.md) records the disposition of
-every merged PR since v4.1.0 through `fcd94d74`, including existing page updates
+every merged PR since v4.1.0 through `b277163a`, including existing page updates
 and menuconfig-only exclusions.
 
 ## Publication dependencies

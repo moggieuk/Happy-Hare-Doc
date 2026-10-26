@@ -61,7 +61,11 @@ One hook doesn't fit the "runs after" pattern: `user_park_move_macro`
 (`_MMU_SEQUENCE_VARS`) **replaces** the default straight-line `G1 X Y` park
 move rather than extending it, so you can route around an obstacle instead
 of moving through it. It's called with `X=`/`Y=`/`F=`, and again with
-`RESTORE=1` plus the restore coordinates when un-parking. See [Macro
+`RESTORE=1` plus the restore coordinates when un-parking. For `last` and
+`next` restores, Happy Hare completes any remaining straight X/Y travel at
+park travel speed before lowering Z, so an obstacle-avoiding macro should
+finish its route at the supplied destination. See [Return to Print
+Movement](Toolchange-Movement.md#return-to-print-movement) and [Macro
 Variables: Sequence/parking](Reference-Macro-Vars.md#sequenceparking-_mmu_sequence_vars)
 for the full parking mechanism this sits inside. Use `_SAFE_G1 X= Y= F=`
 in place of `G1` in this macro so its moves stay within the axis limits under
