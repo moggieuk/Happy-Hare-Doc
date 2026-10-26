@@ -71,7 +71,8 @@ A few settings are worth knowing about specifically:
 - **`pushback_length`** pushes the cut fragment back into the hotend so it
   can't cause a future clog - a PTFE-tube-length-plus-a-few-mm starting
   point, not the couple of millimeters that might look sufficient at first
-  glance.
+  glance. After the optional `pushback_dwell_time`, the pushing filament
+  retracts by the same distance, leaving the cut fragment in the hotend.
 
 !!! warning "Skew correction and cutter travel"
     The pin approach, cut strokes and return use `_SAFE_G1` to keep movement
