@@ -268,6 +268,14 @@ in the printer variable reference - `sync_feedback_state`,
 `sync_feedback_enabled`, `sync_feedback_bias_raw`/`_modelled`, and
 `sync_feedback_flow_rate` (proportional sensors only).
 
+`sync_feedback_rd_correction` reports the percentage difference between the
+confident tuned gear rotation distance and its calibrated baseline. It starts
+at zero until a confident result is available and excludes temporary speed
+boosts. [`MMU_SYNC_FEEDBACK`](Reference-Commands.md#mmu_sync_feedback) also
+reports the tuned value and percentage. Saving the result requires
+`autotune_rotation_distance`; see [autotuning and auto-calibration](Calibration.md#autotuning-and-auto-calibration)
+for the print-end summary of saved changes.
+
 ### Sync-feedback meter (Mainsail/Fluidd)
 
 <p align="center">

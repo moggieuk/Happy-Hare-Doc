@@ -1,11 +1,11 @@
 # v4.2.0 documentation review
 
 Reviewed on 2026-10-25 against Happy Hare development
-`fcd94d745edeef9dd896710475ad8c71878334b0`, with docs based on development
+`b277163a18cf09ee5c794823aed369fecd1327f8`, with docs based on development
 `e3cfa2c`. The v4.1.0 tag is `2034e8a30ba1903fe4419ff8221b4f04589a555d`;
 current main is `70aa90fb9aa18787de445235bd26a0665168c441`.
 
-The tag-to-development history identifies 82 merged PRs. Of these, 65 are in
+The tag-to-development history identifies 84 merged PRs. Of these, 67 are in
 the current main-to-development comparison. The remaining fixes already on
 main are still post-v4.1.0 changes and remain in the release notes. PR #1379,
 previously cited by the draft, is not in this merged history and is omitted.
@@ -15,7 +15,9 @@ Each PR was assessed against existing page coverage and the final source.
 Intermediate implementations are summarized by their final behavior. Menuconfig
 changes remain in the release summary, but menu/editor documentation and
 screenshots are excluded from refinement as requested. Generated command pages
-were regenerated from the pinned source without changing the generator.
+were regenerated during the initial review from `fcd94d74` without changing
+the generator. The follow-up review through `b277163a` adds PRs #1460 and
+#1461; neither changes command help, so no regeneration was needed.
 
 | PR | Change | Page disposition |
 |---|---|---|
@@ -101,6 +103,8 @@ were regenerated from the pinned source without changing the generator.
 | [#1457](https://github.com/moggieuk/Happy-Hare/pull/1457) | fix(sensors): fall back to register_buttons on Klipper without debounce support | Updated Sensors and parameter reference: event timing, debounce fallback and old-Klipper bucket limitation. Hall-endstop repair needs no changed setup. |
 | [#1458](https://github.com/moggieuk/Happy-Hare/pull/1458) | fix(sensors): read event_delay as a float | Updated Sensors and parameter reference: event timing, debounce fallback and old-Klipper bucket limitation. Hall-endstop repair needs no changed setup. |
 | [#1459](https://github.com/moggieuk/Happy-Hare/pull/1459) | feat(sensors): add sensor_min_debounce_delay for filament switch events | Updated Sensors and parameter reference: event timing, debounce fallback and old-Klipper bucket limitation. Hall-endstop repair needs no changed setup. |
+| [#1460](https://github.com/moggieuk/Happy-Hare/pull/1460) | Expose rotation-distance correction and summarize saved autotune changes at print end | Retained existing release notes and printer-variable coverage; added Calibration and Sync-Feedback Buffer guidance and clarified baseline rebasing at print start. |
+| [#1461](https://github.com/moggieuk/Happy-Hare/pull/1461) | Complete restore X/Y travel at travel speed after a custom parking macro | Updated release notes, Toolchange Movement, Macro Sequence and Macro Customization: complete travel before Z descent; custom obstacle routes should reach the destination. |
 
 ## Validation and limits
 

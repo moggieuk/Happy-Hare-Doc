@@ -151,6 +151,9 @@ controller on the active unit; an encoder alone can supply `flowguard` status.
 `100 * (tuned_rotation_distance - starting_rotation_distance) / starting_rotation_distance`.
 For example, tuning from 21.7156 to 22.5000 gives `3.61` (+3.61%). It stays at
 `0.0` until autotune has a confident result and resets to `0.0` on a gate change.
+At print start, the baseline is updated to the saved calibration, including
+on machines that stay synced between prints, so a previously saved correction
+is not reported again as outstanding.
 It uses the tuned value, so temporary two-level speed boosts do not appear as
 calibration corrections. A reported correction does not by itself mean the value
 has been saved; saving requires `autotune_rotation_distance` to be enabled.

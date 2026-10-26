@@ -42,7 +42,10 @@ what that one doesn't cover:
   park move rather than extending it (called with `X=`/`Y=`/`F=`, and again
   with `RESTORE=1` when un-parking). Use `_SAFE_G1 X= Y= F=` instead of `G1`
   for its moves so they stay within the axis limits, like Happy Hare's own
-  park moves.
+  park moves. After the restore call, Happy Hare completes any remaining
+  X/Y travel before lowering Z; see [Return to Print
+  Movement](Toolchange-Movement.md#return-to-print-movement) for custom-route
+  guidance.
 - **`auto_home`** (on by default) - home XYZ automatically if needed before
   a parking move, rather than erroring.
 - **`timelapse`** (off by default) - take a timelapse frame after every
