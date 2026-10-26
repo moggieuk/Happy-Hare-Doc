@@ -251,7 +251,7 @@ an unverified number.
 | `selector_accel` | `1200` | Selector stepper acceleration |
 | `selector_touch_enabled` | *type-dependent* | Enable/disable touch (stallguard) selector movement, if wired for it |
 | `selector_gate_directions` | *(empty)* | Per-gate gear-stepper direction override, e.g. for the 3D-Chameleon design - `1, 1, 0, 0` |
-| `selector_release_gates` | *(empty)* | Per-gate "which gate to move to in order to release this gate's filament" list (only if `filament_always_gripped: 0`) |
+| `selector_release_gates` | *type-dependent* (next gate, e.g. `1, 2, 3, 0`) | Per-gate "which gate to move to in order to release this gate's filament" list (`RotarySelector`/`ServoSelector`, only if `filament_always_gripped: 0`) |
 | `selector_gate_order` | *(empty)* | Order of gates for efficient forward-direction selection - can be auto-calibrated |
 | `selector_endstop_width` | *(empty)* | Width of the gate-index sensor trigger range, for centering on a gate after homing (Indexed selectors) |
 | `select_tool_macro` | `select_tool_macro` | Macro called to change gates (MacroSelector designs only) |
@@ -275,7 +275,7 @@ Servo-driven selectors (`LinearServoSelector`/`ServoSelector`) add:
 | `servo_min_angle` / `servo_max_angle` | *blank* | Hard angle limits Happy Hare will never move the servo past |
 | `servo_gate_angles` | *blank - calibrate* | Optional list of per-gate angles - leave blank to force calibration; calibrated values in `mmu_vars.cfg` override this |
 | `servo_bypass_angle` | *blank* | Optional bypass-gate servo angle - `-1` if unsupported |
-| `servo_release_angle` | *blank* | Optional explicit release angle - `-1` = default (halfway between gate angles) |
+| `servo_release_angle` | `-1` | Optional fixed release angle - `-1` = release by moving to the gate given in `selector_release_gates` (`ServoSelector`) |
 | `servo_duration` | *blank* | Duration of the PWM burst sent to the servo (non-always-active mode) |
 | `servo_dwell` | *blank* | Minimum time given to the servo to finish moving before the next move starts |
 | `servo_always_active` | *blank* | `1` = keep the servo powered continuously - can stress cheap servos/5V supply, use with care |

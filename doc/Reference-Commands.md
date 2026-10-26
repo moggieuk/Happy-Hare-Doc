@@ -1154,6 +1154,7 @@ SPACING = #(int) Angle between gates for quick setting all gates
 BYPASS  = 1      To specify intention to define the bypass gate angle (if fitted)
 RELEASE = 1      To specify intention to define a fixed release angle
 RESET   = 1      To remove calibrated settings and default to configured starting values
+RESET_RELEASE = 1 To remove just the calibrated release angle
 (no options to show the current calibration)
 ```
 
@@ -1164,6 +1165,7 @@ MMU_CALIBRATE_SERVO_SELECTOR ANGLE=83                  ...Set servo to angle of 
 MMU_CALIBRATE_SERVO_SELECTOR GATE=5 SINGLE=1           ...Save current servo angle as position for gate 2
 MMU_CALIBRATE_SERVO_SELECTOR LGATE=0 SPACING=25 SAVE=0 ...Use current angle for local gate 0, space others at 25° intervals. Report but don't save results
 MMU_CALIBRATE_SERVO_SELECTOR RELEASE=1                 ...Save the current angle for a fixed release position
+MMU_CALIBRATE_SERVO_SELECTOR RESET_RELEASE=1           ...Forget the saved release angle
 ```
 
 ### MMU_CALIBRATE_TOOLHEAD
