@@ -9,8 +9,8 @@ moving selector at all - nothing on this page applies to them.
 | Selector mechanism | Command(s) | Example vendors |
 |---|---|---|
 | Linear carriage + grip servo | [`MMU_CALIBRATE_SELECTOR`](#linear-selectors) + [`MMU_SERVO`](#servo-grip-positions) | ERCF, Tradrack |
-| Servo-driven cam | [`MMU_CALIBRATE_SERVO_SELECTOR`](#servo-cam-selectors) | MMX, Pico MMU |
-| Rotary carriage | [`MMU_CALIBRATE_ROTARY_SELECTOR`](#rotary-selectors) | 3D Chameleon, HTLF, Low Rider, MMX6 |
+| Servo-driven cam | [`MMU_CALIBRATE_SERVO_SELECTOR`](#servo-cam-selectors) | MMX, Pico MMU, Low Rider |
+| Rotary carriage | [`MMU_CALIBRATE_ROTARY_SELECTOR`](#rotary-selectors) | 3D Chameleon, HTLF, MMX6 |
 | Indexed (switch-per-gate) | [`MMU_CALIBRATE_SELECTOR_INDEXES`](#indexed-selectors) | BTT ViViD |
 
 ## Linear selectors
@@ -121,7 +121,7 @@ defaults.
 
 ## Servo-cam selectors
 
-MMX and Pico MMU use a servo-driven cam instead of a linear carriage - one
+MMX, Pico MMU and Low Rider use a servo-driven cam instead of a linear carriage - one
 command both moves the servo and calibrates each gate's angle:
 
 ```{.text .console-output}
@@ -136,11 +136,19 @@ with `GATE=`/`LGATE=` (`SINGLE=1` if you only want that one gate touched).
 `SPACING=` sets every gate at once from one calibrated position plus a
 fixed angle-per-gate interval - handy for an initial setup pass.
 `BYPASS=1` and `RELEASE=1` calibrate those two special positions the same
-way. `RESET=1` clears everything back to configured starting values.
+way. `RESET=1` clears everything back to configured starting values, and
+`RESET_RELEASE=1` clears only a saved release angle.
+
+With `filament_always_gripped: 0`, filament is released by moving the servo to
+another gate's angle, set per gate by `selector_release_gates` (by default the
+next gate). A fixed release angle, saved with `RELEASE=1` or set as
+`servo_release_angle`, is used instead when one is set. The summary from
+`MMU_CALIBRATE_SERVO_SELECTOR` shows which applies. The gear is unsynced from
+the extruder before releasing, so the gate gripped for release isn't driven.
 
 ## Rotary selectors
 
-3D Chameleon, HTLF, Low Rider, and MMX6 use a rotating carriage:
+3D Chameleon, HTLF and MMX6 use a rotating carriage:
 
 ```{.text .console-output}
 MMU_CALIBRATE_ROTARY_SELECTOR
