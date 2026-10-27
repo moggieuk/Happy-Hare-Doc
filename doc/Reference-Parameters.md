@@ -428,6 +428,7 @@ full drying-cycle picture.
 | `heater_default_dry_temp` | `45`°C | Fallback drying temperature for an unmatched or empty gate |
 | `heater_default_dry_time` | `300` min | Fallback drying cycle time |
 | `heater_default_dry_humidity` | `25`% | Default humidity goal - drying ends early if reached |
+| `heater_pause_temp` | `-1` | Drying during a print pause: `-1` keeps the target, `0` turns heat off, positive values limit the target in °C. Timer keeps running; active drying targets return on resume. See [Drying during a print pause](Feature-Environment-Manager.md#drying-during-a-print-pause) |
 | `heater_vent_macro` | Empty with a vent servo, otherwise `_MMU_VENT` | Optional callback on opening and closing: `UNIT`, `OPEN`, and `GATES` with per-gate heaters |
 | `heater_vent_interval` | `0` min | Interval between vent openings during drying; `0` disables venting |
 | `heater_vent_duration` | `10` s | Time to leave the vent open |
