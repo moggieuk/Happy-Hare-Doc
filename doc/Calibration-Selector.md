@@ -143,8 +143,10 @@ With `filament_always_gripped: 0`, filament is released by moving the servo to
 another gate's angle, set per gate by `selector_release_gates` (by default the
 next gate). A fixed release angle, saved with `RELEASE=1` or set as
 `servo_release_angle`, is used instead when one is set. The summary from
-`MMU_CALIBRATE_SERVO_SELECTOR` shows which applies. The gear is unsynced from
-the extruder before releasing, so the gate gripped for release isn't driven.
+`MMU_CALIBRATE_SERVO_SELECTOR` shows which applies. Releasing also stops the gear
+syncing to the extruder, so the gate gripped for release isn't driven. Whenever
+the gear is synced again, for example at print start, Happy Hare first grips
+the selected gate, and it won't sync if that gate can't be gripped.
 
 ## Rotary selectors
 

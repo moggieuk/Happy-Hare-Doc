@@ -369,10 +369,10 @@ the buffer-based half of this.
 
 | Parameter | Default | Description |
 |---|---|---|
-| `sync_to_extruder` | `0` | Keep the gear motor synchronized to the extruder throughout printing |
+| `sync_to_extruder` | `0` (`1`, fixed, if `filament_always_gripped`) | Keep the gear motor synchronized to the extruder throughout printing |
 | `sync_gear_current` | `100`% | Gear stepper current while synced during a print |
-| `sync_form_tip` | `0` | Also sync during standalone tip forming |
-| `sync_purge` | `0` | Also sync during standalone purging |
+| `sync_form_tip` | `0` (`1` if `sync_to_extruder`) | Also sync during standalone tip forming |
+| `sync_purge` | `0` (`1` if `sync_to_extruder`) | Also sync during standalone purging |
 | `sync_feedback_enabled` | *(buffer-equipped only)* | Turn sync-feedback off even with the sensor fitted and working |
 | `sync_feedback_speed_multiplier` | `5`% | Gear speed delta applied to keep filament neutral in the buffer |
 | `sync_feedback_boost_multiplier` | `3`% | Extra gear speed boost while first finding the neutral position |
