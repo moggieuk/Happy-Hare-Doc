@@ -271,6 +271,8 @@ and the [development-only comparison](https://github.com/moggieuk/Happy-Hare/com
 
 ### Drying and configuration
 
+- Add optional `heater_pause_temp` to turn drying heaters off or lower their targets during a print pause. The default (`-1`) keeps drying unchanged; `0` turns heat off and positive values limit the temperature. Active drying targets return on resume, with material caps preserved; the drying timer keeps running. See [Drying during a print pause](Feature-Environment-Manager.md#drying-during-a-print-pause). ([#1468](https://github.com/moggieuk/Happy-Hare/pull/1468))
+
 - Cap shared-heater drying temperature by every gate holding filament, including gates not selected for drying. Add experimental `heater_rotate_in_print` for background rotation of empty idle gates on supported independent-gear machines; it remains off by default. See [Heater & Environment Manager](Feature-Environment-Manager.md#spool-rotation). ([#1327](https://github.com/moggieuk/Happy-Hare/pull/1327))
 - Preserve custom temperature-sensor and TMC driver options during Refresh, rebuilding affected sections when sensor or driver type changes. Preserve default vendor, TD, TD-1 color, RFID and spool-weight lists. ([#1405](https://github.com/moggieuk/Happy-Hare/pull/1405), [#1446](https://github.com/moggieuk/Happy-Hare/pull/1446), [#1450](https://github.com/moggieuk/Happy-Hare/pull/1450), [#1452](https://github.com/moggieuk/Happy-Hare/pull/1452))
 - Allow an existing user-owned `[save_variables]` section instead of generating a second one; keep the configured path consistent with its filename. ([#1455](https://github.com/moggieuk/Happy-Hare/pull/1455))

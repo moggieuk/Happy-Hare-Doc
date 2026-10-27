@@ -21,9 +21,13 @@ and menuconfig-only exclusions.
 
 ## Publication dependencies
 
-- All Happy Hare menuconfig screenshots target `development` at `12236421`
+- Except for the heater control menu below, Happy Hare menuconfig screenshots target `development` at `12236421`
   (2026-10-18), including the reorganized MMU Kinematics and Speeds menu.
   Regenerate with `make shots HAPPY_HARE_REF=12236421568777b9adafef69fb19d60cd6ec6eff`.
+
+- The heater control screenshot and print-pause drying behavior target Happy Hare
+  PR #1468, merged at `6c98916e`. Regenerate that menu with
+  `make shots HAPPY_HARE_REF=6c98916eab9ccf1d6be983a995b827da5fb2f26c ARGS='--only feature-environment-manager'`.
 
 - Fans & Airflow and Heater & Environment Manager prose was verified against
   Happy Hare `development` at `8888b228` (2026-10-07).

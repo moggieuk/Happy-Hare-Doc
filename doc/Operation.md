@@ -211,6 +211,10 @@ On a pause:
   don't lose position while you're away from the printer), and the
   extruder for `disable_heater` seconds, both in `mmu.cfg`'s shared
   parameters.
+- A filament drying cycle keeps heating by default. Set
+  [`heater_pause_temp`](Feature-Environment-Manager.md#drying-during-a-print-pause)
+  to turn its heater off or lower its target during the pause. This is
+  separate from the hotend timeout; the drying timer continues running.
 
 <pre class="hh-mermaid">
 graph TD
