@@ -121,7 +121,8 @@ the mechanical routine; this is every knob involved.
 | Variable | Default | Description |
 |---|---|---|
 | `restore_position` | `False` | Return the toolhead to its position before the cut - leave off if using the parking logic above instead |
-| `blade_pos` | `37.5` mm | Distance from the internal nozzle tip to the cutting blade - a toolhead dimension, not a tuning value. Greater than `toolhead_extruder_to_nozzle` means the [cutter is before the extruder](Macro-Toolhead-Tip-Cutting.md#cutter-before-the-extruder) |
+| `blade_pos` | `37.5` mm | Distance from the internal nozzle tip to the cutting blade - a toolhead dimension, not a tuning value |
+| `cutter_before_extruder` | `False` | `True` when the blade is before the extruder gears rather than between the gears and the nozzle - see [cutter before the extruder](Macro-Toolhead-Tip-Cutting.md#cutter-before-the-extruder) |
 | `retract_length` | `32.5` mm | Retract distance before the cut, measured from the nozzle tip - must be less than `blade_pos`; ~5mm less is a good starting point |
 | `simple_tip_forming` | `True` | Do a simple tip-forming move after the initial retraction, for extra cooling time |
 | `cut_axis_steppers` | `stepper_x, stepper_y` | Steppers to boost current on during the cut |

@@ -111,9 +111,11 @@ warn about unexpectedly long sensor-clearing moves after a cut. Start with
 ## Cutter before the extruder
 
 Some toolheads only have room for the blade before the extruder gears - for
-example the Qidi Plus4, Biqu H2 or Smart Orbiter 3. Happy Hare treats the
-cutter this way whenever `blade_pos` is greater than
-`toolhead_extruder_to_nozzle`. There's no separate setting.
+example the Qidi Plus4, Biqu H2 or Smart Orbiter 3. To use one, set
+`variable_cutter_before_extruder: True` in `_MMU_CUT_TIP_VARS` ("Cutter is
+before the extruder" in menuconfig). `blade_pos` must then be greater than
+`toolhead_extruder_to_nozzle`, and Happy Hare reports an error at startup if
+it isn't.
 
 <p align="center">
   <img src="Macro-Toolhead-Tip-Cutting/cutter-before-extruder.svg" alt="Three side views of a toolhead with the blade at 85mm, before the extruder gears at 72mm: the tip is retracted to 35mm and the gear tensions the filament, the blade cuts and the extruder pushes the fragment 1mm off the blade, then a synced 28mm pushback leaves a 50mm fragment between 7mm and 57mm, clear of the toolhead sensor at 62mm" width="95%">
@@ -184,10 +186,12 @@ nozzle tip:
    72, so the tip is still gripped. A longer retract leaves a shorter
    fragment. Choose `retract_length: 35`.
 4. **Keep the defaults** for `rip_length: 1` and `tension_length: 10`.
+5. **Set `cutter_before_extruder: True`.**
 
 ```ini
 [gcode_macro _MMU_CUT_TIP_VARS]
 variable_blade_pos          : 85
+variable_cutter_before_extruder : True
 variable_retract_length     : 35
 variable_pushback_length    : 28
 variable_rip_length         : 1.0
@@ -211,7 +215,8 @@ fragment through to the nozzle.
   fragment is still on it, the next load stops with "Possible toolhead
   sensor malfunction".
 - **Blade calibration.** `MMU_CALIBRATE_TOOLHEAD CUT=1` can't measure
-  `blade_pos` for this layout, so measure it by hand.
+  `blade_pos` for this layout and refuses while `cutter_before_extruder` is
+  set, so measure it by hand.
 - **No-bowden MMUs.** On a no-bowden MMU (such as 3MS) whose gate endstop is
   the extruder sensor, a blade before that sensor leaves the filament end
   already past it. The unload then parks a few mm further back than
