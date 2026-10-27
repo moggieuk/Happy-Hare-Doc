@@ -156,6 +156,10 @@ switch to it with `form_tip_macro: _MMU_CUT_TIP` in `mmu.cfg`.
   the cutter lives in the toolhead, cutting there wastes a little more
   filament and time during the purge than a clean-formed tip would.
 
+If the blade sits before the extruder gears rather than between the gears
+and the nozzle, see [Cutter before the
+extruder](Macro-Toolhead-Tip-Cutting.md#cutter-before-the-extruder).
+
 Mechanically, a toolhead cutter is normally triggered by moving the
 toolhead itself into a fixed position that presses a depressor or servo arm
 against the cutter's own activation mechanism - rather than the cutter
