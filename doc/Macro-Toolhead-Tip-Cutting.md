@@ -46,10 +46,10 @@ Cutting](Macro-Servo-Cutter.md).
 ## The cut sequence
 
 With the blade after the extruder gears - between the gears and the
-nozzle, the usual layout - the shipped defaults cut like this:
+nozzle, the usual layout - a cut goes like this:
 
 <p align="center">
-  <img src="Macro-Toolhead-Tip-Cutting/cutter-after-extruder.svg" alt="Three side views of a toolhead with the blade at 37.5mm, between the extruder gears at 72mm and the nozzle: the tip is retracted to 32.5mm, the blade cuts and a 1mm retract pulls the filament end off the blade, then a 15mm pushback leaves the 5mm fragment between 18.5mm and 23.5mm in the hotend" width="95%">
+  <img src="Macro-Toolhead-Tip-Cutting/cutter-after-extruder.svg" alt="Three side views of a toolhead with the blade at 52mm, between the extruder gears at 72mm and the nozzle: the tip is retracted to 42mm, the blade cuts and a 1mm retract pulls the filament end off the blade, then a 25mm pushback leaves the 10mm fragment between 18mm and 28mm in the hotend" width="95%">
 </p>
 
 1. **Retract.** The tip is retracted to `retract_length` above the nozzle,
