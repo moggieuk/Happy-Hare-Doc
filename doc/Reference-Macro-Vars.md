@@ -241,6 +241,7 @@ left to its upstream README alone.
 | Variable | Default | Description |
 |---|---|---|
 | `brush_start` | `67` | Start X of a bed-mounted brush - indicative defaults `34`/`67`/`84` for 250/300/350mm builds; for a gantry-mounted brush, set to your nozzle-stop position instead |
+| `brush_clearance_x` | `20` mm | Distance left of `brush_start` the nozzle parks before and after brushing, clear of the tray and any Filametrix cutter pin (never below X=30) |
 | `brush_width` | `35` mm | Brush width along X |
 | `brush_top` | `6` | Z position of the brush top - start high and lower carefully; `None` for a gantry-mounted brush needing no Z move |
 | `clearance_z` | `2` mm | Z clearance above the brush while traveling |

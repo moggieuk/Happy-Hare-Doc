@@ -125,8 +125,15 @@ Check physical clearance before relying on the low-height override.
 
 If Blobifier raises the nozzle temperature for a purge, it restores the previous
 target afterward unless another macro changed that target during purging. This
-restoration does not itself wait for cooldown. Buffer tension adjustment runs after the tray cuts off each
-blob, and preserves the gear synchronization needed for the next blob.
+restoration does not itself wait for cooldown. Blobifier does not adjust buffer
+tension between blobs; with a sync-feedback buffer, Happy Hare adjusts tension
+after loading (`toolhead_post_load_tension_adjust`).
+
+When approaching the brush, after wiping and after the tray retracts, the
+nozzle moves to `brush_clearance_x` mm left of `brush_start` (never below
+X=30) to stay clear of the tray and any Filametrix cutter pin. The default of
+20 mm suits the standard build; change it if your brush, tray or cutter needs
+a different gap.
 
 ## See also
 
