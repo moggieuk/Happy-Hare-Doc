@@ -287,10 +287,19 @@ MMU_CALIBRATE_SERVO_SELECTOR ANGLE=83
 MMU_CALIBRATE_SERVO_SELECTOR GATE=0 SINGLE=1
 ```
 
-Tune and save gates 0 through 3, then exercise each one with `MMU_SELECT`. Use
-`MMU_GRIP` and `MMU_RELEASE` when you need to test the cam's filament grip and
-release positions. See [Selector Calibration: Servo-cam selectors](Calibration-Selector.md#servo-cam-selectors)
+Tune and save gates 0 through 3, then exercise each one with `MMU_SELECT`. See
+[Selector Calibration: Servo-cam selectors](Calibration-Selector.md#servo-cam-selectors)
 for the complete command behavior.
+
+The MMX profile turns on **Filament always gripped?** (under **MMU Type →
+Design attributes**). The cam stays on the selected gate, the gear stays
+synchronized to the extruder whenever filament is in it, and `MMU_RELEASE` is
+refused. If your build can release filament, turn that option off. Release then
+moves the cam to the gate listed in **Servo release gates** (under **MMU
+Kinematics and Speeds → Selector servo**), which defaults to the next gate, and
+`MMU_GRIP` / `MMU_RELEASE` test the grip and release positions. With it off,
+the sync options under **Other Settings → MMU/Extruder sync** become your
+choice and start off.
 
 Continue through [Calibration](Calibration.md) for gear rotation distance,
 Bowden length and toolhead calibration before attempting the first print.

@@ -152,8 +152,8 @@ doesn't fit any of the patterns above.
 | Tradrack | Shared gear stepper, moving carriage + servo grip | Type-A |
 | BTT ViViD | Shared gear stepper, one index switch per gate | Type-A |
 | 3D Chameleon | Shared gear stepper, rotary carriage | Type-A |
-| MMX / PicoMMU | Shared gear stepper, servo-driven selection | Type-A |
-| MMX6 / Low Rider | Shared gear stepper, rotary carriage | Type-A |
+| MMX / PicoMMU / Low Rider | Shared gear stepper, servo-driven selection | Type-A |
+| MMX6 | Shared gear stepper, rotary carriage | Type-A |
 | HTLF | Shared gear stepper, rotary cam selector | Type-A |
 | Box Turtle, Night Owl, Angry Beaver, 3MS, Quattro Box, KMS, EMU | Gear-per-gate, no moving selector | Type-B |
 | *(custom MMU only)* | Gear-per-gate + moving carriage | Type-C |

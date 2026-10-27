@@ -213,7 +213,13 @@ gear-per-gate design that always grips the filament has nothing to
 choose - Happy Hare forces it on, and the toggle doesn't appear (the
 screenshot above, from a gear-per-gate design, shows exactly that - the
 sync toggle itself is missing, but the current and tension settings are
-still present).
+still present). Servo-cam designs such as MMX and Pico MMU are always gripped
+by default too, and the sync toggles appear once you turn **Filament always
+gripped?** off.
+
+On designs with a filament release (ERCF/Tradrack servo, servo-cam and rotary
+selectors), Happy Hare grips the selected gate before it syncs the gear, for
+example at print start, and leaves the gear unsynced if that grip fails.
 
 If you normally run the gear stepper near its maximum current,
 `sync_gear_current` is worth lowering - it only applies while actually
@@ -248,9 +254,13 @@ related `toolhead_entry_tension_test` under [Parameter
 Setup](#parameter-setup) above.
 
 ```text
-MMU_SYNC_GEAR_MOTOR          # Force sync on right now (SYNC defaults to 1)
+MMU_SYNC_GEAR_MOTOR          # Grip the selected gate and force sync on right now (SYNC defaults to 1)
 MMU_SYNC_GEAR_MOTOR SYNC=0   # Force sync off and release the servo, on designs that have one
 ```
+
+If the gear can't be synced (the gate can't be gripped, no gate is selected or
+the selector isn't homed), `MMU_SYNC_GEAR_MOTOR` warns and doesn't keep the
+request. `MMU_RELEASE` also stops the gear syncing and cancels a sync requested here.
 
 Full parameter reference: [`MMU_SYNC_GEAR_MOTOR`](Reference-Commands.md#mmu_sync_gear_motor).
 Happy Hare manages this automatically during normal operation - reach for it
