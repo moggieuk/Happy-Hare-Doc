@@ -1144,17 +1144,17 @@ MMU_CALIBRATE_SELECTOR_INDEXES RESET=1 ...reset selector index calibration
 **Parameters**
 
 ```{.text .console-output}
-UNIT    = #(int) Optional if only one unit fitted to printer
-ANGLE   = #(int) Move servo to designated angle
-GATE    = #(int) Specify the gate by it's global logical index
-LGATE   = #(int) Specify gate by the local mmu unit index (same as GATE with single MMU unit)
-SAVE    = 1      To persist the calibration results else they will just be reported
-SINGLE  = 1      To force the calibration of a single gate only
-SPACING = #(int) Angle between gates for quick setting all gates
-BYPASS  = 1      To specify intention to define the bypass gate angle (if fitted)
-RELEASE = 1      To specify intention to define a fixed release angle
-RESET   = 1      To remove calibrated settings and default to configured starting values
-RESET_RELEASE = 1 To remove just the calibrated release angle
+UNIT          = #(int) Optional if only one unit fitted to printer
+ANGLE         = #(int) Move servo to designated angle
+GATE          = #(int) Specify the gate by it's global logical index
+LGATE         = #(int) Specify gate by the local mmu unit index (same as GATE with single MMU unit)
+SAVE          = 1      To persist the calibration results else they will just be reported
+SINGLE        = 1      To force the calibration of a single gate only
+SPACING       = #(int) Angle between gates for quick setting all gates
+BYPASS        = 1      To specify intention to define the bypass gate angle (if fitted)
+RELEASE       = 1      To specify intention to define a fixed release angle
+RESET         = 1      To remove calibrated settings and default to configured starting values
+RESET_RELEASE = 1      To remove just the calibrated release angle
 (no options to show the current calibration)
 ```
 
