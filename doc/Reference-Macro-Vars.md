@@ -122,6 +122,7 @@ the mechanical routine; this is every knob involved.
 |---|---|---|
 | `restore_position` | `False` | Return the toolhead to its position before the cut - leave off if using the parking logic above instead |
 | `blade_pos` | `37.5` mm | Distance from the internal nozzle tip to the cutting blade - a toolhead dimension, not a tuning value |
+| `cutter_before_extruder` | `False` | `True` when the blade is before the extruder gears rather than between the gears and the nozzle - see [cutter before the extruder](Macro-Toolhead-Tip-Cutting.md#cutter-before-the-extruder) |
 | `retract_length` | `32.5` mm | Retract distance before the cut, measured from the nozzle tip - must be less than `blade_pos`; ~5mm less is a good starting point |
 | `simple_tip_forming` | `True` | Do a simple tip-forming move after the initial retraction, for extra cooling time |
 | `cut_axis_steppers` | `stepper_x, stepper_y` | Steppers to boost current on during the cut |
@@ -130,8 +131,9 @@ the mechanical routine; this is every knob involved.
 | `pin_loc_xy` | `14, 250` | X,Y of the depressor pin - where the cutter arm just touches it |
 | `pin_park_dist` | `5.0` mm | Distance added to (or subtracted from) `pin_loc_xy` along `cutting_axis`, for a safe starting position with room to build momentum |
 | `pin_loc_compressed_xy` | `0.5, 250` | X,Y when the cutter is fully compressed |
-| `rip_length` | `1.0` mm | Retract distance after the cut, to free the blade before returning |
+| `rip_length` | `1.0` mm | Retract distance after the cut, to free the blade before returning. With the cutter before the extruder the extruder pushes the fragment this far instead |
 | `rip_speed` | `3` mm/s | Speed of that retract |
+| `tension_length` | `10.0` mm | Cutter before the extruder only: how far the gear retracts before the cut to pull the filament taut across the blade (`0` disables) |
 | `pushback_length` | `15.0` mm | How far the cut fragment is pushed back into the hotend, so it can't cause a future clog - can't exceed `retract_length` minus `toolhead_ooze_reduction` |
 | `pushback_dwell_time` | `0` ms | Dwell time after the pushback |
 | `travel_speed` | `150` mm/s | General travel speed for the cut sequence |
