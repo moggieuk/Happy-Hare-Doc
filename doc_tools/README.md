@@ -181,6 +181,10 @@ no network dependencies. The initial example links to its download using
 Markdown source. The site builder rewrites this to the published location.
 The animation runs in a browser; Markdown viewers such as GitHub do not run it.
 
+Animation download links marked `data-hh-animation-download` preserve the current
+site theme in the offline HTML. Without JavaScript, the ordinary download uses
+the default light theme.
+
 Validate with `make docs_check` and `make spellcheck`. Also spell-check new
 untracked source files explicitly, because the Make target selects tracked
 files. Preview the built page at desktop and phone widths in both site themes;

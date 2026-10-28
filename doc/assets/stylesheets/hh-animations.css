@@ -62,3 +62,5 @@
 .hh-animation .hh-animation-caption { margin: 0.5em 0 0; }
 
 .hh-animation-swatch { display: inline-block; width: 1.5rem; height: 4px; border-radius: 2px; background: currentColor; font-size: 0; vertical-align: middle; }
+
+.hh-animation-brand { display: block; flex: none; width: 32px; height: 32px; margin-left: auto; align-self: center; border-radius: 5px; background: url("../images/favicon.png") center / contain no-repeat; }

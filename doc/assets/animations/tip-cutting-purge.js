@@ -1,3 +1,4 @@
+/* Copyright (C) 2022-2026 Paul Morgan */
 /* Cutter-after-extruder example from Macro-Toolhead-Tip-Cutting.md.
  * Heights are mm above the internal nozzle reference. Melt mixing is schematic.
  */
@@ -323,7 +324,13 @@ window.HHAnimations.register("tip-cutting-purge", {
         const height = 418 - layer * 3.2;
         const radius = 23 - layer * 1.75;
         const blend = blendAt(0.04 + layer / 12 * 0.96);
-        s += `<path data-part="purge-layer" data-blend="${blend}" d="M${x},${height} C${x - radius},${height - 5} ${x - radius},${height + 5} ${x},${height + 2} S${x + radius * 1.6},${height - 3} ${x},${height - 3}" fill="none" stroke="${mix(blend)}" stroke-width="5" stroke-linecap="round" pathLength="100" stroke-dasharray="${fraction * 100} 100"/>`;
+        const coil = `M${x},${height} C${x - radius},${height - 5} ${x - radius},${height + 5} ${x},${height + 2} S${x + radius * 1.6},${height - 3} ${x},${height - 3}`;
+        const reveal = `fill="none" stroke-linecap="round" pathLength="100" stroke-dasharray="${fraction * 100} 100"`;
+        // A shaded lower edge and narrow upper highlight round each deposited
+        // strand without changing its material color or deposition timing.
+        s += `<path d="${coil}" ${reveal} stroke="color-mix(in srgb, ${mix(blend)}, black 28%)" stroke-width="5.8" transform="translate(0 0.5)"/>`;
+        s += `<path data-part="purge-layer" data-blend="${blend}" d="${coil}" ${reveal} stroke="${mix(blend)}" stroke-width="4.6"/>`;
+        s += `<path d="${coil}" ${reveal} stroke="color-mix(in srgb, ${mix(blend)}, white 38%)" stroke-width="1.1" transform="translate(0 -1.2)"/>`;
       }
       const landing = 418 - Math.max(0, layers - 1) * 3.2;
       const falling = Math.min(1, amount / 0.04);

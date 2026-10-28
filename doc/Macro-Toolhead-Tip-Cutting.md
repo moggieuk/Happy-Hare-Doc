@@ -77,8 +77,8 @@ The animation uses a 2mm rip retract to make that small movement easier to see.
   illustration above describe the same mechanism.</p>
 </div>
 
-<p><a href="Macro-Toolhead-Tip-Cutting/tip-cutting-purge.html" download="tip-cutting-purge.html">Download the animation</a>
-as a self-contained HTML file to open in a browser offline.</p>
+<p><a href="Macro-Toolhead-Tip-Cutting/tip-cutting-purge.html" download="tip-cutting-purge.html" data-hh-animation-download>Download the animation</a>
+as a self-contained HTML file in your current light or dark mode to open in a browser offline.</p>
 
 ## Configuration
 

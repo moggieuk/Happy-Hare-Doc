@@ -14,6 +14,8 @@ class AnimationExportTests(unittest.TestCase):
         html = render("tip-cutting-purge")
         self.assertNotRegex(html, r'<(?:script|link)[^>]+(?:src|href)=')
         self.assertIn('data-hh-animation="tip-cutting-purge"', html)
+        self.assertIn('data:image/png;base64,', html)
+        self.assertNotIn('../images/favicon.png', html)
 
     def test_scene_name_cannot_escape_asset_directory(self):
         for name in ("../other", "/tmp/other", "<script>", "", "MixedCase"):
