@@ -145,7 +145,8 @@ An optional `stageTiming` array overrides timing per stage with `seconds`,
 `moveStart` and `moveEnd`. The latter two are fractions of the stage duration;
 the player holds the starting and ending geometry outside that motion window.
 The renderer receives a fourth argument with `moving`, for temporary direction
-arrows. Use these explanatory holds to make small moves visible; they are not
+arrows, plus `stageProgress` for effects that continue during motion holds.
+Use these explanatory holds to make small moves visible; they are not
 printer dwell settings. Omit the array to retain uniform timing.
 Reduced motion renders the end of each stage without continuous movement.
 Scene markup is trusted repository code; do not insert external input into it.

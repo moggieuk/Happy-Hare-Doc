@@ -69,7 +69,8 @@
       const fraction = position - index;
       const progress = Math.max(0, Math.min(0.999999, (fraction - start) / (finish - start)));
       scene.render(svg, index + (reducedMotion.matches ? 0.999999 : progress), svg.clientWidth || 320, {
-        moving: !reducedMotion.matches && fraction >= start && fraction < finish
+        moving: !reducedMotion.matches && fraction >= start && fraction < finish,
+        stageProgress: reducedMotion.matches ? 1 : fraction
       });
       slider.value = position;
       previous.disabled = position === 0;

@@ -9,6 +9,7 @@
   --hh-residual: var(--hh-outgoing);
   --hh-incoming: #168a96;
   --hh-control: #f6f8fb;
+  --hh-sensor-active: #248449;
   color: var(--hh-text);
   margin: 1.5em 0;
   padding: 1em;
@@ -24,6 +25,7 @@
   --hh-outgoing: #f18ab2;
   --hh-incoming: #59c7cc;
   --hh-control: #28323e;
+  --hh-sensor-active: #6bd58b;
 }
 .hh-animation-controls, .hh-animation-legend { display: flex; flex-wrap: wrap; gap: 0.5em 1em; }
 .hh-animation button {
@@ -56,5 +58,7 @@
 .hh-animation-parameters { min-height: 4em; padding: 0.8em 0; }
 .hh-animation .hh-animation-parameters code { color: var(--hh-text); background: var(--hh-control); white-space: normal; overflow-wrap: anywhere; }
 .hh-animation-detail { min-height: 3em; }
-.hh-animation input[type="range"] { display: block; width: 100%; margin: 0.25em 0 0; accent-color: var(--hh-outgoing); min-height: 24px; }
+.hh-animation input[type="range"] { display: block; width: 100%; margin: 0.25em 0 0; accent-color: var(--hh-metal); min-height: 24px; }
 .hh-animation .hh-animation-caption { margin: 0.5em 0 0; }
+
+.hh-animation-swatch { display: inline-block; width: 1.5rem; height: 4px; border-radius: 2px; background: currentColor; font-size: 0; vertical-align: middle; }
