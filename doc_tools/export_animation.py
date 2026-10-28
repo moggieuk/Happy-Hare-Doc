@@ -16,6 +16,8 @@ def render(name):
         raise ValueError("Animation names must be lowercase words separated by hyphens")
     assets = ROOT / "doc" / "assets"
     scene = (assets / "animations" / f"{name}.js").read_text()
+    if name == "tip-cutting-before-purge":
+        scene = (assets / "animations" / "tip-cutting-purge.js").read_text() + "\n" + scene
     player = (assets / "javascripts" / "hh-animations.js").read_text()
     styles = (assets / "stylesheets" / "hh-animations.css").read_text()
     logo = base64.b64encode((assets / "images" / "favicon.png").read_bytes()).decode("ascii")

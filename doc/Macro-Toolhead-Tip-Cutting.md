@@ -158,6 +158,20 @@ The fragment, `blade_pos - retract_length` long, stays in the toolhead.
 The next load pushes it through the nozzle, and it's counted in the purge
 volume.
 
+### Cutter-before-extruder animation
+
+This version follows the worked example below, with the blade at 85mm above
+both the entry sensor and extruder gears. It shows MMU-only tension, a forward
+rip by the extruder, the sensor check, and loading and purging the 50mm fragment.
+
+<div data-hh-animation="tip-cutting-before-purge">
+  <p>The interactive sequence requires JavaScript. The illustration and worked
+  example describe the same cutter-before-extruder mechanism.</p>
+</div>
+
+<p><a href="Macro-Toolhead-Tip-Cutting/tip-cutting-before-purge.html" download="tip-cutting-before-purge.html" data-hh-animation-download>Download this animation</a>
+as a self-contained HTML file in your current light or dark mode.</p>
+
 ### Checking the cut
 
 A missed cut leaves the filament gripped by the extruder, and the bowden

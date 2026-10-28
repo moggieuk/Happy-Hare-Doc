@@ -148,6 +148,10 @@ The renderer receives a fourth argument with `moving`, for temporary direction
 arrows, plus `stageProgress` for effects that continue during motion holds.
 Use these explanatory holds to make small moves visible; they are not
 printer dwell settings. Omit the array to retain uniform timing.
+The two toolhead-cutting scenes share `HHTipCuttingScene` from
+`tip-cutting-purge.js`. Load that script before `tip-cutting-before-purge.js`;
+the exporter bundles this dependency automatically for the second scene.
+
 Reduced motion renders the end of each stage without continuous movement.
 Scene markup is trusted repository code; do not insert external input into it.
 
