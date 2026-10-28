@@ -232,6 +232,11 @@ fragment through to the nozzle.
 
 ## See also
 
+- [Blobbing and Stringing](Blobbing-and-Stringing.md#calibrating-the-toolhead) -
+  calibrate toolhead dimensions, residual filament and an after-extruder
+  blade position before fine-tuning ooze; for a before-extruder cutter,
+  use the manual blade measurement described above
+
 - [Feature: Tip Forming and Purging](Feature-Tip-Forming-Purging.md#toolhead-cutter-_mmu_cut_tip) -
   concept, trade-offs, and the cut routine
 - [Toolchange Movement: Tip Cutting Options](Toolchange-Movement.md#tip-cutting-options) -
