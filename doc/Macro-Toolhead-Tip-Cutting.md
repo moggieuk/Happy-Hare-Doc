@@ -77,9 +77,6 @@ The animation uses a 2mm rip retract to make that small movement easier to see.
   illustration above describe the same mechanism.</p>
 </div>
 
-<p><a href="Macro-Toolhead-Tip-Cutting/tip-cutting-purge.html" download="tip-cutting-purge.html" data-hh-animation-download>Download the animation</a>
-as a self-contained HTML file in your current light or dark mode to open in a browser offline.</p>
-
 ## Configuration
 
 <p align="center">
@@ -160,17 +157,17 @@ volume.
 
 ### Cutter-before-extruder animation
 
-This version follows the worked example below, with the blade at 85mm above
-both the entry sensor and extruder gears. It shows MMU-only tension, a forward
-rip by the extruder, the sensor check, and loading and purging the 50mm fragment.
+This version places the blade at 85mm above both the entry sensor and extruder
+gears. It uses a 51mm retract to leave a shorter 34mm fragment, and a 35mm
+pushback to place its top at 50mm, 12mm below the toolhead sensor. It shows
+MMU-only tension, a forward rip by the extruder, the sensor check, and loading
+and purging the fragment. The static worked example below uses different
+retract and pushback values.
 
 <div data-hh-animation="tip-cutting-before-purge">
   <p>The interactive sequence requires JavaScript. The illustration and worked
   example describe the same cutter-before-extruder mechanism.</p>
 </div>
-
-<p><a href="Macro-Toolhead-Tip-Cutting/tip-cutting-before-purge.html" download="tip-cutting-before-purge.html" data-hh-animation-download>Download this animation</a>
-as a self-contained HTML file in your current light or dark mode.</p>
 
 ### Checking the cut
 

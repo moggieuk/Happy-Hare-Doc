@@ -149,8 +149,7 @@ arrows, plus `stageProgress` for effects that continue during motion holds.
 Use these explanatory holds to make small moves visible; they are not
 printer dwell settings. Omit the array to retain uniform timing.
 The two toolhead-cutting scenes share `HHTipCuttingScene` from
-`tip-cutting-purge.js`. Load that script before `tip-cutting-before-purge.js`;
-the exporter bundles this dependency automatically for the second scene.
+`tip-cutting-purge.js`. Load that script before `tip-cutting-before-purge.js`.
 
 Reduced motion renders the end of each stage without continuous movement.
 Scene markup is trusted repository code; do not insert external input into it.
@@ -171,33 +170,12 @@ Use the shared `--hh-outgoing`, `--hh-cut`, `--hh-residual`, `--hh-incoming`,
 Cut fragments and residual material retain the outgoing filament color;
 distinguish their roles with labels rather than changing the material's color.
 
-For an offline download, regenerate the self-contained HTML from the same
-shared assets and scene whenever any of them changes:
-
-```bash
-python3 -m doc_tools.export_animation tip-cutting-purge doc/Macro-Toolhead-Tip-Cutting/tip-cutting-purge.html
-```
-
-Commit the generated HTML alongside its source assets. The published page uses
-the shared player directly; the download bundles the same code and styles with
-no network dependencies. The initial example links to its download using
-`href="Macro-Toolhead-Tip-Cutting/tip-cutting-purge.html"`, relative to the
-Markdown source. The site builder rewrites this to the published location.
 The animation runs in a browser; Markdown viewers such as GitHub do not run it.
-
-Animation download links marked `data-hh-animation-download` preserve the current
-site theme in the offline HTML. Without JavaScript, the ordinary download uses
-the default light theme.
 
 Validate with `make docs_check` and `make spellcheck`. Also spell-check new
 untracked source files explicitly, because the Make target selects tracked
 files. Preview the built page at desktop and phone widths in both site themes;
-check playback, scrubbing, step controls, reduced motion, navigation away/back,
-and the offline download. Export tests run with:
-
-```bash
-python3 -m unittest doc_tools.test_export_animation
-```
+check playback, scrubbing, step controls, reduced motion, and navigation away/back.
 
 ## Regenerating the images
 

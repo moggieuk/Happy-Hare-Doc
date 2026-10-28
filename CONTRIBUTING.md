@@ -188,7 +188,7 @@ across scenes; cut fragments and residual material keep the outgoing filament
 color, with labels identifying their roles. Distinguish illustrative values and
 schematic melt behavior from calibrated printer settings.
 
-Authoring and offline-export procedures live in
+Animation authoring procedures live in
 [the tooling guide](doc_tools/README.md#interactive-animations).
 
 ### Site navigation and theme

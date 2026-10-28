@@ -131,34 +131,6 @@
   window.HHAnimations = {
     register(name, scene) { scenes.set(name, scene); refresh(); }
   };
-  // Delegation also covers links inserted by instant navigation.
-  document.addEventListener("click", async event => {
-    const link = event.target.closest("a[data-hh-animation-download]");
-    if (!link || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    const scheme = document.querySelector("[data-md-color-scheme]")?.getAttribute("data-md-color-scheme") === "slate" ? "slate" : "default";
-    const save = url => {
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = link.download;
-      document.body.append(anchor);
-      anchor.click();
-      anchor.remove();
-    };
-    try {
-      const response = await fetch(link.href);
-      if (!response.ok) throw new Error("Animation download failed");
-      const standalone = new DOMParser().parseFromString(await response.text(), "text/html");
-      standalone.documentElement.setAttribute("data-md-color-scheme", scheme);
-      const blob = new Blob(["<!doctype html>\n", standalone.documentElement.outerHTML], { type: "text/html" });
-      const url = URL.createObjectURL(blob);
-      save(url);
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
-    } catch {
-      // Keep the ordinary download available if fetching is unavailable.
-      save(link.href);
-    }
-  });
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) players.forEach(player => player.pause());
   });

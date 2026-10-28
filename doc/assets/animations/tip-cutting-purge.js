@@ -38,7 +38,8 @@ window.HHTipCuttingScene = {
     {seconds: 5, moveStart: 0.2, moveEnd: 0.75},
     {seconds: 5, moveStart: 0.25, moveEnd: 0.75},
     {seconds: 4, moveStart: 0.1, moveEnd: 0.8},
-    {seconds: 3},
+    // Keep the Bowden empty for one second before loading the next filament.
+    {seconds: 4, moveStart: 0, moveEnd: 0.75},
     {seconds: 4, moveStart: 0, moveEnd: 0.8},
     {seconds: 3, moveStart: 0.15, moveEnd: 0.85},
     {seconds: 4, moveStart: 0.2, moveEnd: 0.8},
@@ -116,43 +117,43 @@ window.HHTipCuttingScene = {
       fragment = fragmentTop > 0;
     }
     if (before) {
-      if (i === 1) end = interpolate(4, 35, t);
+      if (i === 1) end = interpolate(4, 51, t);
       if (i === 2) {
-        end = tension || t < 0.5 ? 35 : 85;
+        end = tension || t < 0.5 ? 51 : 85;
         fragment = !tension && t >= 0.5;
-        fragmentTop = 85; fragmentBottom = 35;
+        fragmentTop = 85; fragmentBottom = 51;
         blade = tension ? 0 : Math.min(1, t * 2);
       }
       if (i === 3) {
         end = 85;
         const rip = Math.min(1, t / 0.65);
-        fragmentTop = 85 - rip; fragmentBottom = 35 - rip;
+        fragmentTop = 85 - rip; fragmentBottom = 51 - rip;
       }
       if (i === 4) {
-        end = 85 - 28 * t;
-        const shift = Math.max(1, 28 * t);
-        fragmentTop = 85 - shift; fragmentBottom = 35 - shift;
+        end = 85 - 35 * t;
+        const shift = Math.max(1, 35 * t);
+        fragmentTop = 85 - shift; fragmentBottom = 51 - shift;
       }
       if (i === 5 || i === 6) {
-        fragmentTop = 57; fragmentBottom = 7;
-        end = i === 5 ? interpolate(57, 85, t) : 85;
+        fragmentTop = 50; fragmentBottom = 16;
+        end = i === 5 ? interpolate(50, 85, t) : 85;
         if (stage === 7) end = 85 + 245 * phase;
         if (stage === 8) { incoming = true; end = 330 - 250 * phase; }
         if (slowEntry) { incoming = true; end = 80 - 8 * phase; }
       }
-      if (i === 7) { fragmentTop = 57; fragmentBottom = 7; }
+      if (i === 7) { fragmentTop = 50; fragmentBottom = 16; }
       if (i === 8) {
-        end = interpolate(62, 54, t);
-        const shift = Math.max(0, 57 - end);
-        fragmentTop = 57 - shift; fragmentBottom = 7 - shift;
+        end = interpolate(62, 38, t);
+        const shift = Math.max(0, 50 - end);
+        fragmentTop = 50 - shift; fragmentBottom = 16 - shift;
       }
       if (i === 9) {
-        end = interpolate(54, 52, t);
-        fragmentTop = end; fragmentBottom = end - 50;
+        end = interpolate(38, 36, t);
+        fragmentTop = end; fragmentBottom = end - 34;
       }
       if (i >= 10) {
-        const advance = i === 10 ? t * 52 : 52;
-        end = Math.max(0, 52 - advance);
+        const advance = i === 10 ? t * 36 : 36;
+        end = Math.max(0, 36 - advance);
         fragmentTop = end; fragmentBottom = Math.max(0, 2 - advance);
         residual = Math.max(0, 2 - advance); fragment = end > 0;
       }
@@ -167,7 +168,6 @@ window.HHTipCuttingScene = {
     const boreClip = svg.dataset.sceneId + '-bore';
     const wasteClip = svg.dataset.sceneId + '-waste';
     let s = `<defs><clipPath id="${boreClip}"><path d="M${x - 5},${y(90)} H${x + 5} V339 L${x + 1.5},354 V357 H${x - 1.5} V354 L${x - 5},339 Z"/></clipPath><clipPath id="${wasteClip}"><rect x="0" y="357" width="${width}" height="67"/></clipPath></defs>`;
-    s += `<title>${this.title}: ${this.stages[rawStage][0]}</title>`;
     // A continuous Bowden centerline runs from the toolhead to the MMU.
     // Normalized dash lengths expose a single moving filament end, so the
     // color never changes until the old filament has reached the MMU.
@@ -182,6 +182,11 @@ window.HHTipCuttingScene = {
     const bowdenStart = waiting ? Math.max(0, Math.min(1, (end - 90) / 240)) : 0;
     const bowdenColor = stage >= 8 ? 'var(--hh-incoming)' : 'var(--hh-outgoing)';
     s += `<path data-part="bowden-filament" data-start="${bowdenStart}" d="${bowden}" fill="none" stroke="${bowdenColor}" stroke-width="10" pathLength="1000" stroke-dasharray="${(1 - bowdenStart) * 1000} 1000" stroke-dashoffset="${-bowdenStart * 1000}"/>`;
+    if (tension) {
+      const tensionMarker = svg.dataset.sceneId + '-tension-arrow';
+      s += `<defs><marker id="${tensionMarker}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1,1 L8,5 L1,9" fill="none" stroke="var(--hh-text)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>`;
+      s += `<path data-part="tension-arrow" d="M${x + 22},95 C${x + 22},65 ${crownX - 45},50 ${crownX},50 C${mmuX - 55},50 ${mmuX - 22},90 ${mmuX - 22},135" fill="none" stroke="var(--hh-text)" stroke-width="2" stroke-dasharray="5 4" marker-start="url(#${tensionMarker})" marker-end="url(#${tensionMarker})"/>`;
+    }
     const tailGradient = svg.dataset.sceneId + '-mmu-tail';
     s += `<defs><linearGradient id="${tailGradient}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${bowdenColor}"/><stop offset="0.2" stop-color="${bowdenColor}"/><stop offset="1" stop-color="${bowdenColor}" stop-opacity="0"/></linearGradient></defs>`;
     s += rect(mmuX - 5, mmuY, 10, 24, `url(#${tailGradient})`, 'data-part="mmu-filament-tail"');
@@ -189,16 +194,16 @@ window.HHTipCuttingScene = {
     s += rect(x - 12, y(90), 24, y(3) - y(90), 'var(--hh-surface)', 'class="hh-animation-structure"');
     s += rect(x - 37, y(22), 74, 56, 'var(--hh-surface)', 'class="hh-animation-structure" rx="5"');
     const references = [
-      [80, ['Entry sensor · 80'], before ? -2 : width < 440 ? -17 : -7],
-      [72, ['Extruder gears · 72'], width < 440 ? -22 : -6],
-      [62, ['Toolhead sensor · 62'], width < 440 ? -2 : -7],
-      [before ? 85 : 52, [before ? 'Blade position · 85' : 'Blade position · 52'], before ? -10 : -7],
-      [0, ['Nozzle reference · 0'], 20]
+      [80, 'Entry sensor · 80'],
+      [72, 'Extruder gears · 72'],
+      [62, 'Toolhead sensor · 62'],
+      [before ? 85 : 52, before ? 'Blade position · 85' : 'Blade position · 52'],
+      [0, 'Nozzle reference · 0']
     ];
-    for (const [height, lines, offset] of references) {
-      const guideY = y(height) - (width < 440 && height === 80 ? 13 : 0);
-      s += `<line class="hh-animation-line" x1="8" x2="${x - 42}" y1="${guideY}" y2="${guideY}"/>`;
-      lines.forEach((text, line) => { s += label(8, y(height) + offset + line * 14, text); });
+    for (const [height, text] of references) {
+      const guideY = y(height);
+      s += label(8, guideY, text, 'data-part="reference-label" text-anchor="start" dominant-baseline="middle"');
+      s += `<line data-part="reference-line" class="hh-animation-line" x1="150" x2="${x - 42}" y1="${guideY}" y2="${guideY}"/>`;
     }
     // Accumulated downward travel, independent of the cut-end coordinate.
     // Extruder gears run throughout toolhead unloading, even after the end
@@ -231,30 +236,30 @@ window.HHTipCuttingScene = {
     if (slowEntry) mmuTravel = -68 + 8 * phase;
     if (before) {
       if (i === 0) travel = -2 * t;
-      if (i === 1) travel = -2 - 31 * t;
-      if (i === 2) travel = -33;
-      if (i === 3) travel = -33 + Math.min(1, t / 0.65);
-      if (i === 4) travel = -32 + 28 * t;
-      if (i === 5) travel = -4 - 28 * t;
-      if (i === 6) travel = -32;
-      if (i === 7) travel = -32 + 10 * t;
-      if (i === 8) travel = -22 + 8 * t;
+      if (i === 1) travel = -2 - 47 * t;
+      if (i === 2) travel = -49;
+      if (i === 3) travel = -49 + Math.min(1, t / 0.65);
+      if (i === 4) travel = -48 + 35 * t;
+      if (i === 5) travel = -13 - 35 * t;
+      if (i === 6) travel = -48;
+      if (i === 7) travel = -48 + 10 * t;
+      if (i === 8) travel = -38 + 24 * t;
       if (i === 9) travel = -14 + 2 * t;
-      if (i === 10) travel = -12 + 52 * t;
-      if (i === 11) travel = 40 + 30 * t;
-      if (i === 12) travel = 70 + 18 * t;
-      if (i === 13) travel = 88 - 2 * t;
-      if (i === 14) travel = 86;
+      if (i === 10) travel = -12 + 36 * t;
+      if (i === 11) travel = 24 + 30 * t;
+      if (i === 12) travel = 54 + 18 * t;
+      if (i === 13) travel = 72 - 2 * t;
+      if (i === 14) travel = 70;
       mmuTravel = travel;
-      if (i === 2) mmuTravel = tension ? -33 - 10 * t : -43;
-      if (i === 3) mmuTravel = -43;
-      if (i === 4) mmuTravel = -43 + 28 * t;
-      if (i === 5) mmuTravel = -15 - 28 * t;
+      if (i === 2) mmuTravel = tension ? -49 - 10 * t : -59;
+      if (i === 3) mmuTravel = -59;
+      if (i === 4) mmuTravel = -59 + 35 * t;
+      if (i === 5) mmuTravel = -24 - 35 * t;
       if (i === 6) {
-        mmuTravel = -43;
-        if (stage === 7) mmuTravel = -43 - 245 * phase;
-        if (stage === 8) mmuTravel = -288 + 250 * phase;
-        if (slowEntry) mmuTravel = -38 + 8 * phase;
+        mmuTravel = -59;
+        if (stage === 7) mmuTravel = -59 - 245 * phase;
+        if (stage === 8) mmuTravel = -304 + 250 * phase;
+        if (slowEntry) mmuTravel = -54 + 8 * phase;
       }
       if (i >= 7) mmuTravel = travel + 2;
     }
@@ -296,13 +301,13 @@ window.HHTipCuttingScene = {
     // Make space for the visually enlarged residual by translating the whole
     // fragment and its pushing filament, never clipping the fragment shorter.
     const clearance = 18 - 2 * 2.8 + seam;
-    const loadOffset = i === 8 ? clearance * Math.min(1, Math.max(0, ((before ? 7 : 19) - fragmentBottom) / (before ? 3 : 15)))
+    const loadOffset = i === 8 ? clearance * Math.min(1, Math.max(0, ((before ? 16 : 19) - fragmentBottom) / (before ? 12 : 15)))
       : i === 9 ? clearance : i === 10 ? clearance * (1 - t) : 0;
     const fragmentVisualTop = y(fragmentTop) - loadOffset;
     const fragmentVisualBottom = y(fragmentBottom) - loadOffset;
     let feedBottom = y(end) - loadOffset;
     if (i === 0) feedBottom = 357 - 5.6 * t;
-    if (i === 1) feedBottom = interpolate(351.4, y(before ? 35 : 42), t);
+    if (i === 1) feedBottom = interpolate(351.4, y(before ? 51 : 42), t);
     if (i === 13) feedBottom = 357 - 5.6 * t;
     if (i === 14) feedBottom = 351.4;
     if (fragment) feedBottom = Math.min(feedBottom, fragmentVisualTop - gap);
@@ -360,22 +365,25 @@ window.HHTipCuttingScene = {
     if (i >= 3 && i <= 9) {
       const middle = y((fragmentTop + fragmentBottom) / 2) - loadOffset;
       s += `<path d="M${x + 10},${middle} h27" stroke="var(--hh-text)"/>`;
-      s += label(x + 45, middle + 4, before ? 'Cut tip 50mm' : 'Cut tip 10mm');
+      s += label(x + 45, middle + 4, before ? 'Cut tip 34mm' : 'Cut tip 10mm');
     }
     const direction = before && i === 3 ? 1 : before && i === 6 ? 0 : [0, 1, 3, 5, 6, 13].includes(i) ? -1 : [4, 7, 8, 9, 10, 11, 12].includes(i) ? 1 : 0;
     if (motion.moving && direction && !waiting && !(i === 3 && t >= 0.65)) {
       const arrowX = x + 90;
-      const start = direction < 0 ? 129 : 90;
-      const finish = direction < 0 ? 90 : 129;
+      const arrowOffset = [0, 9, 13].includes(i) ? -7 : 0;
+      const start = (direction < 0 ? 129 : 90) + arrowOffset;
+      const finish = (direction < 0 ? 90 : 129) + arrowOffset;
       s += `<g data-part="motion-arrow" fill="none" stroke="var(--hh-text)" stroke-width="2.5"><path d="M${arrowX},${start} V${finish} m-5,${-direction * 7} l5,${direction * 7} l5,${-direction * 7}"/></g>`;
-      const twoLineLabel = i === 4 ? ['Pushback', 'extrude']
-        : i === 9 ? ['Undo', 'retract']
+      const motionLabel = i === 4 ? ['Pushback', 'extrude']
+        : i === 9 ? ['Undo', 'retract', '2mm']
         : i >= 10 && i <= 12 ? ['Purge', 'extrude']
         : i === 1 ? ['Macro', 'retract']
-        : i === 0 || i === 13 ? ['Toolchange', 'retract'] : null;
-      if (twoLineLabel) {
-        s += label(arrowX, y(72) - 7, twoLineLabel[0], 'text-anchor="middle" dominant-baseline="middle"');
-        s += label(arrowX, y(72) + 7, twoLineLabel[1], 'text-anchor="middle" dominant-baseline="middle"');
+        : i === 0 || i === 13 ? ['Toolchange', 'retract', '2mm'] : null;
+      if (motionLabel) {
+        motionLabel.forEach((text, line) => {
+          const offset = (line - (motionLabel.length - 1) / 2) * 14;
+          s += label(arrowX, y(72) + offset, text, 'text-anchor="middle" dominant-baseline="middle"');
+        });
       } else s += label(arrowX, y(72), i === 3 ? (before ? 'Rip extrude' : 'Rip retract') : direction < 0 ? 'Retract' : 'Extrude', 'text-anchor="middle" dominant-baseline="middle"');
     }
     if (i === 6 || stage === 8 || i === 7) {
@@ -423,6 +431,10 @@ window.HHTipCuttingScene = {
     if (tension) s += label(8, 45, 'MMU tensions; extruder holds');
     svg.innerHTML = s;
     svg.setAttribute('viewBox', `0 0 ${width} 460`);
+    // Measure rendered text to keep a consistent gap before each guide line.
+    svg.querySelectorAll('[data-part="reference-label"]').forEach(text => {
+      text.nextElementSibling.setAttribute('x1', 8 + text.getComputedTextLength() + 6);
+    });
   }
 };
 window.HHAnimations.register("tip-cutting-purge", window.HHTipCuttingScene);
