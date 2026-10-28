@@ -124,6 +124,64 @@ longer needed on any page: the Material/Zensical theme renders its own
 long discursive page as much as a flat reference one. Don't add `[TOC]` to
 new pages; it's been removed from the ones that had it (`doc/Reference-Printer-Variables.md`).
 
+## Interactive animations
+
+Animations use three maintained layers:
+
+- `doc/assets/stylesheets/hh-animations.css`: shared palette, typography,
+  responsive controls and light/dark site colors.
+- `doc/assets/javascripts/hh-animations.js`: playback, steps, timeline,
+  parameter highlighting, reduced motion and instant-navigation cleanup.
+- `doc/assets/animations/<name>.js`: each scene's geometry and sequence.
+
+To add a scene, use `tip-cutting-purge.js` as the working example. Register a
+unique name with `window.HHAnimations.register(name, scene)`. The scene provides
+`title`, `caption`, `height`, `secondsPerStage`, `legend`, `stages` and
+`render(svg, position, width)`. Each stage is a three-item array: its title,
+active parameter text and short explanation. The integer part of `position`
+selects the stage; its fractional part is progress through that stage.
+Render using the actual width, keeping labels readable on narrow screens.
+Reduced motion renders the end of each stage without continuous movement.
+Scene markup is trusted repository code; do not insert external input into it.
+
+Add the scene script to `extra_javascript` in `mkdocs.yml` after the shared
+player. Embed it in any Markdown page with a fallback:
+
+```html
+<div data-hh-animation="tip-cutting-purge">
+  <p>See the static illustration above for the cut sequence.</p>
+</div>
+```
+
+The player can appear multiple times on a page. It starts paused and cleans up
+detached players on instant navigation. Playback pauses when the tab is hidden.
+Use the shared `--hh-outgoing`, `--hh-cut`, `--hh-residual`, `--hh-incoming`,
+`--hh-text`, `--hh-surface`, `--hh-metal` and `--hh-border` colors in diagrams.
+
+For an offline download, regenerate the self-contained HTML from the same
+shared assets and scene whenever any of them changes:
+
+```bash
+python3 -m doc_tools.export_animation tip-cutting-purge doc/Macro-Toolhead-Tip-Cutting/tip-cutting-purge.html
+```
+
+Commit the generated HTML alongside its source assets. The published page uses
+the shared player directly; the download bundles the same code and styles with
+no network dependencies. The initial example links to its download using
+`href="Macro-Toolhead-Tip-Cutting/tip-cutting-purge.html"`, relative to the
+Markdown source. The site builder rewrites this to the published location.
+The animation runs in a browser; Markdown viewers such as GitHub do not run it.
+
+Validate with `make docs_check` and `make spellcheck`. Also spell-check new
+untracked source files explicitly, because the Make target selects tracked
+files. Preview the built page at desktop and phone widths in both site themes;
+check playback, scrubbing, step controls, reduced motion, navigation away/back,
+and the offline download. Export tests run with:
+
+```bash
+python3 -m unittest doc_tools.test_export_animation
+```
+
 ## Regenerating the images
 
 ```bash

@@ -176,6 +176,22 @@ Use this lighter section order:
 
 ## Shared presentation changes
 
+### Interactive animations
+
+Use the shared animation player and palette in `doc/assets/` for process
+animations. Keep scene-specific geometry and steps in `doc/assets/animations/`.
+Provide play/pause, step controls, a timeline, readable parameter highlights,
+and a static explanation or illustration for readers without JavaScript.
+Animations start paused, respect reduced motion, and work with instant
+navigation. Use the same outgoing, cut, residual and incoming filament colors
+across scenes; pair colors with labels. Distinguish illustrative values and
+schematic melt behavior from calibrated printer settings.
+
+Authoring and offline-export procedures live in
+[the tooling guide](doc_tools/README.md#interactive-animations).
+
+### Site navigation and theme
+
 The existing header, sidebar home link, Previous/Next navigation, and footer are
 implemented with `mkdocs.yml`, `extra.css`, and `hh-page-nav.js`. Preserve their
 shared behavior when changing presentation:

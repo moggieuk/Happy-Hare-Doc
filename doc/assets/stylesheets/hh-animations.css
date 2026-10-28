@@ -1,0 +1,58 @@
+/* Shared palette and controls, used by both the site and standalone exports. */
+.hh-animation {
+  --hh-text: #20344b;
+  --hh-surface: #e7eef4;
+  --hh-metal: #71869a;
+  --hh-border: #a5b5c4;
+  --hh-outgoing: #cf467d;
+  --hh-cut: #bc5e1c;
+  --hh-residual: #8856bb;
+  --hh-incoming: #168a96;
+  --hh-control: #f6f8fb;
+  color: var(--hh-text);
+  margin: 1.5em 0;
+  padding: 1em;
+  border: 1px solid var(--hh-border);
+  border-radius: 0.6em;
+  font: 16px/1.5 system-ui, sans-serif;
+}
+[data-md-color-scheme="slate"] .hh-animation {
+  --hh-text: #e3eaf2;
+  --hh-surface: #303d4c;
+  --hh-metal: #acbbcc;
+  --hh-border: #657587;
+  --hh-outgoing: #f18ab2;
+  --hh-cut: #f5ad70;
+  --hh-residual: #bc9aef;
+  --hh-incoming: #59c7cc;
+  --hh-control: #28323e;
+}
+.hh-animation-controls, .hh-animation-legend { display: flex; flex-wrap: wrap; gap: 0.5em 1em; }
+.hh-animation button {
+  background: var(--hh-control);
+  color: var(--hh-text);
+  border: 1px solid var(--hh-border);
+  border-radius: 0.35em;
+  padding: 0.45em 0.8em;
+  font: inherit;
+  cursor: pointer;
+  min-height: 44px;
+}
+.hh-animation button:hover:not(:disabled) { border-color: var(--hh-outgoing); }
+.hh-animation button:disabled { opacity: 0.45; cursor: default; }
+.hh-animation :focus-visible { outline: 2px solid var(--hh-outgoing); outline-offset: 3px; }
+.hh-animation .hh-animation-stage { font: 600 1em/1.5 system-ui, sans-serif; margin: 1em 0 0; min-height: 3em; }
+.hh-animation-diagram { display: block; width: 100%; }
+.hh-animation-label { fill: var(--hh-text); font: 12px system-ui, sans-serif; }
+.hh-animation-structure { fill: var(--hh-surface); stroke: var(--hh-border); stroke-width: 1.5; }
+.hh-animation-line { stroke: var(--hh-border); stroke-width: 1; }
+.hh-animation-legend, .hh-animation-detail, .hh-animation-caption { font-size: 0.875em; }
+.hh-animation-outgoing { color: var(--hh-outgoing); }
+.hh-animation-cut { color: var(--hh-cut); }
+.hh-animation-residual { color: var(--hh-residual); }
+.hh-animation-incoming { color: var(--hh-incoming); }
+.hh-animation-parameters { min-height: 4em; padding: 0.8em 0; }
+.hh-animation .hh-animation-parameters code { color: var(--hh-text); background: var(--hh-control); white-space: normal; overflow-wrap: anywhere; }
+.hh-animation-detail { min-height: 4.5em; }
+.hh-animation input[type="range"] { display: block; width: 100%; margin: 0.5em 0; accent-color: var(--hh-outgoing); min-height: 24px; }
+.hh-animation .hh-animation-caption { margin: 0.5em 0 0; }

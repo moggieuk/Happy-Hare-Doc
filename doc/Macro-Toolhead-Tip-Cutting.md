@@ -63,6 +63,22 @@ nozzle, the usual layout - a cut goes like this:
 If your blade is before the extruder gears instead, see [Cutter before the
 extruder](#cutter-before-the-extruder).
 
+### Cutting, loading and purging animation
+
+Follow the same cutter-after-extruder example through the next load and purge.
+Use **Play sequence**, step through with **Previous** and **Next**, or drag
+the timeline. The active configuration settings appear below the toolhead.
+The example adds a 2mm residual-filament allowance and a 2mm parking retract;
+the melt and color transition are schematic, not a prediction of purge volume.
+
+<div data-hh-animation="tip-cutting-purge">
+  <p>The interactive sequence requires JavaScript. The cut sequence and static
+  illustration above describe the same mechanism.</p>
+</div>
+
+<p><a href="Macro-Toolhead-Tip-Cutting/tip-cutting-purge.html" download="tip-cutting-purge.html">Download the animation</a>
+as a self-contained HTML file to open in a browser offline.</p>
+
 ## Configuration
 
 <p align="center">
