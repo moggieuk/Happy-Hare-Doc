@@ -70,6 +70,7 @@ Use **Play sequence**, step through with **Previous** and **Next**, or drag
 the timeline. The active configuration settings appear below the toolhead.
 The example adds a 2mm residual-filament allowance and a 2mm parking retract;
 the melt and color transition are schematic, not a prediction of purge volume.
+The animation uses a 2mm rip retract to make that small movement easier to see.
 
 <div data-hh-animation="tip-cutting-purge">
   <p>The interactive sequence requires JavaScript. The cut sequence and static

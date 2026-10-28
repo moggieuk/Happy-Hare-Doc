@@ -141,6 +141,12 @@ unique name with `window.HHAnimations.register(name, scene)`. The scene provides
 active parameter text and short explanation. The integer part of `position`
 selects the stage; its fractional part is progress through that stage.
 Render using the actual width, keeping labels readable on narrow screens.
+An optional `stageTiming` array overrides timing per stage with `seconds`,
+`moveStart` and `moveEnd`. The latter two are fractions of the stage duration;
+the player holds the starting and ending geometry outside that motion window.
+The renderer receives a fourth argument with `moving`, for temporary direction
+arrows. Use these explanatory holds to make small moves visible; they are not
+printer dwell settings. Omit the array to retain uniform timing.
 Reduced motion renders the end of each stage without continuous movement.
 Scene markup is trusted repository code; do not insert external input into it.
 
@@ -157,6 +163,8 @@ The player can appear multiple times on a page. It starts paused and cleans up
 detached players on instant navigation. Playback pauses when the tab is hidden.
 Use the shared `--hh-outgoing`, `--hh-cut`, `--hh-residual`, `--hh-incoming`,
 `--hh-text`, `--hh-surface`, `--hh-metal` and `--hh-border` colors in diagrams.
+Cut fragments and residual material retain the outgoing filament color;
+distinguish their roles with labels rather than changing the material's color.
 
 For an offline download, regenerate the self-contained HTML from the same
 shared assets and scene whenever any of them changes:

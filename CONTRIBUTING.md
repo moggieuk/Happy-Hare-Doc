@@ -184,7 +184,8 @@ Provide play/pause, step controls, a timeline, readable parameter highlights,
 and a static explanation or illustration for readers without JavaScript.
 Animations start paused, respect reduced motion, and work with instant
 navigation. Use the same outgoing, cut, residual and incoming filament colors
-across scenes; pair colors with labels. Distinguish illustrative values and
+across scenes; cut fragments and residual material keep the outgoing filament
+color, with labels identifying their roles. Distinguish illustrative values and
 schematic melt behavior from calibrated printer settings.
 
 Authoring and offline-export procedures live in

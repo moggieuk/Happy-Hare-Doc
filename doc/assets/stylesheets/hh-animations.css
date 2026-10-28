@@ -5,8 +5,8 @@
   --hh-metal: #71869a;
   --hh-border: #a5b5c4;
   --hh-outgoing: #cf467d;
-  --hh-cut: #bc5e1c;
-  --hh-residual: #8856bb;
+  --hh-cut: var(--hh-outgoing);
+  --hh-residual: var(--hh-outgoing);
   --hh-incoming: #168a96;
   --hh-control: #f6f8fb;
   color: var(--hh-text);
@@ -22,8 +22,6 @@
   --hh-metal: #acbbcc;
   --hh-border: #657587;
   --hh-outgoing: #f18ab2;
-  --hh-cut: #f5ad70;
-  --hh-residual: #bc9aef;
   --hh-incoming: #59c7cc;
   --hh-control: #28323e;
 }
@@ -39,6 +37,10 @@
   min-height: 44px;
 }
 .hh-animation button:hover:not(:disabled) { border-color: var(--hh-outgoing); }
+.hh-animation-controls button { box-sizing: border-box; flex: none; }
+.hh-animation-controls [data-action="play"] { width: 10.5em; }
+.hh-animation-controls [data-action="previous"] { width: 6.5em; }
+.hh-animation-controls [data-action="next"] { width: 5em; }
 .hh-animation button:disabled { opacity: 0.45; cursor: default; }
 .hh-animation :focus-visible { outline: 2px solid var(--hh-outgoing); outline-offset: 3px; }
 .hh-animation .hh-animation-stage { font: 600 1em/1.5 system-ui, sans-serif; margin: 1em 0 0; min-height: 3em; }
@@ -53,6 +55,6 @@
 .hh-animation-incoming { color: var(--hh-incoming); }
 .hh-animation-parameters { min-height: 4em; padding: 0.8em 0; }
 .hh-animation .hh-animation-parameters code { color: var(--hh-text); background: var(--hh-control); white-space: normal; overflow-wrap: anywhere; }
-.hh-animation-detail { min-height: 4.5em; }
-.hh-animation input[type="range"] { display: block; width: 100%; margin: 0.5em 0; accent-color: var(--hh-outgoing); min-height: 24px; }
+.hh-animation-detail { min-height: 3em; }
+.hh-animation input[type="range"] { display: block; width: 100%; margin: 0.25em 0 0; accent-color: var(--hh-outgoing); min-height: 24px; }
 .hh-animation .hh-animation-caption { margin: 0.5em 0 0; }

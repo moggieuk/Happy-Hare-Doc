@@ -21,8 +21,7 @@
       <div class="hh-animation-legend"></div>
       <div class="hh-animation-parameters" aria-live="polite"><code></code></div>
       <div class="hh-animation-detail"></div>
-      <label for="${id}">Sequence position</label>
-      <input id="${id}" type="range" min="0" step="0.001" value="0">
+      <input id="${id}" type="range" aria-label="Sequence position" min="0" step="0.001" value="0">
       <p class="hh-animation-caption"></p>`;
     const find = selector => root.querySelector(selector);
     const play = find('[data-action="play"]');
@@ -37,7 +36,8 @@
     slider.max = end;
     svg.style.height = scene.height + "px";
     svg.setAttribute("aria-label", scene.title);
-    find(".hh-animation-caption").textContent = scene.caption;
+    if (scene.caption) find(".hh-animation-caption").textContent = scene.caption;
+    else find(".hh-animation-caption").remove();
     for (const [kind, label] of scene.legend || []) {
       const item = document.createElement("span");
       const swatch = document.createElement("b");
@@ -63,7 +63,14 @@
         }
         lastStage = index;
       }
-      scene.render(svg, reducedMotion.matches ? index + 0.999 : position, svg.clientWidth || 320);
+      const timing = (scene.stageTiming || [])[index] || {};
+      const start = timing.moveStart ?? 0;
+      const finish = timing.moveEnd ?? 1;
+      const fraction = position - index;
+      const progress = Math.max(0, Math.min(0.999999, (fraction - start) / (finish - start)));
+      scene.render(svg, index + (reducedMotion.matches ? 0.999999 : progress), svg.clientWidth || 320, {
+        moving: !reducedMotion.matches && fraction >= start && fraction < finish
+      });
       slider.value = position;
       previous.disabled = position === 0;
       next.disabled = position >= scene.stages.length - 1;
@@ -77,7 +84,18 @@
     }
     function tick(now) {
       if (!root.isConnected || document.hidden) { pause(); return; }
-      if (lastTime !== null) position = Math.min(end, position + Math.min(100, now - lastTime) / (scene.secondsPerStage * 1000));
+      if (lastTime !== null) {
+        let remaining = Math.min(100, now - lastTime) / 1000;
+        while (remaining > 0 && position < end) {
+          const index = Math.floor(position);
+          const timing = (scene.stageTiming || [])[index] || {};
+          const seconds = timing.seconds ?? scene.secondsPerStage;
+          const boundary = Math.min(index + 1, end);
+          const consumed = Math.min(remaining, (boundary - position) * seconds);
+          position = Math.min(boundary, position + consumed / seconds);
+          remaining -= consumed;
+        }
+      }
       lastTime = now;
       draw();
       if (position >= end) pause();
