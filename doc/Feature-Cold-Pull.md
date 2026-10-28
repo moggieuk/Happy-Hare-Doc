@@ -22,8 +22,8 @@ is its documentation.
 
 Without the macro, the same result is possible by hand:
 
-1. Move the toolhead somewhere convenient (front-middle of the bed, well
-   clear of it) and detach the bowden tube from the toolhead.
+1. Move the toolhead somewhere convenient (front-middle of the bed, at least
+   20mm above it) and detach the bowden tube from the toolhead.
 2. Open the extruder latch, manually feed in ~250mm of filament, close the
    latch.
 3. Extrude 20-30mm, or until it comes out the loaded filament's actual
@@ -54,7 +54,7 @@ MMU_COLD_PULL MATERIAL=pla
 ```
 
 ```{.text .console-output}
-Cold Pull with pull_temp=120°C, hot_temp=250°C, min_extrude_temp=160°C, cold_temp=45°C
+Cold Pull with pull_temp=100°C, hot_temp=250°C, min_extrude_temp=160°C, cold_temp=45°C
 Heating extruder to 250°C
 Cleaning nozzle tip with 25mm of filament
 Allowing extruder to cool...

@@ -481,24 +481,40 @@ often bigger than expected (2-3mm on a low-flow extruder, 12-15mm on a
 high-flow one), and is worth calibrating properly before reaching for the
 setting below as a band-aid.
 
-`toolhead_ooze_reduction` is a small final adjustment on top of that,
-tunable live mid-print:
+Tune `toolhead_ooze_reduction` only after completing the
+[toolhead calibration procedure](Blobbing-and-Stringing.md#calibrating-the-toolhead).
+It adjusts the loading distance in millimeters of filament:
 
-```text
-MMU_TEST_CONFIG toolhead_ooze_reduction=1
-```
+- Start at `0`, with no additional reduction.
+- A positive value shortens the load: `1` loads 1mm less filament.
+- A negative value lengthens the load: `-1` loads 1mm more filament.
+
+Use a real print with repeated toolchanges to judge the result:
+
+1. Start with `toolhead_ooze_reduction=0` and inspect the wipe tower just
+   after each load.
+2. If a blob appears, increase the value slightly to load less filament.
+   If a gap appears before extrusion resumes, decrease it to load more.
+3. Adjust in small steps and compare several toolchanges before adjusting
+   again. You can change the value during the print without restarting:
+
+    ```text
+    MMU_TEST_CONFIG toolhead_ooze_reduction=1
+    ```
+
+4. Keep the adjustment small, typically only a few millimeters. A slightly
+   negative value is possible; a large correction in either direction is
+   a reason to recheck the toolhead dimensions, residual filament and,
+   with a cutter, blade position and retraction length.
+5. Copy the final value into `mmu.cfg` to keep it after a restart.
 
 <p align="center">
   <img src="Feature-Tip-Forming-Purging/toolhead_ooze_reduction.png" alt="A purge tower with blobs/gaps at different toolhead_ooze_reduction values from -3 to 8mm, with +1mm marked as correct" width="60%">
 </p>
 
-Blobs on the purge tower after a load mean the value is too low (more
-reduction needed); a big gap after a load means it's too high. A working
-value is usually small, ±3mm at most, once the toolhead geometry and
-`toolhead_residual_filament` are actually correct - needing a large or
-negative value is itself a sign one of those two is off, not that this
-setting needs to compensate further. Persist the final value in `mmu.cfg`
-once you're happy with it.
+This adjustment controls filament loading. Tune travel stringing separately
+with [toolchange retraction and Z-hop](Blobbing-and-Stringing.md#toolchange-retraction-and-z-hop)
+after the load is correct.
 
 ## Commands
 

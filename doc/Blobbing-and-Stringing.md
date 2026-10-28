@@ -125,7 +125,7 @@ parked at the gate - not loaded into the extruder yet. Then:
 MMU_CALIBRATE_TOOLHEAD CLEAN=1
 ```
 
-(add `SAVE=0` to measure without persisting, e.g. to double-check
+(add `SAVE=0` to measure without applying the results, e.g. to double-check
 repeatability). This runs a series of probing moves on a cold extruder and
 reports the empty-toolhead dimensions:
 
@@ -157,7 +157,7 @@ nozzle shoulder's position and, from it, `toolhead_extruder_to_nozzle`,
 
 !!! tip
     - Re-run with `SAVE=0` any time you want to sanity-check repeatability
-      without touching your saved config - just remember the filament will
+      without changing the active settings - just remember the filament will
       grind a little in the gears/extruder each time, so eject, cut off the
       used portion, and use a fresh segment for the next attempt.
     - If you have a filament tension/compression sensor (e.g. Belay) on the
@@ -234,6 +234,12 @@ accurate and is worth re-running.
 
 ### Step 5: Calibrate the tip-cutting blade position (if fitted)
 
+For cutter setup and the meaning of its settings, see
+[Tip Shaping: Toolhead Cutting](Macro-Toolhead-Tip-Cutting.md).
+The procedure below applies to a blade after the extruder gears. For a
+[cutter before the extruder](Macro-Toolhead-Tip-Cutting.md#cutter-before-the-extruder),
+measure the blade position by hand; `CUT=1` is not supported for that layout.
+
 Toolhead dimensions having changed likely means the cutter's own blade
 position needs recalibrating too - `variable_blade_pos` and
 `variable_retract_length` (both in `mmu_macro_vars.cfg`) control how much
@@ -254,7 +260,7 @@ next load.
     -----------------------------------
     Calibration Results (cut tip):
     > variable_blade_pos: 36.2 (currently: 37.5)
-    > variable_retract_length: 5.0-36.2, recommend: 32.2 (currently: 32.5)
+    > variable_retract_length: 5.0-36.2, recommend: 31.2 (currently: 32.5)
     -----------------------------------
     New calibrated variables active until restart. Update mmu_macro_vars.cfg to persist
     ```
@@ -285,6 +291,15 @@ tension sensor in place for this step too.
 
 `UNIT=` (name or number) targets a specific unit on a multi-unit machine,
 optional if you only have one.
+
+## Final Blob Tuning
+
+Once the dimensions and residual filament are calibrated, start
+`toolhead_ooze_reduction` at `0` and make small adjustments during a real
+print. Positive values shorten the load; negative values lengthen it.
+Follow the [ooze-tuning procedure](Feature-Tip-Forming-Purging.md#toolhead-calibration-and-toolhead_ooze_reduction)
+to distinguish blobs from gaps of the wipe tower and save
+the final setting.
 
 ## Toolchange Retraction and Z-Hop
 
@@ -355,6 +370,7 @@ temperature defaults.
 
 ## See also
 
+- [Tip Shaping: Toolhead Cutting](Macro-Toolhead-Tip-Cutting.md) - cutter configuration and layout-specific limitations
 - [Feature: Cold Pull](Feature-Cold-Pull.md) - cleaning/prepping the nozzle before calibration
 - [Command Reference: `MMU_CALIBRATE_TOOLHEAD`](Reference-Commands.md#mmu_calibrate_toolhead)
 - [Command Reference: `MMU_UNLOAD`](Reference-Commands.md#mmu_unload)
