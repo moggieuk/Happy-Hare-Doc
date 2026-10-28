@@ -214,6 +214,10 @@ fragment through to the nozzle.
 - **Toolhead sensor.** The pushback must clear the toolhead sensor. If the
   fragment is still on it, the next load stops with "Possible toolhead
   sensor malfunction".
+- **Without the MMU gear** (`MMU_UNLOAD EXTRUDER_ONLY=1` or bypass), the
+  pushback can't carry the fragment past the gears, and only an extruder
+  sensor before the blade can check the cut. Happy Hare warns you to clear
+  the fragment by hand before the next load.
 - **Blade calibration.** `MMU_CALIBRATE_TOOLHEAD CUT=1` can't measure
   `blade_pos` for this layout and refuses while `cutter_before_extruder` is
   set, so measure it by hand.
