@@ -40,8 +40,14 @@ theme:
     - search.suggest
 extra_css:
   - assets/stylesheets/extra.css
+  - assets/stylesheets/hh-animations.css
 
 extra_javascript:
+  - assets/javascripts/hh-animations.js
+  - assets/animations/tip-cutting-after-purge.js
+  - assets/animations/tip-cutting-before-purge.js
+  - assets/animations/tip-forming.js
+  - assets/animations/mmu-servo-cutter.js
   - assets/javascripts/hh-page-nav.js
   - assets/javascripts/hh-pinout-embed.js
   # Mermaid, loaded and driven ourselves (hh-mermaid.js) rather than through

@@ -47,6 +47,31 @@ The other settings on this screen control when and how forming runs:
 | **Happy Hare controlled in-print tip forming/cutting** | Leave enabled to run `_MMU_FORM_TIP` during prints and disable the slicer's own tip forming. Disable it when the slicer will form the tip; menuconfig then exposes **Slicer tip park pos**. |
 | **Extruder tip forming current** | Percentage of normal extruder current to use while forming. `100` disables the boost; increase it only as needed, up to `150`. |
 
+## Tip-forming animation
+
+Follow the macro through ramming, the three-part separation pull, four cooling
+cycles, optional skinnydip and parking. The animation uses the shared toolhead
+and MMU view without a cutter; the formed filament tip is schematic.
+
+This illustrative example enables 23mm³ ramming, a 35mm cooling-tube position and 10mm cooling stroke,
+skinnydip and 500ms dwell times. These are demonstration settings, not a tuning
+recommendation: ramming, temperature changes and skinnydip are disabled by
+default. The MMU is shown synced to the extruder, with a 2mm initial toolchange retract
+and 3mm residual-filament allowance. Ramming first recovers the initial retract;
+residual melt stays behind when the tip separates. These allowances reduce the
+separation pull to 40mm before the cooling strokes.
+Movement and temperature waits are slowed for readability. After the macro
+finishes, the animation continues through the surrounding unload, load and purge
+sequence using the same toolhead and MMU movements as
+the cutting examples, with no cut fragment.
+
+<div data-hh-animation="tip-forming">
+  <p>Tip forming first rams filament, retracts it from the nozzle into a cooling
+  zone, moves it back and forth to cool, optionally dips it into the melt zone,
+  then parks the shaped tip for unloading. The MMU unloads it, loads the next
+  filament and purges the residual melt before the color transition.</p>
+</div>
+
 ## Configuration
 
 <p align="center">

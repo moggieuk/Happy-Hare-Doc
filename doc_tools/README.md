@@ -124,6 +124,72 @@ longer needed on any page: the Material/Zensical theme renders its own
 long discursive page as much as a flat reference one. Don't add `[TOC]` to
 new pages; it's been removed from the ones that had it (`doc/Reference-Printer-Variables.md`).
 
+## Interactive animations
+
+Animations use three maintained layers:
+
+- `doc/assets/stylesheets/hh-animations.css`: shared palette, typography,
+  responsive controls and light/dark site colors.
+- `doc/assets/javascripts/hh-animations.js`: playback, steps, timeline,
+  parameter highlighting, reduced motion and instant-navigation cleanup.
+- `doc/assets/animations/<name>.js`: each scene's geometry and sequence.
+
+To add a scene, use `tip-cutting-after-purge.js` as the working example. Register a
+unique name with `window.HHAnimations.register(name, scene)`. The scene provides
+`title`, `caption`, `height`, `secondsPerStage`, `legend`, `stages` and
+`render(svg, position, width)`. Each stage is a three-item array: its title,
+active parameter text and short explanation. The integer part of `position`
+selects the stage; its fractional part is progress through that stage.
+Render using the actual width, keeping labels readable on narrow screens.
+An optional `stageTiming` array overrides timing per stage with `seconds`,
+`moveStart` and `moveEnd`. The latter two are fractions of the stage duration;
+the player holds the starting and ending geometry outside that motion window.
+The renderer receives a fourth argument with `moving`, for temporary direction
+arrows, plus `stageProgress` for effects that continue during motion holds.
+Use these explanatory holds to make small moves visible; they are not
+printer dwell settings. Omit the array to retain uniform timing.
+The two toolhead-cutting scenes share `HHTipCuttingScene` from
+`tip-cutting-after-purge.js`. Load that script before `tip-cutting-before-purge.js`
+and `tip-forming.js`. The forming scene reuses the toolhead/MMU drawing with
+`hideCutter`, then renders its own macro-derived filament motion and cooling
+zone. Keep its example values and movement descriptions consistent with
+`mmu_form_tip.cfg`; temperature and tip-shape effects are schematic.
+
+Reuse the same `data-hh-animation` scene identifier wherever an animation is
+needed; keep scene code central in `doc/assets/animations/`. Wrap embeds in
+`hh-animation-grid` for half-width columns that stack on small screens.
+A single embed occupies one half-width column.
+
+The `servo-cutter` scene follows `mmu_servo_cutter.cfg` with one cut attempt,
+including the preceding unload for context. Keep its servo defaults and command
+order aligned with that macro; Bowden deflection and offcut disposal are schematic.
+
+Reduced motion renders the end of each stage without continuous movement.
+Scene markup is trusted repository code; do not insert external input into it.
+
+Add the scene script to `extra_javascript` in `mkdocs.yml` after the shared
+player. Embed it in any Markdown page with a fallback:
+
+```html
+<div data-hh-animation="tip-cutting-purge">
+  <p>See the static illustration above for the cut sequence.</p>
+</div>
+```
+
+The player can appear multiple times on a page. It starts paused and cleans up
+detached players on instant navigation. Playback pauses when the tab is hidden.
+Use the shared `--hh-outgoing`, `--hh-cut`, `--hh-residual`, `--hh-incoming`,
+`--hh-text`, `--hh-surface`, `--hh-metal` and `--hh-border` colors in diagrams.
+Cut fragments and residual material retain the outgoing filament color;
+distinguish their roles with labels rather than changing the material's color.
+
+The animation runs in a browser; Markdown viewers such as GitHub do not run it.
+
+Validate with `make docs_check` and `make spellcheck`. Also spell-check new
+untracked source files explicitly, because the Make target selects tracked
+files. Preview the built page at desktop and phone widths in both site themes;
+check playback, scrubbing, step controls, reduced motion, and navigation away/back.
+
 ## Regenerating the images
 
 ```bash

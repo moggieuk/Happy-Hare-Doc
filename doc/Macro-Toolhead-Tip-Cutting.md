@@ -63,6 +63,20 @@ nozzle, the usual layout - a cut goes like this:
 If your blade is before the extruder gears instead, see [Cutter before the
 extruder](#cutter-before-the-extruder).
 
+### Cutting, loading and purging animation
+
+Follow the same cutter-after-extruder example through the next load and purge.
+Use **Play sequence**, step through with **Previous** and **Next**, or drag
+the timeline. The active configuration settings appear below the toolhead.
+The example adds a 3mm residual-filament allowance and a 2mm parking retract;
+the melt and color transition are schematic, not a prediction of purge volume.
+The animation uses a 2mm rip retract to make that small movement easier to see.
+
+<div data-hh-animation="tip-cutting-purge">
+  <p>The interactive sequence requires JavaScript. The cut sequence and static
+  illustration above describe the same mechanism.</p>
+</div>
+
 ## Configuration
 
 <p align="center">
@@ -140,6 +154,20 @@ it isn't.
 The fragment, `blade_pos - retract_length` long, stays in the toolhead.
 The next load pushes it through the nozzle, and it's counted in the purge
 volume.
+
+### Cutter-before-extruder animation
+
+This version places the blade at 85mm above both the entry sensor and extruder
+gears. It uses a 51mm retract to leave a shorter 34mm fragment, and a 35mm
+pushback to place its top at 50mm, 12mm below the toolhead sensor. It shows
+MMU-only tension, a forward rip by the extruder, the sensor check, and loading
+and purging the fragment. The static worked example below uses different
+retract and pushback values.
+
+<div data-hh-animation="tip-cutting-before-purge">
+  <p>The interactive sequence requires JavaScript. The illustration and worked
+  example describe the same cutter-before-extruder mechanism.</p>
+</div>
 
 ### Checking the cut
 
