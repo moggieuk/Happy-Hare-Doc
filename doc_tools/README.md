@@ -149,7 +149,11 @@ arrows, plus `stageProgress` for effects that continue during motion holds.
 Use these explanatory holds to make small moves visible; they are not
 printer dwell settings. Omit the array to retain uniform timing.
 The two toolhead-cutting scenes share `HHTipCuttingScene` from
-`tip-cutting-purge.js`. Load that script before `tip-cutting-before-purge.js`.
+`tip-cutting-purge.js`. Load that script before `tip-cutting-before-purge.js`
+and `tip-forming.js`. The forming scene reuses the toolhead/MMU drawing with
+`hideCutter`, then renders its own macro-derived filament motion and cooling
+zone. Keep its example values and movement descriptions consistent with
+`mmu_form_tip.cfg`; temperature and tip-shape effects are schematic.
 
 Reduced motion renders the end of each stage without continuous movement.
 Scene markup is trusted repository code; do not insert external input into it.

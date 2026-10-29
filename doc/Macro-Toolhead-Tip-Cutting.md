@@ -68,7 +68,7 @@ extruder](#cutter-before-the-extruder).
 Follow the same cutter-after-extruder example through the next load and purge.
 Use **Play sequence**, step through with **Previous** and **Next**, or drag
 the timeline. The active configuration settings appear below the toolhead.
-The example adds a 2mm residual-filament allowance and a 2mm parking retract;
+The example adds a 3mm residual-filament allowance and a 2mm parking retract;
 the melt and color transition are schematic, not a prediction of purge volume.
 The animation uses a 2mm rip retract to make that small movement easier to see.
 
