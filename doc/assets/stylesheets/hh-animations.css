@@ -63,4 +63,24 @@
 
 .hh-animation-swatch { display: inline-block; width: 1.5rem; height: 4px; border-radius: 2px; background: currentColor; font-size: 0; vertical-align: middle; }
 
-.hh-animation-brand { display: block; flex: none; width: 32px; height: 32px; margin-left: auto; align-self: center; border-radius: 5px; background: url("../images/favicon.png") center / contain no-repeat; }
+.hh-animation-brand { display: block; flex: none; width: 32px; height: 32px; margin-left: auto; align-self: center; border-radius: 5px; }
+
+/* Reuse scene embeds at half width, stacking them on small screens. */
+.hh-animation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1em;
+  margin: 1.5em 0;
+}
+.hh-animation-grid > * { min-width: 0; }
+.hh-animation-grid-centered { grid-template-columns: minmax(0, 1fr); }
+.hh-animation-grid-centered > * { width: calc((100% - 1em) / 2); justify-self: center; box-sizing: border-box; }
+.hh-animation-grid .hh-animation { margin: 0; font-size: 13px; }
+.hh-animation-grid .hh-animation-controls { gap: 0.5em; }
+.hh-animation-grid .hh-animation-diagram { height: auto !important; aspect-ratio: 700 / 460; }
+@media (max-width: 700px) {
+  .hh-animation-grid { grid-template-columns: minmax(0, 1fr); }
+  .hh-animation-grid-centered > * { width: 100%; }
+}
+
+.hh-animation .hh-animation-brand img { display: block; width: 32px; height: 32px; max-width: none; margin: 0; border-radius: 5px; box-shadow: none; }

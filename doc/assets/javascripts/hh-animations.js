@@ -3,6 +3,7 @@
 /* Shared, dependency-free player for documentation animations. */
 (function () {
   "use strict";
+  const logoUrl = new URL("../images/favicon.png", document.currentScript.src).href;
   const scenes = new Map();
   const players = new Map();
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -16,7 +17,7 @@
         <button type="button" data-action="play">Play sequence</button>
         <button type="button" data-action="previous">Previous</button>
         <button type="button" data-action="next">Next</button>
-        <a class="hh-animation-brand" href="https://github.com/moggieuk/Happy-Hare" target="_blank" rel="noopener noreferrer" aria-label="Happy Hare on GitHub" title="Happy Hare on GitHub"></a>
+        <a class="hh-animation-brand" href="https://github.com/moggieuk/Happy-Hare" target="_blank" rel="noopener noreferrer" aria-label="Happy Hare on GitHub" title="Happy Hare on GitHub"><img class="no-floating" src="${logoUrl}" alt="" width="32" height="32"></a>
       </div>
       <h4 class="hh-animation-stage" aria-live="polite"></h4>
       <svg role="img" class="hh-animation-diagram"></svg>

@@ -62,6 +62,20 @@ relationship between these concrete:
   <img src="Blobbing-and-Stringing/Loading_Tip_Forming.png" alt="Loading with tip forming, dimensions annotated" width="70%">
 </p>
 
+#### Animation
+
+This example shows tip forming with an entry sensor and a toolhead sensor.
+Operation adjusts slightly to the available sensors and configured settings.
+
+<div class="hh-animation-grid hh-animation-grid-centered">
+  <div data-hh-animation="tip-forming">
+    <p>The filament tip is formed and unloaded, then new filament is loaded
+    and the residual filament is purged.</p>
+  </div>
+</div>
+
+<small>See [Tip Shaping: Forming](Macro-Tip-Forming.md) for macro configuration (and larger animation).</small>
+
 ### With Toolhead Tip Cutting
 
 Tip cutting is a little more involved, and introduces two more macro
@@ -78,12 +92,44 @@ The remaining cut filament fragment and the residual filament are both
 accounted for automatically, as long as the parameters are configured to
 match this illustration.
 
+#### Animation
+
+These example animations show cutters after and before the extruder gears. Both use
+two sensors; operation adjusts slightly to the available sensors and configured
+settings.
+
+<div class="hh-animation-grid">
+  <div>
+    <p><strong>Cutter after the extruder</strong></p>
+    <div data-hh-animation="tip-cutting-purge">
+      <p>The cutter below the extruder gears leaves a short fragment that is
+      pushed toward the nozzle and purged with the residual filament.</p>
+    </div>
+  </div>
+  <div>
+    <p><strong>Cutter before the extruder</strong></p>
+    <div data-hh-animation="tip-cutting-before-purge">
+      <p>The cutter above the entry sensor leaves a longer fragment that is
+      pushed below the sensors and purged with the residual filament.</p>
+    </div>
+  </div>
+</div>
+
+<small>See [Tip Shaping: Toolhead Cutting](Macro-Toolhead-Tip-Cutting.md) for macro configuration (and larger animation).</small>
+
 !!! tip
-    `printer.mmu.extruder_filament_remaining` reports the total filament
-    left in the extruder - `toolhead_residual_filament` plus any cut tip
-    fragment. `printer.mmu.toolchange_purge_volume` combines that with the
-    slicer's own purge-volume matrix to give the total suggested purge
-    volume for the current toolchange.
+    `printer.mmu.extruder_filament_remaining` is the total length of old filament
+    (in mm) still in the extruder after an unload. It is the sum of two parts.
+    The first is `toolhead_residual_filament`, a fixed length set in config for
+    the filament that always stays behind in the hotend; the load also shortens
+    its final move by this amount. The second is the cut tip fragment: the piece
+    of filament left between the cutter and the nozzle after the last cut.
+    Happy Hare records it per extruder and resets it to zero once fresh filament
+    reaches the nozzle. `printer.mmu.toolchange_purge_volume` converts that length
+    to mm³ and adds the slicer’s purge-volume matrix value for this tool change,
+    plus any material-change volume. It never returns less than
+    `purge_change_min_volume`. It is only non-zero while a toolchange or load
+    is in progress.
 
 !!! warning "Important"
     1. The nozzle's internal "shoulder" is the real 0mm reference point for

@@ -85,7 +85,7 @@
         // Treat the straight toolhead and curved Bowden as one centerline.
         // Movement references the full-width shoulder; the cone is additive
         // and spans the join rather than shrinking away at the handoff.
-        if (tailStage >= 6 && tailStage <= 12) {
+        if (tailStage >= 6 && tailStage <= 13) {
           const feed = svg.querySelector('[data-part="feed"]');
           const tube = svg.querySelector('[data-part="bowden"]');
           const filament = svg.querySelector('[data-part="bowden-filament"]');
@@ -93,7 +93,11 @@
           const origin = tube.getPointAtLength(0);
           const height = feed ? Number(feed.getAttribute('height')) : 0;
           const baseDistance = height > 0 ? -height : Number(filament.dataset.start) * length;
-          const tipDistance = baseDistance - 7;
+          // Preserve the incoming nose at purge entry, then melt it smoothly
+          // into the residual while the full-width shoulder keeps advancing.
+          const melt = tailStage === 13 ? progress * progress * (3 - 2 * progress) : 0;
+          const tipDistance = baseDistance - 7 * (1 - melt);
+          const clip = tailStage === 13 ? feed.parentElement.getAttribute('clip-path') : null;
           const pointAt = distance => distance < 0
             ? {x: origin.x, y: origin.y - distance} : tube.getPointAtLength(Math.min(length, distance));
           const tip = pointAt(tipDistance);
@@ -108,7 +112,7 @@
           filament.setAttribute('stroke-dashoffset', -start * 1000);
           const color = tailStage >= 8 ? 'var(--hh-incoming)' : 'var(--hh-outgoing)';
           const middle = {x: (tip.x + center.x) / 2, y: (tip.y + center.y) / 2};
-          svg.insertAdjacentHTML('beforeend', `<path data-part="formed-tip" d="M${center.x + nx},${center.y + ny} Q${middle.x + nx * 0.45},${middle.y + ny * 0.45} ${tip.x},${tip.y} Q${middle.x - nx * 0.45},${middle.y - ny * 0.45} ${center.x - nx},${center.y - ny} Z" fill="${color}"/>`);
+          svg.insertAdjacentHTML('beforeend', `<path data-part="formed-tip" ${clip ? `clip-path="${clip}"` : ''} d="M${center.x + nx},${center.y + ny} Q${middle.x + nx * 0.45},${middle.y + ny * 0.45} ${tip.x},${tip.y} Q${middle.x - nx * 0.45},${middle.y - ny * 0.45} ${center.x - nx},${center.y - ny} Z" fill="${color}"/>`);
         }
         return;
       }

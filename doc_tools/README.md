@@ -155,6 +155,11 @@ and `tip-forming.js`. The forming scene reuses the toolhead/MMU drawing with
 zone. Keep its example values and movement descriptions consistent with
 `mmu_form_tip.cfg`; temperature and tip-shape effects are schematic.
 
+Reuse the same `data-hh-animation` scene identifier wherever an animation is
+needed; keep scene code central in `doc/assets/animations/`. Wrap embeds in
+`hh-animation-grid` for half-width columns that stack on small screens.
+A single embed occupies one half-width column.
+
 Reduced motion renders the end of each stage without continuous movement.
 Scene markup is trusted repository code; do not insert external input into it.
 
