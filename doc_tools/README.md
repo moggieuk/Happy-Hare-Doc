@@ -134,7 +134,7 @@ Animations use three maintained layers:
   parameter highlighting, reduced motion and instant-navigation cleanup.
 - `doc/assets/animations/<name>.js`: each scene's geometry and sequence.
 
-To add a scene, use `tip-cutting-purge.js` as the working example. Register a
+To add a scene, use `tip-cutting-after-purge.js` as the working example. Register a
 unique name with `window.HHAnimations.register(name, scene)`. The scene provides
 `title`, `caption`, `height`, `secondsPerStage`, `legend`, `stages` and
 `render(svg, position, width)`. Each stage is a three-item array: its title,
@@ -149,7 +149,7 @@ arrows, plus `stageProgress` for effects that continue during motion holds.
 Use these explanatory holds to make small moves visible; they are not
 printer dwell settings. Omit the array to retain uniform timing.
 The two toolhead-cutting scenes share `HHTipCuttingScene` from
-`tip-cutting-purge.js`. Load that script before `tip-cutting-before-purge.js`
+`tip-cutting-after-purge.js`. Load that script before `tip-cutting-before-purge.js`
 and `tip-forming.js`. The forming scene reuses the toolhead/MMU drawing with
 `hideCutter`, then renders its own macro-derived filament motion and cooling
 zone. Keep its example values and movement descriptions consistent with
