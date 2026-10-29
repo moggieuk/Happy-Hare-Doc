@@ -160,6 +160,10 @@ needed; keep scene code central in `doc/assets/animations/`. Wrap embeds in
 `hh-animation-grid` for half-width columns that stack on small screens.
 A single embed occupies one half-width column.
 
+The `servo-cutter` scene follows `mmu_servo_cutter.cfg` with one cut attempt,
+including the preceding unload for context. Keep its servo defaults and command
+order aligned with that macro; Bowden deflection and offcut disposal are schematic.
+
 Reduced motion renders the end of each stage without continuous movement.
 Scene markup is trusted repository code; do not insert external input into it.
 

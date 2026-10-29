@@ -33,12 +33,23 @@ edit Macro variables"). Add it as a
 variable_user_post_unload_extension : 'SERVO_CUTTER_ACTION'
 ```
 
-!!! note
-    `mmu_macro_vars.cfg`'s own section banner for this block describes it as
-    a "post_load_extension" - that's stale relative to the macro file's own
-    header comment and the hook it's actually written to receive
-    (`user_post_unload_extension`); wire it up per the macro file's own
-    instruction above, not the banner text.
+## Animation
+
+This example starts with the same toolchange and macro retractions as the
+cutter-inside-extruder animation, without a blade in the toolhead. The
+cone and fine hair stay on the tip as it unloads to the MMU. It then follows the servo-cutter
+macro using a 48mm feed length, 10mm cut length and one cut attempt. The cutter
+opens to move the Bowden aside before feeding. It cuts the 10mm tip, plus the schematic formed nose, then makes a 1mm rip
+retract to separate the remaining filament from the blade. Gate parking follows
+your configured unload method. Movement is slowed for visibility; the falling
+offcut and blade-clearance stroke are illustrative. After the old tip is
+discarded, the animation continues with the next filament loading and purging.
+
+<div data-hh-animation="servo-cutter">
+  <p>After unloading to the MMU, open the cutter, feed the old tip past the blade,
+  close the cutter and then retract 1mm. Record the cut, restore the start-of-Bowden
+  filament state, park in the gate again and wait for motion to finish.</p>
+</div>
 
 ## Enabling the MMU cutter
 

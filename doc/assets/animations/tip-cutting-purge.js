@@ -321,7 +321,7 @@ window.HHTipCuttingScene = {
     const residualHeight = 27 * residual / 3;
     // Toolchange retraction shifts the entire retained melt upward. Loading
     // brings the fragment to it; the unretract advances both together.
-    const residualLift = this.formedUnload ? 0 : i < 9 ? 5.6 : i === 9 ? 5.6 * (1 - t) : 0;
+    const residualLift = this.formedUnload && !this.residualRetracted ? 0 : i < 9 ? 5.6 : i === 9 ? 5.6 * (1 - t) : 0;
     const residualTop = y(0) - residualHeight - residualLift;
     // Make space for the visually enlarged residual by translating the whole
     // fragment and its pushing filament, never clipping the fragment shorter.
