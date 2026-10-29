@@ -159,7 +159,8 @@
       const hairOpacity = index === 13 ? Math.max(0, 1 - (motion.stageProgress ?? progress) / 0.3) : 1;
       if (index >= 2 && index <= 13 && hairGrowth > 0 && hairOpacity > 0) {
         const hairLength = 12 * 2.8 * hairGrowth;
-        feed.insertAdjacentHTML('afterend', `<path data-part="tip-hair" d="M${x - 0.8},${tipY} C${x + 0.25},${tipY + hairLength / 3} ${x - 1},${tipY + hairLength * 2 / 3} ${x + 0.4},${tipY + hairLength} C${x - 0.6},${tipY + hairLength * 2 / 3} ${x + 1.35},${tipY + hairLength / 3} ${x + 0.8},${tipY} Z" fill="var(--hh-outgoing)" opacity="${hairOpacity}"/>`);
+        const hairRoot = tipY - Math.min(1.5, coneLength * 0.25);
+        feed.insertAdjacentHTML('afterend', `<path data-part="tip-hair" d="M${x - 0.8},${hairRoot} C${x + 0.25},${tipY + hairLength / 3} ${x - 1},${tipY + hairLength * 2 / 3} ${x + 0.4},${tipY + hairLength} C${x - 0.6},${tipY + hairLength * 2 / 3} ${x + 1.35},${tipY + hairLength / 3} ${x + 0.8},${hairRoot} Z" fill="var(--hh-outgoing)" opacity="${hairOpacity}"/>`);
       }
       const separated = index >= 2 && tipY < 322;
       if (index >= 2) feed.insertAdjacentHTML('afterend', `<rect data-part="forming-residual" x="${x - 5}" y="323" width="10" height="34" fill="var(--hh-outgoing)"/>`);

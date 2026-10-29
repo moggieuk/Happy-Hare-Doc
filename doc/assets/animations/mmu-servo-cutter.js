@@ -109,7 +109,8 @@
         const c=pointAt(distance), p=pointAt(distance-7*growth), a=pointAt(distance-.25), b=pointAt(distance+.25);
         const norm=Math.hypot(b.x-a.x,b.y-a.y)||1, nx=-(b.y-a.y)/norm, ny=(b.x-a.x)/norm;
         const left=pointAt(distance-7*growth-33.6*growth);
-        return `<g data-part="servo-tip"><path d="M${c.x+5*nx},${c.y+5*ny} Q${p.x+3*nx},${p.y+3*ny} ${p.x},${p.y} Q${p.x-3*nx},${p.y-3*ny} ${c.x-5*nx},${c.y-5*ny} Z" fill="var(--hh-outgoing)"/><path data-part="servo-hair" d="M${p.x+.8*nx},${p.y+.8*ny} Q${left.x+nx},${left.y+ny} ${left.x},${left.y} Q${left.x-nx},${left.y-ny} ${p.x-.8*nx},${p.y-.8*ny} Z" fill="var(--hh-outgoing)"/></g>`;
+        const root=pointAt(distance-5.5*growth);
+        return `<g data-part="servo-tip"><path d="M${c.x+5*nx},${c.y+5*ny} Q${p.x+3*nx},${p.y+3*ny} ${p.x},${p.y} Q${p.x-3*nx},${p.y-3*ny} ${c.x-5*nx},${c.y-5*ny} Z" fill="var(--hh-outgoing)"/><path data-part="servo-hair" d="M${root.x+.8*nx},${root.y+.8*ny} Q${left.x+nx},${left.y+ny} ${left.x},${left.y} Q${left.x-nx},${left.y-ny} ${root.x-.8*nx},${root.y-.8*ny} Z" fill="var(--hh-outgoing)"/></g>`;
       };
       if (i>=3 && !cut && !loading) {
         const pointAt = d => i>=5 ? {x:mx,y:gearY-(length-d)} : d<0 ? {x:origin.x,y:origin.y-d} : tube.getPointAtLength(Math.min(length,d));

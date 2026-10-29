@@ -381,9 +381,10 @@ window.HHTipCuttingScene = {
       const shoulder = fragment ? fragmentVisualBottom : feedBottom;
       const tip = shoulder + 7 * growth;
       const hairLength = 12 * 2.8 * growth;
+      const hairRoot = tip - 1.5 * growth;
       const fade = i === 10 ? Math.max(0, 1 - t / 0.2) : 1;
       if (growth > 0 && fade > 0) {
-        s += `<g data-part="cut-fragment-tip" opacity="${fade}"><path d="M${x - 5},${shoulder} Q${x - 3},${tip - 7 * growth / 3} ${x},${tip} Q${x + 3},${tip - 7 * growth / 3} ${x + 5},${shoulder} Z" fill="var(--hh-outgoing)"/><path data-part="cut-fragment-hair" d="M${x - 0.8},${tip} C${x + 0.25},${tip + hairLength / 3} ${x - 1},${tip + hairLength * 2 / 3} ${x + 0.4},${tip + hairLength} C${x - 0.6},${tip + hairLength * 2 / 3} ${x + 1.35},${tip + hairLength / 3} ${x + 0.8},${tip} Z" fill="var(--hh-outgoing)"/></g>`;
+        s += `<g data-part="cut-fragment-tip" opacity="${fade}"><path d="M${x - 5},${shoulder} Q${x - 3},${tip - 7 * growth / 3} ${x},${tip} Q${x + 3},${tip - 7 * growth / 3} ${x + 5},${shoulder} Z" fill="var(--hh-outgoing)"/><path data-part="cut-fragment-hair" d="M${x - 0.8},${hairRoot} C${x + 0.25},${tip + hairLength / 3} ${x - 1},${tip + hairLength * 2 / 3} ${x + 0.4},${tip + hairLength} C${x - 0.6},${tip + hairLength * 2 / 3} ${x + 1.35},${tip + hairLength / 3} ${x + 0.8},${hairRoot} Z" fill="var(--hh-outgoing)"/></g>`;
       }
     }
     // Height is enlarged for visibility; width matches every other filament.
