@@ -113,7 +113,6 @@ procedure and the effect of Replace mode on manual configuration edits.
       -s to skip restart of services
       -a <name> to specify alternative klipper-service-name when installed with Kiauh
       -r allow running install.sh from a root login (not through sudo)
-      -e, --emu Enables multi MCU support (e.g. for EMU design)
       -g <gates> most gates one MMU unit can configure (12 or more, default 12, sticky; more is slower)
       -o override compatibility checks (e.g. unknown MIPS layout)
       -t  activate test mode - write config to /tmp/mmu_test instead of your real install
@@ -156,15 +155,19 @@ procedure and the effect of Replace mode on manual configuration edits.
 
 === "Per Lane Controllers"
 
-    For MMU's like EMU that use dedicated controllers/MCU's per lane, support needs
-    to be enabled by specifying `-e` or `--emu` e.g. 
+    EMU enables per-gate MCU support automatically when selected in
+    **MMU Type**. Run the interactive installer to configure the connection
+    for each gate:
 
-    ```bash 
-    ./install.sh -i -e
+    ```bash
+    ./install.sh -i
     ```
 
-    Once your configuration has per-gate MCU support enabled, later runs turn it
-    on automatically, so `-e` isn't needed again.
+    If a single board drives the whole EMU unit, turn off
+    **MMU Type → Design attributes → Per-gate MCUs?**. The installer then
+    offers the regular board list and configures one MCU and one CPU
+    temperature sensor for the unit. See the
+    [EMU quick start](GettingStarted-EMU.md#choosing-the-mmu-type).
 
 === "More than 12 gates"
 

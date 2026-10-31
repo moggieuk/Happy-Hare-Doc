@@ -268,9 +268,10 @@ BTT ViViD:
 
 ### Per-gate boards (EMU multi-MCU designs)
 
-A per-gate MCU setup (`--emu`/`-e` on the installer, see
-[Installation](Installation.md#running-the-installer)) picks one of these
-per gate instead of a single board for the whole unit:
+EMU enables per-gate MCUs by default, using these board choices instead of
+the regular single-board list. To use one board for the whole EMU unit,
+turn off **MMU Type → Design attributes → Per-gate MCUs?** in menuconfig.
+See the [EMU quick start](GettingStarted-EMU.md#choosing-the-mmu-type).
 
 | Board | Pinout above? |
 |---|---|
