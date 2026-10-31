@@ -17,20 +17,15 @@ where these examples show unit-specific names or pin prefixes.
 First clone the Happy Hare repository as described in
 [Cloning Happy Hare](Installation.md#cloning-happy-hare).
 
-Then run the installer with EMU support enabled:
+Then run the installer:
 
 ```bash
 cd Happy-Hare
-./install.sh -e
+./install.sh
 ```
 
 The first run opens `menuconfig` automatically because no `.mmu_config` exists
 yet; no `-i` flag is needed.
-
-!!! note
-    `-e` ensures multi-mcu (mcu per gate) support, you may omit it on later
-    iterations. `menuconfig` may take longer to start up as a result, but it is
-    required for a typical EMU setup with small mcu per device.
 
 <p align="center"> <img src="GettingStarted-EMU/01-first-run.png" alt="First
   run: nothing configured yet" width="70%"> </p>
@@ -62,6 +57,11 @@ immediately: the radio button fills in (`(X) EMU Type-B`), and new lines appear
 indented underneath it — **PSF Buffer**, **Number of gates**, **Design
 attributes** — options that only make sense once Happy Hare knows this is an
 EMU.
+
+EMU enables per-gate MCU support by default. For a single board driving the
+whole unit, turn off **MMU Type → Design attributes → Per-gate MCUs?**.
+Then select your board and configure its single MCU connection. The rest of
+this walkthrough assumes the default of one MCU per gate.
 
 ### Number of gates
 
