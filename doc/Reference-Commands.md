@@ -174,18 +174,19 @@ LOOSEN    = [0|1] Quick way to loosen filament on spool
 OPERATION = [assist|off|print|rewind] Set espooler operation mode
 POWER     = [0-100] Override default % power to apply to espooler motor
 QUIET     = [0|1] Used to suppress console/log output
-RESET     = [0|1] Turn of in-print assist
+RESET     = [0|1] Turn off in-print assist
 TIGHTEN   = [0|1] Quick way to tighten filament on spool
 (no parameters for status report)
 ```
 
 ```{.text .console-output}
 Examples:
-MMU_ESPOOLER                         ...Report espooler status
-MMU_ESPOOLER GATE=2 TIGHTEN=1        ...Tighten filament on the spool at gate 2
-MMU_ESPOOLER GATE=2 BURST=1 POWER=50 ...Jog espooler on gate 2 in the current operation direction at 50% power
-MMU_ESPOOLER GATE=2 OPERATION=rewind ...Set gate 2 espooler to rewind (in-print) mode
-MMU_ESPOOLER ALLOFF=1                ...Turn all espoolers off
+MMU_ESPOOLER                                          ...Report espooler status
+MMU_ESPOOLER GATE=2 TIGHTEN=1                         ...Tighten filament on the spool at gate 2
+MMU_ESPOOLER GATE=2 OPERATION=assist BURST=1 POWER=50 ...Burst espooler on gate 2 in assist direction at 50% power
+MMU_ESPOOLER GATE=2 OPERATION=rewind                  ...Run gate 2 espooler continuously in rewind direction
+MMU_ESPOOLER GATE=2 OPERATION=off                     ...Turn gate 2 espooler off
+MMU_ESPOOLER ALLOFF=1                                 ...Turn all espoolers off
 ```
 
 ### MMU_FAN

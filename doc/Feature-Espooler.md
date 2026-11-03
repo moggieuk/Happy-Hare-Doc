@@ -21,13 +21,15 @@ modes, tracked independently per gate:
   toolchange.
 - **`print`** - a *sticky* per-gate mode, not a continuous drive: Happy Hare
   arms it automatically once filament is loaded into the extruder, and it
-  stays armed for whichever gate is currently in use, for as long as printing
-  continues. While armed, the motor itself is idle at 0% until something
+  stays armed for the selected gate until that filament is unloaded. While
+  armed, the motor itself is idle at 0% until something
   triggers a short **burst** in the assist direction (see below) - the intent
   is to periodically relieve spool tension during a print without ever
   letting the DC motor spin fast enough to overrun and dump loose filament.
 - **`off`** - motor stopped. Always reachable regardless of current mode,
-  including interrupting an in-progress burst.
+  including interrupting an in-progress burst. On a gate armed for `print`,
+  `off` stops the motor but leaves print mode armed; `MMU_ESPOOLER RESET=1`
+  disarms it.
 
 Only one gate at a time can hold "print assist" mode; selecting a different
 gate cancels it for the previous one. See
@@ -163,7 +165,7 @@ on units that have the feature enabled - the same **eSpooler config** screen
 shown under [Hardware Setup](#hardware-setup) above, before its pin rows:
 
 ```ini
-espooler_min_distance: 50                    # Individual stepper movements less than this distance will not activate espooler
+espooler_min_distance: 30                    # Individual stepper movements less than this distance will not activate espooler
 espooler_max_stepper_speed: 300              # Gear stepper speed at which espooler will be at maximum power
 espooler_min_stepper_speed: 0                # Gear stepper speed at which espooler will become inactive (useful for non-PWM control)
 espooler_speed_exponent: 0.5                 # Controls non-linear espooler power relative to stepper speed (see below)
@@ -172,12 +174,12 @@ espooler_printing_power: 0                   # If >0, fixes the % of PWM power w
 espooler_operations: rewind, assist, print   # Which operations are permitted at all, independent of what's wired
 
 espooler_assist_extruder_move_length: 100    # Distance (mm) extruder needs to move between each assist burst
-espooler_assist_burst_power: 50              # % power of the assist burst move
+espooler_assist_burst_power: 100             # % power of the assist burst move
 espooler_assist_burst_duration: 0.4          # Duration (s) of the assist burst move
 espooler_assist_burst_trigger: 0             # 0=extruder-movement trigger, 1=tension-switch trigger
 espooler_assist_burst_trigger_max: 3         # Max back-to-back bursts before assuming the trigger sensor is stuck
 
-espooler_rewind_burst_power: 50              # % power of the rewind burst move (drying rotation, TIGHTEN)
+espooler_rewind_burst_power: 100             # % power of the rewind burst move (drying rotation, TIGHTEN)
 espooler_rewind_burst_duration: 0.4          # Duration (s) of the rewind burst move
 ```
 
@@ -279,18 +281,22 @@ MMU_ESPOOLER GATE=0 OPERATION=assist BURST=1 POWER=50  # manual burst, explicit 
 motor for one burst using that operation's configured (or overridden) power
 and duration, then returns to whatever mode the gate was already in - `off`
 or `print` are both valid starting states for this, so you don't strictly
-need to arm print mode first just to test a burst. `TIGHTEN=1`/`LOOSEN=1` are
+need to arm print mode first just to test a burst. A burst is ignored while
+the gate is running a continuous `rewind` or `assist`, and `BURST=1` without
+an `OPERATION` is an error. `TIGHTEN=1`/`LOOSEN=1` are
 shorthand for exactly that combination at the gate's configured rewind/assist
 burst power and duration. `OPERATION=print` arms in-print assist manually on
 a gate - mostly useful for testing burst behavior outside of an actual print,
 since Happy Hare arms it automatically once filament reaches the extruder.
 `TRIGGER=1` fires a burst exactly as the real trigger source would, for
-testing without extruder movement or a physical switch. `RESET=1` clears
-in-print assist mode for the unit's current gate.
+testing without extruder movement or a physical switch. `RESET=1` disarms
+in-print assist on the unit - the only way to leave `print` mode by hand.
 
 !!! tip
-    `MMU_ESPOOLER ALLOFF=1` is the quickest way to force every gate's
-    espooler off at once, regardless of what mode each one is currently in.
+    `MMU_ESPOOLER ALLOFF=1` is the quickest way to stop every gate's
+    espooler motor at once, regardless of what mode each one is currently
+    in. A gate armed for in-print assist stays armed; use `RESET=1` to
+    disarm it.
 
 ## Printer variables exposed
 
@@ -328,7 +334,7 @@ MMU_ESPOOLER
 
 ```{.text .console-output}
 0 : off     (0%)
-1 : print   (0%) [assist for 0.4s at 50% power on trigger, max 3 bursts]
+1 : print   (0%) [assist for 0.4s at 100% power on trigger, max 3 bursts]
 2 : off     (0%)
 3 : off     (0%)
 ```
@@ -392,6 +398,7 @@ MMU_ESPOOLER
 3. Test: `MMU_ESPOOLER GATE=0 OPERATION=print POWER=0` to arm, then
    `MMU_ESPOOLER GATE=0 OPERATION=assist BURST=1` to fire a burst by hand -
    you should see it jump to burst power/duration and settle back to 0%.
+   `MMU_ESPOOLER GATE=0 RESET=1` disarms print mode afterwards.
 
 **Intelli-assist, tension-switch trigger:**
 
@@ -400,14 +407,15 @@ MMU_ESPOOLER
 3. Set `espooler_assist_burst_trigger: 1` and
    `espooler_assist_burst_trigger_max` (back-to-back burst safety cap).
 4. Test the same way, or trigger the physical switch and watch it burst; use
-   `MMU_ESPOOLER ALLOFF=1` to reset out of intelli-assist mode.
+   `MMU_ESPOOLER GATE=0 RESET=1` to reset out of intelli-assist mode.
 
 ## Troubleshooting
 
 - **`MMU_ESPOOLER` reports `not fitted` for a gate you expect to have one** -
-  the gate's unit either has no `[mmu_espooler <name>]` section, or that
-  gate's rewind/assist pins are both empty. Check `mmu_hardware.cfg` and that
-  the owning `[mmu_unit]`'s `espooler:` key points at the right section name.
+  the gate's unit has no `[mmu_espooler <name>]` section. Check
+  `mmu_hardware.cfg` and that the owning `[mmu_unit]`'s `espooler:` key points
+  at the right section name. A gate whose rewind/assist pins are both empty
+  still reports `off` and silently ignores every operation.
 - **Espooler never engages during a load/unload move** - check
   `espooler_min_distance` (move too short) and `espooler_min_stepper_speed`
   (move too slow) first; both silently suppress activation rather than
@@ -415,8 +423,8 @@ MMU_ESPOOLER
 - **Repeated "temporarily suspended" errors during printing** - the trigger
   pin is reporting more than `espooler_assist_burst_trigger_max` consecutive
   triggers with no gap, which usually means the tension switch is
-  mechanically stuck closed rather than a software problem. `MMU_ESPOOLER
-  RESET=1` clears the suspended state once the switch is freed.
+  mechanically stuck closed rather than a software problem. Bursts resume
+  by themselves once the switch opens again.
 - **Spool overspins and dumps loose filament** - `assist` (or `rewind`) is
   running too fast for the mechanism; reduce `espooler_max_stepper_speed` or
   `espooler_assist_reduced_speed` rather than the burst power settings, since
