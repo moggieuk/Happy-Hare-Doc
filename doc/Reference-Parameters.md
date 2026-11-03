@@ -407,7 +407,7 @@ including the PWM power curve formula these settings feed.
 | `espooler_speed_exponent` | `0.5` | Non-linear power-vs-speed exponent |
 | `espooler_assist_reduced_speed` | `50`% | % of rewind speed applied to assist-while-loading |
 | `espooler_full_spool_power` | `100`% | Full-spool fraction of normal gear-move power, 10–100%; `100` disables weight scaling. See [eSpooler](Feature-Espooler.md#spool-weight-compensation) |
-| `espooler_printing_power` | `0` | Fixed % PWM power while printing if `>0`; `0` allows burst-style assist moves instead |
+| `espooler_printing_power` | `0` | `0` enables in-print burst assist; `>0` disables it and sets a minimum % power for load assist |
 | `espooler_operations` | `rewind, assist, print` | Which operational modes are active - remove any to disable them even if the hardware supports them |
 | `espooler_assist_extruder_move_length` | `100` mm | Extruder distance between assist bursts |
 | `espooler_assist_burst_power` | `100`% | Power of an assist burst move |
