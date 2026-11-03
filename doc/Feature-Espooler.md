@@ -20,7 +20,8 @@ modes, tracked independently per gate:
   and friction, so the gear stepper isn't fighting the spool's mass every
   toolchange.
 - **`print`** - a *sticky* per-gate mode, not a continuous drive: Happy Hare
-  arms it automatically once filament is loaded into the extruder, and it
+  arms it automatically once filament is loaded into the extruder (only while
+  `espooler_printing_power` is `0`, the default), and it
   stays armed for the selected gate until that filament is unloaded. While
   armed, the motor itself is idle at 0% until something
   triggers a short **burst** in the assist direction (see below) - the intent
@@ -60,8 +61,8 @@ below for a worked example of the curve's shape.
 
 ### In-print bursts: two independent trigger sources
 
-With `print` mode armed and `espooler_printing_power: 0` (the default), the
-motor stays at 0% until a burst is triggered by exactly one of:
+With `print` mode armed, the motor stays at 0% until a burst is triggered by
+exactly one of:
 
 1. **Extruder movement** (default) - an extruder-movement monitor fires a
    burst every `espooler_assist_extruder_move_length` mm of extruder
@@ -170,7 +171,7 @@ espooler_max_stepper_speed: 300              # Gear stepper speed at which espoo
 espooler_min_stepper_speed: 0                # Gear stepper speed at which espooler will become inactive (useful for non-PWM control)
 espooler_speed_exponent: 0.5                 # Controls non-linear espooler power relative to stepper speed (see below)
 espooler_assist_reduced_speed: 50            # % of the "rewind" speed applied to assisting load (rewind should be faster than assist)
-espooler_printing_power: 0                   # If >0, fixes the % of PWM power while printing; 0 enables burst-mode assist instead
+espooler_printing_power: 0                   # 0 enables in-print burst assist; >0 disables it and sets a minimum % power for load assist
 espooler_operations: rewind, assist, print   # Which operations are permitted at all, independent of what's wired
 
 espooler_assist_extruder_move_length: 100    # Distance (mm) extruder needs to move between each assist burst
@@ -248,16 +249,16 @@ as the effective on/off threshold instead.
 A % of the calculated `rewind` power for that same gear speed. You want the
 espooler to keep tension tight on rewind, but you don't want it to *over*-feed
 on assist and get ahead of the gear stepper - the default `50` runs assist at
-half of what rewind would do at the same speed. This never drops below the
-`print`-mode power floor.
+half of what rewind would do at the same speed. This never drops below
+`espooler_printing_power`.
 
 #### `espooler_printing_power`
 
-A fixed % of power applied to the motor for as long as printing continues -
-just enough to "release the braking effort" of the spool's own resistance,
-not enough to spin it on its own. Recommended starting point is `0`
-(burst-mode assist instead, see below); if you do use a fixed value, keep it
-low and confirm it isn't dragging filament off the spool uncontrolled.
+Leave this at `0` (the default) for in-print burst assist. Any value above
+`0` turns in-print assist off: Happy Hare no longer arms `print` mode when
+filament loads, and `MMU_ESPOOLER OPERATION=print` does nothing. The value
+then only sets a minimum % power for `assist` during MMU load moves (see
+[`espooler_assist_reduced_speed`](#espooler_assist_reduced_speed)).
 
 !!! tip
     As with most `mmu_parameters`, every setting on this page can be changed
@@ -380,22 +381,13 @@ MMU_ESPOOLER
 4. Test: `MMU_ESPOOLER GATE=0 OPERATION=assist` then `MMU_ESPOOLER GATE=0
    OPERATION=off`.
 
-**Basic in-print assist:**
-
-1. Wire the assist pin as above.
-2. Set `espooler_printing_power` to a small % - just enough to release the
-   spool's own braking effort, not enough to let it spin freely.
-3. Confirm `print` is in `espooler_operations`.
-4. Test: `MMU_ESPOOLER GATE=0 OPERATION=print` then `MMU_ESPOOLER GATE=0
-   OPERATION=off`.
-
 **Intelli-assist, extruder-movement trigger:**
 
-1. Complete basic in-print assist above, then set `espooler_printing_power:
-   0` to switch from a fixed power to burst mode.
+1. Wire the assist pin as above, confirm `print` is in `espooler_operations`
+   and leave `espooler_printing_power: 0`.
 2. Set `espooler_assist_burst_power`/`espooler_assist_burst_duration` for the
    jog itself.
-3. Test: `MMU_ESPOOLER GATE=0 OPERATION=print POWER=0` to arm, then
+3. Test: `MMU_ESPOOLER GATE=0 OPERATION=print` to arm, then
    `MMU_ESPOOLER GATE=0 OPERATION=assist BURST=1` to fire a burst by hand -
    you should see it jump to burst power/duration and settle back to 0%.
    `MMU_ESPOOLER GATE=0 RESET=1` disarms print mode afterwards.
