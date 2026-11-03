@@ -44,8 +44,9 @@ context:
 | disabled     |            |         |         |         |          | ✅      | ✅      |
 
 Each operation's actual parking move is a 5-value tuple: X, Y, z-hop, a
-horizontal ramp distance for the z-hop move (helps break stringing), and a
-retraction length. Negative X/Y is fine if your printer can handle it:
+horizontal ramp distance for the z-hop move (helps break stringing; it heads
+toward, but never past, the bed center), and a retraction length. Negative X/Y
+is fine if your printer can handle it:
 
 ```ini
 variable_park_pause: 50, 50, 5, 10, 2
@@ -71,6 +72,17 @@ separately for horizontal and pure-vertical moves:
 variable_park_travel_speed: 200       ; XY(Z) travel speed, mm/s
 variable_park_lift_speed: 15          ; Z-only travel speed, mm/s
 ```
+
+X/Y are gcode coordinates, so any XY gcode offset applies. Happy Hare keeps
+its own parking and restore moves within the axis limits. If a move would end
+outside them, it's pulled just inside, with a warning the first time in a print.
+
+!!! warning "Skew correction"
+    With Klipper `[skew_correction]` loaded, the correction grows with height.
+    A park position on or near the edge of the machine can be beyond the axis
+    limits at higher Z, even if it works at the first layer. Keep park
+    coordinates a little inside the boundary, and check them with
+    `MMU_CHECK_POSITION`. See [Skew & Build Envelope](Skew-Build-Envelope.md).
 
 So a 20mm z-hop-only park with 5mm retraction on cancel would minimally be:
 
@@ -178,6 +190,14 @@ is just one example.
 How the toolhead returns to the print after a toolchange is controlled by
 `variable_restore_xy_pos` in `mmu_macro_vars.cfg`:
 
+When `user_park_move_macro` is configured, Happy Hare calls it with
+`RESTORE=1` and the destination `X`, `Y` and feed rate `F`. For both `last`
+and `next`, Happy Hare then completes any remaining X/Y travel at
+`variable_park_travel_speed` at the lifted height before lowering Z. If the
+macro already reached the destination, this adds no travel. A custom route
+around an obstacle should reach the supplied destination itself; any
+remaining travel is a straight move.
+
 ### `last` (default)
 
 Returns to the **last** X/Y position the toolhead was at when the
@@ -262,5 +282,7 @@ so it always ends up the intended height above any printed object.
 - [Macro: Sequence](Macro-Sequence.md) - the menuconfig view of these same
   settings, plus the load/unload extension hooks this page only mentions in
   passing
+- [Skew & Build Envelope](Skew-Build-Envelope.md) - keeping park positions in
+  range with skew correction, and checking them with `MMU_CHECK_POSITION`
 
 ---

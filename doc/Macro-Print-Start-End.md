@@ -46,6 +46,13 @@ Variables: Print start/end](Reference-Macro-Vars.md#print-startend-_mmu_software
   ([Feature: Statistics & Consumption Counters](Feature-Statistics-Counters.md))
   respectively.
 
+!!! tip "Skew correction"
+    If your start-print macro loads a Klipper skew profile, follow it with
+    `MMU_CHECK_POSITION X= Y= ERROR=1` lines for any position that must be
+    exact, such as a toolhead cutter's pin points. The print then stops before
+    the first toolchange if a position would be out of range at some height. See
+    [Skew & Build Envelope](Skew-Build-Envelope.md#checking-at-print-start).
+
 ## See also
 
 - [Macro Customization](Macro-Customization.md) - the extension mechanism

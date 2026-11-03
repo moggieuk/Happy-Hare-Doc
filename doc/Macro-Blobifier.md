@@ -46,7 +46,7 @@ The default cleaning macro is `BLOBIFIER_CLEAN`; leave it blank to skip cleaning
 
 Open menuconfig's **Purging --->** screen and enable **Have Blobifier?**.
 This expands the screen with the bucket-presence input and the tray actuator
-settings. Then open **Select standalone purging option** and choose
+settings. Then open **Happy Hare purging method** and choose
 **Blobifier**. Check this choice explicitly when adding Blobifier to an
 existing configuration: menuconfig can retain the previous **Simple purge
 into bucket** selection.
@@ -63,7 +63,7 @@ The fields in this screen configure the hardware generated in `mmu.cfg`:
 | **Blobifier tray actuator** | Select **Servo** for the servo-driven tray or **Stepper (manual_stepper)** for the stepper-driven tray. This also sets the actuator type used by the Blobifier macros. |
 | **Blobifier servo pin** and pulse widths | Generated as `[mmu_servo blobifier]`. The default pulse widths are starting points; tune the minimum for fully out and the maximum for fully in without servo buzz. |
 | **Servo h/w max angle** and startup angle | Match the servo's angular range to its pulse widths. Optionally set a position to apply at Klipper startup. |
-| **Select standalone purging option** | Choose **Blobifier**. **Simple purge into bucket** runs the much simpler `_MMU_PURGE` macro and does not activate Blobifier. |
+| **Happy Hare purging method** | Choose **Blobifier**. **Simple purge into bucket** runs the much simpler `_MMU_PURGE` macro and does not activate Blobifier. |
 | **Happy Hare controlled in-print purge** | Leave enabled to use Blobifier during prints, and turn off the slicer's wipe tower. |
 
 Selecting **Stepper (manual_stepper)** replaces the servo fields with the
@@ -101,6 +101,40 @@ tune-to-taste: `toolhead_x`/`toolhead_y` (nozzle-to-toolhead-edge offsets)
 and `tray_top` (the tray's real Z height) - the shipped defaults are a
 specific build's measurements, not a sensible starting point for yours.
 
+!!! warning "Skew correction"
+    Blobifier's purge row and brush sit at the back edge of the machine
+    (Y max less `y_offset` / `brush_y_offset`), and the shaker at the X
+    minimum side (`shaker_pos_x`). With Klipper `[skew_correction]` loaded,
+    these positions can end up beyond the axis limits as Z increases. Happy
+    Hare pulls those moves just inside the limit automatically and warns once
+    per print, but the nozzle then isn't exactly where you calibrated it. Use
+    `MMU_CHECK_POSITION` with your skew profile to see how far inside the edge
+    the positions need to be, and adjust `y_offset`, `brush_y_offset` or
+    `shaker_pos_x` to match. The former `skew_correction` variable has been
+    removed. If you used it for extra clearance, add that amount to these
+    offsets instead. See [Skew & Build Envelope](Skew-Build-Envelope.md).
+
+### Parking, temperature and synchronization
+
+`BLOBIFIER_PARK` requires XYZ homing. It requires completed quad gantry leveling
+only when `[quad_gantry_level]` is configured. When the tray is marked unsafe,
+`force_safe_descend_height_until` still permits descent to `tray_top` while the
+recorded print height is below that threshold. At or above it, the unsafe-tray
+guard prevents descent; `0` disables this override for nonnegative print heights.
+Check physical clearance before relying on the low-height override.
+
+If Blobifier raises the nozzle temperature for a purge, it restores the previous
+target afterward unless another macro changed that target during purging. This
+restoration does not itself wait for cooldown. Blobifier does not adjust buffer
+tension between blobs; with a sync-feedback buffer, Happy Hare adjusts tension
+after loading (`toolhead_post_load_tension_adjust`).
+
+When approaching the brush, after wiping and after the tray retracts, the
+nozzle moves to `brush_clearance_x` mm left of `brush_start` (never below
+X=30) to stay clear of the tray and any Filametrix cutter pin. The default of
+20 mm suits the standard build; change it if your brush, tray or cutter needs
+a different gap.
+
 ## See also
 
 - [Feature: Tip Forming and Purging](Feature-Tip-Forming-Purging.md) - the
@@ -112,5 +146,7 @@ specific build's measurements, not a sensible starting point for yours.
   worked example combining Blobifier with a fully custom park/purge, no
   wipe tower
 - [Purge: Simple](Macro-Purge.md) - the simpler built-in alternative
+- [Skew & Build Envelope](Skew-Build-Envelope.md) - keeping edge positions in
+  range with skew correction, and checking them with `MMU_CHECK_POSITION`
 
 ---

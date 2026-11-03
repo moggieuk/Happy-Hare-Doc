@@ -1,6 +1,7 @@
 aetherium
 AliExpress
 allgates
+AntHead
 Anycubic
 automap
 automapping
@@ -36,6 +37,7 @@ configurator
 constructers
 Creality
 crossload
+Cura
 DECSTBM
 DejaVu
 Dockerfiles
@@ -52,6 +54,7 @@ eSpooler
 execve
 fantasticae
 filamenthub
+Filametrix
 FlowGuard
 Fluidd
 flutare

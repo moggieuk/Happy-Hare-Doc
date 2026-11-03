@@ -43,12 +43,14 @@ command.
 
 ## Where it fits in the order
 
-Toolhead calibration is **independent of the other steps** on
-[Calibration](Calibration.md#recommended-order) - it doesn't depend on
-selector, gear, encoder, or bowden calibration, and none of them depend
-on it. Run it whenever convenient, and re-run it any time you change
-toolhead hardware (a new hotend, a different nozzle length) without
-needing to redo anything else.
+Complete the applicable selector, gear, encoder and bowden calibrations
+first, following the [recommended order](Calibration.md#recommended-order).
+The toolhead calibration command checks these prerequisites for the selected
+gate before it runs.
+
+Re-run toolhead calibration when you change the hotend, nozzle or other
+toolhead geometry. Repeat any earlier calibration whose measured path or
+hardware also changed.
 
 ## See also
 

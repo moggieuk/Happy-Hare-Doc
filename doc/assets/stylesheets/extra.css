@@ -126,6 +126,19 @@ body {
   color: #4ade80;
 }
 
+/*
+ * Error text inside a console-output block, red as on the Mainsail/Fluidd
+ * console. Markdown fences can't color part of a block, so write that block as
+ * raw HTML (<div class="console-output codehilite"><pre><code>) and wrap the
+ * error lines in <span class="console-error">.
+ */
+.md-typeset .console-output .console-error {
+  color: #c62828;
+}
+[data-md-color-scheme="slate"] .md-typeset .console-output .console-error {
+  color: #f87171;
+}
+
 .md-typeset .console-command > pre {
   margin-bottom: 0;
 }

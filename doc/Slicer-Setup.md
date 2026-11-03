@@ -231,7 +231,7 @@ begins. Set `show_error_dialog: 0` to disable the pop-up entirely and rely
 on the console/log instead.
 
 <p align="center">
-  <img src="Slicer-Setup/error_dialog_during_start.png" alt="MMU error dialog during print start" width="400">
+  <img src="Slicer-Setup/error_dialog_during_start.png" alt="MMU pause dialog during print start: bypass selected for a multi-color print" width="400">
 </p>
 
 !!! warning "Important"

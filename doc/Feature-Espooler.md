@@ -187,6 +187,33 @@ harmless to leave in place - for example if no `assist_motor_pin` is wired,
 That makes `espooler_operations` most useful as a way to explicitly turn a
 mode **off** even though the hardware for it exists.
 
+### Spool weight compensation
+
+`espooler_full_spool_power` sets the percentage of normal gear-move rewind/assist
+power used for a full spool. Its range is 10–100; the default `100` leaves power
+unchanged. Power rises linearly toward normal as the spool empties. For example,
+`50` gives half normal power when full and 75% when half full. Unknown weights
+leave power unchanged. The assist floor from `espooler_printing_power` still
+applies; bursts and direct `MMU_ESPOOLER` commands are not weight-scaled.
+
+[Spoolman](Feature-Spoolman.md) supplies remaining and initial net filament
+weights. With scaling enabled, each load requests an asynchronous refresh from
+Spoolman, ready for the next unload.
+Without Spoolman, enter net grams manually:
+
+```text
+MMU_GATE_MAP GATE=0 WEIGHT=500 INITIAL_WEIGHT=1000
+MMU_GATE_MAP DETAILS=1
+```
+
+Spoolman owns these values in `pull` mode. They are saved across restarts and
+cleared when a spool changes or its gate becomes empty. Manual weights do not
+automatically track filament consumption.
+
+The final blind eject move does not rewind the spool: once the gear loses its
+grip, rewinding could pull the tip into the spool. Ejection that homes to an
+entry sensor still rewinds until that sensor clears.
+
 #### `espooler_speed_exponent`
 
 This shapes how power ramps up as the gear stepper speeds up, not the overall

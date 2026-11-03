@@ -86,7 +86,7 @@ bigger picture; this table is the full list that page deferred.
 | `park_lift_speed` | `15` mm/s | Speed for Z-only travel |
 | `retract_speed` | `30` mm/s | Speed of the retract move |
 | `unretract_speed` | `30` mm/s | Speed of the unretract move |
-| `user_park_move_macro` | *(empty)* | Macro called instead of a plain `G1 X Y` move to park - receives `X=`/`Y=`/`F=`, and `RESTORE=1` plus the restore coordinates when un-parking |
+| `user_park_move_macro` | *(empty)* | Macro called instead of a plain `G1 X Y` move to park - receives `X=`/`Y=`/`F=`, and `RESTORE=1` plus the restore coordinates when un-parking. Use `_SAFE_G1` in place of `G1` to keep its moves within the axis limits |
 | `auto_home` | `True` | Automatically home XYZ if needed before parking |
 | `timelapse` | `False` | Take a timelapse frame after a load |
 | `user_mmu_error_extension` | *(empty)* | Run after default logic when an MMU error occurs |
@@ -122,6 +122,7 @@ the mechanical routine; this is every knob involved.
 |---|---|---|
 | `restore_position` | `False` | Return the toolhead to its position before the cut - leave off if using the parking logic above instead |
 | `blade_pos` | `37.5` mm | Distance from the internal nozzle tip to the cutting blade - a toolhead dimension, not a tuning value |
+| `cutter_before_extruder` | `False` | `True` when the blade is before the extruder gears rather than between the gears and the nozzle - see [cutter before the extruder](Macro-Toolhead-Tip-Cutting.md#cutter-before-the-extruder) |
 | `retract_length` | `32.5` mm | Retract distance before the cut, measured from the nozzle tip - must be less than `blade_pos`; ~5mm less is a good starting point |
 | `simple_tip_forming` | `True` | Do a simple tip-forming move after the initial retraction, for extra cooling time |
 | `cut_axis_steppers` | `stepper_x, stepper_y` | Steppers to boost current on during the cut |
@@ -130,8 +131,9 @@ the mechanical routine; this is every knob involved.
 | `pin_loc_xy` | `14, 250` | X,Y of the depressor pin - where the cutter arm just touches it |
 | `pin_park_dist` | `5.0` mm | Distance added to (or subtracted from) `pin_loc_xy` along `cutting_axis`, for a safe starting position with room to build momentum |
 | `pin_loc_compressed_xy` | `0.5, 250` | X,Y when the cutter is fully compressed |
-| `rip_length` | `1.0` mm | Retract distance after the cut, to free the blade before returning |
+| `rip_length` | `1.0` mm | Retract distance after the cut, to free the blade before returning. With the cutter before the extruder the extruder pushes the fragment this far instead |
 | `rip_speed` | `3` mm/s | Speed of that retract |
+| `tension_length` | `10.0` mm | Cutter before the extruder only: how far the gear retracts before the cut to pull the filament taut across the blade (`0` disables) |
 | `pushback_length` | `15.0` mm | How far the cut fragment is pushed back into the hotend, so it can't cause a future clog - can't exceed `retract_length` minus `toolhead_ooze_reduction` |
 | `pushback_dwell_time` | `0` ms | Dwell time after the pushback |
 | `travel_speed` | `150` mm/s | General travel speed for the cut sequence |
@@ -222,7 +224,6 @@ left to its upstream README alone.
 | `toolhead_y` | *(calibrate)* | Distance from the nozzle to the front edge of the toolhead - **must calibrate** |
 | `travel_spd_xy` | `10000` mm/min | XY travel speed |
 | `travel_spd_z` | `1000` mm/min | Z travel speed |
-| `skew_correction` | `0.1` | Small XY nudge if skew correction causes an out-of-range error during Blobifier's own moves - adjust in 0.1-0.5mm steps only |
 | `y_offset` | `0` | Offset subtracted from max Y during purging - calibrate by checking the toolhead is centred over the tray at max Y |
 | `force_safe_descend_height_until` | `1.0` | Forces a "safe descend" (rather than skipping a downward move that might hit a print) below this height - useful at print start when no height estimate exists yet |
 
@@ -242,6 +243,7 @@ left to its upstream README alone.
 | Variable | Default | Description |
 |---|---|---|
 | `brush_start` | `67` | Start X of a bed-mounted brush - indicative defaults `34`/`67`/`84` for 250/300/350mm builds; for a gantry-mounted brush, set to your nozzle-stop position instead |
+| `brush_clearance_x` | `20` mm | Distance left of `brush_start` the nozzle parks before and after brushing, clear of the tray and any Filametrix cutter pin (never below X=30) |
 | `brush_width` | `35` mm | Brush width along X |
 | `brush_top` | `6` | Z position of the brush top - start high and lower carefully; `None` for a gantry-mounted brush needing no Z move |
 | `clearance_z` | `2` mm | Z clearance above the brush while traveling |
@@ -254,7 +256,7 @@ left to its upstream README alone.
 
 | Variable | Default | Description |
 |---|---|---|
-| `purge_length_minimum` | `30` mm | Absolute minimum purged, even with no color change - primes the nozzle; roughly 2x your melt-zone length |
+| `purge_length_minimum` | `30` mm | Absolute minimum purged, even with no color change - primes the nozzle; roughly 2x your melt-zone length. If Happy Hare's `purge_change_min_volume` gives a longer purge, that is used instead |
 | `purge_length_maximum` | `150` mm | Maximum filament per single blob - Blobifier splits into multiple blobs above this |
 | `purge_length` | `150` mm | Fallback purge length, if neither the tool map's purge volumes nor an explicit `PURGE_LENGTH` are set |
 | `purge_length_modifier` | `1.0` | Multiplies the slicer-emitted purge value - prefer adjusting the slicer's own purge multiplier instead |
@@ -320,6 +322,8 @@ capable alternative.
 - [Parameters](Reference-Parameters.md) - the `mmu.cfg`/`mmu_parameters.cfg` config
   settings these macros work alongside
 - [Command Reference](Reference-Commands.md) - every `MMU_*` command
+- [Customizing the Error Dialog](Macro-Customization.md#customizing-the-error-dialog) -
+  adding lines and an `ABORT` button to the pause dialog with `MMU_ERROR_DIALOG`
 - [Custom Load/Unload Sequences](Custom-Load-Unload-Sequences.md) - the
   deeper override mechanism `_MMU_SEQUENCE_VARS` sits in front of
 - [Feature: Tip Forming and Purging](Feature-Tip-Forming-Purging.md) -

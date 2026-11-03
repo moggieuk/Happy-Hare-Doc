@@ -65,6 +65,19 @@ run the command (`0`), or quietly accepts the vendor default forever
 exception is ERCF specifically, not "any encoder-equipped design" - KMS
 and QuattroBox both ship with an encoder and still default to skippable.
 
+At print end, Happy Hare reports an **Autotune summary** when saved
+calibration values changed: gear rotation distance and Bowden length by
+gate, and encoder resolution by unit. The summary includes the final
+loaded gate without forcing it to unsync; identical changes on consecutive
+gates are grouped together. It reports saved changes, not unsaved tuning
+recommendations.
+
+With `autotune_rotation_distance` enabled, sync-feedback tuning saves only
+results that meet its confidence and minimum-change thresholds. Short,
+low-confidence gate segments leave the saved calibration unchanged. See
+[Sync-Feedback Buffer](Feature-Sync-Feedback-Buffer.md#printer-variables-exposed)
+for inspecting the current correction.
+
 ## Recommended order
 
 If you're calibrating for the first time, do it in this order - later

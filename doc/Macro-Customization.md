@@ -61,15 +61,22 @@ One hook doesn't fit the "runs after" pattern: `user_park_move_macro`
 (`_MMU_SEQUENCE_VARS`) **replaces** the default straight-line `G1 X Y` park
 move rather than extending it, so you can route around an obstacle instead
 of moving through it. It's called with `X=`/`Y=`/`F=`, and again with
-`RESTORE=1` plus the restore coordinates when un-parking. See [Macro
+`RESTORE=1` plus the restore coordinates when un-parking. For `last` and
+`next` restores, Happy Hare completes any remaining straight X/Y travel at
+park travel speed before lowering Z, so an obstacle-avoiding macro should
+finish its route at the supplied destination. See [Return to Print
+Movement](Toolchange-Movement.md#return-to-print-movement) and [Macro
 Variables: Sequence/parking](Reference-Macro-Vars.md#sequenceparking-_mmu_sequence_vars)
-for the full parking mechanism this sits inside.
+for the full parking mechanism this sits inside. Use `_SAFE_G1 X= Y= F=`
+in place of `G1` in this macro so its moves stay within the axis limits under
+skew correction or a gcode offset. See [Skew & Build
+Envelope](Skew-Build-Envelope.md).
 
 ## Method 2: Replacement
 
 If extension genuinely isn't enough - most often because you need to change
 *how* something happens rather than add a step after it - point Happy Hare
-at a completely different macro. **Software Options → Macro hook overrides
+at a completely different macro. **Global software options → Macro hook overrides
 (ADVANCED)** exposes the pause, state, event, preload and sequence callbacks.
 Tip-forming and purge macro choices remain in their feature settings. These
 choices set the corresponding entries in `mmu.cfg`:
@@ -122,6 +129,49 @@ replacement Happy Hare offers - a wholesale rewrite of the load/unload
 movement logic itself, gated behind `gcode_load_sequence`/
 `gcode_unload_sequence`. That mechanism is big enough to have its own page:
 see [Custom Load/Unload Sequences](Custom-Load-Unload-Sequences.md).
+
+## Customizing the Error Dialog
+
+Happy Hare shows the dialog itself when the MMU pauses (see [What Happens When
+the MMU Pauses](Operation.md#the-pause-dialog)), sending Klipper
+`action:prompt` messages to Mainsail, Fluidd and KlipperScreen. Its title,
+layout and the `RESUME` and `UNLOCK` buttons are fixed. To turn it off
+entirely and rely on the console, set `show_error_dialog: 0` in `mmu.cfg`.
+
+Use [`MMU_ERROR_DIALOG`](Reference-Commands.md#mmu_error_dialog) to add your
+own lines and an `ABORT` button. It doesn't show anything itself: it sets up
+the dialog in advance, ready for whatever pauses the MMU next, which is
+usually an error deep inside a load or toolchange rather than something your
+macro raises.
+
+| Parameter | Meaning |
+|---|---|
+| `MSG="line one\nline two"` | Extra lines shown after the reason. Separate lines with `\n`. When the error has no specific advice, these replace the generic "After fixing, press RESUME..." line. |
+| `ABORT=1` \| `ABORT=0` | Add or remove an `ABORT` button, which runs `CANCEL_PRINT` |
+| `RESET=1` | Clear the extra lines and the `ABORT` button. When combined with `MSG` or `ABORT`, it is applied first. |
+
+With no parameters, `MMU_ERROR_DIALOG` reports the current settings.
+
+The settings stay in place until `RESET=1`, and are also cleared at the start
+and end of every print. Happy Hare's own print start uses them: once it has
+set up the slicer tool map, `MMU_START_SETUP` lists the tools the print needs
+and adds `ABORT`; `MMU_START_LOAD_INITIAL_TOOL` resets them once the initial
+tool is loaded. A pause in between shows the extra lines and the `ABORT`
+button, and a later pause shows neither. If you call `MMU_ERROR_DIALOG` from
+your own start macro, reset it the same way, or the lines and button stay for
+the rest of the print:
+
+```text
+MMU_ERROR_DIALOG ABORT=1 MSG="Check the purge bucket is empty"
+...                       ; the part of your start macro the lines apply to
+MMU_ERROR_DIALOG RESET=1
+```
+
+From top to bottom the dialog shows the headline `Print is still paused` (only
+when it is shown again, such as after a refused `RESUME`), what was being
+attempted, the reason, your extra lines, then the action line (`Fix: ...`).
+Keep your most important line last only when you expect no action line:
+stock KlipperScreen shows just the last text line.
 
 ## Tip forming and tip cutting
 

@@ -129,6 +129,11 @@ output directory matching its page. Enable any capability that gates the menu
 being captured. When shared menus change, check all affected Getting Started
 guides and feature or macro pages.
 
+Preserve intentional screenshot composites when refreshing their source screens,
+including the transparent-to-amber triangular fade that identifies an alternative
+view. Regenerate these through their dedicated composite sessions; do not replace
+them with a plain screenshot. The tooling guide lists the affected images.
+
 Generation commands, source selection, capture limitations, and reproducibility
 details live in [doc_tools/README.md](doc_tools/README.md). Builds render the
 committed screenshots and references; they do not regenerate them.
@@ -170,6 +175,23 @@ Use this lighter section order:
 4. **See also**
 
 ## Shared presentation changes
+
+### Interactive animations
+
+Use the shared animation player and palette in `doc/assets/` for process
+animations. Keep scene-specific geometry and steps in `doc/assets/animations/`.
+Provide play/pause, step controls, a timeline, readable parameter highlights,
+and a static explanation or illustration for readers without JavaScript.
+Animations start paused, respect reduced motion, and work with instant
+navigation. Use the same outgoing, cut, residual and incoming filament colors
+across scenes; cut fragments and residual material keep the outgoing filament
+color, with labels identifying their roles. Distinguish illustrative values and
+schematic melt behavior from calibrated printer settings.
+
+Animation authoring procedures live in
+[the tooling guide](doc_tools/README.md#interactive-animations).
+
+### Site navigation and theme
 
 The existing header, sidebar home link, Previous/Next navigation, and footer are
 implemented with `mkdocs.yml`, `extra.css`, and `hh-page-nav.js`. Preserve their

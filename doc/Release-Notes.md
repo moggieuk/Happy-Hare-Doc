@@ -2,7 +2,20 @@
 
 ## v4.0.0
 
-Initial release.
+Initial release of v4.
+
+Happy Hare builds on years of development and community feedback, with roots
+in 2022's [ERCF-Software-V3](https://github.com/moggieuk/ERCF-Software-V3)
+project for the early DIY MMU, ERCF. That repository housed Happy Hare v1,
+an implementation for ERCF. In June 2023, Happy Hare v2 began broadening
+support to other MMU designs,
+and since [v3](https://github.com/moggieuk/Happy-Hare/tree/v3.0.1) it has been
+a universal MMU driver for Klipper. Version 4 continues that evolution,
+carrying forward the filament handling, calibration and recovery experience
+gained across multiple generations of hardware and software.
+
+For documentation prior to v4, see the
+[Happy Hare wiki](https://github.com/moggieuk/Happy-Hare/wiki).
 
 ## v4.1.0
 
@@ -192,5 +205,94 @@ baseline used for the comparison above.
 - Synchronize main into development and repair merge ancestry. These PRs carry
   branch history rather than additional features. ([#1223](https://github.com/moggieuk/Happy-Hare/pull/1223), [#1225](https://github.com/moggieuk/Happy-Hare/pull/1225), [#1226](https://github.com/moggieuk/Happy-Hare/pull/1226), [#1270](https://github.com/moggieuk/Happy-Hare/pull/1270),
   [#1271](https://github.com/moggieuk/Happy-Hare/pull/1271), [#1333](https://github.com/moggieuk/Happy-Hare/pull/1333), [#1340](https://github.com/moggieuk/Happy-Hare/pull/1340))
+
+---
+
+## v4.2.0
+
+This covers changes since the v4.1.0 tag, including fixes subsequently merged
+into `main`. See the [full release comparison](https://github.com/moggieuk/Happy-Hare/compare/v4.1.0...947d2f152c5702da407a3ba3b5e3fcd8eaf426f6)
+and the [development-only comparison](https://github.com/moggieuk/Happy-Hare/compare/70aa90fb9aa18787de445235bd26a0665168c441...947d2f152c5702da407a3ba3b5e3fcd8eaf426f6).
+
+### Upgrade notes
+
+- EMU installs no longer accept `-e` / `--emu`; use `./install.sh -i`. Select **Per-gate MCUs?** in menuconfig to choose separate gate boards or one board for the whole unit. Existing per-gate setups remain the default. ([#1486](https://github.com/moggieuk/Happy-Hare/pull/1486))
+- Use `MMU_TEST_FORM_TIP` to test the cutter with its configured motor-current boost. Direct `_MMU_CUT_TIP` calls no longer boost current; the retired cutter-motion command and current-adjustment macros are removed, and installation cleans up the obsolete module link. ([#1475](https://github.com/moggieuk/Happy-Hare/pull/1475), [#1481](https://github.com/moggieuk/Happy-Hare/pull/1481))
+- Interactive install option 1 is now **Merge/Refresh**; it imports supported hand-edited values and applies changes made in menuconfig. The separate Merge option is removed. ([#1375](https://github.com/moggieuk/Happy-Hare/pull/1375))
+- The Blobifier `skew_correction` variable is removed. Skew is handled automatically; if you used the old value for clearance, add that clearance to `y_offset`, `brush_y_offset` or `shaker_pos_x`. See [Skew & Build Envelope](Skew-Build-Envelope.md). ([#1395](https://github.com/moggieuk/Happy-Hare/pull/1395))
+- The default `toolhead_move_error_tolerance` is now 80%, requiring the encoder to observe at least 20% of a final move. Merge/Refresh keeps an existing value. Higher tolerance reduces false failures but can also miss real loading failures. ([#1402](https://github.com/moggieuk/Happy-Hare/pull/1402))
+- Unit renames, reorders and gate-count changes preserve surviving gate data at startup. Record renames through the installer, unload before renumbering gates, and restore matching configuration and saved state together. Ambiguous renames and mismatched migration history stop startup. See [State Persistence](Feature-State-Persistence.md). ([#1456](https://github.com/moggieuk/Happy-Hare/pull/1456))
+- `extruder_unload_speed` and the two-level sync-feedback speed/boost multipliers now take effect. ([#1370](https://github.com/moggieuk/Happy-Hare/pull/1370), [#1376](https://github.com/moggieuk/Happy-Hare/pull/1376))
+- BTT ViViD units now render `filament_always_gripped: 1`, and the upgrade sets it on existing ViViD units. `sync_to_extruder`, `sync_form_tip` and `sync_purge` are then always on, and `MMU_RELEASE` and `MMU_SYNC_GEAR_MOTOR SYNC=0` are refused. ([#1472](https://github.com/moggieuk/Happy-Hare/pull/1472))
+- Custom macros that set variables on `_MMU_ERROR_DIALOG` must switch to
+  [`MMU_ERROR_DIALOG`](Reference-Commands.md#mmu_error_dialog) with `ABORT`, `MSG`
+  and `RESET`. The old macro and its temporary title variable were removed.
+  ([#1421](https://github.com/moggieuk/Happy-Hare/pull/1421))
+
+### Filament loading, unloading and motion
+
+- Support a [toolhead cutter before the extruder gears](Macro-Toolhead-Tip-Cutting.md), with fragment pushback, cut checks and a shortened Bowden unload. Without MMU gear assistance, the fragment needs manual clearing; runout pauses before loading replacement filament. `MMU_CALIBRATE_TOOLHEAD CUT=1` is unavailable for this arrangement. ([#1473](https://github.com/moggieuk/Happy-Hare/pull/1473))
+- Retract filament once after the final cutting stroke, for both repeated toolhead cuts and servo-cutter retries. Restore boosted cutting current even when tip forming fails. ([#1474](https://github.com/moggieuk/Happy-Hare/pull/1474), [#1475](https://github.com/moggieuk/Happy-Hare/pull/1475), [#1478](https://github.com/moggieuk/Happy-Hare/pull/1478))
+- Track actual parking retraction per extruder across restarts so cut fragments and subsequent load lengths stay accurate. Standalone loads fill and optionally purge the nozzle, then leave `toolchange_retract` retracted to reduce ooze; the next unload no longer retracts twice. ([#1477](https://github.com/moggieuk/Happy-Hare/pull/1477))
+- Skip tip forming when no tip-forming macro is configured. ([#1391](https://github.com/moggieuk/Happy-Hare/pull/1391))
+- Restore the in-print loaded check: a failed toolchange must be completed before `RESUME`, and an enabled sensor reporting empty after a completed load pauses the print. ([#1396](https://github.com/moggieuk/Happy-Hare/pull/1396))
+- Keep parking, Blobifier and cutter moves within axis limits under skew correction and gcode offsets. Correct z-hop ramp centers and position restores. `_SAFE_G1` now covers the cut strokes too, rejects corrections above 5 mm, and restores cutting current after errors. Mechanical cutter clearance still needs checking. ([#1395](https://github.com/moggieuk/Happy-Hare/pull/1395), [#1397](https://github.com/moggieuk/Happy-Hare/pull/1397), [#1401](https://github.com/moggieuk/Happy-Hare/pull/1401))
+- Add [`MMU_CHECK_POSITION`](Reference-Commands.md#mmu_check_position) to check coordinates throughout the Z range, optionally raising an error for start-print checks. The temporary automatic `MMU_CHECK_POSITIONS` command was removed. ([#1397](https://github.com/moggieuk/Happy-Hare/pull/1397), [#1400](https://github.com/moggieuk/Happy-Hare/pull/1400))
+- After a compression-buffer test confirms extruder grip, skip the encoder percentage-shortfall check for that load. Retain the no-movement check for moves long enough to measure. ([#1403](https://github.com/moggieuk/Happy-Hare/pull/1403), [#1404](https://github.com/moggieuk/Happy-Hare/pull/1404))
+- Add opt-in `toolhead_unload_test`: preserve current behavior (`0`), warn (`1`), or pause on failure during a print (`2`). Sensor-clearing distance can reveal a missed cut or slipping unload. See [Unload validation](Feature-Tip-Forming-Purging.md#unload-validation). ([#1439](https://github.com/moggieuk/Happy-Hare/pull/1439))
+- Keep filament gripped after `MMU_TEST_MOVE GRIP=1` and correct the degree symbol in servo-selector calibration summaries. ([#1424](https://github.com/moggieuk/Happy-Hare/pull/1424), [#1426](https://github.com/moggieuk/Happy-Hare/pull/1426))
+- Servo-cam selectors release filament by moving to another gate's angle, set per gate by `selector_release_gates` (default: the next gate), instead of halfway between gates. A fixed `servo_release_angle` still takes precedence; clear a saved one with `MMU_CALIBRATE_SERVO_SELECTOR RESET_RELEASE=1`. MMX and Pico MMU can now turn off `filament_always_gripped`, and Pico's sync settings then follow it instead of being forced on. Servo, rotary and ERCF/Tradrack selectors grip the selected gate before the gear syncs (for example at print start, where ERCF/Tradrack with `sync_to_extruder` now lower the servo), and don't sync if the grip fails. `MMU_RELEASE` stops the gear syncing and cancels an `MMU_SYNC_GEAR_MOTOR` sync, which now warns when it can't sync. See [Servo-cam selectors](Calibration-Selector.md#servo-cam-selectors). ([#1469](https://github.com/moggieuk/Happy-Hare/pull/1469))
+- Correct the optional G-code unload sequence to unload the Bowden tube and park filament at the same position as the built-in sequence. ([#1443](https://github.com/moggieuk/Happy-Hare/pull/1443), [#1444](https://github.com/moggieuk/Happy-Hare/pull/1444))
+- Allow Blobifier parking on homed printers without QGL. Apply its configured low-print-height descent override when the tray is unsafe. Restore nozzle temperature after raising it for a purge. Blobifier no longer adjusts buffer tension after each blob, as Happy Hare adjusts it after loading; `MMU_SYNC_FEEDBACK ADJUST_TENSION=1` now keeps gear synchronization. Add `brush_clearance_x` for the X gap kept from the brush (default 20 mm, the previous fixed value). ([#1427](https://github.com/moggieuk/Happy-Hare/pull/1427), [#1428](https://github.com/moggieuk/Happy-Hare/pull/1428), [#1433](https://github.com/moggieuk/Happy-Hare/pull/1433), [#1447](https://github.com/moggieuk/Happy-Hare/pull/1447), [#1462](https://github.com/moggieuk/Happy-Hare/pull/1462), [#1465](https://github.com/moggieuk/Happy-Hare/pull/1465))
+- Add [extra purge on a material change](Feature-Tip-Forming-Purging.md#extra-purge-on-a-material-change), with family matching and configurable material-specific volumes. ([#1442](https://github.com/moggieuk/Happy-Hare/pull/1442))
+- For initial loads and standalone loads with Happy Hare-controlled purging, heat for remembered residual filament before returning to the incoming filament temperature. Mid-print changes remain slicer-controlled. Heating and `MMU_COLD_PULL` now target the MMU-configured extruder rather than whichever extruder is active; `printer.mmu.extruder_name` exposes that choice. ([#1434](https://github.com/moggieuk/Happy-Hare/pull/1434), [#1448](https://github.com/moggieuk/Happy-Hare/pull/1448))
+- After a custom `user_park_move_macro`, finish the return to the last or next X/Y position at `park_travel_speed` before lowering Z. This prevents a slow diagonal return at lift speed when the custom macro leaves the toolhead parked. See [Return to Print Movement](Toolchange-Movement.md#return-to-print-movement). ([#1461](https://github.com/moggieuk/Happy-Hare/pull/1461))
+
+### Sync feedback and autotune
+
+- Allow `gate_endstop_to_encoder` tuning with shared-exit homing and negative offsets for an encoder before the gate endstop. Correct encoder dead-space calculations and the filament-locating move used by linear-selector blockage recovery. ([#1490](https://github.com/moggieuk/Happy-Hare/pull/1490), [#1491](https://github.com/moggieuk/Happy-Hare/pull/1491))
+- Expose [`printer.mmu.sync_feedback_rd_correction`](Reference-Printer-Variables.md#sync-feedback-flowguard-and-tangle-prevention), the percentage change in tuned gear `rotation_distance` from the gate's starting calibration. [`MMU_SYNC_FEEDBACK`](Reference-Commands.md#mmu_sync_feedback) also reports the tuned value and percentage, and rotation-distance autotune logs show four decimal places and the percentage change. ([#1460](https://github.com/moggieuk/Happy-Hare/pull/1460))
+- Reset the tuned baseline on gate changes so flow-rate reporting uses the selected gate's calibration. With `autotune_rotation_distance` enabled, save only confident tuning results; short gate segments no longer overwrite calibration with an uncertain candidate. ([#1460](https://github.com/moggieuk/Happy-Hare/pull/1460))
+- Report a compact autotune summary at print end when settings changed, including gear rotation distance and Bowden length per gate, plus encoder resolution per unit. The summary includes the final gate's saved tuning result. No new configuration options are required. ([#1460](https://github.com/moggieuk/Happy-Hare/pull/1460))
+
+### Sensors, errors and recovery
+
+- Make pause dialogs readable across supported interfaces, with context, gate-specific reasons and a **To fix** action. Put **UNLOCK** first in the recovery workflow; expose `pause_hint` for custom UIs and render the final dialog directly with a fixed title. Improve bypass recovery, multiline text and special-character handling. ([#1412](https://github.com/moggieuk/Happy-Hare/pull/1412), [#1413](https://github.com/moggieuk/Happy-Hare/pull/1413), [#1415](https://github.com/moggieuk/Happy-Hare/pull/1415), [#1417](https://github.com/moggieuk/Happy-Hare/pull/1417), [#1418](https://github.com/moggieuk/Happy-Hare/pull/1418), [#1419](https://github.com/moggieuk/Happy-Hare/pull/1419), [#1420](https://github.com/moggieuk/Happy-Hare/pull/1420), [#1421](https://github.com/moggieuk/Happy-Hare/pull/1421))
+- Handled Klipper errors during in-print load, unload, toolchange and runout recovery now pause with the MMU dialog rather than ending the print. A refused resume or repeated pause can show the dialog again, including after a UI closes it with X. ([#1414](https://github.com/moggieuk/Happy-Hare/pull/1414), [#1422](https://github.com/moggieuk/Happy-Hare/pull/1422))
+- Clarify invalid gate lists, slicer-tool and purge-volume counts, and the fan-assist setting in error messages. ([#1427](https://github.com/moggieuk/Happy-Hare/pull/1427))
+- Fix toolhead hall endstops and support filament switches on older Klipper without the debounce-button API. The Blobifier bucket button still needs a Klipper version supporting its configured `debounce_delay`. ([#1425](https://github.com/moggieuk/Happy-Hare/pull/1425), [#1457](https://github.com/moggieuk/Happy-Hare/pull/1457))
+- Accept fractional `event_delay` values correctly. Add the shared `sensor_min_debounce_delay` (default 0, maximum 1 second) to recheck runout/insert/remove events after switch bounce settles. See [Sensors](Feature-Sensors.md#event-timing). ([#1458](https://github.com/moggieuk/Happy-Hare/pull/1458), [#1459](https://github.com/moggieuk/Happy-Hare/pull/1459))
+- Log FlowGuard activation when buffer monitoring is enabled without encoder monitoring. ([#1398](https://github.com/moggieuk/Happy-Hare/pull/1398))
+
+### Spools, metadata and preprocessing
+
+- Create a Spoolman filament when an NFC tag color has no existing match; abort an unfinished PN532 scan when no tag is found to prevent I2C hangs. ([#1368](https://github.com/moggieuk/Happy-Hare/pull/1368), [#1374](https://github.com/moggieuk/Happy-Hare/pull/1374))
+- Fetch newly added Spoolman spools before sending gate-map updates. ([#1431](https://github.com/moggieuk/Happy-Hare/pull/1431))
+- Make exact-color automapping also match material, ignoring case. Unset gate material or unknown slicer material still allows a color-only match. ([#1436](https://github.com/moggieuk/Happy-Hare/pull/1436))
+- Recognize Orca-based Creality Print G-code. Extract `.ufp` uploads before preprocessing; the extracted file still needs a supported slicer generator comment for Happy Hare token processing. ([#1432](https://github.com/moggieuk/Happy-Hare/pull/1432), [#1437](https://github.com/moggieuk/Happy-Hare/pull/1437))
+- Build `printer.mmu.active_filament` from the selected gate’s current metadata. Save bypass metadata across restarts and expose edits immediately; clear it on bypass unload, reset or selection of a real gate. ([#1449](https://github.com/moggieuk/Happy-Hare/pull/1449))
+- Add persisted `gate_remaining_weight` and `gate_initial_weight` in net grams, supplied by Spoolman or `MMU_GATE_MAP WEIGHT=... INITIAL_WEIGHT=...`. Add `espooler_full_spool_power` for optional weight-based gear-move power scaling, with a spool refresh at each load. See [eSpooler](Feature-Espooler.md#spool-weight-compensation). ([#1450](https://github.com/moggieuk/Happy-Hare/pull/1450))
+- Start the eSpooler enable pin at its configured value. Avoid rewind on the final blind eject move, while retaining rewind when homing to an entry sensor. ([#1441](https://github.com/moggieuk/Happy-Hare/pull/1441), [#1451](https://github.com/moggieuk/Happy-Hare/pull/1451))
+- Save swap statistics as plain numbers so they reload correctly after restart. Already-corrupted Kalico statistics entries still need manual repair or removal from the variables file. ([#1430](https://github.com/moggieuk/Happy-Hare/pull/1430))
+
+### Drying and configuration
+
+- Import supported optional fan, vent-servo and eject-button pins during Merge/Refresh when their saved menuconfig pins are blank. Preserve temperature-sensor limits and import per-gate report times and hand-edited MCU serial/CAN connections into menuconfig. ([#1476](https://github.com/moggieuk/Happy-Hare/pull/1476), [#1479](https://github.com/moggieuk/Happy-Hare/pull/1479), [#1487](https://github.com/moggieuk/Happy-Hare/pull/1487))
+- Add optional `heater_pause_temp` to turn drying heaters off or lower their targets during a print pause. The default (`-1`) keeps drying unchanged; `0` turns heat off and positive values limit the temperature. Active drying targets return on resume, with material caps preserved; the drying timer keeps running. See [Drying during a print pause](Feature-Environment-Manager.md#drying-during-a-print-pause). ([#1468](https://github.com/moggieuk/Happy-Hare/pull/1468))
+- Cap shared-heater drying temperature by every gate holding filament, including gates not selected for drying. Add experimental `heater_rotate_in_print` for background rotation of empty idle gates on supported independent-gear machines; it remains off by default. See [Heater & Environment Manager](Feature-Environment-Manager.md#spool-rotation). ([#1327](https://github.com/moggieuk/Happy-Hare/pull/1327))
+- Preserve custom temperature-sensor and TMC driver options during Refresh, rebuilding affected sections when sensor or driver type changes. Preserve default vendor, TD, TD-1 color, RFID and spool-weight lists. Render `diag1_pin` for TMC2130, TMC2240 and TMC5160 drivers instead of `diag_pin`, which Klipper rejects for them. ([#1405](https://github.com/moggieuk/Happy-Hare/pull/1405), [#1446](https://github.com/moggieuk/Happy-Hare/pull/1446), [#1450](https://github.com/moggieuk/Happy-Hare/pull/1450), [#1452](https://github.com/moggieuk/Happy-Hare/pull/1452), [#1466](https://github.com/moggieuk/Happy-Hare/pull/1466))
+- Allow an existing user-owned `[save_variables]` section instead of generating a second one; keep the configured path consistent with its filename. ([#1455](https://github.com/moggieuk/Happy-Hare/pull/1455))
+- Make the filament catchment-buffer option take effect in generated unit configuration. ([#1438](https://github.com/moggieuk/Happy-Hare/pull/1438))
+- Allow `./install.sh -g` to raise the default 12-gate limit per unit, and keep a v4 upgrade on v4 even when started with `-b v3`. ([#1388](https://github.com/moggieuk/Happy-Hare/pull/1388), [#1429](https://github.com/moggieuk/Happy-Hare/pull/1429))
+- Improve Merge/Refresh progress and comparisons; preserve selected custom values while prompts are hidden. Reorganize tip forming, purging and kinematics menus, link macro settings, expose encoder/eSpooler tuning and show the target configuration option. Move help links to this documentation site. Edit numeric heater, TD-1 and tip-park settings as numbers; existing quoted values still load. ([#1380](https://github.com/moggieuk/Happy-Hare/pull/1380), [#1384](https://github.com/moggieuk/Happy-Hare/pull/1384), [#1392](https://github.com/moggieuk/Happy-Hare/pull/1392), [#1393](https://github.com/moggieuk/Happy-Hare/pull/1393), [#1394](https://github.com/moggieuk/Happy-Hare/pull/1394), [#1406](https://github.com/moggieuk/Happy-Hare/pull/1406), [#1407](https://github.com/moggieuk/Happy-Hare/pull/1407), [#1408](https://github.com/moggieuk/Happy-Hare/pull/1408), [#1410](https://github.com/moggieuk/Happy-Hare/pull/1410), [#1440](https://github.com/moggieuk/Happy-Hare/pull/1440), [#1471](https://github.com/moggieuk/Happy-Hare/pull/1471))
+
+### Developer tools and maintenance
+
+- Play complete G-code jobs in the simulator with `/print job`, including preprocessing, toolchanges, pause/resume and cancel. Add cutter and entry-sensor coverage to the default profile, correct simulated motion and seed servo angles and Bowden calibration for the selected hardware. ([#1482](https://github.com/moggieuk/Happy-Hare/pull/1482), [#1483](https://github.com/moggieuk/Happy-Hare/pull/1483), [#1484](https://github.com/moggieuk/Happy-Hare/pull/1484), [#1485](https://github.com/moggieuk/Happy-Hare/pull/1485))
+- Fix growing simulator memory use and slow console exit during long sessions; update the per-gate MCU test comment to match the new configuration option. ([#1488](https://github.com/moggieuk/Happy-Hare/pull/1488), [#1489](https://github.com/moggieuk/Happy-Hare/pull/1489))
+- Improve test progress, interpreter selection, memory use and benchmark reporting; warn about full-suite runtime on a Raspberry Pi. ([#1381](https://github.com/moggieuk/Happy-Hare/pull/1381), [#1382](https://github.com/moggieuk/Happy-Hare/pull/1382), [#1383](https://github.com/moggieuk/Happy-Hare/pull/1383), [#1385](https://github.com/moggieuk/Happy-Hare/pull/1385), [#1386](https://github.com/moggieuk/Happy-Hare/pull/1386), [#1387](https://github.com/moggieuk/Happy-Hare/pull/1387))
+- Refresh the simulator console LED display eight times per second and add a Moonraker-compatible API for testing with a real Mainsail UI. ([#1409](https://github.com/moggieuk/Happy-Hare/pull/1409), [#1416](https://github.com/moggieuk/Happy-Hare/pull/1416))
+- Remove obsolete kconfiglib change markers and set the application version to 4.2.0. ([#1411](https://github.com/moggieuk/Happy-Hare/pull/1411), [#1423](https://github.com/moggieuk/Happy-Hare/pull/1423))
+- Synchronize main into development; these merges add no separate user-facing feature. ([#1377](https://github.com/moggieuk/Happy-Hare/pull/1377), [#1378](https://github.com/moggieuk/Happy-Hare/pull/1378), [#1399](https://github.com/moggieuk/Happy-Hare/pull/1399))
 
 ---

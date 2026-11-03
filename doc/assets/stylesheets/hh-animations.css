@@ -1,0 +1,86 @@
+/* Shared palette and controls, used by documentation animations. */
+.hh-animation {
+  --hh-text: #20344b;
+  --hh-surface: #e7eef4;
+  --hh-metal: #71869a;
+  --hh-border: #a5b5c4;
+  --hh-outgoing: #cf467d;
+  --hh-cut: var(--hh-outgoing);
+  --hh-residual: var(--hh-outgoing);
+  --hh-incoming: #168a96;
+  --hh-control: #f6f8fb;
+  --hh-sensor-active: #248449;
+  color: var(--hh-text);
+  margin: 1.5em 0;
+  padding: 1em;
+  border: 1px solid var(--hh-border);
+  border-radius: 0.6em;
+  font: 16px/1.5 system-ui, sans-serif;
+}
+[data-md-color-scheme="slate"] .hh-animation {
+  --hh-text: #e3eaf2;
+  --hh-surface: #303d4c;
+  --hh-metal: #acbbcc;
+  --hh-border: #657587;
+  --hh-outgoing: #f18ab2;
+  --hh-incoming: #59c7cc;
+  --hh-control: #28323e;
+  --hh-sensor-active: #6bd58b;
+}
+.hh-animation-controls, .hh-animation-legend { display: flex; flex-wrap: wrap; gap: 0.5em 1em; }
+.hh-animation button {
+  background: var(--hh-control);
+  color: var(--hh-text);
+  border: 1px solid var(--hh-border);
+  border-radius: 0.35em;
+  padding: 0.45em 0.8em;
+  font: inherit;
+  cursor: pointer;
+  min-height: 44px;
+}
+.hh-animation button:hover:not(:disabled) { border-color: var(--hh-outgoing); }
+.hh-animation-controls button { box-sizing: border-box; flex: none; }
+.hh-animation-controls [data-action="play"] { width: 10.5em; }
+.hh-animation-controls [data-action="previous"] { width: 6.5em; }
+.hh-animation-controls [data-action="next"] { width: 5em; }
+.hh-animation button:disabled { opacity: 0.45; cursor: default; }
+.hh-animation :focus-visible { outline: 2px solid var(--hh-outgoing); outline-offset: 3px; }
+.hh-animation .hh-animation-stage { font: 600 1em/1.5 system-ui, sans-serif; margin: 1em 0 0; min-height: 3em; }
+.hh-animation-diagram { display: block; width: 100%; }
+.hh-animation-label { fill: var(--hh-text); font: 12px system-ui, sans-serif; }
+.hh-animation-structure { fill: var(--hh-surface); stroke: var(--hh-border); stroke-width: 1.5; }
+.hh-animation-line { stroke: var(--hh-border); stroke-width: 1; }
+.hh-animation-legend, .hh-animation-detail, .hh-animation-caption { font-size: 0.875em; }
+.hh-animation-outgoing { color: var(--hh-outgoing); }
+.hh-animation-cut { color: var(--hh-cut); }
+.hh-animation-residual { color: var(--hh-residual); }
+.hh-animation-incoming { color: var(--hh-incoming); }
+.hh-animation-parameters { min-height: 4em; padding: 0.8em 0; }
+.hh-animation .hh-animation-parameters code { color: var(--hh-text); background: var(--hh-control); white-space: normal; overflow-wrap: anywhere; }
+.hh-animation-detail { min-height: 3em; }
+.hh-animation input[type="range"] { display: block; width: 100%; margin: 0.25em 0 0; accent-color: var(--hh-metal); min-height: 24px; }
+.hh-animation .hh-animation-caption { margin: 0.5em 0 0; }
+
+.hh-animation-swatch { display: inline-block; width: 1.5rem; height: 4px; border-radius: 2px; background: currentColor; font-size: 0; vertical-align: middle; }
+
+.hh-animation-brand { display: block; flex: none; width: 32px; height: 32px; margin-left: auto; align-self: center; border-radius: 5px; }
+
+/* Reuse scene embeds at half width, stacking them on small screens. */
+.hh-animation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1em;
+  margin: 1.5em 0;
+}
+.hh-animation-grid > * { min-width: 0; }
+.hh-animation-grid-centered { grid-template-columns: minmax(0, 1fr); }
+.hh-animation-grid-centered > * { width: calc((100% - 1em) / 2); justify-self: center; box-sizing: border-box; }
+.hh-animation-grid .hh-animation { margin: 0; font-size: 13px; }
+.hh-animation-grid .hh-animation-controls { gap: 0.5em; }
+.hh-animation-grid .hh-animation-diagram { height: auto !important; aspect-ratio: 700 / 460; }
+@media (max-width: 700px) {
+  .hh-animation-grid { grid-template-columns: minmax(0, 1fr); }
+  .hh-animation-grid-centered > * { width: 100%; }
+}
+
+.hh-animation .hh-animation-brand img { display: block; width: 32px; height: 32px; max-width: none; margin: 0; border-radius: 5px; box-shadow: none; }

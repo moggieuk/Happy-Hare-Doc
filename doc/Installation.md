@@ -90,7 +90,7 @@ procedure and the effect of Replace mode on manual configuration edits.
     ```
     ```{.text .console-output}
     Usage: ./install.sh [-i] [-u] [-d] [-y] [-l] [-p] [-z] [-s] [-t] [-r]
-                        [-b <branch>]
+                        [-b <branch>] [-g <gates>]
                         [-k <klipper_home_dir>] [-c <klipper_config_dir>] [-m <moonraker_home_dir>]
                         [-a <kiauh_alternate_klipper>] [config_file]
 
@@ -113,7 +113,7 @@ procedure and the effect of Replace mode on manual configuration edits.
       -s to skip restart of services
       -a <name> to specify alternative klipper-service-name when installed with Kiauh
       -r allow running install.sh from a root login (not through sudo)
-      -e, --emu Enables multi MCU support (e.g. for EMU design)
+      -g <gates> most gates one MMU unit can configure (12 or more, default 12, sticky; more is slower)
       -o override compatibility checks (e.g. unknown MIPS layout)
       -t  activate test mode - write config to /tmp/mmu_test instead of your real install
       (-q verbose make for debugging)
@@ -155,15 +155,38 @@ procedure and the effect of Replace mode on manual configuration edits.
 
 === "Per Lane Controllers"
 
-    For MMU's like EMU that use dedicated controllers/MCU's per lane, support needs
-    to be enabled by specifying `-e` or `--emu` e.g. 
+    EMU enables per-gate MCU support automatically when selected in
+    **MMU Type**. Run the interactive installer to configure the connection
+    for each gate:
 
-    ```bash 
-    ./install.sh -i -e
+    ```bash
+    ./install.sh -i
     ```
 
-    Once your configuration has per-gate MCU support enabled, later runs turn it
-    on automatically, so `-e` isn't needed again.
+    If a single board drives the whole EMU unit, turn off
+    **MMU Type → Design attributes → Per-gate MCUs?**. The installer then
+    offers the regular board list and configures one MCU and one CPU
+    temperature sensor for the unit. See the
+    [EMU quick start](GettingStarted-EMU.md#choosing-the-mmu-type).
+
+=== "More than 12 gates"
+
+    Menuconfig offers per-gate options (sensor pins, gear steppers, LEDs, ...)
+    for up to 12 gates per MMU unit. For a unit with more lanes, such as a large
+    Tradrack or ERCF, raise the limit with `-g <gates>` (12 or more) e.g.
+
+    ```bash
+    ./install.sh -i -g 16
+    ```
+
+    The limit is saved in your configuration, so later runs keep it and `-g`
+    isn't needed again. Run with a different `-g` to change it. Lowering it
+    drops the per-gate settings above the new limit. A higher limit makes
+    menuconfig a little slower to start, so only raise it as far as you need.
+
+    If a unit has more gates than the limit, menuconfig warns:
+    `More gates than the 12 menuconfig can configure: ./install.sh -g <gates>`
+
 ## Client Macros
 
 `menuconfig`'s final section asks:
@@ -283,6 +306,14 @@ much of your existing `.cfg` files is then copied back on top.
   `menuconfig` manages there, and it must follow unit renames and hardware
   changes. Copy anything you added there back from the backup afterwards, or
   keep it in a file of your own (see [Recommendations](#recommendations)).
+
+Refresh also preserves custom options in matching temperature-sensor and TMC
+driver sections. Changing sensor type or driver type rebuilds the affected
+section, discarding incompatible settings; bus changes drop obsolete transport
+options. Replace mode continues to rebuild generated configuration.
+
+For a printer that supplies its own `[save_variables]` section, see
+[State Persistence](Feature-State-Persistence.md#using-your-own-variables-file).
 
 ### Importing `.cfg` values into menuconfig
 

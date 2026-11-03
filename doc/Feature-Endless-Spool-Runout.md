@@ -44,10 +44,10 @@ fitted and active.
 
 ## Parameter Setup
 
-Two checkboxes live under **Software Options** in menuconfig:
+Two checkboxes live under **Global software options** in menuconfig:
 
 <p align="center">
-  <img src="Feature-Endless-Spool-Runout/endless-spool-options.png" alt="Software Options screen, EndlessSpool section: Enable EndlessSpool and Apply EndlessSpool automatically when loading an empty gate, both off by default" width="80%">
+  <img src="Feature-Endless-Spool-Runout/endless-spool-options.png" alt="Global software options screen, EndlessSpool section: Enable EndlessSpool and Apply EndlessSpool automatically when loading an empty gate, both off by default" width="80%">
 </p>
 
 Both default **off**. They set two plain settings in `mmu.cfg`, alongside two

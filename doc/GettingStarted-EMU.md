@@ -17,20 +17,15 @@ where these examples show unit-specific names or pin prefixes.
 First clone the Happy Hare repository as described in
 [Cloning Happy Hare](Installation.md#cloning-happy-hare).
 
-Then run the installer with EMU support enabled:
+Then run the installer:
 
 ```bash
 cd Happy-Hare
-./install.sh -e
+./install.sh
 ```
 
 The first run opens `menuconfig` automatically because no `.mmu_config` exists
 yet; no `-i` flag is needed.
-
-!!! note
-    `-e` ensures multi-mcu (mcu per gate) support, you may omit it on later
-    iterations. `menuconfig` may take longer to start up as a result, but it is
-    required for a typical EMU setup with small mcu per device.
 
 <p align="center"> <img src="GettingStarted-EMU/01-first-run.png" alt="First
   run: nothing configured yet" width="70%"> </p>
@@ -62,6 +57,11 @@ immediately: the radio button fills in (`(X) EMU Type-B`), and new lines appear
 indented underneath it — **PSF Buffer**, **Number of gates**, **Design
 attributes** — options that only make sense once Happy Hare knows this is an
 EMU.
+
+EMU enables per-gate MCU support by default. For a single board driving the
+whole unit, turn off **MMU Type → Design attributes → Per-gate MCUs?**.
+Then select your board and configure its single MCU connection. The rest of
+this walkthrough assumes the default of one MCU per gate.
 
 ### Number of gates
 
@@ -167,7 +167,7 @@ complete drying and vent setup.
 ### Pins: gear direction
 
 This is the one setting on this page that's genuinely impossible to get right by
-guessing. Back out to the top, enter **Pins / TMC**, then **Gear pins**:
+guessing. Back out to the top, enter **Pins / TMC**, then **Gear stepper pins**:
 
 <p align="center"> <img src="GettingStarted-EMU/07-gear-pins.png" alt="Gear pins
   list - one row per gate" width="70%"> </p>
@@ -198,7 +198,7 @@ resets to whatever Happy Hare would have picked on its own.
 
 ### Speeds configuration
 
-Back out to the top and enter **Speeds** to review the
+Back out to the top and enter **MMU Kinematics and Speeds → Speeds** to review the
 motion parameters. The EMU defaults are conservative by design:
 
 <p align="center"> <img src="GettingStarted-EMU/10-speeds.png" alt="Speeds
@@ -234,8 +234,10 @@ gets you real, community-measured values instead of guesses, for free.
 
 Back out and enter **Toolhead sensors/settings** to see the effect:
 
+The inset shows the additional distances that appear when both optional sensors are enabled.
+
 <p align="center"> <img src="GettingStarted-Shared/toolhead-dimensions-combined.png"
-  alt="Toolhead dimensions, pre-filled from the selected combo" width="70%">
+  alt="Toolhead dimensions with sensors disabled, with an inset showing both sensors enabled" width="70%">
 </p>
 
 **Extruder entrance to nozzle** and **Residual filament**, under **Toolhead

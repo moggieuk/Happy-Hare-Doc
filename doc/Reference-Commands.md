@@ -246,7 +246,7 @@ MMU_FLOWGUARD ENABLE=0 UNIT=ALL ...Disable FlowGuard detection on all units
 
 ```{.text .console-output}
 QUIET        = 1 To minimize console reporting
-DETAILS      = 1 Include measured TD/color and the complete Spoolman RFID UID set for each gate
+DETAILS      = 1 Include measured TD/color, the complete Spoolman RFID UID set and spool weight for each gate
 RESET        = 1 To reset specified GATE/GATES filament attributes to configured defaults
 GATES        = g,g,g comma separated list of gates; required with RESET unless GATE is used
 GATE         = g Specify a single gate; required with RESET unless GATES is used
@@ -261,6 +261,8 @@ TEMP         = # Default temperature of filament
 TD           = Positive transmission distance, or blank to clear (also clears measured color)
                With BYPASS=1 sets the measured TD of the bypass filament
 SPEED        = % Speed override (use <100 for soft TPU types)
+WEIGHT       = # Remaining filament weight on the spool in grams (-1 = unknown)
+INITIAL_WEIGHT = # Filament weight on the spool when full in grams (-1 = unknown)
 RFID         = # Single hexadecimal RFID tag UID read at the gate (blank to clear)
 AVAILABLE    = [-1|0|1|2] Filament availability: Unknown | Empty | Available | Available from filament buffer
 (no parameters for status report)
@@ -296,8 +298,8 @@ TIMER           = #(mins) Force drying time
 TEMP            = #(degrees) Force temperature
 HUMIDITY        = % Terminate drying when humidity goal is reached
 GATES           = g1,g2 Gates to control ONLY IF MMU has per-gate heaters/dryers
-ROTATE          = [0|1] Rotate spool (requires eSpooler and explicit GATES)
-ROTATE_INTERVAL = #(mins) How often to rotate spools when drying (requires eSpooler)
+ROTATE          = [0|1] Rotate empty spools (requires eSpooler or gear that turns the spool, and GATES if per-gate heaters)
+ROTATE_INTERVAL = #(mins) How often to rotate spools when drying
 VENT_INTERVAL   = #(mins) How often to open the vent in drying cycle
 (no parameters for status report)
 ```
@@ -308,7 +310,7 @@ MMU_HEATER TEMP=50                             ...Set heater temperature or adju
 MMU_HEATER DRY=1                               ...Dry with intelligent temperature/time recommended from 'drying_data'
 MMU_HEATER DRY=1 TEMP=50 TIMER=240 HUMIDITY=12 ...Initiate drying cycle at 50°C for 240 minutes with 12% humidity goal
 MMU_HEATER STOP=1                              ...Stop current drying cycle
-MMU_HEATER DRY=1 ROTATE=1 GATES=1,3            ...Start drying cycle on gates 1 & 3 periodically rotating them (requires espooler)
+MMU_HEATER DRY=1 ROTATE=1 GATES=1,3            ...Start drying cycle on gates 1 & 3 periodically rotating them
 MMU_HEATER DRYING_DATA=1                       ...List the current drying data database
 MMU_HEATER DRY=1 VENT_INTERVAL=10              ...Initiate drying cycle opening the vent every 10 minutes
 With per-gate heaters:
@@ -1142,16 +1144,17 @@ MMU_CALIBRATE_SELECTOR_INDEXES RESET=1 ...reset selector index calibration
 **Parameters**
 
 ```{.text .console-output}
-UNIT    = #(int) Optional if only one unit fitted to printer
-ANGLE   = #(int) Move servo to designated angle
-GATE    = #(int) Specify the gate by it's global logical index
-LGATE   = #(int) Specify gate by the local mmu unit index (same as GATE with single MMU unit)
-SAVE    = 1      To persist the calibration results else they will just be reported
-SINGLE  = 1      To force the calibration of a single gate only
-SPACING = #(int) Angle between gates for quick setting all gates
-BYPASS  = 1      To specify intention to define the bypass gate angle (if fitted)
-RELEASE = 1      To specify intention to define a fixed release angle
-RESET   = 1      To remove calibrated settings and default to configured starting values
+UNIT          = #(int) Optional if only one unit fitted to printer
+ANGLE         = #(int) Move servo to designated angle
+GATE          = #(int) Specify the gate by it's global logical index
+LGATE         = #(int) Specify gate by the local mmu unit index (same as GATE with single MMU unit)
+SAVE          = 1      To persist the calibration results else they will just be reported
+SINGLE        = 1      To force the calibration of a single gate only
+SPACING       = #(int) Angle between gates for quick setting all gates
+BYPASS        = 1      To specify intention to define the bypass gate angle (if fitted)
+RELEASE       = 1      To specify intention to define a fixed release angle
+RESET         = 1      To remove calibrated settings and default to configured starting values
+RESET_RELEASE = 1      To remove just the calibrated release angle
 (no options to show the current calibration)
 ```
 
@@ -1162,6 +1165,7 @@ MMU_CALIBRATE_SERVO_SELECTOR ANGLE=83                  ...Set servo to angle of 
 MMU_CALIBRATE_SERVO_SELECTOR GATE=5 SINGLE=1           ...Save current servo angle as position for gate 2
 MMU_CALIBRATE_SERVO_SELECTOR LGATE=0 SPACING=25 SAVE=0 ...Use current angle for local gate 0, space others at 25° intervals. Report but don't save results
 MMU_CALIBRATE_SERVO_SELECTOR RELEASE=1                 ...Save the current angle for a fixed release position
+MMU_CALIBRATE_SERVO_SELECTOR RESET_RELEASE=1           ...Forget the saved release angle
 ```
 
 ### MMU_CALIBRATE_TOOLHEAD
@@ -1192,6 +1196,31 @@ Reminder - run with this sequence of options:
     MMU_CALIBRATE_TOOLHEAD DIRTY=1        ...Step 2: measure residual filament with a dirty nozzle
     MMU_CALIBRATE_TOOLHEAD CUT=1          ...Step 3: measure blade position (hold the cutter closed)
     MMU_CALIBRATE_TOOLHEAD CLEAN=1 SAVE=0 ...Measure but don't persist the result to config
+```
+
+### MMU_CHECK_POSITION
+
+*Check an X,Y position is within the axis limits at all heights with skew correction and gcode offset*
+
+**Parameters**
+
+```{.text .console-output}
+X     = #(mm) Gcode X position
+Y     = #(mm) Gcode Y position
+SKEW  = _name_ Saved skew profile to check with (default: current skew)
+ERROR = [0|1] Raise an error if the position is out of range
+```
+
+```{.text .console-output}
+Skew correction moves the toolhead further as Z increases so the position is checked
+from Z=0 to the axis maximum, reporting the height at which it goes out of range. The
+current X,Y gcode offset is applied and an axis not given is checked at both ends of
+its range. Nothing moves. ERROR=1 can be used in PRINT_START, after SKEW_PROFILE LOAD,
+to stop a print that would fail
+Examples:
+MMU_CHECK_POSITION X=19 Y=355              ...Check with the current skew
+MMU_CHECK_POSITION X=19 Y=355 SKEW=my_skew ...Check with saved skew profile 'my_skew'
+MMU_CHECK_POSITION Y=355 ERROR=1           ...Raise an error if out of range
 ```
 
 ### MMU_SOAKTEST_LOAD_SEQUENCE
@@ -1432,6 +1461,26 @@ MMU_TEST_TRACKING DIRECTION=-1 STEP=1 ...Test tracking in the retract direction 
 ### MMU_END
 
 *Called when ending print to finalize MMU*
+
+### MMU_ERROR_DIALOG
+
+*Customize the pop-up dialog shown when the MMU pauses (cleared at print start/end)*
+
+**Parameters**
+
+```{.text .console-output}
+MSG   = _text_ Lines (separated by \n) shown after the reason, replacing the default resume hint
+ABORT = [0|1] Add an ABORT (CANCEL_PRINT) button
+RESET = [0|1] Clear MSG and ABORT (applied before them)
+(no parameters to report current settings)
+```
+
+```{.text .console-output}
+Examples:
+MMU_ERROR_DIALOG ABORT=1                           ...Add an ABORT button for this print
+MMU_ERROR_DIALOG MSG="Ensure T0 is loaded\nThen RESUME" ...Replace the hint text with two lines
+MMU_ERROR_DIALOG RESET=1                           ...Return to defaults
+```
 
 ### MMU_PRINT_END
 

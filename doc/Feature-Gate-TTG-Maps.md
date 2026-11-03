@@ -258,7 +258,8 @@ Print start/end (\_MMU_SOFTWARE)** in menuconfig):
 - `material` - match by material only, ignoring color - useful if you have
   several spools of the same color in different materials.
 - `color` - match a gate whose material matches and whose color matches
-  exactly.
+  exactly. Material matching ignores case; an unset gate material or an
+  unknown slicer material allows a color-only match.
 - `closest_color` - match the *closest* available color rather than an
   exact one, and reports how close the match was.
 - `spool_id` - not yet implemented; reserved for slicers that pass a spool

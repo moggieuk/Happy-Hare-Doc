@@ -60,7 +60,7 @@ number from 1 to Happy Hare's maximum of 20.
 <br>
 Next select the **`Selector servo type`**. Common options are provided - `Feetech FT1117M` (default) for people who
 sourced their servos in the US, the `JX PS-1171MG` Aliexpress alternate and `Not listed` if you have a different servo.
-Servo settings such as min/max pulse widths, etc. are managed using `(Top) → Other Settings → Selector servo` options
+Servo settings such as min/max pulse widths, etc. are managed using `(Top) → MMU Kinematics and Speeds → Selector servo` options
 later in the `menuconfig` flow.
 
 <p align="center">
@@ -127,7 +127,7 @@ If no UUIDs are discovered, choose **`Other / manually entered`** and enter the 
 </p>
 
 ### Pins: gear and selector direction
-++esc++ and back out to the top menu and open **`Pins / TMC`**, then **`Gear pins`**. GPIO Pin defaults are set based on 
+++esc++ and back out to the top menu and open **`Pins / TMC`**, then **`Gear stepper pins`**. GPIO Pin defaults are set based on
 your MCU controller board and Tradrack MMU selection. Review all pin settings for **`Gear`** and **`Selector`** steppers
 to make sure they are correct for your build. Gear direction especially is the one setting that is impossible to set
 correctly by default or guessing and depends on how the stepper cable is _actually wired_. You will validate this later 
@@ -186,8 +186,10 @@ to add your parameters to future installer updates.
 The other two distances Happy Hare can use (**`Toolhead sensor to nozzle`** & **`Extruder sensor to entry`**) 
 only appear when you have enabled the sensors and remain hidden when disabled.
 
+The inset shows the additional distances that appear when both optional sensors are enabled.
+
 <p align="center">
-  <img src="GettingStarted-Shared/toolhead-dimensions-combined.png" alt="Toolhead dimensions, pre-filled from the selected combo" width="70%">
+  <img src="GettingStarted-Shared/toolhead-dimensions-combined.png" alt="Toolhead dimensions with sensors disabled, with an inset showing both sensors enabled" width="70%">
 </p>
 <br>
 

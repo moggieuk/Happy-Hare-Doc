@@ -162,7 +162,7 @@ The **Heater and humidity control** submenu contains the drying limits and
 defaults. A per-gate layout also shows **Maximum concurrent heaters** here.
 
 <p align="center">
-  <img src="Feature-Environment-Manager/heater-control.png" alt="Heater and humidity control: concurrency limit, drying defaults, venting and spool rotation settings" width="80%">
+  <img src="Feature-Environment-Manager/heater-control.png" alt="Heater and humidity control: drying defaults, pause temperature, venting and spool rotation settings" width="80%">
 </p>
 
 The heater controller's own tuning constants live in `mmu_parameters.cfg`;
@@ -174,7 +174,8 @@ heater_max_temp             : 65     # Absolute ceiling; drying never targets ab
 heater_default_dry_temp     : 45     # Fallback drying temperature for an unrecognized or empty gate
 heater_default_dry_time     : 300    # Fallback drying time in minutes
 heater_default_dry_humidity : 25     # Default humidity % goal - drying ends early if reached
-heater_rotate_interval      : 5      # Minutes between spool-rotation bursts, requires eSpooler and explicit GATES
+heater_pause_temp           : -1     # Print pause: -1 keeps drying, 0 turns heat off, positive value limits temperature
+heater_rotate_interval      : 5      # Minutes between spool-rotation bursts, requires eSpooler or spool-driving gear
 
 drying_data : { 'pla': (45, 300), 'pla+': (55, 300), 'petg': (60, 300), 'tpu': (55, 300), 'abs': (70, 300),
                 'abs+': (75, 300), 'asa': (65, 300), 'nylon': (75, 600), 'pc': (75, 600), 'pva': (75, 600),
@@ -205,6 +206,14 @@ across those gates; per-gate heaters use each gate's own recipe. Temperatures
 are capped at `heater_max_temp`. A gate with no material assigned, or one
 that is empty, falls back to `heater_default_dry_temp` and
 `heater_default_dry_time`.
+
+During a shared-heater drying cycle, the temperature is also capped by the
+lowest material recipe temperature of **every gate holding filament**, including
+gates outside `GATES`. Unknown materials use `heater_default_dry_temp`. This
+cap applies to an explicit `TEMP` and to live temperature changes. Loading a
+more temperature-sensitive filament lowers the cap for the rest of the cycle.
+Per-gate heaters and raw heater control outside a drying cycle are unchanged.
+
 Extend the table with your own materials freely - it's a plain dict, and
 `MMU_HEATER DRYING_DATA=1` dumps whatever is currently configured. A
 smaller, illustrative table showing just the shape of it:
@@ -216,6 +225,36 @@ drying_data: {'PLA': (45, 240), 'PETG': (55, 300), 'NYLON': (65, 480)}
 - Values are `(temperature_C, time_minutes)`.
 - A material missing from the table falls back to `heater_default_dry_temp`
   and `heater_default_dry_time`, same as an unrecognized material would.
+
+### Drying during a print pause
+
+Set **Temperature while paused** under **Heater and humidity control**, or
+set `heater_pause_temp` in the unit's `mmu_parameters.cfg`:
+
+| Value | Drying heater behavior while the print is paused |
+|---|---|
+| `-1` (default) | Keep drying at the normal target |
+| `0` | Turn the drying heater off until resume |
+| Positive temperature in °C | Limit the target to this temperature; never raise a lower drying target |
+
+For example, `heater_pause_temp: 30` lowers a 50°C drying target to 30°C
+during a print pause, but leaves a 25°C target unchanged. With per-gate
+heaters, the limit applies separately to each active gate.
+
+Pause and resume changes take effect at the next environment check, within
+30 seconds. A drying cycle started while already paused uses the pause
+setting immediately. On resume, a cycle that is still running restores its
+drying target, subject to the shared-enclosure material cap, including any
+filament loaded during the pause.
+
+The drying timer keeps running while the print is paused, even with the
+heater off. A cycle that finishes during the pause does not restart on
+resume. Changing `MMU_HEATER TEMP=` during an active drying cycle updates
+the stored target, but the pause limit still applies until resume.
+
+This setting controls managed filament drying only. Raw heater control
+outside a drying cycle is unchanged. The hotend's separate pause timeout
+is controlled by [`disable_heater`](Reference-Parameters.md#misc).
 
 ## Commands
 
@@ -253,8 +292,9 @@ gates queue and start automatically as active ones finish - the overall
 cycle can take longer than any single gate's own timer as a result.
 `TEMP=` on a gate behaves according to that gate's current state: queued -
 only the stored target changes, the heater doesn't turn on yet; active - the
-heater updates immediately; not part of the current cycle - it's just set
-immediately, same as raw single-heater control.
+heater updates immediately subject to the
+[print-pause limit](#drying-during-a-print-pause); not part of the current
+cycle - it's just set immediately, same as raw single-heater control.
 
 `MMU_HEATER STOP=1 GATES=1,3` cancelling only some gates behaves according
 to each gate's current state too: an **active** gate has its heater turned
@@ -286,7 +326,12 @@ Venting operational (opening for 10s every 15 minutes, next in 11 minutes; vent 
 Spool rotation enabled (running every 5 minutes, next in <1 minute)
 ```
 
-or, per-gate:
+While the print is paused with a drying temperature limit enabled,
+`MMU_HEATER` also reports `Paused: drying heater off until resume` or
+`Paused: drying heater limited to 30.0°C until resume` (using your configured
+limit). The reported drying target remains the target to restore on resume.
+
+A per-gate status report looks like this:
 
 ```{.text .console-output}
 MMU is in filament drying cycle:
@@ -428,8 +473,9 @@ With an eSpooler, or a design whose gear motor can rotate the spool such as
 ViViD, a drying cycle can periodically nudge each spool a
 short distance in the rewind direction - just enough to stop a respooled
 filament end from baking against one point of contact for hours. Start it
-with `MMU_HEATER DRY=1 ROTATE=1 GATES=1,3` - `GATES` must be given explicitly
-whenever `ROTATE=1` is used. Rotation only actually happens for gates that
+with `MMU_HEATER DRY=1 ROTATE=1 GATES=1,3`. Per-gate heaters require explicit
+`GATES` for rotation; a shared heater can rotate all empty gates without it.
+Rotation only actually happens for gates that
 are genuinely **empty** at the moment the timer fires (filament removed from
 the MMU inlet and secured to the spool) - Happy Hare re-checks this every
 `heater_rotate_interval` minutes rather than only once at the start, so you
@@ -443,6 +489,15 @@ power and duration as an ordinary
 (`espooler_rewind_burst_power`/`espooler_rewind_burst_duration`) - there's no
 separate "rotate" setting to tune. ViViD uses its gear motor for rotation
 only while the printer is not printing.
+
+Gear-driven rotation during printing is off by default. The experimental
+`heater_rotate_in_print: 1` permits short background moves on machines with an
+independent gear per gate and a Klipper version that supports those moves. It
+never rotates the selected or extruder-synchronized gear, and pauses rotation
+while the print is paused. It is unavailable on shared-gear designs such as
+ViViD, Kalico and older Klipper; a warning explains why rotation is skipped,
+while drying continues. Even supported background moves can briefly interrupt
+printing, so test this option on your hardware before relying on it.
 
 ### Choosing a temperature/time by hand
 

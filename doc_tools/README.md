@@ -124,6 +124,72 @@ longer needed on any page: the Material/Zensical theme renders its own
 long discursive page as much as a flat reference one. Don't add `[TOC]` to
 new pages; it's been removed from the ones that had it (`doc/Reference-Printer-Variables.md`).
 
+## Interactive animations
+
+Animations use three maintained layers:
+
+- `doc/assets/stylesheets/hh-animations.css`: shared palette, typography,
+  responsive controls and light/dark site colors.
+- `doc/assets/javascripts/hh-animations.js`: playback, steps, timeline,
+  parameter highlighting, reduced motion and instant-navigation cleanup.
+- `doc/assets/animations/<name>.js`: each scene's geometry and sequence.
+
+To add a scene, use `tip-cutting-after-purge.js` as the working example. Register a
+unique name with `window.HHAnimations.register(name, scene)`. The scene provides
+`title`, `caption`, `height`, `secondsPerStage`, `legend`, `stages` and
+`render(svg, position, width)`. Each stage is a three-item array: its title,
+active parameter text and short explanation. The integer part of `position`
+selects the stage; its fractional part is progress through that stage.
+Render using the actual width, keeping labels readable on narrow screens.
+An optional `stageTiming` array overrides timing per stage with `seconds`,
+`moveStart` and `moveEnd`. The latter two are fractions of the stage duration;
+the player holds the starting and ending geometry outside that motion window.
+The renderer receives a fourth argument with `moving`, for temporary direction
+arrows, plus `stageProgress` for effects that continue during motion holds.
+Use these explanatory holds to make small moves visible; they are not
+printer dwell settings. Omit the array to retain uniform timing.
+The two toolhead-cutting scenes share `HHTipCuttingScene` from
+`tip-cutting-after-purge.js`. Load that script before `tip-cutting-before-purge.js`
+and `tip-forming.js`. The forming scene reuses the toolhead/MMU drawing with
+`hideCutter`, then renders its own macro-derived filament motion and cooling
+zone. Keep its example values and movement descriptions consistent with
+`mmu_form_tip.cfg`; temperature and tip-shape effects are schematic.
+
+Reuse the same `data-hh-animation` scene identifier wherever an animation is
+needed; keep scene code central in `doc/assets/animations/`. Wrap embeds in
+`hh-animation-grid` for half-width columns that stack on small screens.
+A single embed occupies one half-width column.
+
+The `servo-cutter` scene follows `mmu_servo_cutter.cfg` with one cut attempt,
+including the preceding unload for context. Keep its servo defaults and command
+order aligned with that macro; Bowden deflection and offcut disposal are schematic.
+
+Reduced motion renders the end of each stage without continuous movement.
+Scene markup is trusted repository code; do not insert external input into it.
+
+Add the scene script to `extra_javascript` in `mkdocs.yml` after the shared
+player. Embed it in any Markdown page with a fallback:
+
+```html
+<div data-hh-animation="tip-cutting-purge">
+  <p>See the static illustration above for the cut sequence.</p>
+</div>
+```
+
+The player can appear multiple times on a page. It starts paused and cleans up
+detached players on instant navigation. Playback pauses when the tab is hidden.
+Use the shared `--hh-outgoing`, `--hh-cut`, `--hh-residual`, `--hh-incoming`,
+`--hh-text`, `--hh-surface`, `--hh-metal` and `--hh-border` colors in diagrams.
+Cut fragments and residual material retain the outgoing filament color;
+distinguish their roles with labels rather than changing the material's color.
+
+The animation runs in a browser; Markdown viewers such as GitHub do not run it.
+
+Validate with `make docs_check` and `make spellcheck`. Also spell-check new
+untracked source files explicitly, because the Make target selects tracked
+files. Preview the built page at desktop and phone widths in both site themes;
+check playback, scrubbing, step controls, reduced motion, and navigation away/back.
+
 ## Regenerating the images
 
 ```bash
@@ -163,8 +229,34 @@ dependencies, and redesigned workflows still need deliberate session updates.
 The `installer-top` and `installation-unit-name` sessions capture the general
 installer menu and its **Name** submenu. The `getting-started-3ms-additions`,
 `getting-started-ercf-additions` and `getting-started-tradrack-additions` sessions
-also refresh their guides' first-run and configured top menus. Include those
-sessions when a shared top-level prompt changes.
+capture the complete walkthroughs, including board and MCU choices, pin editors,
+toolheads, and profile-specific settings. Their historical `-additions` names
+remain valid for `--only`. Include all profile sessions when shared menus change.
+The `getting-started-shared-toolhead` session captures the plain A4T dimensions.
+The `getting-started-ercf-toolhead-composite` and
+`getting-started-shared-toolhead-composite` sessions preserve the layered
+before/after illustrations used by ERCF, EMU and Tradrack. They capture both
+sensor states at 115 columns, then place the enabled sensor/dimension section
+in a bordered inset over the blank right side of the disabled-sensor screen.
+A triangular connector fades from transparent at its point to amber at the
+inset, preserving the original alternative-view effect.
+`composite.py` finds section boundaries from the actual terminal text and
+rejects a layout that would hide base text or help. It copies rendered cells;
+it does not invent settings or values. Include these composite sessions when
+refreshing shared toolhead screens; a single full-screen capture loses the
+comparison.
+
+The fade is used by these two generated images:
+
+| Image under `doc/` | Used by |
+|---|---|
+| `GettingStarted-ERCF/10-all-toolhead-dimensions-combined.png` | ERCF guide |
+| `GettingStarted-Shared/toolhead-dimensions-combined.png` | EMU and Tradrack guides |
+
+Both sessions are included in a full `make shots` run. When refreshing selected
+toolhead images, include the corresponding composite session as well. Regression
+tests check the fade's increasing opacity, triangular boundary, preservation of
+captured pixels, and rejection of an inset that would obscure the base screen.
 
 The grouped **MMU Features / Additions** screen is taller than the initial
 terminal. Screenshot sessions use `_additions(mc)` to fit it before walking
@@ -359,6 +451,57 @@ changed nothing. A missed key otherwise yields a believable PNG of the wrong scr
 — not a submenu — actually appeared. `mc.write('Turtle Left')` replaces the field
 contents, and `mc.cancel()` closes it without applying, so later screens in the same
 session still show the machine the seed described.
+
+## Photographing a web UI
+
+`doc/Operation/pause-dialog.png` is a real Mainsail dialog, driven by the Happy Hare
+simulator rather than by a printer. It is not regenerated by `make shots`; recapture it by
+hand when the dialog or Mainsail's drawing of it changes.
+
+1. From a Happy Hare checkout, start the simulator (it serves a Moonraker-compatible API by default) with a
+   machine that has filament loaded, then make a print fail with a hint:
+
+   ```bash
+   make console ARGS='--profile ercf_vvd'
+   ```
+
+   ```text
+   /print start
+   /exhaust 1
+   MMU_CHANGE_TOOL TOOL=1
+   ```
+
+   That is `doc/Operation/pause-dialog.png`. The two print-start images vary the error. At
+   print start the start macro first sets the extra lines and the abort button, so do the same
+   (after `/print start`) before causing the failure. The `custom_msg` text is what
+   `MMU_START_SETUP` builds, here for a print using T0 and T3 with T0 first:
+
+   ```text
+   SET_GCODE_VARIABLE MACRO=_MMU_ERROR_DIALOG VARIABLE=show_abort VALUE=True
+   SET_GCODE_VARIABLE MACRO=_MMU_ERROR_DIALOG VARIABLE=custom_msg VALUE="['This print requires tools: T0 (Gate0), T3 (Gate3), Initial Tool: T0. Manually ensure that T0 is loaded and all other tools are available before resuming print']"
+   ```
+
+   - `doc/Operation/pause-dialog-print-start.png`: `/remove 3` then `MMU_CHECK_GATE GATE=3`
+     (the gate check the start macro runs).
+   - `doc/Slicer-Setup/error_dialog_during_start.png`: with tools T0, T1 and T3 in the
+     message, `MMU_PAUSE MSG="Bypass selected for multi-color print"`.
+
+2. Run Mainsail's dev server against it, from a Mainsail checkout:
+
+   ```bash
+   VUE_APP_HOSTNAME=127.0.0.1 VUE_APP_PORT=7125 npx vite serve --port 8089
+   ```
+
+3. Start headless Chrome listening for DevTools, and capture the open dialog:
+
+   ```bash
+   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new \
+     --remote-debugging-port=9333 --user-data-dir=/tmp/chrome-profile about:blank &
+   node doc_tools/capture_webui_dialog.mjs http://localhost:8089/ doc/Operation/pause-dialog.png
+   ```
+
+The script waits for the dialog to finish fading in and clips to it at 2x. Capture from a
+Happy Hare ref that matches `HAPPY_HARE_REF` so the buttons and wording are current.
 
 ## Exploring, before adding a session
 

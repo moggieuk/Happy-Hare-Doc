@@ -171,6 +171,7 @@ _MMU_STEP_UNLOAD_GATE FULL=1 ...Unload with full homing distance (use when start
 ```{.text .console-output}
 EXTRUDER_ONLY   = [0|1] Extruder only unload (e.g. when in bypass)
 PARK_POS        = mm    The starting position of the filament in extruder (after tip forming / retraction)
+CUT_FRAGMENT    = mm    Length cut off by tip cutting, used to detect a missed cut (default: current unload's)
 ```
 
 ```{.text .console-output}
@@ -243,6 +244,31 @@ DUMP_ACTIVE_SENSORS=1 Dump raw active sensors map
 UPDATE_STATUS={dict} Force override (update) of mmu get_status() with supplied dict. 'OFF' to remove
 NFC_READ=1 Simulate an NFC tag read. Params: UID={hex} DEEP=[0|1] GATE={n}(per-gate, else shared) UNIT={n} MATERIAL= BRAND= COLOR= DETAIL= MIN_TEMP= MAX_TEMP=
 NFC_FIELD=1 Classify a tag UID against the gate map (no reader, no motion). Params: GATE={n} UID={hex}
+```
+
+### _SAFE_G1
+
+*Absolute G1 move kept within axis limits after gcode offset and skew correction*
+
+**Parameters**
+
+```{.text .console-output}
+X = #(mm) Absolute X
+Y = #(mm) Absolute Y
+Z = #(mm) Absolute Z
+F = #(mm/min) Speed
+MAX_Z = #(mm) Also keep X,Y in range for following Z moves up to this height
+```
+
+```{.text .console-output}
+Coordinates are always absolute, as with G90, and only X, Y, Z are supported. If the
+move would end out of range once Klipper applies gcode offset and skew_correction
+it is adjusted to just inside the limit and a warning is logged. Corrections greater
+than 5mm on any axis (including the boundary margin) error before moving. Use in place of G1
+in a 'user_park_move_macro'
+Examples:
+_SAFE_G1 X=10 Y=300 F=12000 ...Move to (10, 300), adjusted if necessary
+_SAFE_G1 Y=350 MAX_Z=40     ...Move to Y=350, adjusted so later Z moves up to 40 stay in range
 ```
 
 ### __MMU_ENCODER_INSERT

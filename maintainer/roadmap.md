@@ -15,10 +15,22 @@ lives in `mkdocs.yml`. Check existing coverage before creating a new page.
 | Community and support | `doc/Release-Notes.md` now covers v4.0.0 and the pending v4.1.0 changes. The planned `Donations.md` and `Getting-Help.md` do not exist; review existing home-page and social links before porting wiki material. |
 | External link migration | Assess redirects or an old-to-new URL map for links from the wiki, README files, Discord, KlipperScreen, and videos once destination URLs are stable. |
 
+The [v4.2.0 release review](release-review-v4.2.0.md) records the disposition of
+every merged PR since v4.1.0 through `b277163a`, including existing page updates
+and menuconfig-only exclusions.
+
 ## Publication dependencies
 
-- Fans & Airflow, Heater & Environment Manager, and the refreshed menuconfig
-  screenshots target Happy Hare `development` at `8888b228` (2026-10-07).
+- Except for the heater control menu below, Happy Hare menuconfig screenshots target `development` at `12236421`
+  (2026-10-18), including the reorganized MMU Kinematics and Speeds menu.
+  Regenerate with `make shots HAPPY_HARE_REF=12236421568777b9adafef69fb19d60cd6ec6eff`.
+
+- The heater control screenshot and print-pause drying behavior target Happy Hare
+  PR #1468, merged at `6c98916e`. Regenerate that menu with
+  `make shots HAPPY_HARE_REF=6c98916eab9ccf1d6be983a995b827da5fb2f26c ARGS='--only feature-environment-manager'`.
+
+- Fans & Airflow and Heater & Environment Manager prose was verified against
+  Happy Hare `development` at `8888b228` (2026-10-07).
   These cover built-in vent control, controller fans, fan UI visibility,
   object-name encoder/buffer sharing, I2C bus selection, servo settings and
   the expanded Software Options menu. Confirm release availability
