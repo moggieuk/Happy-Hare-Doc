@@ -62,6 +62,15 @@ Two distinctions need particular care when verifying configuration examples:
   option or assert blanket mutual exclusion with an eSpooler. Verify constraints
   for the particular MMU type against source.
 
+## Release notes
+
+Add unreleased changes to a final `## Development` section in
+`doc/Release-Notes.md`, before the closing `---`. Create the section if it
+does not exist; keep released version sections unchanged when adding new
+development entries. When promoting the release to `main`, replace
+`Development` with the new release number, following the existing `vX.Y.Z`
+heading format. Start a new `Development` section for subsequent changes.
+
 ## Markdown conventions
 
 ### Admonitions

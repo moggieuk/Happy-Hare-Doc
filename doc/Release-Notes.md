@@ -266,7 +266,6 @@ and the [development-only comparison](https://github.com/moggieuk/Happy-Hare/com
 
 ### Spools, metadata and preprocessing
 
-- Add the [`spool_created` macro event](Macro-State-Change-Hooks.md#reacting-to-a-newly-created-spool) when a scanned tag creates a Spoolman spool, with `SPOOLID` and `GATE` (`-1` for a shared reader awaiting assignment). Handle it through `user_mmu_event_extension`; known-spool lookups do not emit it. ([#1504](https://github.com/moggieuk/Happy-Hare/pull/1504))
 - Create a Spoolman filament when an NFC tag color has no existing match; abort an unfinished PN532 scan when no tag is found to prevent I2C hangs. ([#1368](https://github.com/moggieuk/Happy-Hare/pull/1368), [#1374](https://github.com/moggieuk/Happy-Hare/pull/1374))
 - Fetch newly added Spoolman spools before sending gate-map updates. ([#1431](https://github.com/moggieuk/Happy-Hare/pull/1431))
 - Make exact-color automapping also match material, ignoring case. Unset gate material or unknown slicer material still allows a color-only match. ([#1436](https://github.com/moggieuk/Happy-Hare/pull/1436))
@@ -295,5 +294,9 @@ and the [development-only comparison](https://github.com/moggieuk/Happy-Hare/com
 - Refresh the simulator console LED display eight times per second and add a Moonraker-compatible API for testing with a real Mainsail UI. ([#1409](https://github.com/moggieuk/Happy-Hare/pull/1409), [#1416](https://github.com/moggieuk/Happy-Hare/pull/1416))
 - Remove obsolete kconfiglib change markers and set the application version to 4.2.0. ([#1411](https://github.com/moggieuk/Happy-Hare/pull/1411), [#1423](https://github.com/moggieuk/Happy-Hare/pull/1423))
 - Synchronize main into development; these merges add no separate user-facing feature. ([#1377](https://github.com/moggieuk/Happy-Hare/pull/1377), [#1378](https://github.com/moggieuk/Happy-Hare/pull/1378), [#1399](https://github.com/moggieuk/Happy-Hare/pull/1399))
+
+## Development
+
+- Add the [`spool_created` macro event](Macro-State-Change-Hooks.md#reacting-to-a-newly-created-spool) when a scanned tag creates a Spoolman spool, with `SPOOLID` and `GATE` (`-1` for a shared reader awaiting assignment). Handle it through `user_mmu_event_extension`; known-spool lookups do not emit it. ([#1504](https://github.com/moggieuk/Happy-Hare/pull/1504))
 
 ---
