@@ -295,4 +295,8 @@ and the [development-only comparison](https://github.com/moggieuk/Happy-Hare/com
 - Remove obsolete kconfiglib change markers and set the application version to 4.2.0. ([#1411](https://github.com/moggieuk/Happy-Hare/pull/1411), [#1423](https://github.com/moggieuk/Happy-Hare/pull/1423))
 - Synchronize main into development; these merges add no separate user-facing feature. ([#1377](https://github.com/moggieuk/Happy-Hare/pull/1377), [#1378](https://github.com/moggieuk/Happy-Hare/pull/1378), [#1399](https://github.com/moggieuk/Happy-Hare/pull/1399))
 
+## Development
+
+- Add the [`spool_created` macro event](Macro-State-Change-Hooks.md#reacting-to-a-newly-created-spool) when a scanned tag creates a Spoolman spool, with `SPOOLID` and `GATE` (`-1` for a shared reader awaiting assignment). Handle it through `user_mmu_event_extension`; known-spool lookups do not emit it. ([#1504](https://github.com/moggieuk/Happy-Hare/pull/1504))
+
 ---
