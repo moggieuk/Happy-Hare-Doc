@@ -266,6 +266,7 @@ and the [development-only comparison](https://github.com/moggieuk/Happy-Hare/com
 
 ### Spools, metadata and preprocessing
 
+- Add the [`spool_created` macro event](Macro-State-Change-Hooks.md#reacting-to-a-newly-created-spool) when a scanned tag creates a Spoolman spool, with `SPOOLID` and `GATE` (`-1` for a shared reader awaiting assignment). Handle it through `user_mmu_event_extension`; known-spool lookups do not emit it. ([#1504](https://github.com/moggieuk/Happy-Hare/pull/1504))
 - Create a Spoolman filament when an NFC tag color has no existing match; abort an unfinished PN532 scan when no tag is found to prevent I2C hangs. ([#1368](https://github.com/moggieuk/Happy-Hare/pull/1368), [#1374](https://github.com/moggieuk/Happy-Hare/pull/1374))
 - Fetch newly added Spoolman spools before sending gate-map updates. ([#1431](https://github.com/moggieuk/Happy-Hare/pull/1431))
 - Make exact-color automapping also match material, ignoring case. Unset gate material or unknown slicer material still allows a color-only match. ([#1436](https://github.com/moggieuk/Happy-Hare/pull/1436))

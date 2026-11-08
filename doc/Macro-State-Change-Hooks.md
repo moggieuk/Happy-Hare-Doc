@@ -23,7 +23,8 @@ calls them directly in normal use:
   [Printer Variables: Core state](Reference-Printer-Variables.md#core-state)).
   Receives `STATE`/`OLD_STATE`.
 - **`_MMU_EVENT`** - runs on one-off events that aren't really a state
-  transition: `restart`, `gate_map_changed`, `servo_down`, `filament_cut`.
+  transition, including `restart`, `gate_map_changed`, `filament_gripped`,
+  `filament_cut`, and `spool_created`.
   Receives `EVENT` and event-specific parameters.
 
 Your extension macro is called *after* the default handler, with exactly
@@ -51,6 +52,52 @@ and cutter-blade-use counter.
     a `servo_down` event) or from wherever your own macro operates a
     cutter, using
     [`MMU_STATS COUNTER=servo_down LIMIT={printer['gcode_macro _MMU_STATE_VARS'].servo_down_limit}`](Feature-Statistics-Counters.md#consumption-counters).
+
+### Reacting to a newly created spool
+
+When Moonraker reports that a scanned NFC/RFID tag created a new Spoolman
+spool, Happy Hare calls `_MMU_EVENT` with `EVENT=spool_created`. This lets
+your extension offer calibration or set up a filament profile for the new
+spool. Looking up an already known spool does not emit this event: the
+`MMU_GATE_MAP` callback must include `CREATED=1`.
+
+| Parameter | Meaning |
+|---|---|
+| `SPOOLID` | The newly created Spoolman spool ID |
+| `GATE` | The gate for a per-gate reader, or `-1` for a shared reader using `NEXT_SPOOLID`, where the gate is not yet known |
+
+For a shared reader, the event arrives while the spool ID is pending,
+before the spool is loaded into a gate. Handle `GATE=-1` explicitly rather
+than using it as an index into a per-gate list.
+
+Set the existing hook in the `_MMU_STATE_VARS` section of
+`mmu_macro_vars.cfg`:
+
+```ini
+variable_user_mmu_event_extension: 'MY_MMU_EVENT'
+```
+
+Define the extension in your own included macro file. This example reports
+the new spool without starting any printer movement:
+
+```ini
+[gcode_macro MY_MMU_EVENT]
+gcode:
+    {% if params.EVENT == 'spool_created' %}
+        {% set spool_id = params.SPOOLID|int %}
+        {% set gate = params.GATE|int %}
+        {% if gate == -1 %}
+            {action_respond_info("Created Spoolman spool %d; gate assignment pending" % spool_id)}
+        {% else %}
+            {action_respond_info("Created Spoolman spool %d on gate %d" % (spool_id, gate))}
+        {% endif %}
+    {% endif %}
+```
+
+If you already use `user_mmu_event_extension`, add this event branch to
+your existing macro. See [NFC/RFID Reading: Auto-creating
+spools](Feature-NFC.md#auto-creating-spools-from-unknown-tags) for the reader
+and Spoolman settings that enable automatic creation.
 
 ## See also
 

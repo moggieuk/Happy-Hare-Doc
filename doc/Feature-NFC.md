@@ -475,6 +475,14 @@ filament data (see [Concept](#concept)) creates the spool in Spoolman and
 registers the tag against it in the same step - the next scan of that same
 tag resolves normally.
 
+When the resulting gate-map callback reports a newly created spool, Happy
+Hare emits the [`spool_created` macro
+event](Macro-State-Change-Hooks.md#reacting-to-a-newly-created-spool), with
+`SPOOLID` and `GATE`. For a shared reader using `NEXT_SPOOLID`, `GATE=-1`
+because assignment is still pending. Use `user_mmu_event_extension` to
+react to the new spool, for example to offer calibration; resolving an
+already known spool does not emit this event.
+
 ### Registering an unresolved tag after the fact
 
 Auto-create needs a tag that actually carries usable filament data - a
