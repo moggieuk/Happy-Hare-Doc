@@ -311,6 +311,8 @@ and the [development-only comparison](https://github.com/moggieuk/Happy-Hare/com
   remains available for existing UIs.
   ([#1510](https://github.com/moggieuk/Happy-Hare/pull/1510))
 
+- Add opt-in [automatic EndlessSpool groups](Feature-Endless-Spool-Runout.md#automatic-groups-from-the-gate-map) with `endless_spool_auto_groups` (default `0`). Gates with matching material and RGB color back each other up, following gate-map, Spoolman and NFC updates. Empty gates retain their matching replacements; refilled gates without metadata stay separate. Manual `GROUPS=` assignments are rejected while enabled. ([#1511](https://github.com/moggieuk/Happy-Hare/pull/1511))
+
 - Add the [`spool_created` macro event](Macro-State-Change-Hooks.md#reacting-to-a-newly-created-spool) when a scanned tag creates a Spoolman spool, with `SPOOLID` and `GATE` (`-1` for a shared reader awaiting assignment). Handle it through `user_mmu_event_extension`; known-spool lookups do not emit it. ([#1504](https://github.com/moggieuk/Happy-Hare/pull/1504))
 
 ---

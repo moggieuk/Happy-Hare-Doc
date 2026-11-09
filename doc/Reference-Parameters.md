@@ -94,7 +94,8 @@ the full picture.
 | `endless_spool_enabled` | `0` | Enable [EndlessSpool](Feature-Endless-Spool-Runout.md) - automatic hand-off to a spare gate on runout |
 | `endless_spool_on_load` | `0` | Also apply EndlessSpool if the gate a load targets turns out to be empty |
 | `endless_spool_eject_gate` | `-1` | Which gate to eject filament remains to - `-1` = the current gate |
-| `endless_spool_groups` | *(empty)* | EndlessSpool grouping list - empty means no groups defined |
+| `endless_spool_auto_groups` | `0` | Build groups automatically from gate-map material and RGB color; ignores alpha and rejects manual `GROUPS=` assignments. See [automatic grouping](Feature-Endless-Spool-Runout.md#automatic-groups-from-the-gate-map) |
+| `default_endless_spool_groups` | *(empty)* | Default manual group membership per gate; empty gives each gate its own group |
 | `spoolman_support` | `off` | `off`/`readonly`/`push`/`pull` - see [Feature: Spoolman / Filament Hub](Feature-Spoolman.md) for what each does |
 | `spoolman_pending_id_timeout` | `20` s | How long a pending gate assignment (spool ID, NFC tag or TD-1 scan) stays valid before being voided |
 | `spoolman_led_segment` | `gate_status` | Which LED segment(s) show the pending-assignment overlay: `gate_status`, `status`, or `both` |
@@ -190,7 +191,7 @@ your gate count. All commented out (and therefore inactive) by default.
 | Parameter | Restored by |
 |---|---|
 | `default_gate_status`, `default_gate_vendor`, `default_gate_filament_name`, `default_gate_material`, `default_gate_color`, `default_gate_temperature`, `default_gate_spool_id`, `default_gate_speed_override`, `default_gate_td`, `default_gate_td1_color`, `default_gate_spool_rfid`, `default_gate_remaining_weight`, `default_gate_initial_weight` | `MMU_GATE_MAP RESET=1` |
-| `default_endless_spool_groups` | `MMU_ENDLESS_SPOOL_GROUPS RESET=1` |
+| `default_endless_spool_groups` | `MMU_ENDLESS_SPOOL RESET=1` |
 | `default_ttg_map` | `MMU_TTG_MAP RESET=1` |
 
 ### Toolhead geometry (`[mmu_toolhead]`)
