@@ -297,6 +297,20 @@ and the [development-only comparison](https://github.com/moggieuk/Happy-Hare/com
 
 ## Development
 
+- **Custom macro compatibility:** Rename the cut-fragment status field from
+  `filament_remaining` to `filament_cut_fragment`. Update
+  `printer.mmu.filament_remaining` to `printer.mmu.filament_cut_fragment` and
+  `printer["mmu_extruder <name>"].filament_remaining` to
+  `printer["mmu_extruder <name>"].filament_cut_fragment` in custom macros or UI
+  integrations; the old status key is no longer available. The value is the
+  filament left by a tip cut, excluding calibrated residual filament.
+  `extruder_filament_remaining` (cut fragment plus calibrated residual),
+  `filament_remaining_color`, `filament_remaining_material` and
+  `filament_remaining_temp` are unchanged. Previously saved cut-fragment values
+  still load, and the legacy `mmu_state_filament_remaining` saved variable
+  remains available for existing UIs.
+  ([#1510](https://github.com/moggieuk/Happy-Hare/pull/1510))
+
 - Add the [`spool_created` macro event](Macro-State-Change-Hooks.md#reacting-to-a-newly-created-spool) when a scanned tag creates a Spoolman spool, with `SPOOLID` and `GATE` (`-1` for a shared reader awaiting assignment). Handle it through `user_mmu_event_extension`; known-spool lookups do not emit it. ([#1504](https://github.com/moggieuk/Happy-Hare/pull/1504))
 
 ---
