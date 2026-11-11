@@ -21,7 +21,12 @@ and menuconfig-only exclusions.
 
 ## Publication dependencies
 
-- Except for the heater control menu below, Happy Hare menuconfig screenshots target `development` at `12236421`
+- EndlessSpool automatic-group documentation and the Global software options
+  screenshots for EndlessSpool, ViViD and 3MS target PR #1511, merged at
+  `1c178141`. Regenerate those sessions with
+  `make shots HAPPY_HARE_REF=1c178141ccde2dce5aae3a8d2d4da3c832e5ad16 ARGS='--only feature-endless-spool-runout --only getting-started-vivid --only getting-started-3ms-additions'`.
+
+- Except for the updated menus listed here, Happy Hare menuconfig screenshots target `development` at `12236421`
   (2026-10-18), including the reorganized MMU Kinematics and Speeds menu.
   Regenerate with `make shots HAPPY_HARE_REF=12236421568777b9adafef69fb19d60cd6ec6eff`.
 
