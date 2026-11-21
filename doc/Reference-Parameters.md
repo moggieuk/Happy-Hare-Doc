@@ -31,12 +31,13 @@ regardless of how many physical units make it up.
 
 | Parameter | Default | Description |
 |---|---|---|
-| `log_level` | `1` | Console log verbosity: `0`=essential, `1`=info, `2`=debug, `3`=trace, `4`=developer (includes stepper moves) |
+| `log_level` | `1` | Console log verbosity: `0`=essential, `1`=info, `2`=debug, `3`=trace. A saved `4` (the former developer level) is still accepted and logs as trace |
 | `log_file_level` | `2` | Same scale, for `mmu.log` - `-1` disables the log file entirely |
 | `log_statistics` | `1` | Log the swap-timing table on every toolchange - see [Feature: Statistics & Counters](Feature-Statistics-Counters.md) |
 | `log_visual` | `1` | Show a visual representation of filament position in the console |
 | `log_startup_status` | `1` | Log a tool-to-gate summary on startup |
 | `log_m117_messages` | `1` | Mirror toolchange messages to the printer display via `M117` |
+| `default_telemetry_mode` | `off` | Motion-telemetry recording after a Klipper restart: `off`, `on` or `toolchange` (the next load, unload or toolchange only). Set in `mmu.cfg` or menuconfig, not changeable with `MMU_TEST_CONFIG`; change it at runtime with [`MMU_TELEMETRY`](Reference-Commands.md#mmu_telemetry) - see [Feature: Telemetry](Feature-Telemetry.md) |
 | `suppress_klipper_warnings` | `0` | `1` = send startup Klipper warnings to `mmu.log` instead of the console |
 
 !!! tip

@@ -135,6 +135,7 @@ nav:
   - Operation:
       - Understanding MMU State: Understanding-Operation.md
       - Operation: Operation.md
+      - Happy Hare Console: Happy-Hare-Console.md
       - KlipperScreen: KlipperScreen.md
       - Mainsail / Fluidd: Mainsail-Fluidd-Integration.md
   - Tuning:
@@ -159,6 +160,7 @@ nav:
       - State Persistence: Feature-State-Persistence.md
       - Statistics & Consumption Counters: Feature-Statistics-Counters.md
       - Sync-Feedback Buffer: Feature-Sync-Feedback-Buffer.md
+      - Telemetry: Feature-Telemetry.md
       - Tip Forming and Purging: Feature-Tip-Forming-Purging.md
   - Macros:
       - Macro Customization: Macro-Customization.md

@@ -34,6 +34,10 @@ filament from a gate that isn't loaded:
   <img src="Mainsail-Fluidd-Integration/non-selected-gate.png" alt="Actions available on a non-selected gate" width="20%">
 </p>
 
+!!! tip "Watch it move"
+    The [Happy Hare Console](Happy-Hare-Console.md) is a separate browser page that animates the filament path,
+    replays toolchanges step by step and offers the same gate menu.
+
 ## Tool-to-Gate Mapping
 
 Starting a multi-color print gives the opportunity to map the tools the

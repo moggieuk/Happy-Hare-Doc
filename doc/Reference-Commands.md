@@ -885,6 +885,26 @@ MMU_TD1 GATE=2 INIT=1          ...Reboot the scanner on gate 2
 MMU_TD1 INIT_ALL=1             ...Reboot every scanner on all units
 ```
 
+### MMU_TELEMETRY
+
+*Record motion telemetry to the Moonraker log*
+
+**Parameters**
+
+```{.text .console-output}
+MMU_TELEMETRY [MODE=[off|on|toolchange]]
+  MODE=on          ...record everything until switched off
+  MODE=toolchange  ...record the next load, unload or toolchange command, then stop
+  MODE=off         ...stop recording
+  (no parameters)  ...report the current mode and the default (default_telemetry_mode in mmu.cfg)
+```
+
+```{.text .console-output}
+Examples:
+MMU_TELEMETRY MODE=toolchange ...then run T1 to capture just that toolchange
+MMU_TELEMETRY MODE=off ...close the log
+```
+
 ### MMU_TOOL_OVERRIDES
 
 *Displays, sets or clears tool speed and extrusion factors (M220 & M221)*
@@ -1250,7 +1270,7 @@ MMU_SOAKTEST_LOAD_SEQUENCE UNIT=1 FULL=1 ...Loop through all tools on unit 1 loa
 **Parameters**
 
 ```{.text .console-output}
-UNIT  = #(int) Optional if only one unit fitted to printer
+UNIT  = #(int)|ALL Optional if only one unit fitted to printer
 LOOP  = #(int) Test loops (default 10)
 GRIP  = [0|1]  Force filament gripping after selection where optional
 HOME  = [0|1]  Randomized homing
@@ -1472,7 +1492,8 @@ MMU_TEST_TRACKING DIRECTION=-1 STEP=1 ...Test tracking in the retract direction 
 ```{.text .console-output}
 MSG   = _text_ Lines (separated by \n) shown after the reason, replacing the default resume hint
 ABORT = [0|1] Add an ABORT (CANCEL_PRINT) button
-RESET = [0|1] Clear MSG and ABORT (applied before them)
+BUTTONS = _text_ Extra buttons, comma separated: Label|GCODE|style (primary, warning, error...)
+RESET = [0|1] Clear MSG, ABORT and BUTTONS (applied before them)
 (no parameters to report current settings)
 ```
 
