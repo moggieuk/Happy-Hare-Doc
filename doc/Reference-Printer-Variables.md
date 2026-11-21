@@ -77,6 +77,14 @@ A loaded bypass with unknown metadata can still have `active_filament == {}`.
 Bypass metadata survives restart and is cleared by bypass unload, `MMU_RESET`,
 or selecting a real gate.
 
+### Telemetry and configuration changes
+
+| Variable | Type | Meaning |
+|---|---|---|
+| `telemetry_mode` | string | `off` \| `on` \| `toolchange` - whether [motion telemetry](Feature-Telemetry.md) is being recorded to the Moonraker log. Set with [`MMU_TELEMETRY`](Reference-Commands.md#mmu_telemetry); not saved across a restart (see `default_telemetry_mode`) |
+| `homing` | dict or None | While the MMU is making a homing move: `endstops` (list of the qualified endstop names it is homing to, such as `unit0:mmu_shared_exit`) and `triggered` (`True` when it stops on the endstop triggering, `False` when it stops on release). `None` otherwise. The [Happy Hare Console](Happy-Hare-Console.md) uses it to show which sensor a move is seeking |
+| `config_changes` | dict | Runtime changes made with [`MMU_TEST_CONFIG`](Reference-Commands.md#mmu_test_config) that differ from the value in the config files, as `{section: {parameter: value}}`. A change back to the file value removes its entry. Empty when nothing has been changed |
+
 ### Gate and tool maps
 
 All per-gate lists here are indexed by the same global gate number used

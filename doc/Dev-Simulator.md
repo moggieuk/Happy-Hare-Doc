@@ -22,6 +22,12 @@ it that will look like bugs the first time you see them.
 make console
 ```
 
+At an interactive terminal the simulator also serves the [Happy Hare Console](Happy-Hare-Console.md), a browser
+view of the same machine, at **<http://127.0.0.1:7125/sim/viewer/>**; the startup banner prints the exact address.
+Open it beside the terminal and every command, whether typed here or sent from the page, is animated there. If port
+7125 is in use the simulator picks another and the banner and `/web` show it; `--serve PORT` chooses one and
+`--no-serve` turns the web API and the page off. See [below](#the-happy-hare-console-in-the-simulator).
+
 ```{.text .console-command}
 MMU_CHANGE_TOOL TOOL=1
 ```
@@ -156,7 +162,7 @@ MMU_SENSORS
 Useful flags — `make console ARGS='...'`:
 
 ```bash
---profile boxturtle            # or tradrack, emu, encoder, nfc_single, nfc_spoolman, ...
+--profile boxturtle            # or tradrack, emu, encoder, ercf_mmu_cutter, nfc_single, nfc_spoolman, ...
                                # (default is ercf_vvd, a real 2-unit machine)
 --profile /path/to/config      # your own installed config - see below
 --header machine,sensors,filament,selector,gates,leds   # or 'all' / 'off'
@@ -170,8 +176,9 @@ Useful flags — `make console ARGS='...'`:
 --no-preload                   # leave every gate empty
 --no-calibrate                 # boot cold: no seeded calibration, no homing, no preload
 --no-prime                     # leave the gate map blank instead of filling it in
---seed N                       # seed for the primed gate map (default 0, reproducible)
+--seed N                       # repeat a primed gate map; an interactive start picks a new one and prints it, a --script run uses 0
 --no-moonraker                 # don't attach the fake Moonraker/Spoolman
+--serve PORT / --no-serve      # port for the web API and the Happy Hare Console (default 7125), or turn them off
 --pace FACTOR                  # 0=instant, 0.5=twice as fast as real (default), 1=real time
 --wall / --no-wall             # with --pace, whether to sleep in real time (default: interactive only)
 --script FILE                  # run non-interactively (this is how it is tested)
@@ -332,6 +339,44 @@ are typing. `/header GROUPS` switches groups live, `/header all` turns every gro
 `/header off` hides it *and* releases the pinned band. `all` and `off` work on the
 `--header` flag too — both go through the same parser. On a pipe or with `--inline-header`
 it falls back to reprinting above each prompt.
+
+### The Happy Hare Console in the simulator
+
+<p align="center">
+  <img src="Dev-Simulator/visualizer.png" alt="The Happy Hare Console connected to the simulator, a load in progress on a BoxTurtle gate" width="100%">
+</p>
+
+The page animates the simulated machine exactly as it would a printer, so it is the easiest way to see what a
+configuration does, and to look at things the terminal cannot show: where the filament tip is along the Bowden, how a
+cutter or tip-forming sequence moves, which sensor stopped a homing move. Everything it can do is on the
+[Happy Hare Console](Happy-Hare-Console.md) page; what is specific to the simulator is below.
+
+- **Open it.** Browse to `http://127.0.0.1:7125/sim/viewer/` (the port shown at startup, or the one you gave
+  `--serve`). It connects to the simulator that served it; to look at a different one, change the URL in the
+  **Connection** panel and press **Connect**.
+- **Run commands from either place.** The page's command box and the gate menu send commands to the same session as
+  the terminal. Moves are animated after the command finishes, then replayed through the trace.
+- **Start another profile without leaving the page.** In the **Simulator setup** panel choose a built-in profile
+  and press **Restart with profile**. It boots a fresh session, which clears the capture and any runtime changes,
+  so save the telemetry first if you want to keep it. The profile list is the same one `--profile` accepts.
+
+<p align="center">
+  <img src="Dev-Simulator/simulator-setup.png" alt="The Simulator setup panel with a profile list and a Restart with profile button" width="40%">
+</p>
+
+- **Or load your own configuration.** Choose a folder containing a `printer.cfg` and its `mmu/` directory with
+  **Or load a configuration directory**. It is loaded the way `--profile /path` loads an installed configuration: your
+  files are copied to temporary storage and never modified, and saved variables are not imported. A failed boot
+  puts the previous profile back.
+- **Toggle sensors.** Expand **Sensor and device readout** and click a sensor to disable or enable it (the same as
+  `/sensor NAME enable|disable` at the terminal).
+- **A new gate map each start.** An interactive start primes different spools each time, with one spool run out
+  and one or two gates left unknown until checked; `--seed N` repeats a session (the seed is printed at startup).
+
+The Buffer and Encoder panels and the Simulator setup panel appear only against the simulator.
+Most macro bodies still do not run here (see [Three things that will look like bugs](#three-things-that-will-look-like-bugs)), but
+the servo cutter macros do run for real: the `ercf_mmu_cutter` profile is a single ERCF with a servo cutter at the MMU, so an
+MMU cut can be watched.
 
 ### Connecting Mainsail or Fluidd
 

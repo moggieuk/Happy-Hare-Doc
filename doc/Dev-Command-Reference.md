@@ -226,6 +226,7 @@ REALISTIC_SYNC_TEST=1 Load test normal stepper syncing and movement. Params: LOO
 QUIESCE_TEST=1 Quick test of problematic sync changes
 SEL_MOVE=1 Selector move. Params: MOVE={mm} SPEED={mm/s} ACCEL={mm/s^2} WAIT=[0|1] LOOP={n}
 SEL_HOMING_MOVE=1 Selector homing move. Params: MOVE={mm} SPEED={mm/s} ACCEL={mm/s^2} LOOP={n} ENDSTOP={name}
+RANDOM_SELECT=1 Randomly select configured gates across all units. Params: LOOP={n} (default 10)
 SEL_LOAD_TEST=1 Load test selector movements. Params: LOOP={n} HOME=[0|1]
 TTC_TEST=1 / TTC_TEST2=1 / TTC_TEST3=1 Provoke known TTC conditions. Params: LOOP={n} MIX=[0|1] DEBUG=[0|1] WAIT=[0|1]
 STEPCOMPRESS_TEST=1 Provoke stepcompress error. Params: LOOP={n} MIX=[0|1] DEBUG=[0|1] WAIT=[0|1] SELECT=[0|1] MOTOR={name} STOP_ON_ENDSTOP=[-1|0|1]

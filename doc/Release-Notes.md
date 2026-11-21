@@ -315,4 +315,8 @@ and the [development-only comparison](https://github.com/moggieuk/Happy-Hare/com
 
 - Add the [`spool_created` macro event](Macro-State-Change-Hooks.md#reacting-to-a-newly-created-spool) when a scanned tag creates a Spoolman spool, with `SPOOLID` and `GATE` (`-1` for a shared reader awaiting assignment). Handle it through `user_mmu_event_extension`; known-spool lookups do not emit it. ([#1504](https://github.com/moggieuk/Happy-Hare/pull/1504))
 
+- Add [motion telemetry](Feature-Telemetry.md): Happy Hare records what the MMU does and a Moonraker component (`[mmu_telemetry]`, Moonraker v0.9.0 or later) relays and records it. Control recording with [`MMU_TELEMETRY`](Reference-Commands.md#mmu_telemetry) `MODE=off|on|toolchange` or the `default_telemetry_mode` option (default `off`), and read it as `printer.mmu.telemetry_mode`. Adds the `homing` and `config_changes` status keys and records the servo cutter at the MMU. Re-run the installer and restart Klipper and Moonraker when upgrading. The `log_level` 4 (developer) level is removed: a saved `4` still loads and logs as trace. ([#1480](https://github.com/moggieuk/Happy-Hare/pull/1480))
+
+- Add the [Happy Hare Console](Happy-Hare-Console.md), a browser app that animates the MMU live or from a saved telemetry recording, installed with `./install.sh -w`, and served by the [simulator](Dev-Simulator.md#the-happy-hare-console-in-the-simulator). ([#1531](https://github.com/moggieuk/Happy-Hare/pull/1531))
+
 ---
