@@ -156,7 +156,7 @@ Step to the moves that matter and compare them with your expectations:
 </p>
 
 - **Does the tip stop where you expect?** The trace gives every homing move and how far it
-  travelled before the sensor triggered. A Bowden load that homed far sooner or later than
+  traveled before the sensor triggered. A Bowden load that homed far sooner or later than
   `bowden_length` predicts is the clearest sign the calibration is off.
 - **Warnings.** An amber **!** appears when a recorded move contradicts a sensor, for example
   filament sensed where the move says it cannot be. The warning box gives the sensor details.

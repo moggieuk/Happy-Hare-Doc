@@ -134,7 +134,7 @@ time** in [Settings](#settings) to shorten long, fast transfers in proportion to
 
 The main view draws your machine from its configuration: every unit side by side on a rack under the Bowden exit
 (a unit with many gates wraps into rows), the gears, the sensors, the encoder, the sync-feedback buffer, the cutter,
-the extruder and the nozzle. Spool colour, material fill level and gate status come from the real gate map.
+the extruder and the nozzle. Spool color, material fill level and gate status come from the real gate map.
 
 <p align="center">
   <img src="Happy-Hare-Console/unit-footer.png" alt="The rack of units: each unit has its gates, its logo and name beneath" width="100%">
@@ -227,7 +227,7 @@ all from the menu. *Profile `boxturtle2_ercf`.*
 | Check Gate | `MMU_CHECK_GATE GATE=n` | Always |
 | Scan NFC Tag | `MMU_NFC_SCAN GATE=n` | As Preload; shown only where the gate has an NFC reader |
 
-Unavailable items are greyed. Nothing can be sent while printing, with the MMU disabled or when not connected.
+Unavailable items are grayed. Nothing can be sent while printing, with the MMU disabled or when not connected.
 The menu closes when you choose an item, press Escape, click elsewhere, move the pointer off it or after eight seconds.
 The rules are the same as the MMU panel in
 [Mainsail / Fluidd](Mainsail-Fluidd-Integration.md).
@@ -276,7 +276,7 @@ units, and a change affects all of them. Like the runtime parameters, edits are 
   <img src="Happy-Hare-Console/readout.png" alt="The expanded Sensor and device readout" width="85%">
 </p>
 
-Expand **Sensor and device readout** under the scene for every sensor (lit when triggered, grey when disabled)
+Expand **Sensor and device readout** under the scene for every sensor (lit when triggered, gray when disabled)
 and the state of other devices such as heaters and fans. Click a sensor to disable or enable it
 (`MMU_SENSORS`); sensors can only be toggled at the live end, so choose **End, go live** first.
 Disabling one is the quickest way to see how Happy Hare behaves without it.
