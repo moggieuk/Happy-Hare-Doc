@@ -6,48 +6,108 @@ move, with a step-by-step trace beside it. It follows the printer live, replays 
 toolchange you have just run, or opens a recording someone saved earlier. You can also
 drive the MMU from it: click a spool for a menu of load, unload, select and more.
 
-!!! note "Console, Visualizer and the simulator's console"
-    The app's own page title is **Happy Hare Visualizer**; this documentation calls it the
-    Happy Hare Console. It is not the terminal that `make console` starts for the
-    [simulator](Dev-Simulator.md) (though the simulator serves the app, see below), and not the
-    "Console" card inside the app, which is a small command window.
+!!! note "Not the simulator's console"
+    This is not the terminal that `make console` starts for the [simulator](Dev-Simulator.md),
+    although the simulator can serve the Console for you (see
+    [below](#trying-it-without-a-printer)). Nor is it the small "Console" card inside the app, which
+    is a command window.
 
-It is fed by [telemetry](Feature-Telemetry.md). Read that page for how recordings are made and
-for using the Console to [set up and debug](Feature-Telemetry.md#tuning) your configuration.
+The Console is a separate project with its own repository,
+[Happy-Hare-Console](https://github.com/moggieuk/Happy-Hare-Console), installed beside Happy Hare, Mainsail
+and Fluidd. It is fed by [telemetry](Feature-Telemetry.md): read that page for how recordings are made and for
+using the Console to [set up and debug](Feature-Telemetry.md#tuning) your configuration.
 
 ## Installing it on your printer
 
-From the Happy Hare directory on the printer:
+### What you need
+
+- A printer running Klipper, Moonraker and Happy Hare v4.
+- **nginx**, which Mainsail and Fluidd images already include.
+- For animated movement, a Happy Hare version with
+  [motion telemetry](Feature-Telemetry.md) (newer than v4.2.0) and Happy Hare's `[mmu_telemetry]` Moonraker
+  component, see [Telemetry: Moonraker Setup](Feature-Telemetry.md#moonraker-setup). Without telemetry the Console
+  still follows the printer's live status, and it can still play saved recordings.
+
+### Install
+
+On the printer:
 
 ```bash
-./install.sh -w
+cd ~
+git clone https://github.com/moggieuk/Happy-Hare-Console.git
+cd Happy-Hare-Console
+./install.sh
 ```
 
-This adds an nginx site of its own, beside Mainsail or Fluidd, and prints its address - the first
-free port from 8090, for example `http://<printer>:8090/`. The site serves the app from the Happy Hare
-folder and passes the Moonraker connection through, exactly as Mainsail's site does, so nothing needs
-adding to Moonraker's `cors_domains`.
+The installer does two things and prints the Console's address when it finishes:
 
-- It asks before using `sudo`, tests the nginx configuration before reloading, and puts the previous
-  configuration back if nginx rejects the change.
-- Re-running it keeps the same port. Choose another with `VISUALIZER_PORT=9000 ./install.sh -w`, or point it at a
-  Moonraker on another port with `UPSTREAM_PORT=7126 ./install.sh -w`.
-- `./install.sh -u` removes the site along with Happy Hare. Updates need nothing extra: the app is part of the
-  Happy Hare folder, so a normal update refreshes it.
-- nginx must already be installed (Mainsail and Fluidd images include it). If it is missing, the step says so and
-  changes nothing.
-- A **403** page usually means nginx cannot read your home directory. Allow it to be traversed with `chmod o+x ~`.
-- The site exposes the same Moonraker API as Mainsail's own port, and Moonraker's authorization rules apply.
+1. **Adds an nginx site of its own**, beside Mainsail or Fluidd, on the first free port from 8090 (for example
+   `http://<printer>:8090/`). The site serves the Console and passes the Moonraker connection through, exactly as
+   Mainsail's site does, so the page and the API share an origin and nothing needs adding to Moonraker's
+   `cors_domains`.
+2. **Registers the checkout with Moonraker's update manager**, so the Console appears in the update list of Mainsail and
+   Fluidd. Restart Moonraker once to see it there.
 
-Any other static web host also works, provided the page can reach Moonraker and the host is allowed by
-Moonraker's `cors_domains`.
+It asks before using `sudo`, tests the nginx configuration before reloading, and puts the previous configuration back
+if nginx rejects the change. Running it again keeps the same port.
 
-Telemetry needs the `[mmu_telemetry]` Moonraker component, which the installer adds - see
-[Telemetry: Moonraker Setup](Feature-Telemetry.md#moonraker-setup). Without it the Console still works in
-live-status mode, and you can still open saved recordings.
+| Option | Does |
+|---|---|
+| `-p <port>` | First port to try for the Console (default 8090) |
+| `-m <port>` | Moonraker's port (default 7125) |
+| `-c <dir>` | Klipper config directory holding `moonraker.conf` (default `~/printer_data/config`) |
+| `-y` | Answer yes to the prompt |
+| `-u` | Uninstall |
 
-To try the Console with no printer, run the [simulator](Dev-Simulator.md#the-happy-hare-console-in-the-simulator): it serves the
-app itself.
+The installer does not belong to Happy Hare: it is not part of `./install.sh` in the Happy Hare directory, and Happy Hare's
+own installer does not install, update or remove it.
+
+### Updating
+
+Use the update manager in Mainsail or Fluidd, or run `git pull` in the `Happy-Hare-Console` folder. The site serves the folder
+directly, so there is nothing to reinstall. The entry the installer adds to `moonraker.conf`:
+
+```ini
+[update_manager happy-hare-console]
+type: git_repo
+path: ~/Happy-Hare-Console
+origin: https://github.com/moggieuk/Happy-Hare-Console.git
+primary_branch: main
+is_system_service: False
+```
+
+Updating Happy Hare and updating the Console are independent. If a new Console expects something a
+newer Happy Hare provides, update both.
+
+### Uninstalling
+
+```bash
+cd ~/Happy-Hare-Console
+./install.sh -u
+```
+
+This removes the nginx site and the update manager entry. No other site is touched. Delete the folder afterwards if you no
+longer want it.
+
+### Troubleshooting the install
+
+- **nginx was not found.** The installer says so and changes nothing. Install nginx with your system's package manager, or
+  host the folder another way (below).
+- **The page shows a 403.** nginx cannot read the folder, usually because your home directory is private. Allow it to be
+  traversed with `chmod o+x ~`.
+- **Access.** The site exposes the same Moonraker API as Mainsail does on its port; Moonraker's authorization rules apply.
+
+### Other ways to host it
+
+Any static web server can serve the repository's `console/` folder. The page connects to Moonraker at its own origin, so either
+proxy Moonraker's paths as the repository's `nginx/happy-hare-console.conf` does, or set the connection address in the page
+and allow the page's host in Moonraker's `cors_domains`.
+
+### Trying it without a printer
+
+Load a saved recording (a `.jsonl` file) to play it with no printer at all. Or run the Happy Hare
+[simulator](Dev-Simulator.md#the-happy-hare-console-in-the-simulator), which serves the Console itself from a
+`Happy-Hare-Console` folder next to the Happy Hare checkout.
 
 ## The layout
 
@@ -332,7 +392,7 @@ are hidden on a printer:
 **The page loads but shows "Connecting".** The page cannot reach Moonraker. Check the address in
 **Printer / simulator URL**, and that Moonraker is running.
 
-**403 after `./install.sh -w`.** Run `chmod o+x ~`.
+**403 after installing.** Run `chmod o+x ~`.
 
 **Telemetry stream shows no steps.** The telemetry component is not loaded - see
 [Telemetry: Troubleshooting](Feature-Telemetry.md#troubleshooting).

@@ -1,6 +1,6 @@
-// Minimal Chrome DevTools driver for photographing the Happy Hare Console (the Visualizer web app).
+// Minimal Chrome DevTools driver for photographing the Happy Hare Console.
 //
-// Used by capture_viewer.mjs; see doc_tools/README.md, "Photographing the Happy Hare Console".
+// Used by capture_console.mjs; see doc_tools/README.md, "Photographing the Happy Hare Console".
 // Needs Node 22+ (built-in fetch and WebSocket) and Google Chrome. It launches its own headless
 // Chrome on its own profile directory, so it never touches the one you browse with.
 import fs from 'fs'
@@ -14,7 +14,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 export class Browser {
   static async launch({ width = 1440, height = 900, scale = 1 } = {}) {
-    const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'hh-viewer-chrome-'))
+    const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'hh-console-chrome-'))
     const proc = spawn(CHROME, ['--headless=new', `--remote-debugging-port=${PORT}`, `--user-data-dir=${profile}`,
       '--hide-scrollbars', '--no-first-run', '--no-default-browser-check', `--window-size=${width},${height}`, 'about:blank'],
     { stdio: 'ignore' })

@@ -18,7 +18,8 @@ Klipper (Happy Hare)  ->  Moonraker  ->  a viewer
                           records them    recording
 ```
 
-The viewer is the [Happy Hare Console](Happy-Hare-Console.md): a browser app that
+The viewer is the [Happy Hare Console](Happy-Hare-Console.md), a browser app installed
+separately ([installation](Happy-Hare-Console.md#installing-it-on-your-printer)) that
 turns the stream into an animated picture of the filament path, with a step-by-step
 trace underneath. Nothing about telemetry changes how Happy Hare moves filament -
 it only observes.
@@ -219,7 +220,7 @@ Start it again with `MMU_TELEMETRY MODE=on`.
 
 ## See also
 
-- [Happy Hare Console](Happy-Hare-Console.md) - installation and everything the viewer can do
+- [Happy Hare Console](Happy-Hare-Console.md) - installation and everything the Console can do
 - [The Simulator](Dev-Simulator.md) - try the Console without a printer
 - [Printer Variable Reference](Reference-Printer-Variables.md)
 - [`MMU_TELEMETRY`](Reference-Commands.md#mmu_telemetry)

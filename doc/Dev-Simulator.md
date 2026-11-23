@@ -23,7 +23,9 @@ make console
 ```
 
 At an interactive terminal the simulator also serves the [Happy Hare Console](Happy-Hare-Console.md), a browser
-view of the same machine, at **<http://127.0.0.1:7125/sim/viewer/>**; the startup banner prints the exact address.
+view of the same machine, at **<http://127.0.0.1:7125/sim/console/>**; the startup banner prints the exact address. The Console is a separate
+project, [Happy-Hare-Console](https://github.com/moggieuk/Happy-Hare-Console), so it needs a one-time `git clone` next to
+your Happy Hare checkout (see [below](#the-happy-hare-console-in-the-simulator)).
 Open it beside the terminal and every command, whether typed here or sent from the page, is animated there. If port
 7125 is in use the simulator picks another and the banner and `/web` show it; `--serve PORT` chooses one and
 `--no-serve` turns the web API and the page off. See [below](#the-happy-hare-console-in-the-simulator).
@@ -343,7 +345,7 @@ it falls back to reprinting above each prompt.
 ### The Happy Hare Console in the simulator
 
 <p align="center">
-  <img src="Dev-Simulator/visualizer.png" alt="The Happy Hare Console connected to the simulator, a load in progress on a BoxTurtle gate" width="100%">
+  <img src="Dev-Simulator/console.png" alt="The Happy Hare Console connected to the simulator, a load in progress on a BoxTurtle gate" width="100%">
 </p>
 
 The page animates the simulated machine exactly as it would a printer, so it is the easiest way to see what a
@@ -351,7 +353,17 @@ configuration does, and to look at things the terminal cannot show: where the fi
 cutter or tip-forming sequence moves, which sensor stopped a homing move. Everything it can do is on the
 [Happy Hare Console](Happy-Hare-Console.md) page; what is specific to the simulator is below.
 
-- **Open it.** Browse to `http://127.0.0.1:7125/sim/viewer/` (the port shown at startup, or the one you gave
+- **Get the Console.** Clone it beside the Happy Hare checkout, so the folders sit side by side:
+
+  ```bash
+  cd ..   # the folder that holds Happy-Hare
+  git clone https://github.com/moggieuk/Happy-Hare-Console.git
+  ```
+
+  The simulator serves `../Happy-Hare-Console/console`. Keep the Console somewhere else by naming its `console` folder in
+  `HH_CONSOLE_DIR`. With neither present the address shows a short message with the `git clone` command; nothing is
+  downloaded for you. Update it with `git pull` in its folder.
+- **Open it.** Browse to `http://127.0.0.1:7125/sim/console/` (the port shown at startup, or the one you gave
   `--serve`). It connects to the simulator that served it; to look at a different one, change the URL in the
   **Connection** panel and press **Connect**.
 - **Run commands from either place.** The page's command box and the gate menu send commands to the same session as
