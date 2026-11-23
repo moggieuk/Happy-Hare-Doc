@@ -65,26 +65,37 @@ Happy Hare's Moonraker extension (`mmu_server`) needs a few settings in
 
 ```ini
 [mmu_server]
-enable_file_preprocessor: True
-enable_toolchange_next_pos: True
-update_spoolman_location: True
+enable_file_preprocessor: True     # G-code preprocessing - see Feature-Gcode-Preprocessing.md
+enable_toolchange_next_pos: True   # G-code preprocessing - see Feature-Gcode-Preprocessing.md
+update_spoolman_location: True     # Keep Spoolman's "Location" field set to <printer> @ MMU Gate:<n>
+spoolman_live_updates: True        # Apply changes made in Spoolman as they happen
 ```
+
+Each option shown defaults to `True`, so an older `[mmu_server]` section that
+predates `spoolman_live_updates` still gets live updates; add the line with
+`False` to turn them off.
 
 !!! warning "Important"
     Having this `[mmu_server]` section present is what matters - the exact
     set of options shown may differ from a fresh install. `update_spoolman_location`
     controls whether Spoolman's own "Location" field is overwritten with a
     printer/gate summary; set it `False` if you use that field for something
-    else, and use the extra columns below instead.
+    else, and use the extra columns below instead. `spoolman_live_updates`
+    (default `True`) applies changes made in Spoolman as they happen - see
+    [Live updates from Spoolman](#live-updates-from-spoolman).
 
 Any `spoolman_support` mode other than `off` requires **Spoolman 0.18.1 or
 later** - Happy Hare checks the connected version at startup and won't
 activate itself against an older one (you'll see an "Incompatible Spoolman
-version" message on the console). Once connected, it adds three extra
-fields to Spoolman's spool records: `Printer Name`, `MMU Gate`, and `RFID`
-(the tag UID(s) bound to that spool - a spool can carry more than one, e.g.
-a tag stuck on each side, see [NFC/RFID Reading](Feature-NFC.md)).
-They show up below the spool's main data in the details view in Spoolman:
+version" message on the console). Once connected, it adds two extra fields
+to Spoolman's spool records: `Printer Name` and `MMU Gate`. On a Spoolman
+without native tag support it also adds a third, `RFID`, which holds the
+NFC/RFID tag UID(s) bound to that spool - a spool can carry more than one,
+e.g. a tag stuck on each side, see [NFC/RFID Reading](Feature-NFC.md).
+Spoolman 0.27 and later store tags natively instead - see
+[Where tag UIDs are stored](#where-tag-uids-are-stored).
+The extra fields show up below the spool's main data in the details view
+in Spoolman:
 
 <p align="center">
   <img src="Feature-Spoolman/moonraker-extra-columns.png" alt="Spoolman's spool detail view with the new columns highlighted" width="60%">
@@ -94,6 +105,79 @@ An alternative to showing these columns is Spoolman's own "Location" field,
 which `update_spoolman_location` (above) keeps set to a `<printer> @ MMU
 Gate:<n>` summary - useful with multiple printers/MMUs and less cluttered
 than the extra columns.
+
+### Where tag UIDs are stored
+
+Spoolman 0.27 added native NFC/RFID tags: a tag UID can be linked directly
+to a spool (or to a filament), is unique across the whole database, and
+shows up in Spoolman's own UI and scan view. At startup Happy Hare checks
+whether the connected Spoolman offers this tag API - it checks for the API
+itself rather than the version number, so a development build or fork that
+has it is detected too - and logs which storage it chose in `moonraker.log`:
+
+```{.text .console-output}
+Spoolman 0.27.0: native tag API NFC/RFID tag storage
+```
+
+| Spoolman | Where Happy Hare stores tag UIDs |
+|---|---|
+| Older than 0.27 | The `RFID` extra field on each spool, as before |
+| 0.27 or later, upgraded from an older version | Native tags. The existing `RFID` extra field is kept and still written as a mirror |
+| 0.27 or later, fresh install | Native tags only. The `RFID` extra field is never created |
+
+Reads look in both places, so a UID that's still only in the `RFID` extra
+field keeps resolving while it waits to be migrated.
+
+**Migration is automatic.** After an upgrade, Happy Hare finds UIDs that are
+only in the `RFID` extra field and links each one natively to the same
+spool. This runs in the background once Klipper is ready - it waits up to
+about two minutes for that - so a Moonraker restart doesn't hold up
+anything else. Progress is shown on the console, or written only to
+`moonraker.log` if Klipper isn't ready in time:
+
+```{.text .console-output}
+NFC: migrating 3 tag(s) on 2 spool(s) to native Spoolman tags...
+NFC: [1/3] tag 04A1B2C3D4E5F6 on spool 12 migrated to a native Spoolman tag
+NFC: [2/3] tag 04A1B2C3D4E5F7 on spool 12 migrated to a native Spoolman tag
+NFC: [3/3] tag E2003412 on spool 45 migrated to a native Spoolman tag
+NFC: tag migration (extra field -> native tags): 3 tag(s) moved on 2 spool(s)
+```
+
+The `RFID` extra field is left as it was; nothing is deleted. A UID that
+Spoolman already links to a different spool or filament isn't moved - the
+summary lists each conflict for you to resolve in Spoolman. A legacy UID
+that is scanned before the startup migration reaches it is linked natively
+on the spot:
+
+```{.text .console-output}
+NFC: tag E2003412 migrated to a native Spoolman tag on spool 45
+```
+
+To run the migration by hand, or preview it, see
+[Migrating tags manually](#migrating-tags-manually).
+
+### Live updates from Spoolman
+
+With `spoolman_live_updates: True` (the default), Happy Hare listens to
+Spoolman's own change feed - the websocket at Spoolman's `/api/v1/` address -
+so an edit made in the Spoolman web UI reaches the printer within moments
+instead of at the next sync or `MMU_SPOOLMAN REFRESH=1`:
+
+| Change made in Spoolman | Effect on the printer |
+|---|---|
+| A spool's filament details - name, material, color, extruder or bed temperature, vendor, or which filament it uses | Every gate holding that spool is updated, in any `spoolman_support` mode except `off` |
+| A filament's details | Every gate holding a spool of that filament is updated |
+| A spool's printer or `MMU Gate` assignment, or deleting an assigned spool | In `pull` mode, the gate map is updated to match. In other modes the local gate map stays authoritative, as usual |
+| A tag linked to, or unlinked from, a spool | Takes effect on the next scan of that tag, with no refresh needed |
+| Remaining weight only | Not forwarded - Moonraker reports usage every few seconds while printing |
+
+Happy Hare ignores the echoes of its own writes, so syncing a gate to
+Spoolman doesn't bounce straight back as a "change". If the connection to
+Spoolman drops, Happy Hare reconnects on its own, waiting progressively
+longer between attempts up to a minute. After reconnecting it re-reads every
+spool, because changes made while disconnected weren't delivered. Set
+`spoolman_live_updates: False` to turn this off; the startup and on-demand
+syncs (`MMU_SPOOLMAN SYNC=1` / `REFRESH=1`) work the same either way.
 
 ## Parameter Setup
 
@@ -231,6 +315,13 @@ registered against a *different* spool, Happy Hare moves it over (logging
 the move) and strips it from that other spool's record, rather than leaving
 two spools claiming the same tag.
 
+With [native tags](#where-tag-uids-are-stored), `RFID=` makes the spool's
+linked tags exactly the list given: tags no longer in the list are unlinked
+in Spoolman, and new ones are linked. A tag linked to a *filament* rather
+than a spool is not moved - Happy Hare refuses it and names the filament,
+so that you can unlink it from the filament in Spoolman first if it really
+belongs to this spool.
+
 The same "second tag on one spool" case is also available from a live scan,
 without retyping the UID by hand: [`MMU_NFC GATE=<n> REGISTER=1
 APPEND=1`](Feature-NFC.md#commands) reads a newly-presented tag and binds it
@@ -268,6 +359,37 @@ is the more reliable choice if anything else has run in between.
 `REGISTER=1` needs `spoolman_support` to be `readonly` or `push` - in
 `pull` mode Spoolman already owns gate assignment, so use `RFID=` directly
 or re-scan the tag once the spool exists instead.
+
+### Migrating tags manually
+
+Happy Hare migrates legacy `RFID` extra-field UIDs to native Spoolman tags
+on its own at startup (see [Where tag UIDs are stored](#where-tag-uids-are-stored)).
+`MMU_SPOOLMAN_TAG MIGRATE=` runs the same migration on demand - for example
+to preview it before the next restart, or to retry once a reported conflict
+has been fixed in Spoolman:
+
+```text
+MMU_SPOOLMAN_TAG MIGRATE=native DRYRUN=1   # Report which extra-field tags would become native tags; change nothing
+MMU_SPOOLMAN_TAG MIGRATE=native            # Link every extra-field-only tag natively to its spool
+```
+
+Each tag is reported as it's processed, followed by a summary line and any
+conflicts:
+
+```{.text .console-output}
+NFC: tag migration (extra field -> native tags): 1 tag(s) moved on 2 spool(s)
+  - Conflict: tag 04A1B2C3D4E5F6 on spool 12 is already linked to spool 30
+```
+
+Migration needs Spoolman's native tag API (Spoolman 0.27 or later) and a
+`spoolman_support` mode other than `off`. Running it again is safe:
+tags that are already native are skipped. The `RFID` extra field is never
+cleared.
+
+`MIGRATE=extra` does the reverse, moving native tags back into the `RFID`
+extra field (creating the field if necessary). It exists for testing the
+migration and isn't needed in normal use. Also for testing, `SPOOLID=` or
+`GATE=` limits a migration in either direction to that one spool.
 
 ### Spool weights
 
@@ -597,10 +719,12 @@ unknown spool, while gates 3 and 5 are the gates Happy Hare reported as empty.
 - **"Couldn't connect to Spoolman"** - Moonraker's `[spoolman]` component
   isn't configured/running, or hasn't finished starting yet. Run
   `MMU_SPOOLMAN REFRESH=1` to force a retry once it's up.
+
 - **"Incompatible Spoolman version for this feature"** - your Spoolman
   instance is older than 0.18.1; every `spoolman_support` mode above `off`
   needs at least that version (it's what adds the `Printer Name`/`MMU
   Gate`/`RFID` fields Happy Hare relies on). Upgrade Spoolman.
+
 - **A boot-time console line like this appears, unprompted:**
 
     <p align="center">
@@ -611,29 +735,58 @@ unknown spool, while gates 3 and 5 are the gates Happy Hare reported as empty.
     locally - it doesn't always appear, because it can run before the
     console is attached, but seeing it occasionally just confirms
     everything is connected.
+
 - **Gate assignments don't match what you expect in `pull` mode** - remember
   local edits don't stick; use `MMU_SPOOLMAN`, not `MMU_GATE_MAP`, to change
   anything, or the next sync will overwrite it.
+
 - **"Cannot use NEXT_SPOOLID feature with spoolman_support: pull"** - expected
   in `pull` mode; use `MMU_SPOOLMAN GATE=<n> SPOOLID=<id>` instead (see
   [Working with a remote gate map](#working-with-a-remote-gate-map-pull)).
+
 - **Checking another printer's assignments shows "Error: Can only have a
   single spool assigned"** - the same spool is currently assigned to more
   than one gate for that printer in Spoolman; run `MMU_SPOOLMAN REFRESH=1
   FIX=1` to clear all but the first.
+
 - **"GATE=LAST needs a gate to have been preloaded first"** -
   `MMU_SPOOLMAN_TAG GATE=LAST` has nothing to resolve to until `MMU_PRELOAD`
   has actually run at least once since Klipper started; use an explicit
   `GATE=<n>` instead if you're not sure a preload happened.
+
 - **"Gate N has no NFC/RFID tag UID recorded yet"** (on `REGISTER=1`) -
   the gate has to have a cached UID from an earlier scan (even an
   unresolved one) before there's anything to bind - scan the tag first
   (preload the gate, or [`MMU_NFC_SCAN`](Feature-NFC.md#commands) if it's
   already parked), or supply the UID directly with `RFID=` instead.
+
 - **"REGISTER=1 is not applicable with spoolman_support=pull"** - `pull`
   mode already treats Spoolman as authoritative for gate assignment, so use
   `RFID=<uid>` directly, or just re-scan the tag once the spool exists in
   Spoolman.
+
+- **"NFC: tag migration needs a Spoolman with native tag support, 0.27 or
+  later"** - `MIGRATE=` only works against a Spoolman that has the native
+  tag API. On an older Spoolman, tags stay in the `RFID` extra field and
+  nothing needs migrating.
+
+- **A migration summary lists "Conflict: tag ... is already linked to
+  ..."** - Spoolman already links that UID to another spool or filament,
+  and native tags are unique. Decide in Spoolman which record the tag
+  belongs to, unlink it from the other one, then run
+  `MMU_SPOOLMAN_TAG MIGRATE=native` again.
+
+- **"NFC: can't link tag ... it identifies filament N in Spoolman"** - the
+  tag is linked to a filament, not a spool. Unlink it from the filament in
+  Spoolman first if it belongs to this spool.
+
+- **Edits made in Spoolman don't reach the printer until a refresh** -
+  check that `spoolman_live_updates` isn't `False` in `[mmu_server]`, and
+  look in `moonraker.log` for "Spoolman live updates connected". A line
+  such as "Spoolman live updates unavailable (...), retrying in ..s" means
+  Moonraker can't open Spoolman's websocket - for example because of a
+  proxy in front of Spoolman that doesn't pass websockets through. Remember
+  that gate assignment changes only propagate in `pull` mode.
 
 ## See also
 

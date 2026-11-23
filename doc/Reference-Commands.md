@@ -740,6 +740,9 @@ GATE     = #(int)|LAST Gate whose assigned spool (RFID=) or recorded tag (REGIST
 RFID     = _uid_ (or comma-separated UIDs) to write onto the spool. RFID='' to clear
 APPEND   = 1 Add to the existing UID(s) instead of replacing them
 REGISTER = 1 Bind the gate's already-recorded UID onto SPOOLID (needs spoolman_support != pull)
+MIGRATE  = native|extra Move all tag UIDs to Spoolman's native tags (>= 0.27), or back to the legacy extra field
+DRYRUN   = 1 With MIGRATE=, only report what would move
+           With MIGRATE=, GATE= limits the migration to the spool assigned to that gate (temporary, for testing)
 ```
 
 ```{.text .console-output}
@@ -751,6 +754,10 @@ MMU_SPOOLMAN_TAG GATE=0 RFID=E2003412              ...Same, for whichever spool 
 MMU_SPOOLMAN_TAG GATE=3 SPOOLID=87 REGISTER=1      ...Bind gate 3's already-known tag uid to newly-created spool 87
 MMU_SPOOLMAN_TAG GATE=LAST SPOOLID=87 REGISTER=1   ...Bind last gate preloaded already-known tag uid to spool 87
 MMU_SPOOLMAN_TAG SPOOLID=87 REGISTER=1             ...Bind currently selected gate's tag uid to spool 87
+MMU_SPOOLMAN_TAG MIGRATE=native DRYRUN=1          ...Report how many legacy extra-field tags would become native Spoolman tags
+MMU_SPOOLMAN_TAG MIGRATE=native                    ...Link every legacy extra-field tag natively (also done automatically at startup)
+MMU_SPOOLMAN_TAG MIGRATE=extra                     ...(Developer) Move native tags back into the extra field, to re-test migration
+MMU_SPOOLMAN_TAG MIGRATE=extra GATE=2              ...(Developer) Same, but only for the spool assigned to gate 2
 
 See MMU_SPOOLMAN read or change gate-spool assignment in spoolman
 ```

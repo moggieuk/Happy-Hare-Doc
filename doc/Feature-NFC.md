@@ -40,6 +40,17 @@ A read can be shallow or deep:
   Spoolman has never seen before. A tag in a format Happy Hare doesn't
   recognize still yields its UID; it just won't have parsed metadata.
 
+With Spoolman 0.27 or later, tag UIDs are stored as Spoolman's own native
+tags rather than in an extra field (see
+[Where tag UIDs are stored](Feature-Spoolman.md#where-tag-uids-are-stored)).
+Each scan is then sent to Spoolman as a tag scan, so it also appears live in
+Spoolman's UI, against a reader named `Happy Hare <hostname> gate <n>` for a
+per-gate reader or `Happy Hare <hostname> MMU` for a shared one. If
+Spoolman can't be asked, Happy Hare falls back to its cached copy of the
+tag-to-spool mapping. Spoolman can also link a tag to a filament rather than
+a spool - see
+[Tags linked to a filament](#tags-linked-to-a-filament-in-spoolman).
+
 ## Hardware Setup
 
 Examples below use the default unit name `unit0`. Substitute your configured
@@ -483,6 +494,38 @@ because assignment is still pending. Use `user_mmu_event_extension` to
 react to the new spool, for example to offer calibration; resolving an
 already known spool does not emit this event.
 
+### Tags linked to a filament in Spoolman
+
+With native tags (Spoolman 0.27 or later), a tag can be linked to a
+*filament* in Spoolman instead of a specific spool - for example a tag that
+identifies a product rather than one physical spool. Scanning such a tag
+can't pick a spool by itself:
+
+- **With auto-create enabled** (the three conditions in
+  [Auto-creating spools from unknown tags](#auto-creating-spools-from-unknown-tags)),
+  Happy Hare creates a new spool of that filament and moves the tag from the
+  filament to the new spool. The tag doesn't need to carry filament data -
+  Spoolman's filament record supplies it. If the spool can't be created, the
+  tag is linked back to the filament.
+- **Otherwise**, the scan doesn't resolve, and a warning names the
+  filament:
+
+    ```{.text .console-output}
+    Warning: tag 04A1B2C3D4E5F6 is assigned to filament "PLA Matte Black" (id 7) in Spoolman. Link it to a spool, or enable spoolman_nfc_auto_create to create one
+    ```
+
+    Link the tag to the right spool in Spoolman (or unlink it from the
+    filament and use [`MMU_SPOOLMAN_TAG`](Feature-Spoolman.md#mmu_spoolman_tag-registering-a-tag-uid)),
+    then scan it again.
+
+### Tags unlinked in Spoolman
+
+Unlinking a native tag from a spool in Spoolman's UI is respected: the next
+scan of that tag finds it no longer linked, and Happy Hare forgets it. If the
+`RFID` extra field is still kept as a mirror, the UID is removed from it too,
+so it isn't linked straight back from the old copy. The tag then behaves
+like any unregistered tag.
+
 ### Registering an unresolved tag after the fact
 
 Auto-create needs a tag that actually carries usable filament data - a
@@ -616,6 +659,13 @@ both off by default so a stock setup pays no extra reader I/O:
   Expected after re-tagging a spool or fixing a mistyped UID; worth
   double-checking the spool IDs named in the message if it appears
   unexpectedly.
+- **"Warning: tag ... is assigned to filament ... in Spoolman"** - the tag
+  is linked to a filament, not a spool; see
+  [Tags linked to a filament](#tags-linked-to-a-filament-in-spoolman).
+- **A scan logs "tag ... migrated to a native Spoolman tag on spool N"** -
+  informational: the tag was only in the legacy `RFID` extra field and has
+  now been linked natively. See
+  [Where tag UIDs are stored](Feature-Spoolman.md#where-tag-uids-are-stored).
 - **A per-gate reader occasionally picks up a neighboring gate's spool** -
   see [Noisy neighbors](#noisy-neighbors) under Tuning; turn on
   `nfc_neighbor_check` (and, if that alone isn't enough,
