@@ -1,9 +1,9 @@
-// Screenshots and animated clips of the Happy Hare Console (the Visualizer web app), driven by the simulator.
+// Screenshots and animated clips of the Happy Hare Console, driven by the simulator.
 //
-//   node doc_tools/capture_viewer.mjs [--only NAME[,NAME...]] [--list] [--url URL] [--doc DIR]
+//   node doc_tools/capture_console.mjs [--only NAME[,NAME...]] [--list] [--url URL] [--doc DIR]
 //
 // The simulator must already be running and serving the app, from a Happy Hare checkout that matches
-// HAPPY_HARE_REF:   make console ARGS='--profile boxturtle2_ercf --seed 7028'
+// HAPPY_HARE_REF, with the Happy-Hare-Console checkout beside it:   make console ARGS='--profile boxturtle2_ercf --seed 7028'
 // Each recipe restarts the simulator on the profile it needs through the app's own Simulator setup panel,
 // so one running simulator is enough. See doc_tools/README.md, "Photographing the Happy Hare Console".
 import fs from 'fs'
@@ -11,15 +11,15 @@ import os from 'os'
 import path from 'path'
 import { spawnSync } from 'child_process'
 import { fileURLToPath } from 'url'
-import { Browser, sleep } from './viewer_cdp.mjs'
+import { Browser, sleep } from './console_cdp.mjs'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const args = process.argv.slice(2)
 const option = (name, fallback) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : fallback }
-const URL_BASE = option('--url', 'http://127.0.0.1:7125/sim/viewer/')
+const URL_BASE = option('--url', 'http://127.0.0.1:7125/sim/console/')
 const DOC = path.resolve(option('--doc', path.join(here, '..', 'doc')))
 const PYTHON = process.env.PYTHON || path.join(here, '..', 'venv', 'bin', 'python')
-const WS_URL = URL_BASE.replace(/^http/, 'ws').replace(/\/sim\/viewer\/?$/, '/websocket')
+const WS_URL = URL_BASE.replace(/^http/, 'ws').replace(/\/sim\/console\/?$/, '/websocket')
 const WIDTH = 1440, HEIGHT = 1040
 const FIRST_CARD = 'main > section > .card'   // the scene card
 
@@ -190,7 +190,7 @@ const normal = s => s.b.setView({ width: WIDTH, height: HEIGHT })
 
 const CALLOUTS = [
   ['#connection', [-20, 12]], ['#theme-toggle', [0, 0]], ['#connection-panel', [0, 12]], ['#sidebar-playback', [0, 12]],
-  ['#tool-mapping', [0, 12]], ['#runtime-parameters', [0, 12]], ['aside:has(.object-choice)', [0, 12]], ['#simulator-controls', [0, 12]], ['#viewer-settings', [0, 12]],
+  ['#tool-mapping', [0, 12]], ['#runtime-parameters', [0, 12]], ['aside:has(.object-choice)', [0, 12]], ['#simulator-controls', [0, 12]], ['#console-settings', [0, 12]],
   ['#mode', [-20, 0]], ['#position', [-20, 0]], ['#scene-macros', [-14, 6]], ['[data-part="unit-footer"]', [-14, 10]],
   ['#sensor-readout', [-14, 10]], ['.mini-console-card', [0, 12]], ['#command', [-14, 0]], ['#trace', [0, 12]], ['#timeline', [-14, 0]],
 ]
@@ -217,7 +217,7 @@ Object.assign(recipes, {
     await s.shotOf('parameters.png', '#runtime-parameters', 6)
     await s.shotOf('toolhead-config.png', 'aside:has(.object-choice)', 6)
     await s.shotOf('simulator-setup.png', '#simulator-controls', 6)
-    const settings = await s.b.rect('#viewer-settings'), divider = await s.b.rect('.settings-divider')
+    const settings = await s.b.rect('#console-settings'), divider = await s.b.rect('.settings-divider')
     await s.shot('settings.png', { x: settings.x - 6, y: settings.y - 6, width: settings.width + 12, height: divider.y - settings.y + 6 })
     await s.shotOf('console.png', '.mini-console-card', 6)
     await s.shotOf('trace.png', '#trace-card, .card:has(#trace)', 6)
@@ -272,8 +272,10 @@ Object.assign(recipes, {
   'shots-simulator': { out: SIM, run: async s => {
     await s.profile('boxturtle2_ercf')
     await s.run('MMU_LOAD')
+    await s.b.eval('scrollTo(0, 0)')
+    await sleep(300)
     await s.b.move(5, 5)
-    await s.shot('visualizer.png')
+    await s.shot('console.png')
     await tall(s)
     await s.shotOf('simulator-setup.png', '#simulator-controls', 6)
     await normal(s)

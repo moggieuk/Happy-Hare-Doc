@@ -1,6 +1,6 @@
 # Happy Hare documentation tooling
 #
-# Turns the timestamped screencast frames written by capture_viewer.mjs into a small
+# Turns the timestamped screencast frames written by capture_console.mjs into a small
 # looping animated WebP: crop to a region, scale down, resample to a fixed rate, and
 # merge runs of identical frames into one longer frame so a mostly-still scene costs
 # almost nothing.
