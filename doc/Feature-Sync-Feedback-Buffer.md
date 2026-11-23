@@ -276,7 +276,8 @@ regardless of the current sync state.
 See [sync feedback, FlowGuard and tangle prevention](Reference-Printer-Variables.md#sync-feedback-flowguard-and-tangle-prevention)
 in the printer variable reference - `sync_feedback_state`,
 `sync_feedback_enabled`, `sync_feedback_bias_raw`/`_modelled`, and
-`sync_feedback_flow_rate` (proportional sensors only).
+`sync_feedback_flow_rate` / `sync_feedback_flow_rate_calibrated` (estimates
+calculated for proportional sensors only).
 
 `sync_feedback_rd_correction` reports the percentage difference between the
 confident tuned gear rotation distance and its calibrated baseline. It starts
@@ -285,6 +286,40 @@ boosts. [`MMU_SYNC_FEEDBACK`](Reference-Commands.md#mmu_sync_feedback) also
 reports the tuned value and percentage. Saving the result requires
 `autotune_rotation_distance`; see [autotuning and auto-calibration](Calibration.md#autotuning-and-auto-calibration)
 for the print-end summary of saved changes.
+
+### Interpreting the flow estimates
+
+`sync_feedback_flow_rate` compares the current gear rotation distance with the
+value learned by AutoTune and is capped at 100%. It is useful for detecting
+reduced flow after tuning settles. However, extruder slip already present while
+AutoTune settles can be learned as part of that reference, leaving this estimate
+at 100% even when the extruder takes in less filament than commanded.
+
+`sync_feedback_flow_rate_calibrated` compares against the calibrated gear
+rotation distance instead and is not capped at 100%. It can expose that persistent
+slip, provided the calibration is accurate:
+
+| Example | Autotuned estimate | Calibrated estimate |
+|---|---|---|
+| Extruder takes in 95% of commanded filament, and AutoTune has learned that condition | About 100% | About 95% |
+| Gear slips and must turn faster to keep the buffer balanced, while extruder intake remains normal | 100% (capped) | Above 100% |
+| Calibration is accurate and neither drive slips | About 100% | About 100% |
+
+A sustained value below 100% can indicate reduced extruder intake, such as a
+partial clog or a hotend flow limit. A value above 100% can indicate gear slip or
+spool drag. It does **not** mean the nozzle is extruding more than commanded.
+
+Treat this as an estimate relative to calibration, not a direct nozzle-flow
+measurement or a diagnosis by itself. Calibration error also shifts the value,
+and slip at both drives can mask the difference. Temporary buffer corrections
+can move the estimate too. The controller's speed limits bound how far it can
+respond, so severe slip cannot be quantified reliably from this value.
+
+The reference is refreshed from the saved calibration at print start. If
+`autotune_rotation_distance` is enabled, 100% can therefore mean “as calibrated
+after the previous print,” rather than the original manual calibration. The
+existing flow estimate is unchanged; front ends can choose which field to show.
+A useful label for the new field is “Estimated flow relative to calibration.”
 
 ### Sync-feedback meter (Mainsail/Fluidd)
 
