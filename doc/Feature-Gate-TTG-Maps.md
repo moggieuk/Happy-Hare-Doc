@@ -231,7 +231,7 @@ and Mainsail/Fluidd both have a TTG editor:
 </table>
 
 !!! tip
-    The default TTG map (and EndlessSpool groups) can also be preset in
+    The default TTG map (and manual EndlessSpool groups) can also be preset in
     `mmu.cfg`'s `default_ttg_map`/`default_endless_spool_groups` -
     restored by `MMU_TTG_MAP RESET=1`/`MMU_ENDLESS_SPOOL RESET=1`
     respectively. See [Feature: EndlessSpool &
@@ -266,9 +266,10 @@ Print start/end (\_MMU_SOFTWARE)** in menuconfig):
   ID directly.
 
 If more than one gate matches, Happy Hare uses the last match found and logs
-a warning rather than guessing - it does not create an EndlessSpool group
-automatically, so if you want gate 3 and gate 7's matching PLA to act as one
-EndlessSpool pair, set that group up yourself.
+a warning. Tool automapping does not itself create an EndlessSpool group.
+To make matching spools back each other up, assign a group manually or enable
+[automatic EndlessSpool grouping](Feature-Endless-Spool-Runout.md#automatic-groups-from-the-gate-map)
+with `endless_spool_auto_groups: 1`.
 
 You can also trigger a single tool's automap by hand, after the slicer tool
 map is loaded:

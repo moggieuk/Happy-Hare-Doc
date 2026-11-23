@@ -31,12 +31,13 @@ regardless of how many physical units make it up.
 
 | Parameter | Default | Description |
 |---|---|---|
-| `log_level` | `1` | Console log verbosity: `0`=essential, `1`=info, `2`=debug, `3`=trace, `4`=developer (includes stepper moves) |
+| `log_level` | `1` | Console log verbosity: `0`=essential, `1`=info, `2`=debug, `3`=trace. A saved `4` (the former developer level) is still accepted and logs as trace |
 | `log_file_level` | `2` | Same scale, for `mmu.log` - `-1` disables the log file entirely |
 | `log_statistics` | `1` | Log the swap-timing table on every toolchange - see [Feature: Statistics & Counters](Feature-Statistics-Counters.md) |
 | `log_visual` | `1` | Show a visual representation of filament position in the console |
 | `log_startup_status` | `1` | Log a tool-to-gate summary on startup |
 | `log_m117_messages` | `1` | Mirror toolchange messages to the printer display via `M117` |
+| `default_telemetry_mode` | `off` | Motion-telemetry recording after a Klipper restart: `off`, `on` or `toolchange` (the next load, unload or toolchange only). Set in `mmu.cfg` or menuconfig, not changeable with `MMU_TEST_CONFIG`; change it at runtime with [`MMU_TELEMETRY`](Reference-Commands.md#mmu_telemetry) - see [Feature: Telemetry](Feature-Telemetry.md) |
 | `suppress_klipper_warnings` | `0` | `1` = send startup Klipper warnings to `mmu.log` instead of the console |
 
 !!! tip
@@ -94,7 +95,8 @@ the full picture.
 | `endless_spool_enabled` | `0` | Enable [EndlessSpool](Feature-Endless-Spool-Runout.md) - automatic hand-off to a spare gate on runout |
 | `endless_spool_on_load` | `0` | Also apply EndlessSpool if the gate a load targets turns out to be empty |
 | `endless_spool_eject_gate` | `-1` | Which gate to eject filament remains to - `-1` = the current gate |
-| `endless_spool_groups` | *(empty)* | EndlessSpool grouping list - empty means no groups defined |
+| `endless_spool_auto_groups` | `0` | Build groups automatically from gate-map material and RGB color; ignores alpha and rejects manual `GROUPS=` assignments. See [automatic grouping](Feature-Endless-Spool-Runout.md#automatic-groups-from-the-gate-map) |
+| `default_endless_spool_groups` | *(empty)* | Default manual group membership per gate; empty gives each gate its own group |
 | `spoolman_support` | `off` | `off`/`readonly`/`push`/`pull` - see [Feature: Spoolman / Filament Hub](Feature-Spoolman.md) for what each does |
 | `spoolman_pending_id_timeout` | `20` s | How long a pending gate assignment (spool ID, NFC tag or TD-1 scan) stays valid before being voided |
 | `spoolman_led_segment` | `gate_status` | Which LED segment(s) show the pending-assignment overlay: `gate_status`, `status`, or `both` |
@@ -190,7 +192,7 @@ your gate count. All commented out (and therefore inactive) by default.
 | Parameter | Restored by |
 |---|---|
 | `default_gate_status`, `default_gate_vendor`, `default_gate_filament_name`, `default_gate_material`, `default_gate_color`, `default_gate_temperature`, `default_gate_spool_id`, `default_gate_speed_override`, `default_gate_td`, `default_gate_td1_color`, `default_gate_spool_rfid`, `default_gate_remaining_weight`, `default_gate_initial_weight` | `MMU_GATE_MAP RESET=1` |
-| `default_endless_spool_groups` | `MMU_ENDLESS_SPOOL_GROUPS RESET=1` |
+| `default_endless_spool_groups` | `MMU_ENDLESS_SPOOL RESET=1` |
 | `default_ttg_map` | `MMU_TTG_MAP RESET=1` |
 
 ### Toolhead geometry (`[mmu_toolhead]`)

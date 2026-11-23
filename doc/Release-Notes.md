@@ -295,4 +295,28 @@ and the [development-only comparison](https://github.com/moggieuk/Happy-Hare/com
 - Remove obsolete kconfiglib change markers and set the application version to 4.2.0. ([#1411](https://github.com/moggieuk/Happy-Hare/pull/1411), [#1423](https://github.com/moggieuk/Happy-Hare/pull/1423))
 - Synchronize main into development; these merges add no separate user-facing feature. ([#1377](https://github.com/moggieuk/Happy-Hare/pull/1377), [#1378](https://github.com/moggieuk/Happy-Hare/pull/1378), [#1399](https://github.com/moggieuk/Happy-Hare/pull/1399))
 
+## Development
+
+- **Custom macro compatibility:** Rename the cut-fragment status field from
+  `filament_remaining` to `filament_cut_fragment`. Update
+  `printer.mmu.filament_remaining` to `printer.mmu.filament_cut_fragment` and
+  `printer["mmu_extruder <name>"].filament_remaining` to
+  `printer["mmu_extruder <name>"].filament_cut_fragment` in custom macros or UI
+  integrations; the old status key is no longer available. The value is the
+  filament left by a tip cut, excluding calibrated residual filament.
+  `extruder_filament_remaining` (cut fragment plus calibrated residual),
+  `filament_remaining_color`, `filament_remaining_material` and
+  `filament_remaining_temp` are unchanged. Previously saved cut-fragment values
+  still load, and the legacy `mmu_state_filament_remaining` saved variable
+  remains available for existing UIs.
+  ([#1510](https://github.com/moggieuk/Happy-Hare/pull/1510))
+
+- Add opt-in [automatic EndlessSpool groups](Feature-Endless-Spool-Runout.md#automatic-groups-from-the-gate-map) with `endless_spool_auto_groups` (default `0`). Gates with matching material and RGB color back each other up, following gate-map, Spoolman and NFC updates. Empty gates retain their matching replacements; refilled gates without metadata stay separate. Manual `GROUPS=` assignments are rejected while enabled. ([#1511](https://github.com/moggieuk/Happy-Hare/pull/1511))
+
+- Add the [`spool_created` macro event](Macro-State-Change-Hooks.md#reacting-to-a-newly-created-spool) when a scanned tag creates a Spoolman spool, with `SPOOLID` and `GATE` (`-1` for a shared reader awaiting assignment). Handle it through `user_mmu_event_extension`; known-spool lookups do not emit it. ([#1504](https://github.com/moggieuk/Happy-Hare/pull/1504))
+
+- Add [motion telemetry](Feature-Telemetry.md): Happy Hare records what the MMU does and a Moonraker component (`[mmu_telemetry]`, Moonraker v0.9.0 or later) relays and records it. Control recording with [`MMU_TELEMETRY`](Reference-Commands.md#mmu_telemetry) `MODE=off|on|toolchange` or the `default_telemetry_mode` option (default `off`), and read it as `printer.mmu.telemetry_mode`. Adds the `homing` and `config_changes` status keys and records the servo cutter at the MMU. Re-run the installer and restart Klipper and Moonraker when upgrading. The `log_level` 4 (developer) level is removed: a saved `4` still loads and logs as trace. ([#1480](https://github.com/moggieuk/Happy-Hare/pull/1480))
+
+- Add the [Happy Hare Console](Happy-Hare-Console.md), a browser app that animates the MMU live or from a saved telemetry recording, installed with `./install.sh -w`, and served by the [simulator](Dev-Simulator.md#the-happy-hare-console-in-the-simulator). ([#1531](https://github.com/moggieuk/Happy-Hare/pull/1531))
+
 ---

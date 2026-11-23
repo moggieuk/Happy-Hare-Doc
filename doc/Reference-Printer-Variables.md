@@ -77,6 +77,14 @@ A loaded bypass with unknown metadata can still have `active_filament == {}`.
 Bypass metadata survives restart and is cleared by bypass unload, `MMU_RESET`,
 or selecting a real gate.
 
+### Telemetry and configuration changes
+
+| Variable | Type | Meaning |
+|---|---|---|
+| `telemetry_mode` | string | `off` \| `on` \| `toolchange` - whether [motion telemetry](Feature-Telemetry.md) is being recorded to the Moonraker log. Set with [`MMU_TELEMETRY`](Reference-Commands.md#mmu_telemetry); not saved across a restart (see `default_telemetry_mode`) |
+| `homing` | dict or None | While the MMU is making a homing move: `endstops` (list of the qualified endstop names it is homing to, such as `unit0:mmu_shared_exit`) and `triggered` (`True` when it stops on the endstop triggering, `False` when it stops on release). `None` otherwise. The [Happy Hare Console](Happy-Hare-Console.md) uses it to show which sensor a move is seeking |
+| `config_changes` | dict | Runtime changes made with [`MMU_TEST_CONFIG`](Reference-Commands.md#mmu_test_config) that differ from the value in the config files, as `{section: {parameter: value}}`. A change back to the file value removes its entry. Empty when nothing has been changed |
+
 ### Gate and tool maps
 
 All per-gate lists here are indexed by the same global gate number used
@@ -142,10 +150,29 @@ controller on the active unit; an encoder alone can supply `flowguard` status.
 | `sync_feedback_enabled` | bool | Sync feedback currently active |
 | `sync_feedback_bias_raw` | float | Raw sensor bias, rounded to 2dp |
 | `sync_feedback_bias_modelled` | float | Modelled/smoothed bias, rounded to 2dp |
-| `sync_feedback_flow_rate` | float | Flow rate as seen by the buffer |
+| `sync_feedback_flow_rate` | float or `None` | Estimated flow percentage relative to the autotuned gear rotation distance, capped at 100%; calculated for proportional sensors only |
+| `sync_feedback_flow_rate_calibrated` | float or `None` | Estimated flow percentage relative to the calibrated gear rotation distance, uncapped and rounded to 2 decimal places; calculated for proportional sensors only |
 | `sync_feedback_rd_correction` | float or `None` | Percentage change in tuned gear `rotation_distance` from the calibrated value used when the gate was synced, rounded to 2 decimal places; `None` when sync-feedback status is unavailable |
 | `flowguard` | dict | `trigger`, `reason`, `level`, `max_clog`, `max_tangle`, `active`, `enabled`, and `encoder_mode` when an encoder is fitted |
 | `tangle_prevention` | dict | `enabled`, `active`, `boosted`, `threshold`, `release` |
+
+The two flow estimates use different references:
+
+- `sync_feedback_flow_rate` = `100 * min(1, tuned_rotation_distance / current_rotation_distance)`.
+- `sync_feedback_flow_rate_calibrated` = `100 * calibrated_rotation_distance / current_rotation_distance`.
+
+The calibrated reference is captured when sync feedback is fully reset (for
+example, when the gear and extruder are synced) and refreshed from the saved
+calibration at print start. With `autotune_rotation_distance`
+enabled, this can include tuning saved from the previous print. Both estimates
+start at `100.0` and are updated only for proportional sensors; switch-only
+buffers retain that default, which is not a flow measurement. Both are `None`
+when sync-feedback status is unavailable. A gate change does not itself clear
+the last flow estimate; the controller reset updates it.
+
+These are buffer-based estimates, not measurements of nozzle output. See
+[interpreting the flow estimates](Feature-Sync-Feedback-Buffer.md#interpreting-the-flow-estimates)
+for examples and limitations.
 
 `sync_feedback_rd_correction` is calculated as
 `100 * (tuned_rotation_distance - starting_rotation_distance) / starting_rotation_distance`.

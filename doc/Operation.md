@@ -28,6 +28,9 @@ rotates the same way, keeping the last 5. To disable it entirely, choose
 parameters (anything that reaches the console still ends up in `klipper.log`
 regardless).
 
+The [Happy Hare Console](Happy-Hare-Console.md) is a browser app that shows the same operations as an animated
+picture of the filament path, live or replayed from a [telemetry](Feature-Telemetry.md) recording.
+
 A separate `log_visual: 1` setting adds a compact ASCII diagram of filament
 position to load/unload console output - covered below.
 

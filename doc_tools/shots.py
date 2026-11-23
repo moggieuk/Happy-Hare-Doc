@@ -839,7 +839,7 @@ def _feature_endless_spool_runout(mc, shot):
     """
     mc.enter(menu_of('PARAM_ENDLESS_SPOOL_ENABLED'))
     mc.select(symbol('PARAM_ENDLESS_SPOOL_ENABLED'))
-    # both EndlessSpool checkboxes, off by default
+    # EndlessSpool enable, on-load and automatic-group checkboxes, off by default
     shot('endless-spool-options')
 
 
