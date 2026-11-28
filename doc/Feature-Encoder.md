@@ -30,6 +30,9 @@ distance reading accurate - the value set during hardware setup below is
 only ever a starting point, replaced once [`MMU_CALIBRATE_ENCODER`](#tuning)
 has run.
 
+Most setups use a digital encoder. The separate [Analog encoders](#analog-encoders)
+section covers sensors connected to an ADC input and their different limits.
+
 ## Hardware Setup
 
 Examples below use the default unit name `unit0`. Substitute your configured
@@ -120,8 +123,9 @@ settings - the encoder just supplies the movement signal FlowGuard acts on.
 page stops at the console output in [Commands](#commands) below.
 
 !!! tip
-    As with most `mmu_parameters`, every setting on this page can be changed
-    live with `MMU_TEST_CONFIG <var>=<value>` - no Klipper restart needed.
+    Settings in `[mmu_unit_parameters ...]` can be changed live with
+    `MMU_TEST_CONFIG <var>=<value>`. Encoder hardware settings in
+    `[mmu_encoder ...]` require a Klipper restart.
 
 ## Commands
 
@@ -211,6 +215,85 @@ detection length is fixed or self-tuning.
   notes above on `desired_headroom` and `flowguard_encoder_max_motion`; full
   false-trigger diagnosis is covered on [Feature:
   FlowGuard](Feature-FlowGuard.md#tuning).
+
+## Analog encoders
+
+An analog encoder is an uncommon alternative for a sensor whose voltage rises
+and falls as filament moves, such as a Hall sensor beside a magnet wheel.
+It uses one ADC input for one encoder. It suits coarse sensors with several
+millimeters of filament travel per pulse; use a digital input for a fine
+encoder that produces rapid pulses.
+
+### Configuration
+
+In **Encoder config**, select **Type: Analog sensor**, then set **Encoder analog
+pin**, **Analog high threshold**, and **Analog low threshold**. The starting
+resolution is `5.0` mm per pulse. With sharing disabled, the encoder section in
+`mmu_hardware.cfg` looks like this:
+
+```ini
+[mmu_encoder unit0]
+analog_pin         : unit0:PC1  # Example only: use your board's ADC-capable pin
+analog_high        : 0.72
+analog_low         : 0.58
+encoder_resolution : 5.0        # Starter value; calibrate for your sensor
+```
+
+Use `analog_pin` instead of `encoder_pin`; setting both is an error. The digital
+pin pull-up and inversion advice above does not apply to this ADC input.
+Thresholds are fractions of the ADC's full scale, from `0` to `1`, and
+`analog_low` must be below `analog_high`.
+
+After the initial reading establishes a state, a pulse is counted each time
+the reading alternates between reaching the high threshold and reaching the
+low threshold. The gap between them prevents small fluctuations from adding
+pulses. One complete high/low cycle produces two pulses. Turn the wheel slowly
+and inspect `analog.value` in the [printer variables](Reference-Printer-Variables.md#analog-encoder-fields)
+to choose thresholds that the signal reliably crosses on both sides.
+Calibrate with [`MMU_CALIBRATE_ENCODER`](Reference-Commands.md#mmu_calibrate_encoder)
+after checking the wiring and thresholds.
+
+A unit sharing another configured unit's analog encoder inherits its analog
+capability automatically. If the shared encoder is defined in your own
+configuration instead, enable **Shared encoder uses analog input?** so the
+installer chooses the appropriate homing and validation defaults.
+
+### Sampling and movement limits
+
+The ADC readings are counted on the host. `analog_report_time` controls the
+interval between readings (default `0.02` seconds). On Klipper versions with
+batched ADC reports, `analog_batch` controls readings per report (default `8`);
+older versions send individual readings. These optional settings belong in the
+`[mmu_encoder ...]` section and require a restart to change.
+
+A reading must reach each threshold for a pulse to be seen. The reported
+sampling-speed estimate is:
+
+```text
+max_speed = calibrated resolution / (2 * analog_report_time)
+```
+
+At `5.0` mm per pulse and a `0.02` second interval, that is `125` mm/s. This is
+an estimate, not a guarantee for every waveform, and it does not limit motor
+speed automatically. Counts can arrive a batch after the movement; with the
+default batching, allow roughly `0.18` seconds for reporting. Position and
+flow-rate displays can therefore update in larger steps.
+
+For this reason, `encoder_move_validation` defaults to `0`, and menuconfig
+avoids encoder homing as a default. Prefer suitable physical endstops. In a
+hand-written `[mmu_unit_parameters ...]` section, explicitly choose
+`gate_homing_endstop`: leaving it unset would select the built-in `encoder`
+default and prevents startup with an analog encoder.
+
+Explicit `encoder_move_validation: 1` or `encoder` choices for
+`gate_homing_endstop`, `gate_preload_endstop`, or `extruder_homing_endstop` are
+accepted with startup warnings: moves may appear short and homing can stop
+late. An omitted or blank preload endstop inherits the gate endstop, including
+an explicit encoder opt-in.
+
+FlowGuard and the usual encoder printer variables remain available. Existing
+status fields keep their names and types; analog encoders add only the optional
+[`analog` dictionary](Reference-Printer-Variables.md#analog-encoder-fields).
 
 ## See also
 

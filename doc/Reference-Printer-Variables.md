@@ -169,7 +169,8 @@ means for the rest of Happy Hare.
 
 ### Encoder
 
-`encoder` is only present when the active unit has one:
+`encoder` is a dictionary when the active unit has an encoder, otherwise `None`.
+The following fields are available for both digital and analog encoders:
 
 | Variable | Type | Meaning |
 |---|---|---|
@@ -181,6 +182,36 @@ means for the rest of Happy Hare.
 | `detection_mode` | int | Clog detection mode |
 | `enabled` | bool | Encoder currently enabled for clog detection |
 | `flow_rate` | int | % flow rate (extruder movement vs. encoder movement) |
+
+#### Analog encoder fields
+
+An [analog encoder](Feature-Encoder.md#analog-encoders) adds an optional `analog`
+dictionary under `printer.mmu.encoder`. Digital encoders do not include this
+key. The existing encoder fields above keep the same names and types.
+
+| Variable | Type | Meaning |
+|---|---|---|
+| `analog.value` | float or None | Latest ADC reading as a fraction of full scale (`0.0`–`1.0`); `None` until the first reading arrives |
+| `analog.count` | int | Cumulative threshold-crossing pulse count since initialization; independent of the position set or reset with `MMU_ENCODER POS=...` |
+| `analog.max_speed` | float | Estimated sampling-speed limit in mm/s, rounded to one decimal place: current encoder resolution divided by twice `analog_report_time`. Informational only; does not cap motor speed |
+
+The same optional fields are available on the named encoder object, for example
+`printer['mmu_encoder unit0'].analog.value`. Substitute the configured encoder
+name. UI clients and macros should check for the dictionary before reading it:
+
+```jinja
+{% set encoder = printer.mmu.encoder %}
+{% if encoder and 'analog' in encoder %}
+    {% set adc_value = encoder.analog.value %}
+    {% if adc_value is not none %}
+        {action_respond_info("Encoder ADC: %.3f" % adc_value)}
+    {% endif %}
+{% endif %}
+```
+
+Readings can arrive in batches, so position and flow-rate updates may be coarser
+or delayed compared with a digital encoder. See the feature page's
+[sampling and movement limits](Feature-Encoder.md#sampling-and-movement-limits).
 
 ### Per-gate arrays merged across every unit
 
